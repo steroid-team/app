@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">todolist</string>
+    <string name="greeting_button">Enter</string>
+    <string name="button_hint">Enter your name</string>
+</resources>

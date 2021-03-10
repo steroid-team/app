@@ -24,5 +24,9 @@ public class MainActivity extends AppCompatActivity {
             greetingActivity.putExtra(EXTRA_USER_NAME, mainName.getText().toString());
             startActivity(greetingActivity);
         });
+
+        // Placeholder: The main To do activity not available yet => go directly to ItemViewActivity
+        Intent itemViewActivity = new Intent(MainActivity.this, ItemViewActivity.class);
+        startActivity(itemViewActivity);
     }
 }

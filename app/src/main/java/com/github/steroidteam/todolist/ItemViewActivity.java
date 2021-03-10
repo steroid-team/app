@@ -18,7 +18,7 @@ public class ItemViewActivity extends AppCompatActivity {
 
         // Placeholder
         List<String> items = Arrays.asList("Change passwords", "Replace old server", "Set up firewall",
-                "Fix router", "Change passwords", "Replace old server", "Set up firewall");
+                "Fix router", "Change passwords", "Replace old server", "Set up firewall", "f", "f", "f", "f", "f", "f", "f", "f", "f", "f", "f", "f", "f", "f", "f", "f", "f", "f", "f", "f");
 
         // Todo: customize adapter
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,

@@ -7,16 +7,18 @@
     tools:context=".ItemViewActivity">
 
     <ListView
-        android:id="@+id/itemlist"
+        android:id="@+id/activity_itemview_itemlist"
         android:layout_width="0dp"
         android:layout_height="600dp"
+        android:layout_marginTop="44dp"
         android:divider="@null"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_itemview_toolbar" />
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/activity_itemview_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"

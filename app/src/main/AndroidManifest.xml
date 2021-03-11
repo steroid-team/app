@@ -9,8 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Todolist">
-        <activity android:name=".GreetingActivity"></activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" />
+        <activity android:name=".GreetingActivity" />
+        <activity android:name=".ui.FirebaseUIActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

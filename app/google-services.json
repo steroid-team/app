@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "114917489011",
+    "project_id": "steroid-notes",
+    "storage_bucket": "steroid-notes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:114917489011:android:90e6dc2bb1123b3413ed06",
+        "android_client_info": {
+          "package_name": "com.github.steroidteam.todolist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "114917489011-5qeavr188joj2u8h94gih9i2up2iv3ep.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKMC5_Und_efIBJW6KgCWCoz8WkI6xWm4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "114917489011-5qeavr188joj2u8h94gih9i2up2iv3ep.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

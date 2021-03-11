@@ -6,4 +6,16 @@
         android:id="@+id/menu_add"
         android:title="Add media"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_share"
+        android:title="Share"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_change_type"
+        android:title="Change type"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_delete"
+        android:title="Delete"
+        app:showAsAction="ifRoom" />
 </menu>

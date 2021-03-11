@@ -1,6 +1,6 @@
 package com.github.steroidteam.todolist.database;
 
-import com.github.steroidteam.todolist.task.Task;
+import com.github.steroidteam.todolist.todo.Task;
 
 /**
  * A database that stores pairs of key and value.

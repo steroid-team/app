@@ -13,7 +13,6 @@
             android:name=".ItemViewActivity"
             android:parentActivityName="com.github.steroidteam.todolist.MainActivity">
         </activity>
-        <activity android:name=".GreetingActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

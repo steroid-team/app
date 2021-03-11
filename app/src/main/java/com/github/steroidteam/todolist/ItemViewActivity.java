@@ -14,15 +14,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.github.steroidteam.todolist.todo.Task;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ItemViewActivity extends AppCompatActivity {
+    private static TasksAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,18 +38,17 @@ public class ItemViewActivity extends AppCompatActivity {
         String todoListTitle = "Example list";
         setTitle(todoListTitle);
 
-        // Placeholder
-        List<Task> items = Arrays.asList(
-                new Task("Change passwords"),
-                new Task("Replace old server"),
-                new Task("Set up firewall"),
-                new Task("Fix router"),
-                new Task("Change passwords"),
-                new Task("Replace old server"),
-                new Task("Set up firewall")
-                );
+        // Pre-populate the database with a few sample tasks.
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(new Task("Change passwords"));
+        tasks.add(new Task("Replace old server"));
+        tasks.add(new Task("Set up firewall"));
+        tasks.add(new Task("Fix router"));
+        tasks.add(new Task("Change passwords"));
+        tasks.add(new Task("Replace old server"));
+        tasks.add(new Task("Set up firewall"));
 
-        TasksAdapter adapter = new TasksAdapter(this, items);
+        adapter = new TasksAdapter(this, tasks);
         ListView listView = findViewById(R.id.activity_itemview_itemlist);
         listView.setAdapter(adapter);
     }
@@ -58,6 +58,17 @@ public class ItemViewActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_items, menu);
         return true;
+    }
+
+    public void addTask(View view) {
+        EditText newTaskET = (EditText) findViewById(R.id.new_task_text);
+        String taskDescription = newTaskET.getText().toString();
+
+        // Make sure that we only add the task if the description has text.
+        if (taskDescription.length() > 0) adapter.add(new Task(taskDescription));
+
+        // Clean the description text box.
+        newTaskET.getText().clear();
     }
 
     private class TasksAdapter extends ArrayAdapter<Task> {

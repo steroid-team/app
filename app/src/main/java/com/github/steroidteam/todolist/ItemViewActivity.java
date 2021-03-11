@@ -4,12 +4,21 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 
+import com.github.steroidteam.todolist.todo.Task;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,12 +38,17 @@ public class ItemViewActivity extends AppCompatActivity {
         setTitle(todoListTitle);
 
         // Placeholder
-        List<String> items = Arrays.asList("Change passwords", "Replace old server", "Set up firewall",
-                "Fix router", "Change passwords", "Replace old server", "Set up firewall");
+        List<Task> items = Arrays.asList(
+                new Task("Change passwords"),
+                new Task("Replace old server"),
+                new Task("Set up firewall"),
+                new Task("Fix router"),
+                new Task("Change passwords"),
+                new Task("Replace old server"),
+                new Task("Set up firewall")
+                );
 
-        // Todo: customize adapter
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                R.layout.layout_list_item, R.id.checkBox, items);
+        TasksAdapter adapter = new TasksAdapter(this, items);
         ListView listView = findViewById(R.id.activity_itemview_itemlist);
         listView.setAdapter(adapter);
     }
@@ -44,5 +58,33 @@ public class ItemViewActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_items, menu);
         return true;
+    }
+
+    private class TasksAdapter extends ArrayAdapter<Task> {
+        public TasksAdapter(Context context, List<Task> users) {
+            super(context, 0, users);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Task task = getItem(position);
+
+            // Check if an existing view is being reused, otherwise inflate the view
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.layout_task_item, parent, false);
+            }
+
+            CheckBox taskView = convertView.findViewById(R.id.layout_task_checkbox);
+            taskView.setText(task.getBody());
+            taskView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    Task task = (Task) buttonView.getTag();
+                    // Notify database?
+                }
+            });
+
+            return convertView;
+        }
     }
 }

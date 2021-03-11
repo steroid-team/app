@@ -11,35 +11,34 @@ public class TaskTest {
     @Test
     public void taskCorrectlyThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
-            Task nullTask = new Task("0", null);
-        });
-        assertThrows(IllegalArgumentException.class, () -> {
-            Task nullTask = new Task(null, "This is a body !");
+            Task nullTask = new Task(null);
         });
     }
 
     @Test
     public void taskIsCorrectlyCreated() {
         String body = "Body!";
-        String id = "89273";
-        Task dumbTask = new Task(id, body);
+        Integer id = 87879;
+        Task dumbTask = new Task(body);
+        dumbTask.setId(id);
 
         assertEquals(id, dumbTask.getId());
         assertEquals(body, dumbTask.getBody());
 
-        Task dumbTask2 = new Task(id, "This is a different body !");
+        Task dumbTask2 = new Task("This is a different body !");
+        dumbTask2.setId(19111);
 
         assertTrue(dumbTask.equals(dumbTask));
         assertFalse(dumbTask.equals(null));
         assertFalse(dumbTask.equals("Different Class"));
-        assertTrue(dumbTask.equals(dumbTask2));
+        assertFalse(dumbTask.equals(dumbTask2));
     }
 
     @Test
-    public void modifyWorks() {
+    public void getWorks() {
         String newBody = "New Body!";
-        Task dumbTask = new Task("0", "body");
-        dumbTask.modifyBody(newBody);
+        Task dumbTask = new Task("body");
+        dumbTask.setBody(newBody);
 
         assertEquals(newBody, dumbTask.getBody());
     }
@@ -47,9 +46,10 @@ public class TaskTest {
     @Test
     public void serializationOfaTaskIsCorrect() {
         String body = "Body!";
-        String id = "89273";
-        Task dumbTask = new Task("89273", "Body!");
+        Integer id = 97873;
+        Task dumbTask = new Task("Body!");
+        dumbTask.setId(id);
 
-        assertEquals("Task{id='89273', body='Body!'}", dumbTask.toString());
+        assertEquals("Task{id='97873', body='Body!'}", dumbTask.toString());
     }
 }

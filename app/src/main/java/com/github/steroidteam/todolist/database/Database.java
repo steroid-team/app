@@ -8,35 +8,28 @@ import com.github.steroidteam.todolist.todo.Task;
 public interface Database {
 
     /**
-     * Pushes a new task in the database.
+     * Pushes a new value in the database.
      *
-     * @param task The task of the mapping.
+     * @param key   The key of the mapping
+     * @param value The value of the mapping.
      */
-    void putTask(Task task);
+    void put(String key, String value);
 
     /**
      * Removes a task from the database.
      *
-     * @param id The key of the mapping.
-     * @throws DatabaseException Thrown if the id is not in the database
+     * @param key The key of the mapping.
+     * @throws IllegalArgumentException Thrown if the argument is null.
+     * @throws DatabaseException        Thrown if the id is not in the database
      */
-    void removeTask(int id) throws DatabaseException;
+    void remove(String key) throws DatabaseException;
 
     /**
-     * Updates a task from the database
+     * Gets a value from the database
      *
-     * @param updatedTask The updated task to put in the database.
-     * @throws DatabaseException Thrown if the id of the task is not in the database
+     * @param key The key of the mapping.
+     * @return The value of the mapping or null if the key does not exist in the database.
      */
-    void updateTask(Task updatedTask) throws DatabaseException;
-
-    /**
-     * Gets a task from the database
-     *
-     * @param id The key of the mapping.
-     * @return The task of the mapping or null if the key does not exist in the database.
-     * @throws DatabaseException Thrown if the id is not in the database
-     */
-    Task getTask(int id) throws DatabaseException;
+    String get(String key);
 
 }

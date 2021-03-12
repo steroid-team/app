@@ -37,8 +37,21 @@ public class TodoList {
         list.add(task);
     }
 
-    public void removeTask(int index) {
-        list.remove(index);
+    public void removeTask(Integer index) {
+        if(index >= 0 && index < list.size()) {
+            //Need to cast the index to int.
+            //Otherwise we use .remove(Object o) and not .remove(int index) as wanted.
+            list.remove((int)index);
+        }
+    }
+
+    public Task getTask(Integer index) {
+        if(index >= 0 && index < list.size()) {
+            return list.get(index);
+        }
+        else {
+            return null;
+        }
     }
 
     public int getSize() {

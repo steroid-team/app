@@ -1,5 +1,8 @@
 package com.github.steroidteam.todolist.database;
 
+import com.github.steroidteam.todolist.todo.Task;
+import com.github.steroidteam.todolist.todo.TodoList;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,33 +19,32 @@ public class VolatileDatabase implements Database {
     }
 
     @Override
-    public void put(String key, String value) {
-        if (key == null || value == null) {
-            throw new IllegalArgumentException();
-        }
-        database.put(key, value);
+    public void putTodoList(TodoList list) {
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
-    public void remove(String key) throws DatabaseException {
-        if (key == null) {
-            throw new IllegalArgumentException();
-        }
-        if (!database.containsKey(key)) {
-            throw new DatabaseException("The key isn't in the database!");
-        } else {
-            database.remove(key);
-        }
+    public void removeTodoList(Integer id) {
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
-    public String get(String key) {
-        if (key == null) {
-            throw new IllegalArgumentException();
-        }
-        if (!database.containsKey(key)) {
-            return null;
-        }
-        return database.get(key);
+    public TodoList getTodoList(Integer todoListID) {
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    @Override
+    public void pushTask(Integer todoListID, Task task) {
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    @Override
+    public void removeTask(Integer todoListID, Integer taskID) {
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    @Override
+    public Task getTask(Integer taskID) {
+        throw new UnsupportedOperationException("TODO");
     }
 }

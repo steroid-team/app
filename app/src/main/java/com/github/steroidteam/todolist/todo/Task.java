@@ -5,13 +5,13 @@ import java.io.Serializable;
 /**
  * A class that represents a task described by a title and a body.
  * <p>
- * The id is null upon the creation of the Task, and it will
+ * The index is null upon the creation of the Task, and it will
  * be assigned by the database when it's pushed into it.
  */
-public class Task implements Serializable {
+public class Task {
 
     private String body;
-    private Integer id;
+    private Integer index;
 
     /**
      * Constructs a new Task with a body.
@@ -24,7 +24,7 @@ public class Task implements Serializable {
             throw new IllegalArgumentException();
         }
         this.body = body;
-        this.id = null;
+        this.index = null;
     }
 
     /**
@@ -45,36 +45,23 @@ public class Task implements Serializable {
         return new String(body);
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setIndex(Integer index) {
+        this.index = index;
     }
 
     /**
-     * Returns the id of the task.
+     * Returns the index of the task.
      *
-     * @return Integer The id or null if not present in the database.
+     * @return Integer The index or null if not present in a to-do list.
      */
-    public Integer getId() {
-        return id;
+    public Integer getIndex() {
+        return index;
     }
 
     @Override
     public String toString() {
         return "Task{" +
-                "id='" + id.toString() + "\'" +
-                ", body='" + body + "\'" +
+                "body='" + body + "\'" +
                 "}";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        } else if (o == null || this.getClass() != o.getClass()) {
-            return false;
-        } else {
-            Task task = (Task) o;
-            return this.id.equals(task.getId());
-        }
     }
 }

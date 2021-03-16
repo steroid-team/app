@@ -7,6 +7,8 @@ import com.github.steroidteam.todolist.todo.TodoList;
 
 import org.junit.Test;
 
+import java.util.UUID;
+
 import static org.junit.Assert.*;
 
 public class VolatileDatabaseTest {
@@ -54,15 +56,14 @@ public class VolatileDatabaseTest {
 
         assertThrows(IllegalArgumentException.class, () -> {
             VolatileDatabase database2 = new VolatileDatabase();
-            database2.putTask(0, null);
+            database2.putTask(UUID.randomUUID(), null);
         });
-
 
         TodoList todo = new TodoList("A title!");
         Task task = new Task("A body!");
         VolatileDatabase database = new VolatileDatabase();
 
-        database.putTask(0, task);
+        database.putTask(todo.getId(), task);
         assertNull(todo.getTask(0));
 
         database.putTodoList(todo);
@@ -79,7 +80,7 @@ public class VolatileDatabaseTest {
 
         assertThrows(IllegalArgumentException.class, () -> {
             VolatileDatabase database2 = new VolatileDatabase();
-            database2.removeTask(0, null);
+            database2.removeTask(UUID.randomUUID(), null);
         });
 
         TodoList todo = new TodoList("A title!");
@@ -104,7 +105,7 @@ public class VolatileDatabaseTest {
 
         assertThrows(IllegalArgumentException.class, () -> {
             VolatileDatabase database2 = new VolatileDatabase();
-            database2.getTask(0, null);
+            database2.getTask(UUID.randomUUID(), null);
         });
 
         TodoList todo = new TodoList("A title!");

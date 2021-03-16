@@ -3,6 +3,7 @@ package com.github.steroidteam.todolist.todo;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * A class that represents a to-do list.
@@ -14,6 +15,7 @@ import java.util.List;
  */
 public class TodoList {
 
+    private final UUID id;
     private List<Task> list;
     private String title;
     private Date date;
@@ -28,6 +30,7 @@ public class TodoList {
         if(title == null) {
             throw new IllegalArgumentException();
         }
+        this.id = UUID.randomUUID();
         this.list = new ArrayList<>();
         this.title = title;
         this.date = new Date(System.currentTimeMillis());
@@ -66,8 +69,8 @@ public class TodoList {
         return this.date;
     }
 
-    public Integer getId() {
-        return this.date.toString().hashCode();
+    public UUID getId() {
+        return this.id;
     }
 
     public String getTitle() {

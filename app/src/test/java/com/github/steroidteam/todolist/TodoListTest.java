@@ -33,9 +33,6 @@ public class TodoListTest {
         assertNull(td.getTask(0));
         assertNull(td.getTask(-3));
 
-        Integer hash = td.getDate().toString().hashCode();
-        assertEquals(hash, td.getId());
-
         String newTitle = "new title !";
         td.setTitle(newTitle);
         assertEquals(newTitle, td.getTitle());

@@ -5,6 +5,7 @@ import com.github.steroidteam.todolist.todo.TodoList;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * A simple volatile implementation of the interface database.
@@ -13,7 +14,7 @@ import java.util.Map;
  */
 public class VolatileDatabase implements Database {
 
-    private Map<Integer, TodoList> database;
+    private Map<UUID, TodoList> database;
 
     /**
      * Creates a volatile database.
@@ -45,7 +46,7 @@ public class VolatileDatabase implements Database {
      * @param id The id of the to-do list.
      */
     @Override
-    public void removeTodoList(Integer id) {
+    public void removeTodoList(UUID id) {
         if (id == null) {
             throw new IllegalArgumentException();
         }
@@ -59,7 +60,7 @@ public class VolatileDatabase implements Database {
      * @return The to-do list or null if not present in the database.
      */
     @Override
-    public TodoList getTodoList(Integer todoListID) {
+    public TodoList getTodoList(UUID todoListID) {
         if (todoListID == null) {
             throw new IllegalArgumentException();
         }
@@ -76,7 +77,7 @@ public class VolatileDatabase implements Database {
      * @param task       The new task to add.
      */
     @Override
-    public void putTask(Integer todoListID, Task task) {
+    public void putTask(UUID todoListID, Task task) {
         if (todoListID == null || task == null) {
             throw new IllegalArgumentException();
         }
@@ -96,7 +97,7 @@ public class VolatileDatabase implements Database {
      * @param taskIndex  The index of the task within the to-do list.
      */
     @Override
-    public void removeTask(Integer todoListID, Integer taskIndex) {
+    public void removeTask(UUID todoListID, Integer taskIndex) {
         if (todoListID == null || taskIndex == null) {
             throw new IllegalArgumentException();
         }
@@ -114,7 +115,7 @@ public class VolatileDatabase implements Database {
      * @return Return null if the to-do list or the task are not present in the database.
      */
     @Override
-    public Task getTask(Integer todoListID, Integer taskIndex) {
+    public Task getTask(UUID todoListID, Integer taskIndex) {
         if (todoListID == null || taskIndex == null) {
             throw new IllegalArgumentException();
         }

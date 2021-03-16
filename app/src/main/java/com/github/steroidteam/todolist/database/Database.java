@@ -15,7 +15,7 @@ public interface Database {
      *
      * @param list The to-do list to push.
      */
-    void putTodoList(TodoList list);
+    void putTodoList(TodoList list) throws DatabaseException;
 
     /**
      * Removes a to-do list from the database.
@@ -23,7 +23,7 @@ public interface Database {
      * @param todoListID The ID of the to-do list to remove.
      * @throws IllegalArgumentException Thrown if the argument is null.
      */
-    void removeTodoList(UUID todoListID);
+    void removeTodoList(UUID todoListID) throws DatabaseException;
 
     /**
      * Gets the to-do list given the ID.
@@ -31,7 +31,7 @@ public interface Database {
      * @param todoListID The ID of the to-do list.
      * @return The to-do list or null if the ID isn't in the database.
      */
-    TodoList getTodoList(UUID todoListID);
+    TodoList getTodoList(UUID todoListID) throws DatabaseException;
 
     /**
      * Pushes a new task in the database.
@@ -39,7 +39,7 @@ public interface Database {
      * @param todoListID The id of the associated list of the task.
      * @param task The new task to add.
      */
-    void putTask(UUID todoListID, Task task);
+    void putTask(UUID todoListID, Task task) throws DatabaseException;
 
     /**
      * Removes a task from the database.
@@ -48,7 +48,7 @@ public interface Database {
      * @param taskIndex The index of the task within the list.
      * @throws IllegalArgumentException Thrown if one argument is null.
      */
-    void removeTask(UUID todoListID, Integer taskIndex);
+    void removeTask(UUID todoListID, Integer taskIndex) throws DatabaseException;
 
     /**
      * Gets the task from the database
@@ -57,6 +57,6 @@ public interface Database {
      * @param taskIndex The index of the task you want from a to-do list.
      * @return The task or null if the key does not exist in the database.
      */
-    Task getTask(UUID todoListID, Integer taskIndex);
+    Task getTask(UUID todoListID, Integer taskIndex) throws DatabaseException;
 
 }

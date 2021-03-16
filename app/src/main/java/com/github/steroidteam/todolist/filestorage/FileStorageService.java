@@ -13,7 +13,7 @@ public interface FileStorageService {
      *              by the specific filesystem. Cannot be null.
      * @return A CompletableFuture that returns the new file's path upon completion.
      */
-    CompletableFuture<String> create(byte[] bytes, @NonNull String path);
+    CompletableFuture<String> upload(byte[] bytes, @NonNull String path);
 
     /**
      * Fetch a file from the filesystem.
@@ -22,7 +22,7 @@ public interface FileStorageService {
      *             specific filesystem. Cannot be null.
      * @return A CompletableFuture that returns the file's binary contents upon completion.
      */
-    CompletableFuture<byte[]> get(@NonNull String path);
+    CompletableFuture<byte[]> download(@NonNull String path);
 
     /**
      * Delete a file from the filesystem.

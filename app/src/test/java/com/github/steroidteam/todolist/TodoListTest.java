@@ -17,7 +17,6 @@ public class TodoListTest {
 
         Task t1 = new Task("body1");
         Task t2 = new Task("body2");
-        t2.setIndex(98);
         TodoList td = new TodoList("This is a title!");
 
         td.addTask(t1);

@@ -11,7 +11,6 @@ import java.io.Serializable;
 public class Task {
 
     private String body;
-    private Integer index;
 
     /**
      * Constructs a new Task with a body.
@@ -24,7 +23,6 @@ public class Task {
             throw new IllegalArgumentException();
         }
         this.body = body;
-        this.index = null;
     }
 
     /**
@@ -43,19 +41,6 @@ public class Task {
      */
     public String getBody() {
         return new String(body);
-    }
-
-    public void setIndex(Integer index) {
-        this.index = index;
-    }
-
-    /**
-     * Returns the index of the task.
-     *
-     * @return Integer The index or null if not present in a to-do list.
-     */
-    public Integer getIndex() {
-        return index;
     }
 
     @Override

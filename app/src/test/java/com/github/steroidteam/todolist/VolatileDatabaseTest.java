@@ -57,12 +57,6 @@ public class VolatileDatabaseTest {
             database2.putTask(0, null);
         });
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            VolatileDatabase database2 = new VolatileDatabase();
-            Task t = new Task("body!");
-            t.setIndex(1);
-            database2.putTask(0, t);
-        });
 
         TodoList todo = new TodoList("A title!");
         Task task = new Task("A body!");
@@ -97,9 +91,6 @@ public class VolatileDatabaseTest {
         database.removeTask(todo.getId(), 2);
         assertEquals(1, todo.getSize());
 
-        database.removeTask(0, 0);
-        assertEquals(1, todo.getSize());
-
         database.removeTask(todo.getId(), 0);
         assertEquals(0, todo.getSize());
     }
@@ -121,8 +112,5 @@ public class VolatileDatabaseTest {
         VolatileDatabase database = new VolatileDatabase();
         database.putTodoList(todo);
         database.putTask(todo.getId(), task);
-
-        assertEquals(null, database.getTask(0, task.getIndex()));
-        assertEquals(task, database.getTask(todo.getId(), task.getIndex()));
     }
 }

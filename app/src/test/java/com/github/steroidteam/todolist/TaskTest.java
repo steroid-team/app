@@ -48,4 +48,11 @@ public class TaskTest {
 
         assertEquals("Task{body='Body!'}", dumbTask.toString());
     }
+
+    @Test
+    public void equalsWorks() {
+        assertEquals(new Task("Do something"), new Task("Do something"));
+        assertNotEquals(new Task("Do something"), new Task("Do something else"));
+        assertNotEquals(null, new Task(""));
+    }
 }

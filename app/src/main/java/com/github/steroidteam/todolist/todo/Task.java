@@ -1,6 +1,7 @@
 package com.github.steroidteam.todolist.todo;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A class that represents a task described by a title and a body.
@@ -48,5 +49,13 @@ public class Task {
         return "Task{" +
                 "body='" + body + "\'" +
                 "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return Objects.equals(body, task.body);
     }
 }

@@ -3,6 +3,8 @@ package com.github.steroidteam.todolist.database;
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
 
+import java.util.UUID;
+
 /**
  * A database that stores pairs of key and value.
  */
@@ -21,7 +23,7 @@ public interface Database {
      * @param todoListID The ID of the to-do list to remove.
      * @throws IllegalArgumentException Thrown if the argument is null.
      */
-    void removeTodoList(Integer todoListID);
+    void removeTodoList(UUID todoListID);
 
     /**
      * Gets the to-do list given the ID.
@@ -29,7 +31,7 @@ public interface Database {
      * @param todoListID The ID of the to-do list.
      * @return The to-do list or null if the ID isn't in the database.
      */
-    TodoList getTodoList(Integer todoListID);
+    TodoList getTodoList(UUID todoListID);
 
     /**
      * Pushes a new task in the database.
@@ -37,7 +39,7 @@ public interface Database {
      * @param todoListID The id of the associated list of the task.
      * @param task The new task to add.
      */
-    void putTask(Integer todoListID, Task task);
+    void putTask(UUID todoListID, Task task);
 
     /**
      * Removes a task from the database.
@@ -46,7 +48,7 @@ public interface Database {
      * @param taskIndex The index of the task within the list.
      * @throws IllegalArgumentException Thrown if one argument is null.
      */
-    void removeTask(Integer todoListID, Integer taskIndex);
+    void removeTask(UUID todoListID, Integer taskIndex);
 
     /**
      * Gets the task from the database
@@ -55,6 +57,6 @@ public interface Database {
      * @param taskIndex The index of the task you want from a to-do list.
      * @return The task or null if the key does not exist in the database.
      */
-    Task getTask(Integer todoListID, Integer taskIndex);
+    Task getTask(UUID todoListID, Integer taskIndex);
 
 }

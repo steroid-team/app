@@ -20,13 +20,10 @@ public class TaskTest {
         String body = "Body!";
         Integer id = 87879;
         Task dumbTask = new Task(body);
-        dumbTask.setIndex(id);
 
-        assertEquals(id, dumbTask.getIndex());
         assertEquals(body, dumbTask.getBody());
 
         Task dumbTask2 = new Task("This is a different body !");
-        dumbTask2.setIndex(19111);
 
         assertTrue(dumbTask.equals(dumbTask));
         assertFalse(dumbTask.equals(null));
@@ -48,7 +45,6 @@ public class TaskTest {
         String body = "Body!";
         Integer id = 97873;
         Task dumbTask = new Task("Body!");
-        dumbTask.setIndex(id);
 
         assertEquals("Task{body='Body!'}", dumbTask.toString());
     }

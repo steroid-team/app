@@ -77,15 +77,12 @@ public class VolatileDatabase implements Database {
      */
     @Override
     public void putTask(Integer todoListID, Task task) {
-        if (todoListID == null || task == null || task.getIndex() != null) {
+        if (todoListID == null || task == null) {
             throw new IllegalArgumentException();
         }
         //get the to-do list from the database.
         TodoList list = database.get(todoListID);
         if (list != null) {
-            //recover the size to assign the index to the task.
-            Integer index = list.getSize();
-            task.setIndex(index);
             list.addTask(task);
         }
     }

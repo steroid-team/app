@@ -1,6 +1,5 @@
 package com.github.steroidteam.todolist.todo;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -41,13 +40,13 @@ public class Task {
      * @return String The body.
      */
     public String getBody() {
-        return new String(body);
+        return this.body;
     }
 
     @Override
     public String toString() {
         return "Task{" +
-                "body='" + body + "\'" +
+                "body='" + body + "'" +
                 "}";
     }
 

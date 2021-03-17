@@ -51,6 +51,10 @@ public class ItemViewActivity extends AppCompatActivity {
 
         adapter = new TasksAdapter(this, tasks);
         ListView listView = findViewById(R.id.activity_itemview_itemlist);
+        setListViewSettings(listView, tasks);
+    }
+
+    private void setListViewSettings(ListView listView, List<Task> tasks) {
         listView.setAdapter(adapter);
 
         listView.setLongClickable(true);

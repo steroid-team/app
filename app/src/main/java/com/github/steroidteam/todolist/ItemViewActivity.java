@@ -25,7 +25,6 @@ import java.util.List;
 
 public class ItemViewActivity extends AppCompatActivity {
     private static TasksAdapter adapter;
-    private int selectedItemIndex = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +54,12 @@ public class ItemViewActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
 
         listView.setLongClickable(true);
+        // The part for deleteTask
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Task t = tasks.get(i);
                 tasks.remove(i);
-                //adapter.remove(adapter.getItem(i));
                 adapter.notifyDataSetChanged();
                 return true;
             }
@@ -84,6 +83,7 @@ public class ItemViewActivity extends AppCompatActivity {
         // Clean the description text box.
         newTaskET.getText().clear();
     }
+
 
     private class TasksAdapter extends ArrayAdapter<Task> {
         public TasksAdapter(Context context, List<Task> users) {

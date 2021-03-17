@@ -92,12 +92,21 @@ public class VolatileDatabaseTest {
         database.removeTask(todo.getId(), 2);
         assertEquals(1, todo.getSize());
 
+        database.removeTask(UUID.randomUUID(), 0);
+        assertEquals(1, todo.getSize());
+
         database.removeTask(todo.getId(), 0);
         assertEquals(0, todo.getSize());
     }
 
     @Test
     public void getTaskWorks() {
+        // Null arguments throw IllegalArgumentException.
+        assertThrows(IllegalArgumentException.class, () -> {
+            VolatileDatabase database2 = new VolatileDatabase();
+            database2.getTask(null, null);
+        });
+
         assertThrows(IllegalArgumentException.class, () -> {
             VolatileDatabase database2 = new VolatileDatabase();
             database2.getTask(null, 0);
@@ -113,5 +122,14 @@ public class VolatileDatabaseTest {
         VolatileDatabase database = new VolatileDatabase();
         database.putTodoList(todo);
         database.putTask(todo.getId(), task);
+
+        // Getting tasks from a nonexistent list returns a null object.
+        assertNull(database.getTask(UUID.randomUUID(), 0));
+
+        // Getting non-existent tasks from an existing list returns a null object.
+        assertNull(database.getTask(todo.getId(),todo.getSize() + 1));
+
+        // Getting existent tasks from an existing list returns the corresponding Task.
+        assertEquals(task, database.getTask(todo.getId(), 0));
     }
 }

@@ -1,20 +1,26 @@
 package com.github.steroidteam.todolist;
 
-import android.app.Activity;
 import static android.app.Instrumentation.*;
+
+import android.app.Activity;
 import android.content.Intent;
 
-import androidx.test.espresso.intent.Intents;
-
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.intent.Intents.*;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.*;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.*;
+
 import static androidx.test.espresso.matcher.ViewMatchers.*;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.*;
 
 
+import static androidx.test.espresso.intent.Intents.*;
+
+import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.KickoffActivity;
 
 import com.github.steroidteam.todolist.ui.FirebaseUIActivity;
 
@@ -34,17 +40,28 @@ public class FirebaseUIActivityTest {
         onView(withId(R.id.loginStatus)).check(matches(withText("Logged out")));
     }
 
-//    @Test
-//    public void checkUserLogin() {
-//        Intents.init();
-//
-//        Intent resultData = new Intent();
-//        ActivityResult result =
-//                new ActivityResult(Activity.RESULT_OK, resultData);
-//        intending(toPackage(FirebaseUIActivity.class.getName())).respondWith(result);
-//
-//        onView(withId(R.id.loginStatus)).check(matches(withText("Logged out")));
-//
-//        Intents.release();
-//    }
+    @Test
+    public void checkUserPushesLoginButton() {
+        onView(withId(R.id.button2)).perform(click());
+    }
+
+    @Test
+    public void testUserLoggedIn() {
+        Intents.init();
+
+        ActivityResult result = new ActivityResult(Activity.RESULT_OK, null);
+        intending(toPackage(FirebaseUIActivity.class.getName())).respondWith(result);
+
+        Intents.release();
+    }
+
+    @Test
+    public void testUserLoginFailed() {
+        Intents.init();
+
+        ActivityResult result = new ActivityResult(Activity.RESULT_CANCELED, null);
+        intending(toPackage(FirebaseUIActivity.class.getName())).respondWith(result);
+
+        Intents.release();
+    }
 }

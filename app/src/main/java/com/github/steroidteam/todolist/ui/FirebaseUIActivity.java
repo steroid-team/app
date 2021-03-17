@@ -44,22 +44,20 @@ public class FirebaseUIActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-            TextView loginStatusTextView = (TextView) findViewById(R.id.loginStatus);
+        IdpResponse response = IdpResponse.fromResultIntent(data);
+        TextView loginStatusTextView = (TextView) findViewById(R.id.loginStatus);
 
-            if (resultCode == RESULT_OK) {
-                // Successfully signed in
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                loginStatusTextView.setText("Logged in !");
-                // ...
-            } else {
-                // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
-                // ...
-                loginStatusTextView.setText("Login failed !");
-            }
+        if (resultCode == RESULT_OK) {
+            // Successfully signed in
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            loginStatusTextView.setText("Logged in !");
+            // ...
+        } else {
+            // Sign in failed. If response is null the user canceled the
+            // sign-in flow using the back button. Otherwise check
+            // response.getError().getErrorCode() and handle the error.
+            // ...
+            loginStatusTextView.setText("Login failed !");
         }
     }
 }

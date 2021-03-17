@@ -11,6 +11,10 @@
 
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
+            android:name=".ui.FirebaseUIActivity"
+            android:parentActivityName="com.github.steroidteam.todolist.MainActivity">
+        </activity>
+        <activity
             android:name=".ItemViewActivity"
             android:parentActivityName="com.github.steroidteam.todolist.MainActivity">
         </activity>

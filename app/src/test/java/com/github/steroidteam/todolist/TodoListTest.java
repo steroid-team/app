@@ -5,6 +5,8 @@ import com.github.steroidteam.todolist.todo.TodoList;
 
 import org.junit.Test;
 
+import java.util.Date;
+
 import static org.junit.Assert.*;
 
 public class TodoListTest {
@@ -18,6 +20,11 @@ public class TodoListTest {
         Task t1 = new Task("body1");
         Task t2 = new Task("body2");
         TodoList td = new TodoList("This is a title!");
+
+        assertNotNull(td.getDate());
+        // Make sure that the difference between the task's date and the current one is not
+        // greater than 100ms.
+        assertTrue((new Date().getTime() - td.getDate().getTime()) < 100);
 
         td.addTask(t1);
         assertEquals(1, td.getSize());

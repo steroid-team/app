@@ -77,9 +77,7 @@ public class ItemViewActivity extends AppCompatActivity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Task t = todoList.getTask(i);
-                                todoList.removeTask(i);
-                                adapter.notifyDataSetChanged();
+                                Task t = adapter.remove(i);
                                 Toast.makeText(getApplicationContext(), "Successfully removed the task : "+t.getBody(), Toast.LENGTH_LONG).show();
                             }
                         })
@@ -119,6 +117,13 @@ public class ItemViewActivity extends AppCompatActivity {
 
         public void add(Task task) {
             todoList.addTask(task);
+        }
+
+        public Task remove(int index){
+            Task t = todoList.getTask(index);
+            todoList.removeTask(index);
+            this.notifyDataSetChanged();
+            return t;
         }
 
         @Override

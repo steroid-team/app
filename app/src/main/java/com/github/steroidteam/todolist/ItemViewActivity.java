@@ -46,7 +46,6 @@ public class ItemViewActivity extends AppCompatActivity {
         todoList.addTask(new Task("Replace old server"));
         todoList.addTask(new Task("Set up firewall"));
 
-        //adapter = new TasksAdapter(this, tasks);
         adapter = new todoAdapter(todoList);
         ListView listView = findViewById(R.id.activity_itemview_itemlist);
         setListViewSettings(listView, todoList);

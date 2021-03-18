@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
@@ -76,8 +77,10 @@ public class ItemViewActivity extends AppCompatActivity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                Task t = todoList.getTask(i);
                                 todoList.removeTask(i);
                                 adapter.notifyDataSetChanged();
+                                Toast.makeText(getApplicationContext(), "Successfully removed the task : "+t.getBody(), Toast.LENGTH_LONG).show();
                             }
                         })
                         .create()

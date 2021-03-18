@@ -2,4 +2,6 @@
     <string name="app_name">todolist</string>
     <string name="greeting_button">Enter</string>
     <string name="button_hint">Enter your name</string>
+    <string name="plus">+</string>
+    <string name="task_creation_placeholder">Do something great</string>
 </resources>

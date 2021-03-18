@@ -1,17 +1,16 @@
 package com.github.steroidteam.todolist.todo;
 
-import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A class that represents a task described by a title and a body.
  * <p>
- * The id is null upon the creation of the Task, and it will
+ * The index is null upon the creation of the Task, and it will
  * be assigned by the database when it's pushed into it.
  */
-public class Task implements Serializable {
+public class Task {
 
     private String body;
-    private Integer id;
 
     /**
      * Constructs a new Task with a body.
@@ -24,7 +23,6 @@ public class Task implements Serializable {
             throw new IllegalArgumentException();
         }
         this.body = body;
-        this.id = null;
     }
 
     /**
@@ -42,39 +40,21 @@ public class Task implements Serializable {
      * @return String The body.
      */
     public String getBody() {
-        return new String(body);
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    /**
-     * Returns the id of the task.
-     *
-     * @return Integer The id or null if not present in the database.
-     */
-    public Integer getId() {
-        return id;
+        return this.body;
     }
 
     @Override
     public String toString() {
         return "Task{" +
-                "id='" + id.toString() + "\'" +
-                ", body='" + body + "\'" +
+                "body='" + body + "'" +
                 "}";
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        } else if (o == null || this.getClass() != o.getClass()) {
-            return false;
-        } else {
-            Task task = (Task) o;
-            return this.id.equals(task.getId());
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return Objects.equals(body, task.body);
     }
 }

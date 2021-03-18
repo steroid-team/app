@@ -5,11 +5,14 @@ check_android_task:
     TARGET: default
     ARCH: x86
     CC_TEST_REPORTER_ID: ENCRYPTED[!18641e04e9f96b888ae7492d501c47ca3b0ec80e5b1190fcc460a297921e20fa51b7229309265625b4a4d1b1b1edee23!]
+    GOOGLE_SERVICES_JSON_STRING: ENCRYPTED[f21b30ac9f69909dc734c787bd3d9487cc376218f824ff84ae5cbaffa8299a4e12a24d13dfcbae7b24b4788c330afcbf]
   container:
     image: reactivecircus/android-emulator-$API_LEVEL:latest
     kvm: true
     cpu: 8
     memory: 10G
+  create_google_services_script:
+    echo "$GOOGLE_SERVICES_JSON_STRING" > app/google-services.json
   create_device_script:
     echo no | avdmanager create avd --force --name test --abi "$TARGET/$ARCH" --package "system-images;android-$API_LEVEL;$TARGET;$ARCH"
   start_emulator_background_script:

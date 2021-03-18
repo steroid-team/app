@@ -8,9 +8,24 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Todolist">
-        <activity android:name=".GreetingActivity"></activity>
+
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".ListSelectionActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.FirebaseUIActivity"
+            android:parentActivityName="com.github.steroidteam.todolist.MainActivity">
+        </activity>
+        <activity
+            android:name=".ItemViewActivity"
+            android:parentActivityName=".MainActivity"></activity>
         <activity android:name=".MainActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

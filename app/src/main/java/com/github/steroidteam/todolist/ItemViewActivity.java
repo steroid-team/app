@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.github.steroidteam.todolist.todo.Task;
+import com.github.steroidteam.todolist.todo.TodoList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,18 +37,18 @@ public class ItemViewActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        String todoListTitle = "Example list";
-        setTitle(todoListTitle);
+        TodoList todoList = new TodoList("Example list");
+        setTitle(todoList.getTitle());
 
         // Pre-populate the database with a few sample tasks.
         List<Task> tasks = new ArrayList<>();
-        tasks.add(new Task("Change passwords"));
-        tasks.add(new Task("Replace old server"));
-        tasks.add(new Task("Set up firewall"));
-        tasks.add(new Task("Fix router"));
-        tasks.add(new Task("Change passwords"));
-        tasks.add(new Task("Replace old server"));
-        tasks.add(new Task("Set up firewall"));
+        todoList.addTask(new Task("Change passwords"));
+        todoList.addTask(new Task("Replace old server"));
+        todoList.addTask(new Task("Set up firewall"));
+        todoList.addTask(new Task("Fix router"));
+        todoList.addTask(new Task("Change passwords"));
+        todoList.addTask(new Task("Replace old server"));
+        todoList.addTask(new Task("Set up firewall"));
 
         adapter = new TasksAdapter(this, tasks);
         ListView listView = findViewById(R.id.activity_itemview_itemlist);

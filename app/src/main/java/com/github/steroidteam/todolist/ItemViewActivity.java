@@ -118,7 +118,10 @@ public class ItemViewActivity extends AppCompatActivity {
             Task task = (Task)getItem(position);
             // Check if an existing view is being reused, otherwise inflate the view
 
-            convertView = LayoutInflater.from(getBaseContext()).inflate(R.layout.layout_task_item, parent, false);
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getBaseContext()).inflate(R.layout.layout_task_item, parent, false);
+            }
+
             CheckBox taskView = convertView.findViewById(R.id.layout_task_checkbox);
             taskView.setText(task.getBody());
 

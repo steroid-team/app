@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -50,7 +51,23 @@ public class ItemViewActivity extends AppCompatActivity {
 
         adapter = new TasksAdapter(this, tasks);
         ListView listView = findViewById(R.id.activity_itemview_itemlist);
+        setListViewSettings(listView, tasks);
+    }
+
+    private void setListViewSettings(ListView listView, List<Task> tasks) {
         listView.setAdapter(adapter);
+
+        listView.setLongClickable(true);
+        // The part for deleteTask
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Task t = tasks.get(i);
+                tasks.remove(i);
+                adapter.notifyDataSetChanged();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -70,6 +87,7 @@ public class ItemViewActivity extends AppCompatActivity {
         // Clean the description text box.
         newTaskET.getText().clear();
     }
+
 
     private class TasksAdapter extends ArrayAdapter<Task> {
         public TasksAdapter(Context context, List<Task> users) {
@@ -92,6 +110,13 @@ public class ItemViewActivity extends AppCompatActivity {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     Task task = (Task) buttonView.getTag();
                     // Notify database?
+                }
+            });
+            taskView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+
+                    return false;
                 }
             });
 

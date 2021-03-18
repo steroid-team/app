@@ -20,13 +20,10 @@ public class TaskTest {
         String body = "Body!";
         Integer id = 87879;
         Task dumbTask = new Task(body);
-        dumbTask.setId(id);
 
-        assertEquals(id, dumbTask.getId());
         assertEquals(body, dumbTask.getBody());
 
         Task dumbTask2 = new Task("This is a different body !");
-        dumbTask2.setId(19111);
 
         assertTrue(dumbTask.equals(dumbTask));
         assertFalse(dumbTask.equals(null));
@@ -48,8 +45,14 @@ public class TaskTest {
         String body = "Body!";
         Integer id = 97873;
         Task dumbTask = new Task("Body!");
-        dumbTask.setId(id);
 
-        assertEquals("Task{id='97873', body='Body!'}", dumbTask.toString());
+        assertEquals("Task{body='Body!'}", dumbTask.toString());
+    }
+
+    @Test
+    public void equalsWorks() {
+        assertEquals(new Task("Do something"), new Task("Do something"));
+        assertNotEquals(new Task("Do something"), new Task("Do something else"));
+        assertNotEquals(null, new Task(""));
     }
 }

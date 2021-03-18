@@ -1,9 +1,11 @@
 package com.github.steroidteam.todolist;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -60,8 +62,26 @@ public class ItemViewActivity extends AppCompatActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                todoList.removeTask(i);
-                adapter.notifyDataSetChanged();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(ItemViewActivity.this);
+
+                builder.setTitle("You are about to delete a task!")
+                        .setMessage("Are you sure ?")
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //DO NOT REMOVE THE TASK!
+                            }
+                        })
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                todoList.removeTask(i);
+                                adapter.notifyDataSetChanged();
+                            }
+                        })
+                        .create()
+                        .show();
                 return true;
             }
         });

@@ -102,6 +102,7 @@ public class ItemViewActivity extends AppCompatActivity {
 
         public void add(Task task) {
             todoList.addTask(task);
+            this.notifyDataSetChanged();
         }
 
         public Task remove(int index){

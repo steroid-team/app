@@ -2,8 +2,6 @@ package com.github.steroidteam.todolist;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Placeholder: The main To do activity not available yet => go directly to ItemViewActivity
-        Intent itemViewActivity = new Intent(MainActivity.this, ItemViewActivity.class);
-        startActivity(itemViewActivity);
+        Intent listViewActivity = new Intent(MainActivity.this, ListSelectionActivity.class);
+        startActivity(listViewActivity);
     }
 }

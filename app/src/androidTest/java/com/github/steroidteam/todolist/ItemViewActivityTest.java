@@ -7,6 +7,7 @@ import android.widget.ListView;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -82,7 +83,34 @@ public class ItemViewActivityTest {
         Intent itemViewActivity = new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
 
         try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(itemViewActivity)) {
-            Espresso.onData(anything()).inAdapterView(withId(R.id.activity_itemview_itemlist)).atPosition(3).perform(longClick());
+            Espresso.onData(anything()).inAdapterView(withId(R.id.activity_itemview_itemlist)).atPosition(0).perform(longClick());
+
+            onView(withText("You are about to delete a task!")).check(matches(isDisplayed()));
+
+            onView(withText("Yes")).perform(click());
+
+            //after deleting the first item we check that we have the second one at position 0.
+            Espresso.onData(anything()).inAdapterView(withId(R.id.activity_itemview_itemlist)).atPosition(0).
+                    onChildView(withId(R.id.layout_task_checkbox)).
+                    check(matches(withText("Replace old server")));
+        }
+    }
+
+    @Test
+    public void confirmDeletionWorks() {
+        Intent itemViewActivity = new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
+
+        try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(itemViewActivity)) {
+            Espresso.onData(anything()).inAdapterView(withId(R.id.activity_itemview_itemlist)).atPosition(0).perform(longClick());
+
+            onView(withText("You are about to delete a task!")).check(matches(isDisplayed()));
+
+            onView(withText("No")).perform(click());
+
+            //after deleting the first item we check that we have the second one at position 0.
+            Espresso.onData(anything()).inAdapterView(withId(R.id.activity_itemview_itemlist)).atPosition(0).
+                    onChildView(withId(R.id.layout_task_checkbox)).
+                    check(matches(withText("Change passwords")));
         }
     }
 

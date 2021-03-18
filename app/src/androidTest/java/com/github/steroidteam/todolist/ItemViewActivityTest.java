@@ -2,16 +2,21 @@ package com.github.steroidteam.todolist;
 
 
 import android.content.Intent;
+import android.os.IBinder;
+import android.view.WindowManager;
 import android.widget.ListView;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
+import androidx.test.espresso.Root;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,11 +28,14 @@ import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.arrayWithSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 @RunWith(AndroidJUnit4.class)
 public class ItemViewActivityTest {
@@ -107,11 +115,28 @@ public class ItemViewActivityTest {
 
             onView(withText("No")).perform(click());
 
-            //after deleting the first item we check that we have the second one at position 0.
+            //after deleting the first item we check that we have still the first one at position 0.
             Espresso.onData(anything()).inAdapterView(withId(R.id.activity_itemview_itemlist)).atPosition(0).
                     onChildView(withId(R.id.layout_task_checkbox)).
                     check(matches(withText("Change passwords")));
         }
     }
+
+    @Test
+    public void notificationDeleteWorks() {
+        Intent itemViewActivity = new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
+
+        try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(itemViewActivity)) {
+            Espresso.onData(anything()).inAdapterView(withId(R.id.activity_itemview_itemlist)).atPosition(0).perform(longClick());
+
+            onView(withText("You are about to delete a task!")).check(matches(isDisplayed()));
+
+            onView(withText("Yes")).perform(click());
+
+            onView(withText("Successfully removed the task : Change passwords")).check(matches(isDisplayed()));
+            //onView(withText("Successfully removed the task : Change passwords")).check(matches(isDisplayed()));
+        }
+    }
+
 
 }

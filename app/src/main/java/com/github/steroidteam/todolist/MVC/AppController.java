@@ -2,20 +2,36 @@ package com.github.steroidteam.todolist.MVC;
 
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseException;
-import com.github.steroidteam.todolist.database.IdManager;
-import com.github.steroidteam.todolist.database.TaskDatabaseAdapter;
-import com.github.steroidteam.todolist.database.VolatileDatabase;
 import com.github.steroidteam.todolist.todo.Task;
+import com.github.steroidteam.todolist.todo.TodoList;
+
+import java.util.UUID;
 
 /**
  * The controller of the App that communicates with the View and the Database
  */
 public class AppController {
-    private TaskDatabaseAdapter taskDatabaseAdapter;
+
+    private Database database;
     // TODO Add the view so it can update it
 
-    public AppController(Database database, IdManager manager){
-        taskDatabaseAdapter = new TaskDatabaseAdapter(database, manager);
+    public AppController(Database database) {
+        this.database = database;
+    }
+
+    /**
+     *
+     * @param todoListID The ID of the to-do list.
+     * @return The to-do list or null if the ID isn't in the database.
+     */
+    public TodoList getTodoList(UUID todoListID) {
+        TodoList res = null;
+        try {
+            res = database.getTodoList(todoListID);
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 
     /**
@@ -23,33 +39,69 @@ public class AppController {
      *
      * @param body   The body of the task
      */
-    public void createTask(String body) {
+    public void createTask(UUID todoListID, String body) {
         if (body == null) {
             throw new IllegalArgumentException();
         }
-        taskDatabaseAdapter.putTask(new Task(body));
-    }
-
-    /**
-     * Update a task and put it in the database
-     *
-     * @param bodyNewTask   The new body of the task
-     */
-    // It must know which task it should update and we can't do that yet
-    /*
-    public void updateTask(String bodyNewTask) {
-        if (bodyNewTask == null) {
-            throw new IllegalArgumentException();
-        }
         try {
-            taskDatabaseAdapter.updateTask(new Task(bodyNewTask));
+            database.putTask(todoListID, new Task(body));
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
     }
-    */
-    // TODO removeTask since it needs to know which id the view has assigned to the task I don't know how to do it for now
 
-    // TODO getTask same problem as removeTask
+    /**
+     * Updates the description of a task
+     * DRAFT: I believe there should be a method for any kind of "atomic" updates user can make in the view. (description, checkbox)
+     *
+     * @param todoListID The ID of the TodoList
+     * @param taskIndex The index of the Task in the given TodoList
+     * @param description The new description of the task
+     */
+    public void updateTaskDescription(UUID todoListID, Integer taskIndex, String description) {
+        if (description == null) {
+            throw new IllegalArgumentException();
+        }
+
+        // The database doesn't support updates yet => temporary implementation
+        try {
+            database.removeTask(todoListID, taskIndex);
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
+        createTask(todoListID, description);
+    }
+
+    /**
+     * Removes a task from the database
+     *
+     * @param todoListID The ID of the TodoList
+     * @param taskIndex The index of the Task in the given TodoList
+     */
+    public void removeTask(UUID todoListID, Integer taskIndex) {
+        try {
+            database.removeTask(todoListID, taskIndex);
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Gets the task from the database
+     * DRAFT: I don't believe this method should exist really, I don't see how it would be used.
+     *
+     * @param todoListID The ID of the TodoList
+     * @param taskIndex The index of the Task in the given TodoList
+     * @return The Task or null if the key does not exist in the database
+     */
+    public Task getTask(UUID todoListID, Integer taskIndex) {
+        Task res = null;
+        try {
+            res = database.getTask(todoListID, taskIndex);
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
 
 }

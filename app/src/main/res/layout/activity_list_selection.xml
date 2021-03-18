@@ -76,7 +76,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/list_selection_item1"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:onClick="openList"
@@ -84,7 +84,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/list_selection_item2"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:onClick="openList"
@@ -92,7 +92,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/list_selection_item3"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:onClick="openList"

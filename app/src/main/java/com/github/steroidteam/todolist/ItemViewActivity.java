@@ -56,31 +56,20 @@ public class ItemViewActivity extends AppCompatActivity {
 
         listView.setLongClickable(true);
         // The part for deleteTask
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+        listView.setOnItemLongClickListener((adapterView, view, i, l) -> {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(ItemViewActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(ItemViewActivity.this);
 
-                builder.setTitle("You are about to delete a task!")
-                        .setMessage("Are you sure ?")
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //DO NOT REMOVE THE TASK!
-                            }
-                        })
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Task t = adapter.remove(i);
-                                Toast.makeText(getApplicationContext(), "Successfully removed the task : "+t.getBody(), Toast.LENGTH_LONG).show();
-                            }
-                        })
-                        .create()
-                        .show();
-                return true;
-            }
+            builder.setTitle("You are about to delete a task!")
+                    .setMessage("Are you sure ?")
+                    .setNegativeButton("No", (dialog, which) -> {})
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        Task t = adapter.remove(i);
+                        Toast.makeText(getApplicationContext(), "Successfully removed the task : "+t.getBody(), Toast.LENGTH_LONG).show();
+                    })
+                    .create()
+                    .show();
+            return true;
         });
     }
 
@@ -149,19 +138,13 @@ public class ItemViewActivity extends AppCompatActivity {
             CheckBox taskView = convertView.findViewById(R.id.layout_task_checkbox);
             taskView.setText(task.getBody());
 
-            taskView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Task task = (Task) buttonView.getTag();
-                    // Notify database?
-                }
+            taskView.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                Task task1 = (Task) buttonView.getTag();
+                // Notify database?
             });
-            taskView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    // Notify database?
-                    return false;
-                }
+            taskView.setOnLongClickListener(view -> {
+                // Notify database?
+                return false;
             });
 
             return convertView;

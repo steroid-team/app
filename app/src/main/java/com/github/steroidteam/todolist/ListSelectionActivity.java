@@ -29,12 +29,7 @@ public class ListSelectionActivity extends AppCompatActivity {
 
     public void logOut(View view) {
         Activity thisActivity = this;
-        AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                thisActivity.finish();
-            }
-        });
+        AuthUI.getInstance().signOut(this).addOnCompleteListener(task -> thisActivity.finish());
     }
 
     public void openList(View view){

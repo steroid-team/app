@@ -21,7 +21,7 @@ public class AppController {
 
     /**
      *
-     * @param todoListID The ID of the to-do list.
+     * @param todoListID The ID of the TodoList
      * @return The to-do list or null if the ID isn't in the database.
      */
     public TodoList getTodoList(UUID todoListID) {
@@ -35,16 +35,17 @@ public class AppController {
     }
 
     /**
-     * Create a new Task and put it in the database
+     * Creates a new Task and put it in the database
      *
-     * @param body   The body of the task
+     * @param todoListID The ID of the TodoList
+     * @param description The description of the task
      */
-    public void createTask(UUID todoListID, String body) {
-        if (body == null) {
+    public void createTask(UUID todoListID, String description) {
+        if (description == null) {
             throw new IllegalArgumentException();
         }
         try {
-            database.putTask(todoListID, new Task(body));
+            database.putTask(todoListID, new Task(description));
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
@@ -52,7 +53,6 @@ public class AppController {
 
     /**
      * Updates the description of a task
-     * DRAFT: I believe there should be a method for any kind of "atomic" updates user can make in the view. (description, checkbox)
      *
      * @param todoListID The ID of the TodoList
      * @param taskIndex The index of the Task in the given TodoList
@@ -84,24 +84,6 @@ public class AppController {
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Gets the task from the database
-     * DRAFT: I don't believe this method should exist really, I don't see how it would be used.
-     *
-     * @param todoListID The ID of the TodoList
-     * @param taskIndex The index of the Task in the given TodoList
-     * @return The Task or null if the key does not exist in the database
-     */
-    public Task getTask(UUID todoListID, Integer taskIndex) {
-        Task res = null;
-        try {
-            res = database.getTask(todoListID, taskIndex);
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        }
-        return res;
     }
 
 }

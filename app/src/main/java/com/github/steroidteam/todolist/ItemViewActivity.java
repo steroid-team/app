@@ -4,6 +4,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,14 +16,15 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
 
 
 public class ItemViewActivity extends AppCompatActivity {
+
     private static todoAdapter adapter;
+    private ItemViewActivityViewModel model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,24 +36,27 @@ public class ItemViewActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        TodoList todoList = new TodoList("Example list");
-        setTitle(todoList.getTitle());
-
-        // Pre-populate the database with a few sample tasks.
-        todoList.addTask(new Task("Change passwords"));
-        todoList.addTask(new Task("Replace old server"));
-        todoList.addTask(new Task("Set up firewall"));
-        todoList.addTask(new Task("Fix router"));
-        todoList.addTask(new Task("Change passwords"));
-        todoList.addTask(new Task("Replace old server"));
-        todoList.addTask(new Task("Set up firewall"));
-
-        adapter = new todoAdapter(todoList);
         ListView listView = findViewById(R.id.activity_itemview_itemlist);
-        setListViewSettings(listView, todoList);
+
+        //Instantiate the view model.
+        model = new ViewModelProvider(this).get(ItemViewActivityViewModel.class);
+
+        // Observe the LiveData todoList from the ViewModel,
+        // 'this' refers to the activity so it the ItemViewActivity acts as the LifeCycleOwner,
+        // and use a lambda for the observer.
+        model.getTodoList().observe(this, todoList -> {
+            // update UI
+            setTitle(todoList.getTitle());
+
+            // Set the listView setting:
+            // attach the adapter to the listView,
+            // and create the AlertDialog.
+            setListViewSettings(listView, todoList);
+        });
     }
 
     private void setListViewSettings(ListView listView, TodoList todoList) {
+        todoAdapter adapter = new todoAdapter(todoList);
         listView.setAdapter(adapter);
 
         listView.setLongClickable(true);
@@ -64,8 +69,7 @@ public class ItemViewActivity extends AppCompatActivity {
                     .setMessage("Are you sure ?")
                     .setNegativeButton("No", (dialog, which) -> {})
                     .setPositiveButton("Yes", (dialog, which) -> {
-                        Task t = adapter.remove(i);
-                        Toast.makeText(getApplicationContext(), "Successfully removed the task : "+t.getBody(), Toast.LENGTH_LONG).show();
+                        model.removeTask(i);
                     })
                     .create()
                     .show();
@@ -85,7 +89,7 @@ public class ItemViewActivity extends AppCompatActivity {
         String taskDescription = newTaskET.getText().toString();
 
         // Make sure that we only add the task if the description has text.
-        if (taskDescription.length() > 0) adapter.add(new Task(taskDescription));
+        if (taskDescription.length() > 0) model.addTask(taskDescription);
 
         // Clean the description text box.
         newTaskET.getText().clear();
@@ -98,18 +102,6 @@ public class ItemViewActivity extends AppCompatActivity {
 
         public todoAdapter(TodoList todoList) {
             this.todoList = todoList;
-        }
-
-        public void add(Task task) {
-            todoList.addTask(task);
-            this.notifyDataSetChanged();
-        }
-
-        public Task remove(int index){
-            Task t = todoList.getTask(index);
-            todoList.removeTask(index);
-            this.notifyDataSetChanged();
-            return t;
         }
 
         @Override

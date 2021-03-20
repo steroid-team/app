@@ -1,0 +1,99 @@
+package com.github.steroidteam.todolist;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.github.steroidteam.todolist.notes.Note;
+
+import java.util.ArrayList;
+
+public class NoteSelectionActivity extends AppCompatActivity {
+
+    private static NoteAdapter adapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_note_selection);
+
+        Toolbar toolbar = findViewById(R.id.activity_noteselection_toolbar);
+        setSupportActionBar(toolbar);
+        setTitle("My notes");
+
+        // Filler
+        ArrayList<Note> notes = new ArrayList<>();
+        Note note1 = new Note("Lorem ipsum");
+        note1.setContent("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor" +
+                " incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation" +
+                " ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in" +
+                " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non" +
+                " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+        Note note2 = new Note("Note 2");
+        note2.setContent("This is the second note");
+        Note note3 = new Note("Note 3");
+        note3.setContent("This is the third note");
+
+        notes.add(note1);
+        notes.add(note2);
+        notes.add(note3);
+
+        adapter = new NoteAdapter(notes);
+        ListView listView = findViewById(R.id.activity_noteselection_notelist);
+        listView.setAdapter(adapter);
+    }
+
+
+
+
+    private class NoteAdapter extends BaseAdapter {
+
+        private final ArrayList<Note> notes;
+
+        public NoteAdapter(@NonNull ArrayList<Note> notes) { this.notes = notes; }
+
+        @Override
+        public int getCount() {
+            return notes.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return notes.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position; //No need to specify a particular ID, we just return the position.
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Note note = (Note) getItem(position);
+            // Check if an existing view is being reused, otherwise inflate the view
+
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getBaseContext()).inflate(R.layout.layout_note_item, parent, false);
+            }
+
+            TextView noteView = convertView.findViewById(R.id.layout_note_textview);
+            noteView.setText(note.getTitle());
+
+            noteView.setOnClickListener((view) -> {
+                Note note1 = (Note) view.getTag();
+                // TODO: go to other activity
+            });
+
+            return convertView;
+        }
+
+    }
+}

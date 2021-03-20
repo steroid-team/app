@@ -24,4 +24,9 @@ public class ListSelectionActivity extends AppCompatActivity {
         Intent itemViewActivity = new Intent(ListSelectionActivity.this, ItemViewActivity.class);
         startActivity(itemViewActivity);
     }
+
+    public void openNotes(View view) {
+        Intent noteSelectionActivity = new Intent(ListSelectionActivity.this, NoteSelectionActivity.class);
+        startActivity(noteSelectionActivity);
+    }
 }

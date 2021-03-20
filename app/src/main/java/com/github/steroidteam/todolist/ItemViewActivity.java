@@ -4,7 +4,11 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,12 +23,14 @@ import android.widget.ListView;
 
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
+import com.github.steroidteam.todolist.util.TodoAdapter;
+
+import java.util.UUID;
 
 
 public class ItemViewActivity extends AppCompatActivity {
 
-    private static todoAdapter adapter;
-    private ItemViewActivityViewModel model;
+    private ItemViewModel model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,44 +42,31 @@ public class ItemViewActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        ListView listView = findViewById(R.id.activity_itemview_itemlist);
+        RecyclerView recyclerView = findViewById(R.id.activity_itemview_itemlist);
+
+        // The layout manager takes care of displaying the task below each other
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        recyclerView.setHasFixedSize(true);
+
+        final TodoAdapter adapter = new TodoAdapter();
+        recyclerView.setAdapter(adapter);
 
         //Instantiate the view model.
-        model = new ViewModelProvider(this).get(ItemViewActivityViewModel.class);
+        // random UUID because we don't have persistent memory !
+        // this UUID is not used.
+        model = new ItemViewModel(this.getApplication(), UUID.randomUUID());
 
         // Observe the LiveData todoList from the ViewModel,
         // 'this' refers to the activity so it the ItemViewActivity acts as the LifeCycleOwner,
         // and use a lambda for the observer.
-        model.getTodoList().observe(this, todoList -> {
-            // update UI
-            setTitle(todoList.getTitle());
 
-            // Set the listView setting:
-            // attach the adapter to the listView,
-            // and create the AlertDialog.
-            setListViewSettings(listView, todoList);
-        });
-    }
-
-    private void setListViewSettings(ListView listView, TodoList todoList) {
-        todoAdapter adapter = new todoAdapter(todoList);
-        listView.setAdapter(adapter);
-
-        listView.setLongClickable(true);
-        // The part for deleteTask
-        listView.setOnItemLongClickListener((adapterView, view, i, l) -> {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(ItemViewActivity.this);
-
-            builder.setTitle("You are about to delete a task!")
-                    .setMessage("Are you sure ?")
-                    .setNegativeButton("No", (dialog, which) -> {})
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        model.removeTask(i);
-                    })
-                    .create()
-                    .show();
-            return true;
+        model.getTodoList().observe(this, new Observer<TodoList>() {
+            @Override
+            public void onChanged(TodoList todoList) {
+                // Update the adapter
+                adapter.setTodoList(todoList);
+            }
         });
     }
 
@@ -93,54 +86,5 @@ public class ItemViewActivity extends AppCompatActivity {
 
         // Clean the description text box.
         newTaskET.getText().clear();
-    }
-
-
-    private class todoAdapter extends BaseAdapter {
-
-        private final TodoList todoList;
-
-        public todoAdapter(TodoList todoList) {
-            this.todoList = todoList;
-        }
-
-        @Override
-        public int getCount() {
-            return todoList.getSize();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return todoList.getTask(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position; //No need to specify a particular ID, we just return the position.
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            Task task = (Task)getItem(position);
-            // Check if an existing view is being reused, otherwise inflate the view
-
-            if (convertView == null) {
-                convertView = LayoutInflater.from(getBaseContext()).inflate(R.layout.layout_task_item, parent, false);
-            }
-
-            CheckBox taskView = convertView.findViewById(R.id.layout_task_checkbox);
-            taskView.setText(task.getBody());
-
-            taskView.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                Task task1 = (Task) buttonView.getTag();
-                // Notify database?
-            });
-            taskView.setOnLongClickListener(view -> {
-                // Notify database?
-                return false;
-            });
-
-            return convertView;
-        }
     }
 }

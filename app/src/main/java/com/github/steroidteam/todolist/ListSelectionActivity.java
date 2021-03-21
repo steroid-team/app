@@ -93,17 +93,7 @@ public class ListSelectionActivity extends AppCompatActivity {
             todoListView.setText(todoList.getTitle());
 
             todoListView.setOnLongClickListener(view -> {
-                AlertDialog.Builder alert = new AlertDialog.Builder(ListSelectionActivity.this);
-                final EditText input = new EditText(getBaseContext());
-                alert.setTitle("Please enter a new name")
-                        .setView(input)
-                        .setNegativeButton("Cancel", (dialog, which) -> {})
-                        .setPositiveButton("Confirm", (dialog, which) -> {
-                            todoList.setTitle(input.getText().toString());
-                            Toast.makeText(getApplicationContext(), "Successfully changed the name ! ", Toast.LENGTH_LONG).show();
-                        })
-                        .create()
-                        .show();
+                createRenameAlert(todoList);
                 // Notify database?
                 return false;
             });
@@ -115,6 +105,20 @@ public class ListSelectionActivity extends AppCompatActivity {
             });
 
             return convertView;
+        }
+
+        private void createRenameAlert(TodoList todoList){
+            AlertDialog.Builder alert = new AlertDialog.Builder(ListSelectionActivity.this);
+            final EditText input = new EditText(getBaseContext());
+            alert.setTitle("Please enter a new name")
+                    .setView(input)
+                    .setNegativeButton("Cancel", (dialog, which) -> {})
+                    .setPositiveButton("Confirm", (dialog, which) -> {
+                        todoList.setTitle(input.getText().toString());
+                        Toast.makeText(getApplicationContext(), "Successfully changed the name ! ", Toast.LENGTH_LONG).show();
+                    })
+                    .create()
+                    .show();
         }
     }
 

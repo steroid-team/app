@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -100,6 +102,17 @@ public class ListSelectionActivity extends AppCompatActivity {
             todoListView.setText(todoList.getTitle());
 
             todoListView.setOnLongClickListener(view -> {
+                AlertDialog.Builder alert = new AlertDialog.Builder(ListSelectionActivity.this);
+                final EditText input = new EditText(getBaseContext());
+                alert.setTitle("Please enter a new name")
+                        .setView(input)
+                        .setNegativeButton("Cancel", (dialog, which) -> {})
+                        .setPositiveButton("Confirm", (dialog, which) -> {
+                            todoList.setTitle(input.getText().toString());
+                            Toast.makeText(getApplicationContext(), "Successfully changed the name ! ", Toast.LENGTH_LONG).show();
+                        })
+                        .create()
+                        .show();
                 // Notify database?
                 return false;
             });

@@ -33,9 +33,9 @@ public class ItemViewActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-        String title  = getIntent().getStringExtra("title_todo_list");
-        TodoList todoList = new TodoList("Example list");
-        setTitle(title);
+
+        TodoList todoList = new TodoList(getIntent().getStringExtra("title_todo_list"));
+        setTitle(todoList.getTitle());
 
         // Pre-populate the database with a few sample tasks.
         todoList.addTask(new Task("Change passwords"));

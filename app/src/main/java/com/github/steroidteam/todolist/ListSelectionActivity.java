@@ -105,7 +105,9 @@ public class ListSelectionActivity extends AppCompatActivity {
             });
 
             todoListView.setOnClickListener(view -> {
-                openList(view);
+                Intent itemViewActivity = new Intent(ListSelectionActivity.this, ItemViewActivity.class);
+                itemViewActivity.putExtra("title_todo_list",todoList.getTitle());
+                startActivity(itemViewActivity);
             });
 
             return convertView;

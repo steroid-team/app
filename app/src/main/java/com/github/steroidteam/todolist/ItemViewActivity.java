@@ -20,6 +20,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
@@ -49,7 +50,24 @@ public class ItemViewActivity extends AppCompatActivity {
 
         recyclerView.setHasFixedSize(true);
 
-        final TodoAdapter adapter = new TodoAdapter();
+        //Custom listener to remove the task
+        TodoAdapter.TaskCustomListener listener = new TodoAdapter.TaskCustomListener() {
+            @Override
+            public void onLongClickCustom(int position) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ItemViewActivity.this);
+
+                builder.setTitle("You are about to delete a task!")
+                        .setMessage("Are you sure ?")
+                        .setNegativeButton("No", (dialog, which) -> {})
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            model.removeTask(position);
+                            Toast.makeText(getApplicationContext(), "Successfully removed the task ", Toast.LENGTH_LONG).show();
+                        })
+                        .create()
+                        .show();
+            }
+        };
+        final TodoAdapter adapter = new TodoAdapter(listener);
         recyclerView.setAdapter(adapter);
 
         //Instantiate the view model.
@@ -65,6 +83,7 @@ public class ItemViewActivity extends AppCompatActivity {
             @Override
             public void onChanged(TodoList todoList) {
                 // Update the adapter
+                System.out.println("On CHANGED : " + todoList.toString());
                 adapter.setTodoList(todoList);
             }
         });
@@ -84,6 +103,7 @@ public class ItemViewActivity extends AppCompatActivity {
         // Make sure that we only add the task if the description has text.
         if (taskDescription.length() > 0) model.addTask(taskDescription);
 
+        System.out.println("===========================================>" + taskDescription);
         // Clean the description text box.
         newTaskET.getText().clear();
     }

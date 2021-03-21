@@ -16,9 +16,9 @@ public class ItemViewModel extends AndroidViewModel {
 
     private TodoRepository repository;
     private LiveData<TodoList> todoList;
-    private UUID todoListID;
+    public UUID todoListID;
 
-    public ItemViewModel(@NonNull Application application, UUID todoListID) {
+    public ItemViewModel(@NonNull Application application, UUID todoListIDD) {
         super(application);
         repository = new TodoRepository();
 
@@ -26,9 +26,9 @@ public class ItemViewModel extends AndroidViewModel {
         // We don't have persistent database !
         this.todoListID = repository.id;
         // =========================
-        // this.todoListID = todoListID;
-        //System.err.println("On a : " + this.todoListID);
-        this.repository.putTask(todoListID, new Task("Test"));
+        // We will do this instead :
+        // this.todoListID = todoListIDD
+
         todoList = repository.getTodoList(this.todoListID);
     }
 
@@ -38,6 +38,7 @@ public class ItemViewModel extends AndroidViewModel {
     }
 
     public void addTask(String body) {
+        System.out.println("AJOUTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
         repository.putTask(todoListID, new Task(body));
     }
 

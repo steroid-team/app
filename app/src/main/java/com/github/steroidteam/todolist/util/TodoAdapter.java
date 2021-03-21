@@ -16,6 +16,11 @@ import com.github.steroidteam.todolist.todo.TodoList;
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
     private TodoList todoList = new TodoList("This should not be displayed");
+    private TaskCustomListener listener;
+
+    public TodoAdapter(TaskCustomListener listener) {
+        this.listener = listener;
+    }
 
     @NonNull
     @Override
@@ -32,7 +37,13 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         // Need to add the getChecked in Task class
         // holder.taskBox.set(currentTask.getChecked())
 
-        holder.itemView.setLongClickable(true);
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                listener.onLongClickCustom(position);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -43,9 +54,15 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
     public void setTodoList(TodoList todoList) {
         //Updates the adapter with the new todoList (the observable one)
         this.todoList = todoList;
+        System.out.println("The new list to dispayed : " + this.todoList.toString());
         //Check notifyDataSetChanged() might not be the best function
         //considering performance
         notifyDataSetChanged();
+    }
+
+    public interface TaskCustomListener {
+
+        void onLongClickCustom(int position);
     }
 
     class TaskHolder extends RecyclerView.ViewHolder {

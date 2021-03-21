@@ -110,12 +110,17 @@ public class ListSelectionActivity extends AppCompatActivity {
         private void createRenameAlert(TodoList todoList){
             AlertDialog.Builder alert = new AlertDialog.Builder(ListSelectionActivity.this);
             final EditText input = new EditText(getBaseContext());
+            input.setText(todoList.getTitle());
             alert.setTitle("Please enter a new name")
                     .setView(input)
                     .setNegativeButton("Cancel", (dialog, which) -> {})
                     .setPositiveButton("Confirm", (dialog, which) -> {
+                        if (input.getText().length() <= 0) {
+                            Toast.makeText(getApplicationContext(), "The name shouldn't be empty !", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         todoList.setTitle(input.getText().toString());
-                        Toast.makeText(getApplicationContext(), "Successfully changed the name ! ", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Successfully changed the name !", Toast.LENGTH_SHORT).show();
                     })
                     .create()
                     .show();

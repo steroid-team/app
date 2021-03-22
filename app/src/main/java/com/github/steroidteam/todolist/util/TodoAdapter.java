@@ -3,6 +3,7 @@ package com.github.steroidteam.todolist.util;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -17,9 +18,15 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
     private TodoList todoList = new TodoList("This should not be displayed");
     private TaskCustomListener listener;
+    private Boolean deleteButtonIsVisible;
 
     public TodoAdapter(TaskCustomListener listener) {
+        this.deleteButtonIsVisible = false;
         this.listener = listener;
+    }
+
+    public void switchDeleteButton() {
+        deleteButtonIsVisible = !this.deleteButtonIsVisible;
     }
 
     @NonNull
@@ -36,6 +43,12 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         holder.taskBody.setText(currentTask.getBody());
         // Need to add the getChecked in Task class
         // holder.taskBox.set(currentTask.getChecked())
+
+        if(this.deleteButtonIsVisible) {
+            holder.taskDelete.setVisibility(View.VISIBLE);
+        }else {
+            holder.taskDelete.setVisibility(View.GONE);
+        }
 
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -54,7 +67,6 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
     public void setTodoList(TodoList todoList) {
         //Updates the adapter with the new todoList (the observable one)
         this.todoList = todoList;
-        System.out.println("The new list to dispayed : " + this.todoList.toString());
         //Check notifyDataSetChanged() might not be the best function
         //considering performance
         notifyDataSetChanged();
@@ -69,11 +81,13 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
         private TextView taskBody;
         private CheckBox taskBox;
+        private Button taskDelete;
 
         public TaskHolder(@NonNull View itemView) {
             super(itemView);
             taskBody = itemView.findViewById(R.id.layout_task_body);
             taskBox = itemView.findViewById(R.id.layout_task_checkbox);
+            taskDelete = itemView.findViewById(R.id.layout_task_delete_button);
         }
     }
 }

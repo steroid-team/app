@@ -14,9 +14,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -26,12 +28,15 @@ import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
 import com.github.steroidteam.todolist.util.TodoAdapter;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 
 public class ItemViewActivity extends AppCompatActivity {
 
     private ItemViewModel model;
+    private TodoAdapter adapter;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +48,30 @@ public class ItemViewActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        RecyclerView recyclerView = findViewById(R.id.activity_itemview_itemlist);
+        //Instantiate the view model.
+        // random UUID because we don't have persistent memory !
+        // this UUID is not used.
+        model = new ItemViewModel(this.getApplication(), UUID.randomUUID());
 
+        // Observe the LiveData todoList from the ViewModel,
+        // 'this' refers to the activity so it the ItemViewActivity acts as the LifeCycleOwner,
+        model.getTodoList().observe(this, new Observer<TodoList>() {
+            @Override
+            public void onChanged(TodoList todoList) {
+                // Update the adapter
+                adapter.setTodoList(todoList);
+            }
+        });
+
+        recyclerView = findViewById(R.id.activity_itemview_itemlist);
         // The layout manager takes care of displaying the task below each other
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         recyclerView.setHasFixedSize(true);
 
+        createAndSetAdapter(createCustomListener());
+    }
+
+    public TodoAdapter.TaskCustomListener createCustomListener() {
         //Custom listener to remove the task
         TodoAdapter.TaskCustomListener listener = new TodoAdapter.TaskCustomListener() {
             @Override
@@ -58,7 +80,8 @@ public class ItemViewActivity extends AppCompatActivity {
 
                 builder.setTitle("You are about to delete a task!")
                         .setMessage("Are you sure ?")
-                        .setNegativeButton("No", (dialog, which) -> {})
+                        .setNegativeButton("No", (dialog, which) -> {
+                        })
                         .setPositiveButton("Yes", (dialog, which) -> {
                             model.removeTask(position);
                             Toast.makeText(getApplicationContext(), "Successfully removed the task ", Toast.LENGTH_LONG).show();
@@ -67,26 +90,12 @@ public class ItemViewActivity extends AppCompatActivity {
                         .show();
             }
         };
-        final TodoAdapter adapter = new TodoAdapter(listener);
-        recyclerView.setAdapter(adapter);
+        return listener;
+    }
 
-        //Instantiate the view model.
-        // random UUID because we don't have persistent memory !
-        // this UUID is not used.
-        model = new ItemViewModel(this.getApplication(), UUID.randomUUID());
-
-        // Observe the LiveData todoList from the ViewModel,
-        // 'this' refers to the activity so it the ItemViewActivity acts as the LifeCycleOwner,
-        // and use a lambda for the observer.
-
-        model.getTodoList().observe(this, new Observer<TodoList>() {
-            @Override
-            public void onChanged(TodoList todoList) {
-                // Update the adapter
-                System.out.println("On CHANGED : " + todoList.toString());
-                adapter.setTodoList(todoList);
-            }
-        });
+    public void createAndSetAdapter(TodoAdapter.TaskCustomListener listener) {
+        this.adapter = new TodoAdapter(listener);
+        this.recyclerView.setAdapter(this.adapter);
     }
 
     @Override
@@ -103,8 +112,30 @@ public class ItemViewActivity extends AppCompatActivity {
         // Make sure that we only add the task if the description has text.
         if (taskDescription.length() > 0) model.addTask(taskDescription);
 
-        System.out.println("===========================================>" + taskDescription);
         // Clean the description text box.
         newTaskET.getText().clear();
+    }
+
+    public void removeTask(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ItemViewActivity.this);
+
+        View parentRow = (View) view.getParent();
+        RecyclerView recycler = (RecyclerView) parentRow.getParent();
+        final int position = recycler.getChildAdapterPosition(parentRow);
+
+        builder.setTitle("You are about to delete a task!")
+                .setMessage("Are you sure ?")
+                .setNegativeButton("No", (dialog, which) -> {})
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    model.removeTask(position);
+                    Toast.makeText(getApplicationContext(), "Successfully removed the task !", Toast.LENGTH_LONG).show();
+                })
+                .create()
+                .show();
+    }
+
+    public void deleteLayout(MenuItem item) {
+        adapter.switchDeleteButton();
+        adapter.notifyDataSetChanged();
     }
 }

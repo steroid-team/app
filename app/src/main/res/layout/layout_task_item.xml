@@ -21,4 +21,13 @@
         android:text="Task body"
         android:ellipsize="end"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <Button
+        android:id="@+id/layout_task_delete_button"
+        android:onClick="removeTask"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"
+        android:background="@drawable/ic_launcher_background"/>
 </RelativeLayout>

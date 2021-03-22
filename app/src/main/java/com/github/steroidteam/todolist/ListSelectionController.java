@@ -18,14 +18,18 @@ public class ListSelectionController {
      *
      * @param title   The title of the todo-list
      */
-    public void createTodoList(String title) {
+    public UUID createTodoList(String title) {
         if (title == null) {
             throw new IllegalArgumentException();
         }
         try {
-            database.putTodoList(new TodoList(title));
+            TodoList tdl = new TodoList(title);
+            UUID uuid = tdl.getId();
+            database.putTodoList(tdl);
+            return uuid;
         } catch (DatabaseException e) {
             e.printStackTrace();
+            return null;
         }
     }
 
@@ -35,7 +39,7 @@ public class ListSelectionController {
      * @param title The new title of the todo-list
      */
     public void updateTodoList(UUID todoListID, String title) {
-        if (title == null) {
+        if (todoListID == null || title == null) {
             throw new IllegalArgumentException();
         }
         //To be completed when the necessary methods will be available in Database
@@ -46,7 +50,7 @@ public class ListSelectionController {
      *
      * @param todoListID The ID of the todo-list
      */
-    public void removeTask(UUID todoListID) {
+    public void removeTodoList(UUID todoListID) {
         try {
             database.removeTodoList(todoListID);
         } catch (DatabaseException e) {

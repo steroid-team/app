@@ -4,4 +4,5 @@
     <string name="button_hint">Enter your name</string>
     <string name="plus">+</string>
     <string name="task_creation_placeholder">Do something great</string>
+    <string name="add_todo">Add todo</string>
 </resources>

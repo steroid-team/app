@@ -55,7 +55,8 @@
         android:clickable="true"
         android:foreground="@android:drawable/ic_menu_add"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@string/add_todo" />
 
     <Button
         android:id="@+id/logoutButton"

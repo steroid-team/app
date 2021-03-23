@@ -84,7 +84,7 @@ public class ItemViewActivity extends AppCompatActivity {
                         })
                         .setPositiveButton("Yes", (dialog, which) -> {
                             model.removeTask(position);
-                            Toast.makeText(getApplicationContext(), "Successfully removed the task ", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Successfully removed the task !", Toast.LENGTH_LONG).show();
                         })
                         .create()
                         .show();

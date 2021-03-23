@@ -168,7 +168,7 @@ public class ItemViewActivityTest {
 
             onView(withText("Yes")).perform(click());
 
-            onView(withText("Successfully removed the task : Change passwords")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
+            onView(withText("Successfully removed the task !")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
         }
     }
 

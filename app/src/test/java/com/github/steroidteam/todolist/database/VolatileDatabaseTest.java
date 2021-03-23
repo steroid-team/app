@@ -1,4 +1,4 @@
-package com.github.steroidteam.todolist;
+package com.github.steroidteam.todolist.database;
 
 import com.github.steroidteam.todolist.database.DatabaseException;
 import com.github.steroidteam.todolist.database.VolatileDatabase;

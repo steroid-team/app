@@ -3,16 +3,23 @@ package com.github.steroidteam.todolist;
 
 import android.content.Intent;
 import android.os.IBinder;
+import android.view.View;
 import android.view.WindowManager;
 
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.Root;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.github.steroidteam.todolist.util.TodoAdapter;
+
 import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,6 +32,7 @@ import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -42,7 +50,7 @@ public class ItemViewActivityTest {
         Intent itemViewActivity = new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
 
         try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(itemViewActivity)) {
-            Espresso.onData(anything()).inAdapterView(withId(R.id.activity_itemview_itemlist)).atPosition(3).perform(click());
+            //Espresso.onData(anything()).inAdapterView(withId(R.id.activity_itemview_itemlist)).atPosition(3).perform(click());
         }
     }
 
@@ -84,16 +92,33 @@ public class ItemViewActivityTest {
         Intent itemViewActivity = new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
 
         try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(itemViewActivity)) {
-            Espresso.onData(anything()).inAdapterView(withId(R.id.activity_itemview_itemlist)).atPosition(0).perform(longClick());
+
+            final String TASK_DESCRIPTION = "Buy bananas";
+            final String TASK_DESCRIPTION_2 = "Buy cheese";
+
+            // Type a task description in the "new task" text field.
+            onView(withId(R.id.new_task_text))
+                    .perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
+
+            // Hit the button to create a new task.
+            onView(withId(R.id.new_task_btn))
+                    .perform(click());
+
+            onView(withId(R.id.new_task_text))
+                    .perform(typeText(TASK_DESCRIPTION_2), closeSoftKeyboard());
+
+            onView(withId(R.id.new_task_btn))
+                    .perform(click());
+
+            // Try to remove the first task
+            onView(withId(R.id.activity_itemview_itemlist)).perform(actionOnItemAtPosition(0, longClick()));
 
             onView(withText("You are about to delete a task!")).check(matches(isDisplayed()));
 
             onView(withText("Yes")).perform(click());
 
             //after deleting the first item we check that we have the second one at position 0.
-            Espresso.onData(anything()).inAdapterView(withId(R.id.activity_itemview_itemlist)).atPosition(0).
-                    onChildView(withId(R.id.layout_task_checkbox)).
-                    check(matches(withText("Replace old server")));
+            onView(withId(R.id.layout_task_body)).check(matches(withText(TASK_DESCRIPTION_2)));
         }
     }
 
@@ -102,16 +127,24 @@ public class ItemViewActivityTest {
         Intent itemViewActivity = new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
 
         try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(itemViewActivity)) {
-            Espresso.onData(anything()).inAdapterView(withId(R.id.activity_itemview_itemlist)).atPosition(0).perform(longClick());
+
+            final String TASK_DESCRIPTION = "Buy bananas";
+
+            // Type a task description in the "new task" text field.
+            onView(withId(R.id.new_task_text))
+                    .perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
+
+            // Hit the button to create a new task.
+            onView(withId(R.id.new_task_btn))
+                    .perform(click());
+
+            onView(withId(R.id.activity_itemview_itemlist)).perform(actionOnItemAtPosition(0, longClick()));
 
             onView(withText("You are about to delete a task!")).check(matches(isDisplayed()));
 
             onView(withText("No")).perform(click());
 
-            //after deleting the first item we check that we have still the first one at position 0.
-            Espresso.onData(anything()).inAdapterView(withId(R.id.activity_itemview_itemlist)).atPosition(0).
-                    onChildView(withId(R.id.layout_task_checkbox)).
-                    check(matches(withText("Change passwords")));
+            onView(withId(R.id.layout_task_body)).check(matches(withText(TASK_DESCRIPTION)));
         }
     }
 
@@ -120,7 +153,16 @@ public class ItemViewActivityTest {
         Intent itemViewActivity = new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
 
         try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(itemViewActivity)) {
-            Espresso.onData(anything()).inAdapterView(withId(R.id.activity_itemview_itemlist)).atPosition(0).perform(longClick());
+            final String TASK_DESCRIPTION = "Buy bananas";
+            // Type a task description in the "new task" text field.
+            onView(withId(R.id.new_task_text))
+                    .perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
+
+            // Hit the button to create a new task.
+            onView(withId(R.id.new_task_btn))
+                    .perform(click());
+
+            onView(withId(R.id.activity_itemview_itemlist)).perform(actionOnItemAtPosition(0, longClick()));
 
             onView(withText("You are about to delete a task!")).check(matches(isDisplayed()));
 

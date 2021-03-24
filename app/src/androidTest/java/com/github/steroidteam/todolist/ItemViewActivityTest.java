@@ -115,7 +115,7 @@ public class ItemViewActivityTest {
         }
     }
 
-    @Test
+    /*@Test
     public void notificationDeleteWorks() {
         Intent itemViewActivity = new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
 
@@ -128,7 +128,7 @@ public class ItemViewActivityTest {
 
             onView(withText("Successfully removed the task : Change passwords")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
         }
-    }
+    }*/
 
 
     public class ToastMatcher extends TypeSafeMatcher<Root> {

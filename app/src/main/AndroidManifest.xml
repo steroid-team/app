@@ -9,7 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".NoteSelectionActivity"></activity>
+        <activity android:name=".NoteDisplayActivity"
+            android:parentActivityName=".NoteSelectionActivity" />
+        <activity android:name=".NoteSelectionActivity" />
         <activity android:name=".ListSelectionActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,7 +21,7 @@
         </activity>
         <activity
             android:name=".ui.FirebaseUIActivity"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".ItemViewActivity"
             android:parentActivityName=".MainActivity" />

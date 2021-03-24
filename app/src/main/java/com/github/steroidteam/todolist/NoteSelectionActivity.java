@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,8 @@ import com.github.steroidteam.todolist.notes.Note;
 import java.util.ArrayList;
 
 public class NoteSelectionActivity extends AppCompatActivity {
+
+    public static final String EXTRA_NOTE_ID = "id";
 
     private static NoteAdapter adapter;
 
@@ -88,12 +91,19 @@ public class NoteSelectionActivity extends AppCompatActivity {
             noteView.setText(note.getTitle());
 
             noteView.setOnClickListener((view) -> {
-                Note note1 = (Note) view.getTag();
-                // TODO: go to other activity
+                //Note note1 = (Note) view.getTag();
+                Intent noteDisplayActivity = new Intent(NoteSelectionActivity.this, NoteDisplayActivity.class);
+                noteDisplayActivity.putExtra(EXTRA_NOTE_ID, note.getId().toString());
+                startActivity(noteDisplayActivity);
             });
 
             return convertView;
         }
 
+    }
+
+    public void openNotes(View view) {
+        Intent listSelectionActivity = new Intent(NoteSelectionActivity.this, ListSelectionActivity.class);
+        startActivity(listSelectionActivity);
     }
 }

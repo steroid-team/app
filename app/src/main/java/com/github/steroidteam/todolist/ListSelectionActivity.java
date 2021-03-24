@@ -77,7 +77,7 @@ public class ListSelectionActivity extends AppCompatActivity {
 
         @Override
         public long getItemId(int i) {
-            return i;
+            return todoLists.get(i).getId().getLeastSignificantBits();
         }
 
         @Override
@@ -110,6 +110,7 @@ public class ListSelectionActivity extends AppCompatActivity {
         private void createRenameAlert(TodoList todoList){
             AlertDialog.Builder alert = new AlertDialog.Builder(ListSelectionActivity.this);
             final EditText input = new EditText(getBaseContext());
+            input.setSingleLine(true);
             input.setText(todoList.getTitle());
             alert.setTitle("Please enter a new name")
                     .setView(input)

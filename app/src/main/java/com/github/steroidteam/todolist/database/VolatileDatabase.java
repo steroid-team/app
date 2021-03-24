@@ -1,5 +1,6 @@
 package com.github.steroidteam.todolist.database;
 
+import com.github.steroidteam.todolist.notes.Note;
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
 
@@ -11,16 +12,19 @@ import java.util.UUID;
  * A simple volatile implementation of the interface database.
  * The database is just a HashMap storing the ID of to-do lists for keys,
  * and objects TodoList for values.
+ * It has the same structure for notes.
  */
 public class VolatileDatabase implements Database {
 
-    private Map<UUID, TodoList> database;
+    private Map<UUID, TodoList> todoListDB;
+    private Map<UUID, Note> noteDB;
 
     /**
      * Creates a volatile database.
      */
     public VolatileDatabase() {
-        this.database = new HashMap<>();
+        this.todoListDB = new HashMap<>();
+        this.noteDB = new HashMap<>();
     }
 
     /**
@@ -36,12 +40,12 @@ public class VolatileDatabase implements Database {
             throw new IllegalArgumentException();
         }
 
-        database.put(list.getId(), list);
+        todoListDB.put(list.getId(), list);
     }
 
     /**
      * Removes the to-do list from the database.
-     * Do nothing id the ID is not a key.
+     * Do nothing if the ID is not a key.
      *
      * @param id The id of the to-do list.
      */
@@ -50,7 +54,7 @@ public class VolatileDatabase implements Database {
         if (id == null) {
             throw new IllegalArgumentException();
         }
-        database.remove(id);
+        todoListDB.remove(id);
     }
 
     /**
@@ -64,7 +68,7 @@ public class VolatileDatabase implements Database {
         if (todoListID == null) {
             throw new IllegalArgumentException();
         }
-        return database.get(todoListID);
+        return todoListDB.get(todoListID);
     }
 
     /**
@@ -82,7 +86,7 @@ public class VolatileDatabase implements Database {
             throw new IllegalArgumentException();
         }
         //get the to-do list from the database.
-        TodoList list = database.get(todoListID);
+        TodoList list = todoListDB.get(todoListID);
         if (list != null) {
             list.addTask(task);
         }
@@ -101,7 +105,7 @@ public class VolatileDatabase implements Database {
         if (todoListID == null || taskIndex == null) {
             throw new IllegalArgumentException();
         }
-        TodoList list = database.get(todoListID);
+        TodoList list = todoListDB.get(todoListID);
         if (list != null) {
             list.removeTask(taskIndex);
         }
@@ -119,10 +123,53 @@ public class VolatileDatabase implements Database {
         if (todoListID == null || taskIndex == null) {
             throw new IllegalArgumentException();
         }
-        TodoList list = database.get(todoListID);
+        TodoList list = todoListDB.get(todoListID);
         if (list != null) {
             return list.getTask(taskIndex);
         }
         return null;
+    }
+
+    /**
+     * Pushes the note in the database.
+     * Updates the note if it's already present in the database
+     * (=if there is already a same ID).
+     *
+     * @param note The note to push.
+     */
+    @Override
+    public void putNote(Note note) {
+        if (note == null) {
+            throw new IllegalArgumentException();
+        }
+        noteDB.put(note.getId(), note);
+    }
+
+    /**
+     * Removes the note from the database.
+     * Do nothing if the ID is not a key.
+     *
+     * @param id The id of the note.
+     */
+    @Override
+    public void removeNote(UUID id) {
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
+        noteDB.remove(id);
+    }
+
+    /**
+     * Gets a note given an ID.
+     *
+     * @param id The ID of the to-do list.
+     * @return The note or null if not present in the database.
+     */
+    @Override
+    public Note getNote(UUID id) {
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
+        return noteDB.get(id);
     }
 }

@@ -3,6 +3,7 @@ package com.github.steroidteam.todolist.database;
 import androidx.annotation.NonNull;
 
 import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
+import com.github.steroidteam.todolist.notes.Note;
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
 import com.github.steroidteam.todolist.util.JSONSerializer;
@@ -136,5 +137,20 @@ public class FirebaseDatabase implements Database {
         } catch (ExecutionException | InterruptedException e) {
             throw new DatabaseException(e.toString());
         }
+    }
+
+    @Override
+    public void putNote(Note note) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void removeNote(UUID id) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Note getNote(UUID id) {
+        throw new UnsupportedOperationException();
     }
 }

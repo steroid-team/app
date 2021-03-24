@@ -1,5 +1,6 @@
 package com.github.steroidteam.todolist.database;
 
+import com.github.steroidteam.todolist.notes.Note;
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
 
@@ -58,5 +59,28 @@ public interface Database {
      * @return The task or null if the key does not exist in the database.
      */
     Task getTask(UUID todoListID, Integer taskIndex) throws DatabaseException;
+
+    /**
+     * Pushes a new note in the database
+     *
+     * @param note The new note to add.
+     */
+    void putNote(Note note) throws DatabaseException;
+
+    /**
+     * Removes a note from the database.
+     *
+     * @param noteID The ID of the note to remove.
+     * @throws IllegalArgumentException Thrown if the argument is null.
+     */
+    void removeNote(UUID noteID) throws DatabaseException;
+
+    /**
+     * Gets the note given the ID.
+     *
+     * @param noteID The ID of the note.
+     * @return The note or null if the ID isn't in the database.
+     */
+    Note getNote(UUID noteID) throws DatabaseException;
 
 }

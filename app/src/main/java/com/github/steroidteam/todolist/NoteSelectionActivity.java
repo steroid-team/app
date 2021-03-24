@@ -33,23 +33,10 @@ public class NoteSelectionActivity extends AppCompatActivity {
         setTitle("My notes");
 
         // Filler
-        ArrayList<Note> notes = new ArrayList<>();
-        Note note1 = new Note("Lorem ipsum");
-        note1.setContent("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor" +
-                " incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation" +
-                " ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in" +
-                " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non" +
-                " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
-        Note note2 = new Note("Note 2");
-        note2.setContent("This is the second note");
-        Note note3 = new Note("Note 3");
-        note3.setContent("This is the third note");
+        //ArrayList<Note> notes = new ArrayList<>();
 
-        notes.add(note1);
-        notes.add(note2);
-        notes.add(note3);
 
-        adapter = new NoteAdapter(notes);
+        adapter = new NoteAdapter(DBInstance.volatileDatabase.getNoteList());
         ListView listView = findViewById(R.id.activity_noteselection_notelist);
         listView.setAdapter(adapter);
     }

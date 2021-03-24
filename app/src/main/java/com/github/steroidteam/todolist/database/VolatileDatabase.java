@@ -4,7 +4,11 @@ import com.github.steroidteam.todolist.notes.Note;
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -171,5 +175,9 @@ public class VolatileDatabase implements Database {
             throw new IllegalArgumentException();
         }
         return noteDB.get(id);
+    }
+
+    public ArrayList<Note> getNoteList() {
+        return new ArrayList(noteDB.values());
     }
 }

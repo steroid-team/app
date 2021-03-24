@@ -1,6 +1,8 @@
 package com.github.steroidteam.todolist;
 
 import android.content.Intent;
+import android.os.SystemClock;
+
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
@@ -62,6 +64,8 @@ public class ListSelectionActivityTest {
 
             onView(withText("Confirm")).perform(click());
 
+            SystemClock.sleep(1000);
+
             onView(withText("The name shouldn't be empty !")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
         }
     }
@@ -80,6 +84,8 @@ public class ListSelectionActivityTest {
             onView(withClassName(endsWith("EditText"))).perform(replaceText(TODO_LIST_NAME), closeSoftKeyboard());
 
             onView(withText("Confirm")).perform(click());
+
+            SystemClock.sleep(1000);
 
             onView(withText("Successfully changed the name !")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
             

@@ -29,7 +29,7 @@ public class JSONSerializerTest {
         });
     }
 
-    /*@Test
+    @Test
     public void todoListSerializerWoksWithEmptyTasks() {
         final String LIST_TITLE = "Test list";
 
@@ -67,7 +67,7 @@ public class JSONSerializerTest {
                 "\"date\":\"" + expectedFormattedDate + "\"" +
                 "}";
         assertEquals(expectedSerializedObject, actualSerializedObject);
-    }*/
+    }
 
     @Test
     public void todoListDeserializerWorksWithEmptyTasks() {

@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -14,6 +15,8 @@ import com.github.steroidteam.todolist.notes.Note;
 import java.util.UUID;
 
 public class NoteDisplayActivity extends AppCompatActivity {
+
+    private Note note;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +30,7 @@ public class NoteDisplayActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         UUID id = UUID.fromString(intent.getStringExtra(NoteSelectionActivity.EXTRA_NOTE_ID));
-        Note note = DBInstance.volatileDatabase.getNote(id);
+        note = DBInstance.volatileDatabase.getNote(id);
 
         //setTitle("Lorem ipsum");
         EditText view = findViewById(R.id.activity_notedisplay_edittext);
@@ -39,5 +42,11 @@ public class NoteDisplayActivity extends AppCompatActivity {
         setTitle(note.getTitle());
         view.setText(note.getContent());
 
+    }
+
+    public void updateNote(View view) {
+        EditText editText = findViewById(R.id.activity_notedisplay_edittext);
+        note.setContent(editText.getText().toString());
+        DBInstance.volatileDatabase.putNote(note);
     }
 }

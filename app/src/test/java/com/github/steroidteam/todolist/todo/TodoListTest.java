@@ -1,4 +1,4 @@
-package com.github.steroidteam.todolist;
+package com.github.steroidteam.todolist.todo;
 
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;

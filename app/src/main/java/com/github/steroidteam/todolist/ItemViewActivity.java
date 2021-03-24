@@ -76,18 +76,7 @@ public class ItemViewActivity extends AppCompatActivity {
         TodoAdapter.TaskCustomListener listener = new TodoAdapter.TaskCustomListener() {
             @Override
             public void onLongClickCustom(int position) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(ItemViewActivity.this);
-
-                builder.setTitle("You are about to delete a task!")
-                        .setMessage("Are you sure ?")
-                        .setNegativeButton("No", (dialog, which) -> {
-                        })
-                        .setPositiveButton("Yes", (dialog, which) -> {
-                            model.removeTask(position);
-                            Toast.makeText(getApplicationContext(), "Successfully removed the task !", Toast.LENGTH_LONG).show();
-                        })
-                        .create()
-                        .show();
+                displayDeletionConfirmation(position);
             }
         };
         return listener;
@@ -117,25 +106,29 @@ public class ItemViewActivity extends AppCompatActivity {
     }
 
     public void removeTask(View view) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ItemViewActivity.this);
-
         View parentRow = (View) view.getParent();
         RecyclerView recycler = (RecyclerView) parentRow.getParent();
         final int position = recycler.getChildAdapterPosition(parentRow);
 
+        displayDeletionConfirmation(position);
+    }
+
+    public void deleteLayout(MenuItem item) {
+        adapter.switchDeleteButton();
+        adapter.notifyDataSetChanged();
+    }
+
+    public void displayDeletionConfirmation(final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ItemViewActivity.this);
         builder.setTitle("You are about to delete a task!")
                 .setMessage("Are you sure ?")
-                .setNegativeButton("No", (dialog, which) -> {})
+                .setNegativeButton("No", (dialog, which) -> {
+                })
                 .setPositiveButton("Yes", (dialog, which) -> {
                     model.removeTask(position);
                     Toast.makeText(getApplicationContext(), "Successfully removed the task !", Toast.LENGTH_LONG).show();
                 })
                 .create()
                 .show();
-    }
-
-    public void deleteLayout(MenuItem item) {
-        adapter.switchDeleteButton();
-        adapter.notifyDataSetChanged();
     }
 }

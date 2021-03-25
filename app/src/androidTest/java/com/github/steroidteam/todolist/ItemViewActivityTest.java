@@ -51,15 +51,6 @@ public class ItemViewActivityTest {
             new ActivityScenarioRule<>(ItemViewActivity.class);
 
     @Test
-    public void checkBoxInList() {
-        Intent itemViewActivity = new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
-
-        try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(itemViewActivity)) {
-            //Espresso.onData(anything()).inAdapterView(withId(R.id.activity_itemview_itemlist)).atPosition(3).perform(click());
-        }
-    }
-
-    @Test
     public void createTaskWorks() {
         final String TASK_DESCRIPTION = "Buy bananas";
 

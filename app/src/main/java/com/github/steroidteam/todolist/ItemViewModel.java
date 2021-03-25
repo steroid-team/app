@@ -18,7 +18,7 @@ public class ItemViewModel extends AndroidViewModel {
     private LiveData<TodoList> todoList;
     private UUID todoListID;
 
-    public ItemViewModel(@NonNull Application application, UUID todoListIDD) {
+    public ItemViewModel(@NonNull Application application, UUID todoListID) {
         super(application);
         repository = new TodoRepository();
 

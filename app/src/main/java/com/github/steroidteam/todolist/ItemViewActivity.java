@@ -5,30 +5,20 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
 import com.github.steroidteam.todolist.util.TodoAdapter;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 
@@ -55,12 +45,8 @@ public class ItemViewActivity extends AppCompatActivity {
 
         // Observe the LiveData todoList from the ViewModel,
         // 'this' refers to the activity so it the ItemViewActivity acts as the LifeCycleOwner,
-        model.getTodoList().observe(this, new Observer<TodoList>() {
-            @Override
-            public void onChanged(TodoList todoList) {
-                // Update the adapter
+        model.getTodoList().observe(this, (todoList) -> {
                 adapter.setTodoList(todoList);
-            }
         });
 
         recyclerView = findViewById(R.id.activity_itemview_itemlist);
@@ -68,22 +54,7 @@ public class ItemViewActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        createAndSetAdapter(createCustomListener());
-    }
-
-    public TodoAdapter.TaskCustomListener createCustomListener() {
-        //Custom listener to remove the task
-        TodoAdapter.TaskCustomListener listener = new TodoAdapter.TaskCustomListener() {
-            @Override
-            public void onLongClickCustom(int position) {
-                displayDeletionConfirmation(position);
-            }
-        };
-        return listener;
-    }
-
-    public void createAndSetAdapter(TodoAdapter.TaskCustomListener listener) {
-        this.adapter = new TodoAdapter(listener);
+        this.adapter = new TodoAdapter(this::displayDeletionConfirmation);
         this.recyclerView.setAdapter(this.adapter);
     }
 

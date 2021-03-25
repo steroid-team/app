@@ -11,15 +11,6 @@
 
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity android:name=".ListSelectionActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ui.FirebaseUIActivity"
-            android:parentActivityName="com.github.steroidteam.todolist.MainActivity">
         </activity>
         <activity
             android:name=".ItemViewActivity"

@@ -62,6 +62,7 @@ public class ListSelectionActivity extends AppCompatActivity {
         listView.setOnItemLongClickListener((adapterView, view, i, l) -> {
             return true;
         });
+    }
   
     public void logOut(View view) {
         Activity thisActivity = this;

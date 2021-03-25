@@ -1,5 +1,7 @@
 package com.github.steroidteam.todolist.todo;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -91,5 +93,13 @@ public class TodoList {
         str.append("}");
 
         return str.toString();
+    }
+
+    @Override
+    public boolean equals(@Nullable Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TodoList todoList = (TodoList) o;
+        return todoList.getId().equals(this.getId());
     }
 }

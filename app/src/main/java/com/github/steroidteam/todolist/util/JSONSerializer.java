@@ -6,14 +6,13 @@ import com.github.steroidteam.todolist.todo.TodoList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.text.DateFormat;
 import java.util.Objects;
 
 public class JSONSerializer {
     private static final Gson gson = new GsonBuilder()
             // Date serialization might depend on the system, so let's make it deterministic
             // across platforms.
-            .setDateFormat(DateFormat.FULL, DateFormat.FULL).create();
+            .setDateFormat("yyyy-MM-dd HH:mm:ss.SSS").create();
 
     /**
      * Transforms a TodoList object into a JSON object.

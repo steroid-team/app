@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/layout_task_checkbox"
-        android:text=""
+        android:text="Task body"
         android:ellipsize="end"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -54,7 +55,7 @@ public class ItemViewActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        this.adapter = new TodoAdapter(this::displayDeletionConfirmation);
+        this.adapter = new TodoAdapter(this::displayModificationDialog);
         this.recyclerView.setAdapter(this.adapter);
     }
 
@@ -87,6 +88,37 @@ public class ItemViewActivity extends AppCompatActivity {
     public void deleteLayout(MenuItem item) {
         adapter.switchDeleteButton();
         adapter.notifyDataSetChanged();
+    }
+
+    public void displayModificationDialog(final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ItemViewActivity.this);
+        builder.setTitle("Modify task")
+                .setMessage("Choose an option")
+                .setNegativeButton("Modify", (dialog, which) -> {
+                    renameDialog(position);
+                })
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    displayDeletionConfirmation(position);
+                })
+                .create()
+                .show();
+    }
+
+    public void renameDialog(final int position) {
+        final EditText titleInput = new EditText(this);
+        titleInput.setInputType(InputType.TYPE_CLASS_TEXT);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ItemViewActivity.this);
+        builder.setTitle("Modify your task")
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    dialog.cancel();
+                })
+                .setPositiveButton("Modify", (dialog, which) -> {
+                    model.renameTask(position, titleInput.getText().toString());
+                    Toast.makeText(getApplicationContext(), "Successfully modified the task !", Toast.LENGTH_LONG).show();
+                })
+                .setView(titleInput)
+                .create()
+                .show();
     }
 
     public void displayDeletionConfirmation(final int position) {

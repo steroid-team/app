@@ -37,7 +37,7 @@ public class TodoRepository {
 
     public LiveData<TodoList> getTodoList(UUID todoListID) {
         if(oneTodoList==null) {
-            oneTodoList = new MutableLiveData<TodoList>(this.database.getTodoList(todoListID));
+            oneTodoList = new MutableLiveData<TodoList>();//this.database.getTodoList(todoListID));
         }
         return this.oneTodoList;
     }
@@ -51,4 +51,10 @@ public class TodoRepository {
         this.database.removeTask(todoListID, index);
         this.oneTodoList.setValue(this.database.getTodoList(todoListID));
     }
+
+    public void renameTask(UUID todoListID, int index, String newText) {
+        this.database.getTask(todoListID, index).setBody(newText);
+        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
+    }
+
 }

@@ -1,5 +1,5 @@
 include ':app'
-rootProject.name = "todolist"
+rootProject.name = "asteroid-notes"
 
 ext.isCiServer = System.getenv().containsKey("CIRRUS_CI")
 ext.isDefaultBranch = System.getenv()["CIRRUS_BRANCH"] == "master"

@@ -7,7 +7,7 @@
     tools:context=".ListSelectionActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/list_selection_toolbar2"
+        android:id="@+id/list_selection_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
@@ -17,7 +17,7 @@
         tools:layout_editor_absoluteX="0dp" />
 
     <Button
-        android:id="@+id/categories_button2"
+        android:id="@+id/categories_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -27,7 +27,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/search_button2"
+        android:id="@+id/search_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -37,7 +37,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/sort_button2"
+        android:id="@+id/sort_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -47,13 +47,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/create_note_button2"
+        android:id="@+id/create_note_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
         android:foreground="@android:drawable/ic_menu_add"
+        android:onClick="createButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -79,9 +80,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/list_selection_toolbar2">
+        app:layout_constraintTop_toBottomOf="@+id/list_selection_toolbar">
 
         <LinearLayout
+            android:id="@+id/lists_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -90,7 +92,7 @@
                 android:id="@+id/list_selection_item1"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:onClick="openList"
+                android:onClick="openExampleList"
                 android:text="Daily todo"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
@@ -98,7 +100,7 @@
                 android:id="@+id/list_selection_item2"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:onClick="openList"
+                android:onClick="openExampleList"
                 android:text="Homework"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
@@ -106,7 +108,7 @@
                 android:id="@+id/list_selection_item3"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:onClick="openList"
+                android:onClick="openExampleList"
                 android:text="Shopping list"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
         </LinearLayout>

@@ -72,7 +72,7 @@ public class FBaseUserTest {
         when(authMock.getCurrentUser()).thenReturn(firebaseUserMock);
 
         Task<Void> taskMock = Mockito.mock(Task.class);
-        when(firebaseUserMock.updateProfile(any())).thenReturn(taskMock);
+        //when(firebaseUserMock.updateProfile(any())).thenReturn(taskMock);
         when(firebaseUserMock.updateEmail(anyString())).thenReturn(taskMock);
         when(firebaseUserMock.sendEmailVerification()).thenReturn(taskMock);
         when(firebaseUserMock.updatePassword(anyString())).thenReturn(taskMock);

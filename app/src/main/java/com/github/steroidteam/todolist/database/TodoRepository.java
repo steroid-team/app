@@ -1,12 +1,20 @@
 package com.github.steroidteam.todolist.database;
 
+import android.os.AsyncTask;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.loader.content.AsyncTaskLoader;
 
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
 
+import java.nio.channels.AsynchronousChannelGroup;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
+import javax.xml.transform.Result;
 
 public class TodoRepository {
 
@@ -43,12 +51,72 @@ public class TodoRepository {
     }
 
     public void putTask(UUID todoListID, Task task) {
-        this.database.putTask(todoListID, task);
-        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
+        new PutTaskAsyncTask(database, oneTodoList).execute(new UUIDTask(todoListID, task));
     }
 
     public void removeTask(UUID todoListID, int index) {
-        this.database.removeTask(todoListID, index);
-        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
+        new RemoveTaskAsyncTask(database, oneTodoList).execute(new UUIDInt(todoListID, index));
     }
+
+    private static class UUIDTask {
+        protected UUID id;
+        protected Task task;
+        public UUIDTask(UUID id, Task task){
+            this.id = id;
+            this.task = task;
+        }
+    }
+
+    private static class PutTaskAsyncTask extends AsyncTask<UUIDTask, Void, Void> {
+        private Database database;
+        private MutableLiveData<TodoList> oneTodoList;
+
+        private PutTaskAsyncTask(Database database, MutableLiveData<TodoList> oneTodoList) {
+            this.database = database;
+            this.oneTodoList = oneTodoList;
+        }
+
+        @Override
+        protected Void doInBackground(UUIDTask... uuidTasks) {
+            try {
+                database.putTask(uuidTasks[0].id, uuidTasks[0].task);
+                oneTodoList.postValue(database.getTodoList(uuidTasks[0].id));
+            } catch (DatabaseException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    private static class UUIDInt {
+        protected UUID id;
+        protected int index;
+        public UUIDInt(UUID id, int index){
+            this.id = id;
+            this.index = index;
+        }
+    }
+
+    private static class RemoveTaskAsyncTask extends AsyncTask<UUIDInt, Void, Void> {
+        private Database database;
+        private MutableLiveData<TodoList> oneTodoList;
+
+        private RemoveTaskAsyncTask(Database database, MutableLiveData<TodoList> oneTodoList) {
+            this.database = database;
+            this.oneTodoList = oneTodoList;
+        }
+
+        @Override
+        protected Void doInBackground(UUIDInt... uuidInts) {
+            try {
+                database.removeTask(uuidInts[0].id, uuidInts[0].index);
+                oneTodoList.postValue(database.getTodoList(uuidInts[0].id));
+            } catch (DatabaseException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
 }
+

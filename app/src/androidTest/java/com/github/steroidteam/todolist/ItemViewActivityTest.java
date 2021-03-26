@@ -143,12 +143,6 @@ public class ItemViewActivityTest {
 
             openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getInstrumentation().getTargetContext());
             onView(withText("Delete")).perform(click());
-
-            openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getInstrumentation().getTargetContext());
-            onView(withText("Delete")).perform(click());
-
-            openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getInstrumentation().getTargetContext());
-            onView(withText("Delete")).perform(click());
             
             onView(withId(R.id.activity_itemview_itemlist)).perform(
                     RecyclerViewActions.actionOnItemAtPosition(0, MyViewAction.clickChildViewWithId(R.id.layout_task_delete_button)));

@@ -109,6 +109,8 @@ public class ItemViewActivityTest {
             // Try to remove the first task
             onView(withId(R.id.activity_itemview_itemlist)).perform(actionOnItemAtPosition(0, longClick()));
 
+            onView(withText("Delete")).perform(click());
+
             onView(withText("You are about to delete a task!")).check(matches(isDisplayed()));
 
             onView(withText("Yes")).perform(click());
@@ -210,6 +212,8 @@ public class ItemViewActivityTest {
 
             onView(withId(R.id.activity_itemview_itemlist)).perform(actionOnItemAtPosition(0, longClick()));
 
+            onView(withText("Delete")).perform(click());
+
             onView(withText("You are about to delete a task!")).check(matches(isDisplayed()));
 
             onView(withText("No")).perform(click());
@@ -233,6 +237,8 @@ public class ItemViewActivityTest {
                     .perform(click());
 
             onView(withId(R.id.activity_itemview_itemlist)).perform(actionOnItemAtPosition(0, longClick()));
+
+            onView(withText("Delete")).perform(click());
 
             onView(withText("You are about to delete a task!")).check(matches(isDisplayed()));
 

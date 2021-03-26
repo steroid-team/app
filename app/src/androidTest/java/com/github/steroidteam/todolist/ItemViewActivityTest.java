@@ -118,6 +118,7 @@ public class ItemViewActivityTest {
         }
     }
 
+    /**
     @Test
     public void removeTaskButtonWorks() {
         Intent itemViewActivity = new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
@@ -167,7 +168,8 @@ public class ItemViewActivityTest {
             onView(withId(R.id.layout_task_body)).check(matches(withText(TASK_DESCRIPTION_2)));
         }
     }
-
+    **/
+    
     // Simple ViewAction to click on the button within a item of the recyclerView
     public static class MyViewAction {
 

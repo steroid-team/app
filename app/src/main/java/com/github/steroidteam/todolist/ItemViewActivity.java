@@ -37,15 +37,16 @@ public class ItemViewActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        //Instantiate the view model.
-        // random UUID because we don't have persistent memory !
-        // this UUID is not used.
+
         UUID todo_list_id = (UUID) getIntent().getSerializableExtra("id_todo_list");
         if (todo_list_id != null){
             model = new ItemViewModel(this.getApplication(), todo_list_id);
+        } else {
+            //Instantiate the view model.
+            // random UUID because we don't have persistent memory !
+            // this UUID is not used.
+            model = new ItemViewModel(this.getApplication(), UUID.randomUUID());
         }
-
-        model = new ItemViewModel(this.getApplication(), UUID.randomUUID());
         // Observe the LiveData todoList from the ViewModel,
         // 'this' refers to the activity so it the ItemViewActivity acts as the LifeCycleOwner,
         model.getTodoList().observe(this, (todoList) -> {

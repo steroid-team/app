@@ -37,22 +37,21 @@ public class ItemViewActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        String title = getIntent().getStringExtra("title_todo_list");
-        if (title == null){
-            title = "Default";
-        }
-        TodoList todoList = new TodoList(title);
-        setTitle(todoList.getTitle());
         //Instantiate the view model.
         // random UUID because we don't have persistent memory !
         // this UUID is not used.
+        UUID todo_list_id = (UUID) getIntent().getSerializableExtra("id_todo_list");
+        if (todo_list_id != null){
+            model = new ItemViewModel(this.getApplication(), todo_list_id);
+        }
+
         model = new ItemViewModel(this.getApplication(), UUID.randomUUID());
-      
         // Observe the LiveData todoList from the ViewModel,
         // 'this' refers to the activity so it the ItemViewActivity acts as the LifeCycleOwner,
         model.getTodoList().observe(this, (todoList) -> {
                 adapter.setTodoList(todoList);
         });
+
 
         recyclerView = findViewById(R.id.activity_itemview_itemlist);
         // The layout manager takes care of displaying the task below each other

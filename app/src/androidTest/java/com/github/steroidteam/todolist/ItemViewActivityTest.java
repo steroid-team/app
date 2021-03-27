@@ -18,7 +18,6 @@ import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -28,7 +27,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -38,6 +36,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withChild;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
@@ -82,7 +81,7 @@ public class ItemViewActivityTest {
     }
 
     @Test
-    public void removeTaskLongClickWorks() {
+    public void updateTaskWorks() {
         Intent itemViewActivity = new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
 
         try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(itemViewActivity)) {
@@ -107,17 +106,19 @@ public class ItemViewActivityTest {
             // Try to remove the first task
             onView(withId(R.id.activity_itemview_itemlist)).perform(actionOnItemAtPosition(0, longClick()));
 
-            onView(withText("You are about to delete a task!")).inRoot(isDialog()).check(matches(isDisplayed()));
+            onView(withId(R.id.activity_itemview_itemlist)).perform(actionOnItemAtPosition(0, typeText(" !")));
+            onView(withId(R.id.activity_itemview_itemlist)).perform(
+                    RecyclerViewActions.actionOnItemAtPosition(
+                            0, MyViewAction.clickChildViewWithId(R.id.layout_task_save_modif)));
 
-            onView(withText("Yes")).inRoot(isDialog()).perform(click());
 
-            //after deleting the first item we check that we have the second one at position 0.
-            onView(withId(R.id.activity_itemview_itemlist)).check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
+            onView(withId(R.id.activity_itemview_itemlist)).check(matches(atPositionCheckText(0, TASK_DESCRIPTION + " !")));
+            onView(withId(R.id.activity_itemview_itemlist)).check(matches(atPositionCheckText(1, TASK_DESCRIPTION_2)));
         }
     }
 
     @Test
-    public void removeTaskButtonWorks() {
+    public void removeTaskWorks() {
         Intent itemViewActivity = new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
 
         try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(itemViewActivity)) {
@@ -139,25 +140,18 @@ public class ItemViewActivityTest {
             onView(withId(R.id.new_task_btn))
                     .perform(click());
 
-            openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getInstrumentation().getTargetContext());
-            onView(withText("Delete")).perform(click());
+            // Try to remove the first task
+            onView(withId(R.id.activity_itemview_itemlist)).perform(actionOnItemAtPosition(0, longClick()));
 
             onView(withId(R.id.activity_itemview_itemlist)).perform(
-                    RecyclerViewActions.actionOnItemAtPosition(0, MyViewAction.clickChildViewWithId(R.id.layout_task_delete_button)));
+                    RecyclerViewActions.actionOnItemAtPosition(
+                            0, MyViewAction.clickChildViewWithId(R.id.layout_task_delete_button)));
 
             onView(withText("You are about to delete a task!")).inRoot(isDialog()).check(matches(isDisplayed()));
 
             onView(withText("Yes")).inRoot(isDialog()).perform(click());
 
             //after deleting the first item we check that we have the second one at position 0.
-            onView(withId(R.id.activity_itemview_itemlist)).check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
-
-            //check that cancel the deletion works
-            onView(withId(R.id.activity_itemview_itemlist)).perform(
-                    RecyclerViewActions.actionOnItemAtPosition(0, MyViewAction.clickChildViewWithId(R.id.layout_task_delete_button)));
-
-            onView(withText("No")).inRoot(isDialog()).perform(click());
-
             onView(withId(R.id.activity_itemview_itemlist)).check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
         }
     }
@@ -179,6 +173,10 @@ public class ItemViewActivityTest {
                     .perform(click());
 
             onView(withId(R.id.activity_itemview_itemlist)).perform(actionOnItemAtPosition(0, longClick()));
+
+            onView(withId(R.id.activity_itemview_itemlist)).perform(
+                    RecyclerViewActions.actionOnItemAtPosition(
+                            0, MyViewAction.clickChildViewWithId(R.id.layout_task_delete_button)));
 
             onView(withText("You are about to delete a task!")).inRoot(isDialog()).check(matches(isDisplayed()));
 
@@ -203,6 +201,10 @@ public class ItemViewActivityTest {
                     .perform(click());
 
             onView(withId(R.id.activity_itemview_itemlist)).perform(actionOnItemAtPosition(0, longClick()));
+
+            onView(withId(R.id.activity_itemview_itemlist)).perform(
+                    RecyclerViewActions.actionOnItemAtPosition(
+                            0, MyViewAction.clickChildViewWithId(R.id.layout_task_delete_button)));
 
             onView(withText("You are about to delete a task!")).inRoot(isDialog()).check(matches(isDisplayed()));
 

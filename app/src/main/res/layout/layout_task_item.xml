@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="40dp"
     android:layout_marginTop="8dp"
     android:layout_marginStart="8dp"
     android:layout_marginEnd="8dp">
@@ -10,7 +10,8 @@
         android:id="@+id/layout_task_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"/>
+        android:layout_centerInParent="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:id="@+id/layout_task_body"
@@ -20,14 +21,40 @@
         android:layout_toEndOf="@+id/layout_task_checkbox"
         android:text="Task body"
         android:ellipsize="end"
+        android:visibility="visible"
+        android:layout_centerInParent="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <EditText
+        android:id="@+id/layout_task_edit_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="80dp"
+        android:layout_toEndOf="@+id/layout_task_checkbox"
+        android:ellipsize="end"
+        android:text="Task body"
+        android:inputType="text"
+        android:maxLines="1"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/layout_task_save_modif"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerInParent="true"
+        android:layout_toStartOf="@+id/layout_task_delete_button"
+        android:onClick="updateTask"
+        android:background="@color/green"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/layout_task_delete_button"
-        android:onClick="removeTask"
         android:layout_width="30dp"
         android:layout_height="30dp"
+        android:layout_centerInParent="true"
         android:layout_alignParentEnd="true"
-        android:visibility="gone"
-        android:background="@drawable/ic_launcher_background"/>
+        android:background="@color/red"
+        android:onClick="removeTask"
+        android:visibility="gone" />
 </RelativeLayout>

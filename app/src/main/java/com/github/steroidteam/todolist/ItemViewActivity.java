@@ -4,19 +4,16 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.github.steroidteam.todolist.todo.TodoList;
 import com.github.steroidteam.todolist.util.TodoAdapter;
 
 import java.util.UUID;
@@ -54,7 +51,7 @@ public class ItemViewActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        this.adapter = new TodoAdapter(this::displayDeletionConfirmation);
+        this.adapter = new TodoAdapter(this::updateTaskListener);
         this.recyclerView.setAdapter(this.adapter);
     }
 
@@ -81,12 +78,31 @@ public class ItemViewActivity extends AppCompatActivity {
         RecyclerView recycler = (RecyclerView) parentRow.getParent();
         final int position = recycler.getChildAdapterPosition(parentRow);
 
+        TodoAdapter.TaskHolder holder = (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
+        if(holder!=null) {
+            holder.closeUpdateLayout();
+        }
+
         displayDeletionConfirmation(position);
     }
 
-    public void deleteLayout(MenuItem item) {
-        adapter.switchDeleteButton();
-        adapter.notifyDataSetChanged();
+    public void updateTask(View view) {
+        View parentRow = (View) view.getParent();
+        RecyclerView recycler = (RecyclerView) parentRow.getParent();
+        final int position = recycler.getChildAdapterPosition(parentRow);
+
+        TodoAdapter.TaskHolder holder = (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
+        if(holder!=null) {
+            holder.closeUpdateLayout();
+            model.renameTask(position, holder.getUserInput());
+        }
+    }
+
+    public void updateTaskListener(final int position) {
+        TodoAdapter.TaskHolder holder = (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
+        if(holder!=null) {
+            holder.displayUpdateLayout();
+        }
     }
 
     public void displayDeletionConfirmation(final int position) {

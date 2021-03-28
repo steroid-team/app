@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
     id 'jacoco'
+    id 'com.diffplug.spotless' version '5.11.1'
 }
 
 android {
@@ -119,4 +120,24 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
 
 connectedCheck {
     finalizedBy jacocoTestReport
+}
+
+spotless {
+    format 'misc', {
+        // A general formatter for miscellaneous files (Gradle build files, Markdown docs &
+        // gitignores).
+        target '*.gradle', '*.md', '.gitignore'
+
+        trimTrailingWhitespace()
+        indentWithSpaces(4)
+        endWithNewline()
+    }
+    java {
+        // We need to set the target because it's an Android project
+        // (see https://github.com/diffplug/spotless/issues/111).
+        target 'src/*/java/**/*.java'
+
+        // Use google-java-format as the style guideline.
+        googleJavaFormat('1.7').aosp()
+    }
 }

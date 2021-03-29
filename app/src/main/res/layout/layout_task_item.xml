@@ -29,7 +29,6 @@
         android:id="@+id/layout_task_edit_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@null"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="80dp"
         android:layout_toEndOf="@+id/layout_task_checkbox"

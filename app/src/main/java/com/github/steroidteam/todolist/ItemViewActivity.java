@@ -79,6 +79,7 @@ public class ItemViewActivity extends AppCompatActivity {
         final int position = recycler.getChildAdapterPosition(parentRow);
 
         TodoAdapter.TaskHolder holder = (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
+        adapter.setUpdateLayoutDisplayed(false);
         if(holder!=null) {
             holder.closeUpdateLayout();
         }
@@ -94,6 +95,7 @@ public class ItemViewActivity extends AppCompatActivity {
         final int position = recycler.getChildAdapterPosition(parentRow);
 
         TodoAdapter.TaskHolder holder = (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
+        adapter.setUpdateLayoutDisplayed(false);
         if(holder!=null) {
             holder.closeUpdateLayout();
             model.renameTask(position, holder.getUserInput());
@@ -102,7 +104,8 @@ public class ItemViewActivity extends AppCompatActivity {
 
     public void updateTaskListener(final int position) {
         TodoAdapter.TaskHolder holder = (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
-        if(holder!=null) {
+        if(holder!=null && !adapter.isUpdateLayoutDisplayed()) {
+            adapter.setUpdateLayoutDisplayed(true);
             holder.displayUpdateLayout();
         }
     }

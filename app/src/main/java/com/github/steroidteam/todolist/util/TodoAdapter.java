@@ -19,9 +19,11 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
     private TodoList todoList = new TodoList("This should not be displayed");
     private TaskCustomListener listener;
+    private boolean isUpdateLayoutDisplayed;
 
     public TodoAdapter(TaskCustomListener listener) {
         this.listener = listener;
+        isUpdateLayoutDisplayed = false;
     }
 
     @NonNull
@@ -39,11 +41,10 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         // Need to add the getChecked in Task class
         // holder.taskBox.set(currentTask.getChecked())
 
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
-                listener.onLongClickCustom(position);
-                return true;
+            public void onClick(View v) {
+                listener.onClickCustom(position);
             }
         });
     }
@@ -61,9 +62,16 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         notifyDataSetChanged();
     }
 
-    public interface TaskCustomListener {
+    public boolean isUpdateLayoutDisplayed() {
+        return isUpdateLayoutDisplayed;
+    }
 
-        void onLongClickCustom(int position);
+    public void setUpdateLayoutDisplayed(boolean updateLayoutDisplayed) {
+        isUpdateLayoutDisplayed = updateLayoutDisplayed;
+    }
+
+    public interface TaskCustomListener {
+        void onClickCustom(int position);
     }
 
     public class TaskHolder extends RecyclerView.ViewHolder {

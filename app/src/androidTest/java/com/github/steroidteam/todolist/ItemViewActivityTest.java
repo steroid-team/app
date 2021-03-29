@@ -179,7 +179,7 @@ public class ItemViewActivityTest {
         return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
             @Override
             public void describeTo(Description description) {
-                description.appendText("View holder at position " + String.valueOf(position) + " ");
+                description.appendText("View holder at position " + String.valueOf(position) + ", expected: " + expectedText + " ");
             }
 
             @Override

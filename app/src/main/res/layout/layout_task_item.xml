@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/layout_task_checkbox"
-        android:text="Task body"
+        android:text=""
         android:ellipsize="end"
         android:visibility="visible"
         android:layout_centerInParent="true"

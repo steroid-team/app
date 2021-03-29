@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
+import static androidx.test.espresso.Espresso.openContextualActionModeOverflowMenu;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -139,7 +139,7 @@ public class ItemViewActivityTest {
             onView(withId(R.id.new_task_btn))
                     .perform(click());
 
-            openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getInstrumentation().getTargetContext());
+            openContextualActionModeOverflowMenu();
             onView(withText("Delete")).perform(click());
 
             onView(withId(R.id.activity_itemview_itemlist)).perform(
@@ -147,7 +147,7 @@ public class ItemViewActivityTest {
 
             onView(withText("You are about to delete a task!")).inRoot(isDialog()).check(matches(isDisplayed()));
 
-            onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+            onView(withText("Yes")).inRoot(isDialog()).perform(click());
 
             onView(withId(R.id.activity_itemview_itemlist)).check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
         }

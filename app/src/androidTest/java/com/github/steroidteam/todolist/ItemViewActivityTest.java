@@ -3,6 +3,7 @@ package com.github.steroidteam.todolist;
 
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -33,6 +34,7 @@ import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.longClick;
+import static androidx.test.espresso.action.ViewActions.pressBack;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
@@ -109,7 +111,7 @@ public class ItemViewActivityTest {
 
             onView(withText("You are about to delete a task!")).inRoot(isDialog()).check(matches(isDisplayed()));
 
-            onView(withText("Yes")).inRoot(isDialog()).perform(click());
+            onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
 
             //after deleting the first item we check that we have the second one at position 0.
             onView(withId(R.id.activity_itemview_itemlist)).check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
@@ -147,16 +149,7 @@ public class ItemViewActivityTest {
 
             onView(withText("You are about to delete a task!")).inRoot(isDialog()).check(matches(isDisplayed()));
 
-            onView(withText("Yes")).inRoot(isDialog()).perform(click());
-
-            //after deleting the first item we check that we have the second one at position 0.
-            onView(withId(R.id.activity_itemview_itemlist)).check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
-
-            //check that cancel the deletion works
-            onView(withId(R.id.activity_itemview_itemlist)).perform(
-                    RecyclerViewActions.actionOnItemAtPosition(0, MyViewAction.clickChildViewWithId(R.id.layout_task_delete_button)));
-
-            onView(withText("No")).inRoot(isDialog()).perform(click());
+            onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
 
             onView(withId(R.id.activity_itemview_itemlist)).check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
         }
@@ -264,9 +257,7 @@ public class ItemViewActivityTest {
             if (type == WindowManager.LayoutParams.TYPE_TOAST) {
                 IBinder windowToken = root.getDecorView().getWindowToken();
                 IBinder appToken = root.getDecorView().getApplicationWindowToken();
-                if (windowToken == appToken) {
-                    return true;
-                }
+                return windowToken == appToken;
             }
             return false;
         }

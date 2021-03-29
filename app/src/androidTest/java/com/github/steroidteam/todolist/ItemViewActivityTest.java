@@ -147,42 +147,8 @@ public class ItemViewActivityTest {
                     RecyclerViewActions.actionOnItemAtPosition(
                             0, MyViewAction.clickChildViewWithId(R.id.layout_task_delete_button)));
 
-            onView(withText("You are about to delete a task!")).inRoot(isDialog()).check(matches(isDisplayed()));
-
-            onView(withText("Yes")).inRoot(isDialog()).perform(click());
-
             //after deleting the first item we check that we have the second one at position 0.
             onView(withId(R.id.activity_itemview_itemlist)).check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
-        }
-    }
-
-    @Test
-    public void confirmDeletionWorks() {
-        Intent itemViewActivity = new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
-
-        try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(itemViewActivity)) {
-
-            final String TASK_DESCRIPTION = "Buy bananas";
-
-            // Type a task description in the "new task" text field.
-            onView(withId(R.id.new_task_text))
-                    .perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
-
-            // Hit the button to create a new task.
-            onView(withId(R.id.new_task_btn))
-                    .perform(click());
-
-            onView(withId(R.id.activity_itemview_itemlist)).perform(actionOnItemAtPosition(0, longClick()));
-
-            onView(withId(R.id.activity_itemview_itemlist)).perform(
-                    RecyclerViewActions.actionOnItemAtPosition(
-                            0, MyViewAction.clickChildViewWithId(R.id.layout_task_delete_button)));
-
-            onView(withText("You are about to delete a task!")).inRoot(isDialog()).check(matches(isDisplayed()));
-
-            onView(withText("No")).inRoot(isDialog()).perform(click());
-
-            onView(withId(R.id.activity_itemview_itemlist)).check(matches(atPositionCheckText(0, TASK_DESCRIPTION)));
         }
     }
 
@@ -205,10 +171,6 @@ public class ItemViewActivityTest {
             onView(withId(R.id.activity_itemview_itemlist)).perform(
                     RecyclerViewActions.actionOnItemAtPosition(
                             0, MyViewAction.clickChildViewWithId(R.id.layout_task_delete_button)));
-
-            onView(withText("You are about to delete a task!")).inRoot(isDialog()).check(matches(isDisplayed()));
-
-            onView(withText("Yes")).inRoot(isDialog()).perform(click());
 
             onView(withText("Successfully removed the task !")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
         }

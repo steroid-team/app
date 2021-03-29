@@ -82,8 +82,10 @@ public class ItemViewActivity extends AppCompatActivity {
         if(holder!=null) {
             holder.closeUpdateLayout();
         }
+        model.removeTask(position);
+        Toast.makeText(getApplicationContext(), "Successfully removed the task !", Toast.LENGTH_LONG).show();
 
-        displayDeletionConfirmation(position);
+        //displayDeletionConfirmation(position);
     }
 
     public void updateTask(View view) {

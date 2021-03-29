@@ -1,20 +1,21 @@
 package com.github.steroidteam.todolist;
 
-import com.github.steroidteam.todolist.notes.Note;
-
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
+
+import com.github.steroidteam.todolist.notes.Note;
+import org.junit.Test;
 
 public class NoteTest {
 
     @Test
     public void NoteCorrectlyThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Note(null);
-        });
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    new Note(null);
+                });
     }
 
     @Test

@@ -29,6 +29,7 @@
         android:id="@+id/layout_task_edit_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@null"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="80dp"
         android:layout_toEndOf="@+id/layout_task_checkbox"
@@ -36,7 +37,9 @@
         android:text="Task body"
         android:inputType="text"
         android:maxLines="1"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 
     <Button
         android:id="@+id/layout_task_save_modif"

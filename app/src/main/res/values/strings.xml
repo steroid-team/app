@@ -4,9 +4,6 @@
     <string name="task_creation_placeholder">Do something great</string>
     <string name="add_todo">Add todo</string>
     <string name="login_failure_msg">Log in failed. Try again.</string>
-    <string name="categories_btn">Categories</string>
-    <string name="search_btn">Search</string>
-    <string name="sort_btn">Sort</string>
     <string name="todo_list_fixture1_title">Daily todo</string>
     <string name="todo_list_fixture2_title">Homework</string>
     <string name="todo_list_fixture3_title">Shopping list</string>

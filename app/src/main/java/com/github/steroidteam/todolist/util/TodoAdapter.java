@@ -41,12 +41,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         // Need to add the getChecked in Task class
         // holder.taskBox.set(currentTask.getChecked())
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onClickCustom(position);
-            }
-        });
+        holder.itemView.setOnClickListener(v -> listener.onClickCustom(position));
     }
 
     @Override

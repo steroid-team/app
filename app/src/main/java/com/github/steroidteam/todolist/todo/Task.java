@@ -4,9 +4,9 @@ import java.util.Objects;
 
 /**
  * A class that represents a task described by a title and a body.
- * <p>
- * The index is null upon the creation of the Task, and it will
- * be assigned by the database when it's pushed into it.
+ *
+ * <p>The index is null upon the creation of the Task, and it will be assigned by the database when
+ * it's pushed into it.
  */
 public class Task {
 
@@ -45,9 +45,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "body='" + body + "'" +
-                "}";
+        return "Task{" + "body='" + body + "'" + "}";
     }
 
     @Override

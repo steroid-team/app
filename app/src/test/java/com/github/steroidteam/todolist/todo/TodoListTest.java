@@ -1,21 +1,19 @@
 package com.github.steroidteam.todolist.todo;
 
-import com.github.steroidteam.todolist.todo.Task;
-import com.github.steroidteam.todolist.todo.TodoList;
-
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.util.Date;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class TodoListTest {
 
     @Test
     public void quickTodoListTest() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            TodoList t = new TodoList(null);
-        });
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    TodoList t = new TodoList(null);
+                });
 
         Task t1 = new Task("body1");
         Task t2 = new Task("body2");

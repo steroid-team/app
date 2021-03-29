@@ -7,10 +7,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
@@ -29,8 +27,9 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
     @NonNull
     @Override
     public TaskHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layout_task_item, parent, false);
+        View itemView =
+                LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.layout_task_item, parent, false);
         return new TaskHolder(itemView);
     }
 
@@ -50,10 +49,10 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
     }
 
     public void setTodoList(TodoList todoList) {
-        //Updates the adapter with the new todoList (the observable one)
+        // Updates the adapter with the new todoList (the observable one)
         this.todoList = todoList;
-        //Check notifyDataSetChanged() might not be the best function
-        //considering performance
+        // Check notifyDataSetChanged() might not be the best function
+        // considering performance
         notifyDataSetChanged();
     }
 

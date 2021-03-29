@@ -1,9 +1,5 @@
 package com.github.steroidteam.todolist;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,9 +8,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.github.steroidteam.todolist.notes.Note;
-
 import java.util.ArrayList;
 
 public class NoteSelectionActivity extends AppCompatActivity {
@@ -35,11 +32,12 @@ public class NoteSelectionActivity extends AppCompatActivity {
         // Filler
         ArrayList<Note> notes = new ArrayList<>();
         Note note1 = new Note("Lorem ipsum");
-        note1.setContent("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor" +
-                " incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation" +
-                " ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in" +
-                " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non" +
-                " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+        note1.setContent(
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
+                        + " incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation"
+                        + " ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in"
+                        + " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non"
+                        + " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
         Note note2 = new Note("Note 2");
         note2.setContent("This is the second note");
         Note note3 = new Note("Note 3");
@@ -54,14 +52,13 @@ public class NoteSelectionActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
     }
 
-
-
-
     private class NoteAdapter extends BaseAdapter {
 
         private final ArrayList<Note> notes;
 
-        public NoteAdapter(@NonNull ArrayList<Note> notes) { this.notes = notes; }
+        public NoteAdapter(@NonNull ArrayList<Note> notes) {
+            this.notes = notes;
+        }
 
         @Override
         public int getCount() {
@@ -75,7 +72,7 @@ public class NoteSelectionActivity extends AppCompatActivity {
 
         @Override
         public long getItemId(int position) {
-            return position; //No need to specify a particular ID, we just return the position.
+            return position; // No need to specify a particular ID, we just return the position.
         }
 
         @Override
@@ -84,26 +81,30 @@ public class NoteSelectionActivity extends AppCompatActivity {
             // Check if an existing view is being reused, otherwise inflate the view
 
             if (convertView == null) {
-                convertView = LayoutInflater.from(getBaseContext()).inflate(R.layout.layout_note_item, parent, false);
+                convertView =
+                        LayoutInflater.from(getBaseContext())
+                                .inflate(R.layout.layout_note_item, parent, false);
             }
 
             TextView noteView = convertView.findViewById(R.id.layout_note_textview);
             noteView.setText(note.getTitle());
 
-            noteView.setOnClickListener((view) -> {
-                //Note note1 = (Note) view.getTag();
-                Intent noteDisplayActivity = new Intent(NoteSelectionActivity.this, NoteDisplayActivity.class);
-                noteDisplayActivity.putExtra(EXTRA_NOTE_ID, note.getId().toString());
-                startActivity(noteDisplayActivity);
-            });
+            noteView.setOnClickListener(
+                    (view) -> {
+                        // Note note1 = (Note) view.getTag();
+                        Intent noteDisplayActivity =
+                                new Intent(NoteSelectionActivity.this, NoteDisplayActivity.class);
+                        noteDisplayActivity.putExtra(EXTRA_NOTE_ID, note.getId().toString());
+                        startActivity(noteDisplayActivity);
+                    });
 
             return convertView;
         }
-
     }
 
     public void openNotes(View view) {
-        Intent listSelectionActivity = new Intent(NoteSelectionActivity.this, ListSelectionActivity.class);
+        Intent listSelectionActivity =
+                new Intent(NoteSelectionActivity.this, ListSelectionActivity.class);
         startActivity(listSelectionActivity);
     }
 }

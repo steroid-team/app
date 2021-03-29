@@ -3,7 +3,6 @@ package com.github.steroidteam.todolist;
 
 import android.content.Intent;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -34,7 +33,6 @@ import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.longClick;
-import static androidx.test.espresso.action.ViewActions.pressBack;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;

@@ -33,6 +33,8 @@
         android:layout_marginEnd="80dp"
         android:layout_toEndOf="@+id/layout_task_checkbox"
         android:ellipsize="end"
+        android:background="@null"
+        android:layout_centerInParent="true"
         android:text="Task body"
         android:inputType="text"
         android:maxLines="1"

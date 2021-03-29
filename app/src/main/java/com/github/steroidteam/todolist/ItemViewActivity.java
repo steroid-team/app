@@ -85,8 +85,6 @@ public class ItemViewActivity extends AppCompatActivity {
         }
         model.removeTask(position);
         Toast.makeText(getApplicationContext(), "Successfully removed the task !", Toast.LENGTH_LONG).show();
-
-        //displayDeletionConfirmation(position);
     }
 
     public void updateTask(View view) {
@@ -108,19 +106,5 @@ public class ItemViewActivity extends AppCompatActivity {
             adapter.setUpdateLayoutDisplayed(true);
             holder.displayUpdateLayout();
         }
-    }
-
-    public void displayDeletionConfirmation(final int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ItemViewActivity.this);
-        builder.setTitle("You are about to delete a task!")
-                .setMessage("Are you sure ?")
-                .setNegativeButton("No", (dialog, which) -> {
-                })
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    model.removeTask(position);
-                    Toast.makeText(getApplicationContext(), "Successfully removed the task !", Toast.LENGTH_LONG).show();
-                })
-                .create()
-                .show();
     }
 }

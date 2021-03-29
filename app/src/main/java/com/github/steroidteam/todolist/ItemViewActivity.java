@@ -79,7 +79,7 @@ public class ItemViewActivity extends AppCompatActivity {
         final int position = recycler.getChildAdapterPosition(parentRow);
 
         TodoAdapter.TaskHolder holder = (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
-        adapter.setUpdateLayoutDisplayed(false);
+        adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
         if(holder!=null) {
             holder.closeUpdateLayout();
         }
@@ -93,7 +93,7 @@ public class ItemViewActivity extends AppCompatActivity {
         final int position = recycler.getChildAdapterPosition(parentRow);
 
         TodoAdapter.TaskHolder holder = (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
-        adapter.setUpdateLayoutDisplayed(false);
+        adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
         if(holder!=null) {
             holder.closeUpdateLayout();
             model.renameTask(position, holder.getUserInput());
@@ -102,8 +102,16 @@ public class ItemViewActivity extends AppCompatActivity {
 
     public void updateTaskListener(final int position) {
         TodoAdapter.TaskHolder holder = (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
-        if(holder!=null && !adapter.isUpdateLayoutDisplayed()) {
-            adapter.setUpdateLayoutDisplayed(true);
+        Integer currentlyDisplayed = adapter.getCurrentlyDisplayedUpdateLayoutPos();
+
+        if (currentlyDisplayed != null) {
+            TodoAdapter.TaskHolder currentHolder =
+                    (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(currentlyDisplayed);
+            currentHolder.closeUpdateLayout();
+            adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
+        }
+        if(holder!=null) {
+            adapter.setCurrentlyDisplayedUpdateLayoutPos(position);
             holder.displayUpdateLayout();
         }
     }

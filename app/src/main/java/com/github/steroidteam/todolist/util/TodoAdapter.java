@@ -19,11 +19,11 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
     private TodoList todoList = new TodoList("This should not be displayed");
     private TaskCustomListener listener;
-    private boolean isUpdateLayoutDisplayed;
+    private Integer currentlyDisplayedUpdateLayoutPos;
 
     public TodoAdapter(TaskCustomListener listener) {
         this.listener = listener;
-        isUpdateLayoutDisplayed = false;
+        this.currentlyDisplayedUpdateLayoutPos = null;
     }
 
     @NonNull
@@ -62,12 +62,12 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         notifyDataSetChanged();
     }
 
-    public boolean isUpdateLayoutDisplayed() {
-        return isUpdateLayoutDisplayed;
+    public Integer getCurrentlyDisplayedUpdateLayoutPos() {
+        return this.currentlyDisplayedUpdateLayoutPos;
     }
 
-    public void setUpdateLayoutDisplayed(boolean updateLayoutDisplayed) {
-        isUpdateLayoutDisplayed = updateLayoutDisplayed;
+    public void setCurrentlyDisplayedUpdateLayoutPos(Integer currentlyDisplayedUpdateLayoutPos) {
+        this.currentlyDisplayedUpdateLayoutPos = currentlyDisplayedUpdateLayoutPos;
     }
 
     public interface TaskCustomListener {

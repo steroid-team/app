@@ -5,6 +5,7 @@
         <item name="colorPrimary">@color/dark_blue</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
+        <item name="android:background">@color/light_grey</item>
         <!-- Status bar color. -->
         <!-- Customize your theme here. -->
     </style>

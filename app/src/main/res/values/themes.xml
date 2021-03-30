@@ -18,11 +18,14 @@
         <item name="android:textSize">30sp</item>
         <item name="android:fontFamily">@font/nunitosans_bold</item>
     </style>
-    <style name="TaskEntry">
-        <item name="android:fontFamily">@font/nunitosans_semibold</item>
+    <style name="TaskEntryCheckbox">
         <item name="android:buttonTint">@color/dark_grey</item>
+    </style>
+    <style name="TaskEntryText">
+        <item name="android:fontFamily">@font/nunitosans_semibold</item>
         <item name="android:textSize">20sp</item>
         <item name="android:includeFontPadding">false</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
     <style name="ToolbarActionButton">
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>

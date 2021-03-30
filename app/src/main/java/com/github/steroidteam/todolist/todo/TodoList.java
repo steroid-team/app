@@ -59,6 +59,10 @@ public class TodoList {
         }
     }
 
+    public void renameTask(int index, String newBody) {
+        list.set(index, new Task(newBody));
+    }
+
     public int getSize() {
         return list.size();
     }

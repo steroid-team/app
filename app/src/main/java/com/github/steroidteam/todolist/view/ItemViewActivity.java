@@ -5,6 +5,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,6 +48,10 @@ public class ItemViewActivity extends AppCompatActivity {
                 .observe(
                         this,
                         (todoList) -> {
+                            // Change the activity's title.
+                            TextView activityTitle = (TextView) findViewById(R.id.activity_title);
+                            activityTitle.setText(todoList.getTitle());
+
                             adapter.setTodoList(todoList);
                         });
 

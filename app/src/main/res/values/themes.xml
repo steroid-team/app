@@ -8,6 +8,10 @@
         <item name="android:background">@color/light_grey</item>
         <!-- Status bar color. -->
         <!-- Customize your theme here. -->
+        <item name="android:textViewStyle">@style/NunitoTextViewStyle</item>
+    </style>
+    <style name="NunitoTextViewStyle">
+        <item name="android:fontFamily">@font/nunitosans_regular</item>
     </style>
     <style name="ActivityTitle">
         <item name="android:textColor">@color/activity_title</item>

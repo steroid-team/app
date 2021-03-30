@@ -16,4 +16,5 @@
     <string name="welcome_log_in_msg">Welcome ! Please log in.</string>
     <string name="task_edit_hint">Your task…</string>
     <string name="list_activity_title">My lists</string>
+    <string name="new_task">New task</string>
 </resources>

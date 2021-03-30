@@ -74,6 +74,11 @@ public class ListSelectionActivity extends AppCompatActivity {
         startActivity(itemViewActivity);
     }
 
+    public void openNotes(View view) {
+        Intent noteSelectionActivity = new Intent(ListSelectionActivity.this, NoteSelectionActivity.class);
+        startActivity(noteSelectionActivity);
+    }
+  
     private class todoListAdapter extends BaseAdapter{
 
         private List<TodoList> todoLists;
@@ -146,5 +151,4 @@ public class ListSelectionActivity extends AppCompatActivity {
       
 
     }
-
 }

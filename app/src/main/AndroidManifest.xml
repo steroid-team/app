@@ -12,6 +12,9 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity android:name=".ListSelectionActivity">
         </activity>
+        <activity android:name=".NoteDisplayActivity"
+            android:parentActivityName=".NoteSelectionActivity" />
+        <activity android:name=".NoteSelectionActivity" />
         <activity
             android:name=".ItemViewActivity"
             android:parentActivityName=".MainActivity"></activity>

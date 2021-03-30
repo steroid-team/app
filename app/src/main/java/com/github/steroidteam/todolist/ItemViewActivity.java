@@ -4,18 +4,17 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.github.steroidteam.todolist.todo.TodoList;
+
 import com.github.steroidteam.todolist.util.TodoAdapter;
 
 import java.util.UUID;
@@ -59,7 +58,7 @@ public class ItemViewActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        this.adapter = new TodoAdapter(this::displayDeletionConfirmation);
+        this.adapter = new TodoAdapter(this::updateTaskListener);
         this.recyclerView.setAdapter(this.adapter);
     }
 
@@ -86,25 +85,41 @@ public class ItemViewActivity extends AppCompatActivity {
         RecyclerView recycler = (RecyclerView) parentRow.getParent();
         final int position = recycler.getChildAdapterPosition(parentRow);
 
-        displayDeletionConfirmation(position);
+        TodoAdapter.TaskHolder holder = (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
+        adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
+        if(holder!=null) {
+            holder.closeUpdateLayout();
+        }
+        model.removeTask(position);
+        Toast.makeText(getApplicationContext(), "Successfully removed the task !", Toast.LENGTH_LONG).show();
     }
 
-    public void deleteLayout(MenuItem item) {
-        adapter.switchDeleteButton();
-        adapter.notifyDataSetChanged();
+    public void updateTask(View view) {
+        View parentRow = (View) view.getParent();
+        RecyclerView recycler = (RecyclerView) parentRow.getParent();
+        final int position = recycler.getChildAdapterPosition(parentRow);
+
+        TodoAdapter.TaskHolder holder = (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
+        adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
+        if(holder!=null) {
+            holder.closeUpdateLayout();
+            model.renameTask(position, holder.getUserInput());
+        }
     }
 
-    public void displayDeletionConfirmation(final int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ItemViewActivity.this);
-        builder.setTitle("You are about to delete a task!")
-                .setMessage("Are you sure ?")
-                .setNegativeButton("No", (dialog, which) -> {
-                })
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    model.removeTask(position);
-                    Toast.makeText(getApplicationContext(), "Successfully removed the task !", Toast.LENGTH_LONG).show();
-                })
-                .create()
-                .show();
+    public void updateTaskListener(final int position) {
+        TodoAdapter.TaskHolder holder = (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
+        Integer currentlyDisplayed = adapter.getCurrentlyDisplayedUpdateLayoutPos();
+
+        if (currentlyDisplayed != null) {
+            TodoAdapter.TaskHolder currentHolder =
+                    (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(currentlyDisplayed);
+            currentHolder.closeUpdateLayout();
+            adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
+        }
+        if(holder!=null) {
+            adapter.setCurrentlyDisplayedUpdateLayoutPos(position);
+            holder.displayUpdateLayout();
+        }
     }
 }

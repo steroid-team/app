@@ -5,6 +5,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,10 @@ public class ItemViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_view);
+
+        // Add a click listener to the "back" button to return to the previous activity.
+        ImageButton backButton = (ImageButton) findViewById(R.id.back_button);
+        backButton.setOnClickListener((view) -> finish());
 
         // Instantiate the view model.
         // random UUID because we don't have persistent memory !

@@ -92,6 +92,8 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
             inputText.setVisibility(View.VISIBLE);
             btn_save.setVisibility(View.VISIBLE);
             taskBody.setVisibility(View.GONE);
+
+            inputText.requestFocus();
         }
 
         public void closeUpdateLayout() {

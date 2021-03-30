@@ -24,4 +24,9 @@
         <item name="android:textSize">20sp</item>
         <item name="android:includeFontPadding">false</item>
     </style>
+    <style name="ToolbarActionButton">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:tint">#000000</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
 </resources>

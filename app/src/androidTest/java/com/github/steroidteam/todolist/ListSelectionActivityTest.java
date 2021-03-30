@@ -101,4 +101,5 @@ public class ListSelectionActivityTest {
             onView(withText("Successfully changed the name !")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
             
         }
+    }
 }

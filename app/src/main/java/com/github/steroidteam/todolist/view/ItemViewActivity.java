@@ -30,7 +30,7 @@ public class ItemViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_item_view);
 
         // Add a click listener to the "back" button to return to the previous activity.
-        ImageButton backButton = (ImageButton) findViewById(R.id.back_button);
+        ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener((view) -> finish());
 
         // Instantiate the view model.
@@ -54,7 +54,7 @@ public class ItemViewActivity extends AppCompatActivity {
                         this,
                         (todoList) -> {
                             // Change the activity's title.
-                            TextView activityTitle = (TextView) findViewById(R.id.activity_title);
+                            TextView activityTitle = findViewById(R.id.activity_title);
                             activityTitle.setText(todoList.getTitle());
 
                             adapter.setTodoList(todoList);

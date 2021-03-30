@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,15 +19,11 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
     private TodoList todoList = new TodoList("This should not be displayed");
     private TaskCustomListener listener;
-    private Boolean deleteButtonIsVisible;
+    private Integer currentlyDisplayedUpdateLayoutPos;
 
     public TodoAdapter(TaskCustomListener listener) {
-        this.deleteButtonIsVisible = false;
         this.listener = listener;
-    }
-
-    public void switchDeleteButton() {
-        deleteButtonIsVisible = !this.deleteButtonIsVisible;
+        this.currentlyDisplayedUpdateLayoutPos = null;
     }
 
     @NonNull
@@ -44,19 +41,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         // Need to add the getChecked in Task class
         // holder.taskBox.set(currentTask.getChecked())
 
-        if(this.deleteButtonIsVisible) {
-            holder.taskDelete.setVisibility(View.VISIBLE);
-        }else {
-            holder.taskDelete.setVisibility(View.GONE);
-        }
-
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                listener.onLongClickCustom(position);
-                return true;
-            }
-        });
+        holder.itemView.setOnClickListener(v -> listener.onClickCustom(position));
     }
 
     @Override
@@ -72,22 +57,53 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         notifyDataSetChanged();
     }
 
-    public interface TaskCustomListener {
-
-        void onLongClickCustom(int position);
+    public Integer getCurrentlyDisplayedUpdateLayoutPos() {
+        return this.currentlyDisplayedUpdateLayoutPos;
     }
 
-    class TaskHolder extends RecyclerView.ViewHolder {
+    public void setCurrentlyDisplayedUpdateLayoutPos(Integer currentlyDisplayedUpdateLayoutPos) {
+        this.currentlyDisplayedUpdateLayoutPos = currentlyDisplayedUpdateLayoutPos;
+    }
 
-        private TextView taskBody;
-        private CheckBox taskBox;
-        private Button taskDelete;
+    public interface TaskCustomListener {
+        void onClickCustom(int position);
+    }
+
+    public class TaskHolder extends RecyclerView.ViewHolder {
+
+        private final TextView taskBody;
+        private final CheckBox taskBox;
+        private final Button taskDelete;
+        private final EditText inputText;
+        private final Button btn_save;
 
         public TaskHolder(@NonNull View itemView) {
             super(itemView);
             taskBody = itemView.findViewById(R.id.layout_task_body);
             taskBox = itemView.findViewById(R.id.layout_task_checkbox);
             taskDelete = itemView.findViewById(R.id.layout_task_delete_button);
+            inputText = itemView.findViewById(R.id.layout_task_edit_text);
+            btn_save = itemView.findViewById(R.id.layout_task_save_modif);
+        }
+
+        public void displayUpdateLayout() {
+            inputText.setText(taskBody.getText().toString());
+
+            taskDelete.setVisibility(View.VISIBLE);
+            inputText.setVisibility(View.VISIBLE);
+            btn_save.setVisibility(View.VISIBLE);
+            taskBody.setVisibility(View.GONE);
+        }
+
+        public void closeUpdateLayout() {
+            taskDelete.setVisibility(View.GONE);
+            inputText.setVisibility(View.GONE);
+            btn_save.setVisibility(View.GONE);
+            taskBody.setVisibility(View.VISIBLE);
+        }
+
+        public String getUserInput() {
+            return inputText.getText().toString();
         }
     }
 }

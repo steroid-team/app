@@ -28,7 +28,6 @@
         android:gravity="top|left"
         android:inputType="textMultiLine|textCapSentences"
         android:singleLine="false"
-        android:text="EditText"
         app:layout_constraintBottom_toTopOf="@+id/activity_notedisplay_save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

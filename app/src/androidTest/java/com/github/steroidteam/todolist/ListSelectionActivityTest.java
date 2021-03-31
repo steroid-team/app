@@ -78,7 +78,7 @@ public class ListSelectionActivityTest {
 
             onView(withClassName(endsWith("EditText"))).perform(clearText());
 
-            while(viewIsVisible(withText("Confirm"))) {
+            while(!viewIsVisible(withText("Confirm"))) {
                 onView(withText("Confirm")).inRoot(isDialog()).perform(click());
             }
 

@@ -31,7 +31,15 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import androidx.appcompat.app.AppCompatActivity;
+import com.firebase.ui.auth.AuthUI;
+
 public class ListSelectionActivity extends AppCompatActivity {
+
     private static todoListAdapter adapter;
     private ArrayList<TodoList> todoLists;
 
@@ -39,6 +47,7 @@ public class ListSelectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_selection);
+
         todoLists = new ArrayList<>();
         TodoList todoList = new TodoList("Sweng project");
         todoLists.add(todoList);
@@ -59,13 +68,13 @@ public class ListSelectionActivity extends AppCompatActivity {
             return true;
         });
     }
-  
+
     public void logOut(View view) {
         Activity thisActivity = this;
         AuthUI.getInstance().signOut(this).addOnCompleteListener(task -> thisActivity.finish());
     }
 
-    public void openList(View view){
+    public void openList(View view) {
         Intent itemViewActivity = new Intent(ListSelectionActivity.this, ItemViewActivity.class);
         startActivity(itemViewActivity);
     }

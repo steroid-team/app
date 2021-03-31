@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Welcome ! Please log in."
+            android:text="@string/welcome_log_in_msg"
             android:textSize="18sp" />
 
         <Button
@@ -31,14 +31,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:onClick="startLoginProcess"
-            android:text="Log in" />
+            android:text="@string/log_in" />
 
         <TextView
             android:id="@+id/loginFailureMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Log in failed. Try again."
+            android:text="@string/login_failure_msg"
             android:textColor="#F44336"
             android:visibility="invisible" />
     </LinearLayout>

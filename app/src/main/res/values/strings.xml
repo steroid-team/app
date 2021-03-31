@@ -1,12 +1,21 @@
 <resources>
     <string name="app_name">Asteroid</string>
-    <string name="greeting_button">Enter</string>
-    <string name="button_hint">Enter your name</string>
     <string name="plus">+</string>
     <string name="task_creation_placeholder">Do something great</string>
-    <string name="categories">Categories</string>
-    <string name="search">Search</string>
-    <string name="sort">Sort</string>
+    <string name="add_todo">Add todo</string>
+    <string name="login_failure_msg">Log in failed. Try again.</string>
+    <string name="categories_btn">Categories</string>
+    <string name="search_btn">Search</string>
+    <string name="sort_btn">Sort</string>
+    <string name="todo_list_fixture1_title">Daily todo</string>
+    <string name="todo_list_fixture2_title">Homework</string>
+    <string name="todo_list_fixture3_title">Shopping list</string>
+    <string name="add_media_btn">Add media</string>
+    <string name="share_btn">Share</string>
+    <string name="change_type_btn">Change type</string>
+    <string name="delete_btn">Delete</string>
     <string name="log_out">Log out</string>
-    <string name="button_switch_note">My notes</string>
+    <string name="log_in">Log in</string>
+    <string name="welcome_log_in_msg">Welcome ! Please log in.</string>
+    <string name="task_edit_hint">Your task…</string>
 </resources>

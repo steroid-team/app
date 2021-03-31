@@ -1,14 +1,11 @@
 package com.github.steroidteam.todolist;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
-import android.widget.TextView;
-
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import java.util.UUID;
 
 public class NoteDisplayActivity extends AppCompatActivity {
@@ -28,11 +25,11 @@ public class NoteDisplayActivity extends AppCompatActivity {
 
         setTitle("Lorem ipsum");
         EditText view = findViewById(R.id.activity_notedisplay_edittext);
-        view.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor" +
-                " incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation" +
-                " ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in" +
-                " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non" +
-                " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
-
+        view.setText(
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
+                        + " incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation"
+                        + " ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in"
+                        + " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non"
+                        + " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
     }
 }

@@ -2,31 +2,26 @@ package com.github.steroidteam.todolist.database;
 
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 /**
- * A simple volatile implementation of the interface database.
- * The database is just a HashMap storing the ID of to-do lists for keys,
- * and objects TodoList for values.
+ * A simple volatile implementation of the interface database. The database is just a HashMap
+ * storing the ID of to-do lists for keys, and objects TodoList for values.
  */
 public class VolatileDatabase implements Database {
 
     private Map<UUID, TodoList> database;
 
-    /**
-     * Creates a volatile database.
-     */
+    /** Creates a volatile database. */
     public VolatileDatabase() {
         this.database = new HashMap<>();
     }
 
     /**
-     * Pushes the to-do list in the database.
-     * Updates the to-do list if it's already present in the database
-     * (=if there is already a same ID).
+     * Pushes the to-do list in the database. Updates the to-do list if it's already present in the
+     * database (=if there is already a same ID).
      *
      * @param list The to-do list to push.
      */
@@ -40,8 +35,7 @@ public class VolatileDatabase implements Database {
     }
 
     /**
-     * Removes the to-do list from the database.
-     * Do nothing id the ID is not a key.
+     * Removes the to-do list from the database. Do nothing id the ID is not a key.
      *
      * @param id The id of the to-do list.
      */
@@ -68,20 +62,19 @@ public class VolatileDatabase implements Database {
     }
 
     /**
-     * Pushes a task in the database.
-     * Assign the correct ID to the task (equivalent to its index in the to-do list).
-     * Updates the task if it's already present in the database.
-     * Do nothing if the ID is not is the database or if the task is already present in a to-do list.
+     * Pushes a task in the database. Assign the correct ID to the task (equivalent to its index in
+     * the to-do list). Updates the task if it's already present in the database. Do nothing if the
+     * ID is not is the database or if the task is already present in a to-do list.
      *
      * @param todoListID The id of the associated list of the task.
-     * @param task       The new task to add.
+     * @param task The new task to add.
      */
     @Override
     public void putTask(UUID todoListID, Task task) {
         if (todoListID == null || task == null) {
             throw new IllegalArgumentException();
         }
-        //get the to-do list from the database.
+        // get the to-do list from the database.
         TodoList list = database.get(todoListID);
         if (list != null) {
             list.addTask(task);
@@ -89,12 +82,11 @@ public class VolatileDatabase implements Database {
     }
 
     /**
-     * Removes a task from the database.
-     * Do nothing if the ID of the to-do is not present in the database,
-     * or if the task is not in the to-do list.
+     * Removes a task from the database. Do nothing if the ID of the to-do is not present in the
+     * database, or if the task is not in the to-do list.
      *
      * @param todoListID The id of the associated list of the task.
-     * @param taskIndex  The index of the task within the to-do list.
+     * @param taskIndex The index of the task within the to-do list.
      */
     @Override
     public void removeTask(UUID todoListID, Integer taskIndex) {
@@ -111,7 +103,7 @@ public class VolatileDatabase implements Database {
      * Gets a task given a to-do list ID and a task index.
      *
      * @param todoListID The id of the associated list of the task.
-     * @param taskIndex  The index of the task within the to-do list.
+     * @param taskIndex The index of the task within the to-do list.
      * @return Return null if the to-do list or the task are not present in the database.
      */
     @Override

@@ -1,18 +1,18 @@
 package com.github.steroidteam.todolist.todo;
 
-import com.github.steroidteam.todolist.todo.Task;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class TaskTest {
 
     @Test
     public void taskCorrectlyThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            Task nullTask = new Task(null);
-        });
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    Task nullTask = new Task(null);
+                });
     }
 
     @Test

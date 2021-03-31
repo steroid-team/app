@@ -59,4 +59,13 @@ public interface Database {
      */
     Task getTask(UUID todoListID, Integer taskIndex) throws DatabaseException;
 
+    /**
+     * Rename the task in the database
+     *
+     * @param todoListID The id of the associated list of the task.
+     * @param taskIndex The index of the task you want from a to-do list.
+     * @param newBody The new content of the task
+     */
+    void renameTask(UUID todoListID, Integer taskIndex, String newBody);
+
 }

@@ -126,6 +126,7 @@ public class VolatileDatabase implements Database {
         return null;
     }
 
+    @Override
     public void renameTask(UUID todoListID, Integer taskIndex, String newBody) {
         TodoList list = database.get(todoListID);
         if (list != null) {

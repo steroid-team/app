@@ -60,6 +60,11 @@ public class TodoRepository {
         new RemoveTaskAsyncTask(database, oneTodoList).execute(new UUIDInt(todoListID, index));
     }
 
+    public void renameTask(UUID todoListID, int index, String newText) {
+        this.database.renameTask(todoListID, index, newText);
+        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
+    }
+
     private static class UUIDTask {
         protected UUID id;
         protected Task task;
@@ -120,8 +125,36 @@ public class TodoRepository {
         }
     }
 
-    public void renameTask(UUID todoListID, int index, String newText) {
-        this.database.renameTask(todoListID, index, newText);
-        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
+    private static class UUIDIntStr {
+        protected UUID id;
+        protected int index;
+        protected String string;
+        public UUIDIntStr(UUID id, int index, String string){
+            this.id = id;
+            this.index = index;
+            this.string = string;
+        }
     }
+
+    private static class RenameTaskAsyncTask extends AsyncTask<UUIDIntStr, Void, Void> {
+        private Database database;
+        private MutableLiveData<TodoList> oneTodoList;
+
+        private RenameTaskAsyncTask(Database database, MutableLiveData<TodoList> oneTodoList) {
+            this.database = database;
+            this.oneTodoList = oneTodoList;
+        }
+
+        @Override
+        protected Void doInBackground(UUIDIntStr... uuidIntStrs) {
+            this.database.renameTask(uuidIntStrs[0].id, uuidIntStrs[0].index, uuidIntStrs[0].string);
+            try {
+                this.oneTodoList.postValue(this.database.getTodoList(uuidIntStrs[0].id));
+            } catch (DatabaseException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
 }

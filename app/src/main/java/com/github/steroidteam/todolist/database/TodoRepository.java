@@ -61,8 +61,7 @@ public class TodoRepository {
     }
 
     public void renameTask(UUID todoListID, int index, String newText) {
-        this.database.renameTask(todoListID, index, newText);
-        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
+        new RenameTaskAsyncTask(database, oneTodoList).execute(new UUIDIntStr(todoListID, index, newText));
     }
 
     private static class UUIDTask {

@@ -137,4 +137,9 @@ public class FirebaseDatabase implements Database {
             throw new DatabaseException(e.toString());
         }
     }
+
+    @Override
+    public void renameTask(UUID todoListID, Integer taskIndex, String newBody) {
+        // TODO
+    }
 }

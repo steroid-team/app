@@ -6,11 +6,15 @@ import android.os.SystemClock;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
+import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
@@ -74,11 +78,20 @@ public class ListSelectionActivityTest {
 
             onView(withClassName(endsWith("EditText"))).perform(clearText());
 
-            onView(withText("Confirm")).inRoot(isDialog()).perform(click());
-
-            SystemClock.sleep(1000);
+            while(viewIsVisible(withText("Confirm"))) {
+                onView(withText("Confirm")).inRoot(isDialog()).perform(click());
+            }
 
             onView(withText("The name shouldn't be empty !")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
+        }
+    }
+
+    private boolean viewIsVisible(Matcher<android.view.View> m) {
+        try {
+            onView(m).check(matches(isDisplayed()));
+            return true;
+        }catch (NoMatchingViewException e) {
+            return false;
         }
     }
 

@@ -2,9 +2,7 @@ package com.github.steroidteam.todolist;
 
 import android.os.IBinder;
 import android.view.WindowManager;
-
 import androidx.test.espresso.Root;
-
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
@@ -27,5 +25,4 @@ public class ToastMatcher extends TypeSafeMatcher<Root> {
         }
         return false;
     }
-
 }

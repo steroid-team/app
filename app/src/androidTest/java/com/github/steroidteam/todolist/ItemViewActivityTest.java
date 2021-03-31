@@ -112,7 +112,6 @@ public class ItemViewActivityTest {
         }
     }
 
-
     @Test
     public void removeTaskWorks() {
         Intent itemViewActivity =
@@ -205,7 +204,6 @@ public class ItemViewActivityTest {
             }
         };
     }
-
 
     // Simple ViewAction to click on the button within a item of the recyclerView
     public static class MyViewAction {

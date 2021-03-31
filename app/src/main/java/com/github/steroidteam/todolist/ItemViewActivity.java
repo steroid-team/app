@@ -6,7 +6,6 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.github.steroidteam.todolist.todo.TodoList;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -37,10 +36,10 @@ public class ItemViewActivity extends AppCompatActivity {
         model = new ItemViewModel(this.getApplication(), UUID.randomUUID());
 
         UUID todo_list_id = (UUID) getIntent().getSerializableExtra("id_todo_list");
-        if (todo_list_id != null){
+        if (todo_list_id != null) {
             model = new ItemViewModel(this.getApplication(), todo_list_id);
         } else {
-            //Instantiate the view model.
+            // Instantiate the view model.
             // random UUID because we don't have persistent memory !
             // this UUID is not used.
             model = new ItemViewModel(this.getApplication(), UUID.randomUUID());
@@ -53,7 +52,6 @@ public class ItemViewActivity extends AppCompatActivity {
                         (todoList) -> {
                             adapter.setTodoList(todoList);
                         });
-
 
         recyclerView = findViewById(R.id.activity_itemview_itemlist);
         // The layout manager takes care of displaying the task below each other

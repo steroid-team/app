@@ -62,7 +62,7 @@ public class ListSelectionActivityTest {
 
         onView(withId(R.id.notes_button2)).perform(click());
 
-        Intents.intended(
+        intended(
                 Matchers.allOf(IntentMatchers.hasComponent(NoteSelectionActivity.class.getName())));
         Intents.release();
     }

@@ -26,6 +26,7 @@ import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
@@ -74,14 +75,17 @@ public class ListSelectionActivityTest {
         try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(listSelectionActivity)) {
             Espresso.onData(anything()).inAdapterView(withId(R.id.activity_list_selection_itemlist)).atPosition(0).perform(longClick());
 
+            // User input
             onView(withText("Please enter a new name")).check(matches(isDisplayed()));
 
             onView(withClassName(endsWith("EditText"))).perform(clearText());
 
-            while(!viewIsVisible(withText("Confirm"))) {
-                onView(withText("Confirm")).inRoot(isDialog()).perform(click());
-            }
+            onView(withText("Confirm")).inRoot(isDialog()).perform(click());
 
+            // make sure dialog is gone
+            onView(withText("Please enter a new name")).check(doesNotExist());
+
+            // test if toast is displayed
             onView(withText("The name shouldn't be empty !")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
         }
     }

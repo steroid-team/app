@@ -120,4 +120,8 @@ public class TodoRepository {
         }
     }
 
+    public void renameTask(UUID todoListID, int index, String newText) {
+        this.database.renameTask(todoListID, index, newText);
+        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
+    }
 }

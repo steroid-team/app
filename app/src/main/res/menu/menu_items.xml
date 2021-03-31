@@ -17,6 +17,5 @@
     <item
         android:id="@+id/menu_delete"
         android:title="Delete"
-        app:showAsAction="ifRoom"
-        android:onClick="deleteLayout"/>
+        app:showAsAction="ifRoom" />
 </menu>

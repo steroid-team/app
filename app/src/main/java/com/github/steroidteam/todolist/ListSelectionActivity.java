@@ -49,10 +49,6 @@ public class ListSelectionActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.activity_list_selection_itemlist);
         adapter = new todoListAdapter(todoLists);
         setListViewSettings(listView);
-        //Toolbar toolbar = findViewById(R.id.list_selection_toolbar);
-        //setSupportActionBar(toolbar);
-        //ActionBar actionBar = getSupportActionBar();
-        //actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     private void setListViewSettings(ListView listView) {

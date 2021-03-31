@@ -135,11 +135,9 @@ public class ListSelectionActivity extends AppCompatActivity {
                     .setNegativeButton("Cancel", (dialog, which) -> {})
                     .setPositiveButton("Confirm", (dialog, which) -> {
                         if (input.getText().length() <= 0) {
-                            Toast.makeText(getApplicationContext(), "The name shouldn't be empty !", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         todoList.setTitle(input.getText().toString());
-                        Toast.makeText(getApplicationContext(), "Successfully changed the name !", Toast.LENGTH_SHORT).show();
                     })
                     .create()
                     .show();

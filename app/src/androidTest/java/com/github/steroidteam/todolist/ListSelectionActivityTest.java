@@ -31,12 +31,14 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
+import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.not;
 
 @RunWith(AndroidJUnit4.class)
 public class ListSelectionActivityTest {
@@ -85,8 +87,6 @@ public class ListSelectionActivityTest {
             // make sure dialog is gone
             onView(withText("Please enter a new name")).check(doesNotExist());
 
-            // test if toast is displayed
-            onView(withText("The name shouldn't be empty !")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
         }
     }
 
@@ -113,11 +113,6 @@ public class ListSelectionActivityTest {
             onView(withClassName(endsWith("EditText"))).perform(replaceText(TODO_LIST_NAME), closeSoftKeyboard());
 
             onView(withText("Confirm")).inRoot(isDialog()).perform(click());
-
-            SystemClock.sleep(1000);
-
-            onView(withText("Successfully changed the name !")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
-            
         }
     }
 }

@@ -11,6 +11,7 @@
         <item name="android:textViewStyle">@style/NunitoTextViewStyle</item>
     </style>
     <style name="LoginTheme" parent="FirebaseUI">
+        <item name="android:fontFamily">@font/nunitosans_regular</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

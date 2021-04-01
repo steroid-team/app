@@ -60,59 +60,12 @@ public class ListSelectionActivityTest {
     public void openNotesWorks() {
         Intents.init();
 
-        onView(withId(R.id.notes_button2)).perform(click());
+        onView(withId(R.id.notes_button)).perform(click());
 
         intended(
                 Matchers.allOf(IntentMatchers.hasComponent(NoteSelectionActivity.class.getName())));
         Intents.release();
     }
 
-    @Test
-    public void cannotRenameTodoListWithoutText() {
-        Intent listSelectionActivity =
-                new Intent(
-                        ApplicationProvider.getApplicationContext(), ListSelectionActivity.class);
 
-        try (ActivityScenario<ItemViewActivity> scenario =
-                ActivityScenario.launch(listSelectionActivity)) {
-            Espresso.onData(anything())
-                    .inAdapterView(withId(R.id.activity_list_selection_itemlist))
-                    .atPosition(0)
-                    .perform(longClick());
-
-            // User input
-            onView(withText("Please enter a new name")).check(matches(isDisplayed()));
-
-            onView(withClassName(endsWith("EditText"))).perform(clearText());
-
-            onView(withText("Confirm")).inRoot(isDialog()).perform(click());
-
-            // make sure dialog is gone
-            onView(withText("Please enter a new name")).check(doesNotExist());
-        }
-    }
-
-    @Test
-    public void renameTodoListWorks() {
-        final String TODO_LIST_NAME = "Sweng Test";
-
-        Intent listSelectionActivity =
-                new Intent(
-                        ApplicationProvider.getApplicationContext(), ListSelectionActivity.class);
-
-        try (ActivityScenario<ItemViewActivity> scenario =
-                ActivityScenario.launch(listSelectionActivity)) {
-            Espresso.onData(anything())
-                    .inAdapterView(withId(R.id.activity_list_selection_itemlist))
-                    .atPosition(0)
-                    .perform(longClick());
-
-            onView(withText("Please enter a new name")).check(matches(isDisplayed()));
-
-            onView(withClassName(endsWith("EditText")))
-                    .perform(replaceText(TODO_LIST_NAME), closeSoftKeyboard());
-
-            onView(withText("Confirm")).inRoot(isDialog()).perform(click());
-        }
-    }
 }

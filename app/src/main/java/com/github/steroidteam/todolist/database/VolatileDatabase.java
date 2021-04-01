@@ -2,7 +2,10 @@ package com.github.steroidteam.todolist.database;
 
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -123,5 +126,9 @@ public class VolatileDatabase implements Database {
         if (list != null) {
             list.renameTask(taskIndex, newBody);
         }
+    }
+
+    public ArrayList<TodoList> getAllTodo() {
+        return new ArrayList<>(this.database.values());
     }
 }

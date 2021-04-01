@@ -7,7 +7,7 @@
     tools:context=".ListSelectionActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/list_selection_toolbar2"
+        android:id="@+id/list_selection_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
@@ -17,17 +17,18 @@
         tools:layout_editor_absoluteX="0dp" />
 
     <Button
-        android:id="@+id/categories_button2"
+        android:id="@+id/categories_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/categories_btn"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/search_button2"
+        android:id="@+id/search_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -37,7 +38,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/sort_button2"
+        android:id="@+id/sort_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -46,7 +47,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
   
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/activity_list_selection_itemlist"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -59,17 +60,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/list_selection_toolbar2">
+        app:layout_constraintTop_toBottomOf="@+id/list_selection_toolbar">
 
-    </ListView>
+    </androidx.recyclerview.widget.RecyclerView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/create_note_button2"
+        android:id="@+id/create_note_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
+        android:onClick="addTodoList"
         android:foreground="@android:drawable/ic_menu_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -89,7 +91,7 @@
 
 
     <Button
-        android:id="@+id/notes_button2"
+        android:id="@+id/notes_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"

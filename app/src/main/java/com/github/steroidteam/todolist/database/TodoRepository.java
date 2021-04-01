@@ -4,12 +4,16 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class TodoRepository {
 
     private VolatileDatabase database;
     private MutableLiveData<TodoList> oneTodoList;
+    private MutableLiveData<ArrayList<TodoList>> allTodo;
 
     // ====== TO DELETE ======== BEGIN
     // We don't have persistent database !
@@ -52,5 +56,22 @@ public class TodoRepository {
     public void renameTask(UUID todoListID, int index, String newText) {
         this.database.renameTask(todoListID, index, newText);
         this.oneTodoList.setValue(this.database.getTodoList(todoListID));
+    }
+
+    public LiveData<ArrayList<TodoList>> getAllTodo() {
+        if(allTodo == null) {
+            allTodo = new MutableLiveData<>(this.database.getAllTodo());
+        }
+        return allTodo;
+    }
+
+    public void putTodo(TodoList todoList) {
+        this.database.putTodoList(todoList);
+        this.allTodo.postValue(this.database.getAllTodo());
+    }
+
+    public void removeTodo(UUID id) {
+        this.database.removeTodoList(id);
+        this.allTodo.postValue(this.database.getAllTodo());
     }
 }

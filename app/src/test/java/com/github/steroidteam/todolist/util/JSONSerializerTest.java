@@ -1,15 +1,9 @@
 package com.github.steroidteam.todolist.util;
 
-<<<<<<< HEAD
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-=======
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
-
-import com.github.steroidteam.todolist.todo.Task;
-import com.github.steroidteam.todolist.todo.TodoList;
->>>>>>> cfb7ad8ae27bdf352a8b940ea222365a6ab87dc8
 import com.google.gson.JsonSyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

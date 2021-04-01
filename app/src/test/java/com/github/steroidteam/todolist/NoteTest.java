@@ -1,18 +1,12 @@
 package com.github.steroidteam.todolist;
 
-<<<<<<< HEAD
 import com.github.steroidteam.todolist.model.notes.Note;
 
 import org.junit.Test;
 
-=======
->>>>>>> cfb7ad8ae27bdf352a8b940ea222365a6ab87dc8
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
-
-import com.github.steroidteam.todolist.notes.Note;
-import org.junit.Test;
 
 public class NoteTest {
 

@@ -11,34 +11,15 @@ import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.util.JSONSerializer;
-<<<<<<< HEAD
 
-=======
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
->>>>>>> cfb7ad8ae27bdf352a8b940ea222365a6ab87dc8
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-<<<<<<< HEAD
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-
-=======
->>>>>>> cfb7ad8ae27bdf352a8b940ea222365a6ab87dc8
 @RunWith(MockitoJUnitRunner.class)
 public class FirebaseDatabaseTest {
     private static final String TODO_LIST_PATH = "/todo-lists";

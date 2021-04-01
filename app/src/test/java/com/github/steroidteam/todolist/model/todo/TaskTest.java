@@ -1,10 +1,6 @@
-<<<<<<< HEAD:app/src/test/java/com/github/steroidteam/todolist/model/todo/TaskTest.java
 package com.github.steroidteam.todolist.model.todo;
-=======
-package com.github.steroidteam.todolist.todo;
 
 import static org.junit.Assert.*;
->>>>>>> cfb7ad8ae27bdf352a8b940ea222365a6ab87dc8:app/src/test/java/com/github/steroidteam/todolist/todo/TaskTest.java
 
 import org.junit.Test;
 

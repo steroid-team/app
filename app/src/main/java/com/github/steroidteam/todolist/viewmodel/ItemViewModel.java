@@ -4,17 +4,10 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-<<<<<<< HEAD:app/src/main/java/com/github/steroidteam/todolist/viewmodel/ItemViewModel.java
 
 import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-
-=======
-import com.github.steroidteam.todolist.database.TodoRepository;
-import com.github.steroidteam.todolist.todo.Task;
-import com.github.steroidteam.todolist.todo.TodoList;
->>>>>>> cfb7ad8ae27bdf352a8b940ea222365a6ab87dc8:app/src/main/java/com/github/steroidteam/todolist/ItemViewModel.java
 import java.util.UUID;
 
 public class ItemViewModel extends AndroidViewModel {

@@ -10,6 +10,13 @@
         <!-- Customize your theme here. -->
         <item name="android:textViewStyle">@style/NunitoTextViewStyle</item>
     </style>
+    <style name="LoginTheme" parent="FirebaseUI">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="FirebaseUI.AuthMethodPicker.Logo">
+        <item name="android:padding">60dp</item>
+    </style>
     <style name="NunitoTextViewStyle">
         <item name="android:fontFamily">@font/nunitosans_regular</item>
     </style>

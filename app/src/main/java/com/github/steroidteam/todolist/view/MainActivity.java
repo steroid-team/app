@@ -10,6 +10,7 @@ import com.firebase.ui.auth.IdpResponse;
 import com.github.steroidteam.todolist.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
+                        .setTheme(R.style.LoginTheme)
+                        .setLogo(R.drawable.asteroid_banner)
                         .build(),
                 RC_SIGN_IN);
     }

@@ -21,7 +21,6 @@ public class TodoRepository {
     public UUID id;
     // ========================= END
 
-
     public TodoRepository() {
         this.database = new VolatileDatabase();
 
@@ -37,7 +36,7 @@ public class TodoRepository {
     }
 
     public LiveData<TodoList> getTodoList(UUID todoListID) {
-        if(oneTodoList==null) {
+        if (oneTodoList == null) {
             oneTodoList = new MutableLiveData<TodoList>(this.database.getTodoList(todoListID));
         }
         return this.oneTodoList;

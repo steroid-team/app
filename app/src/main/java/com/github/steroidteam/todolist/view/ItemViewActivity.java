@@ -19,7 +19,6 @@ import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
 
 import java.util.UUID;
 
-
 public class ItemViewActivity extends AppCompatActivity {
 
     private ItemViewModel model;
@@ -36,16 +35,28 @@ public class ItemViewActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        //Instantiate the view model.
+        // Instantiate the view model.
         // random UUID because we don't have persistent memory !
         // this UUID is not used.
         model = new ItemViewModel(this.getApplication(), UUID.randomUUID());
 
+        UUID todo_list_id = (UUID) getIntent().getSerializableExtra("id_todo_list");
+        if (todo_list_id != null) {
+            model = new ItemViewModel(this.getApplication(), todo_list_id);
+        } else {
+            // Instantiate the view model.
+            // random UUID because we don't have persistent memory !
+            // this UUID is not used.
+            model = new ItemViewModel(this.getApplication(), UUID.randomUUID());
+        }
         // Observe the LiveData todoList from the ViewModel,
         // 'this' refers to the activity so it the ItemViewActivity acts as the LifeCycleOwner,
-        model.getTodoList().observe(this, (todoList) -> {
-                adapter.setTodoList(todoList);
-        });
+        model.getTodoList()
+                .observe(
+                        this,
+                        (todoList) -> {
+                            adapter.setTodoList(todoList);
+                        });
 
         recyclerView = findViewById(R.id.activity_itemview_itemlist);
         // The layout manager takes care of displaying the task below each other
@@ -79,13 +90,18 @@ public class ItemViewActivity extends AppCompatActivity {
         RecyclerView recycler = (RecyclerView) parentRow.getParent();
         final int position = recycler.getChildAdapterPosition(parentRow);
 
-        TodoAdapter.TaskHolder holder = (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
+        TodoAdapter.TaskHolder holder =
+                (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
         adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
-        if(holder!=null) {
+        if (holder != null) {
             holder.closeUpdateLayout();
         }
         model.removeTask(position);
-        Toast.makeText(getApplicationContext(), "Successfully removed the task !", Toast.LENGTH_LONG).show();
+        Toast.makeText(
+                        getApplicationContext(),
+                        "Successfully removed the task !",
+                        Toast.LENGTH_LONG)
+                .show();
     }
 
     public void updateTask(View view) {
@@ -93,25 +109,28 @@ public class ItemViewActivity extends AppCompatActivity {
         RecyclerView recycler = (RecyclerView) parentRow.getParent();
         final int position = recycler.getChildAdapterPosition(parentRow);
 
-        TodoAdapter.TaskHolder holder = (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
+        TodoAdapter.TaskHolder holder =
+                (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
         adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
-        if(holder!=null) {
+        if (holder != null) {
             holder.closeUpdateLayout();
             model.renameTask(position, holder.getUserInput());
         }
     }
 
     public void updateTaskListener(final int position) {
-        TodoAdapter.TaskHolder holder = (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
+        TodoAdapter.TaskHolder holder =
+                (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
         Integer currentlyDisplayed = adapter.getCurrentlyDisplayedUpdateLayoutPos();
 
         if (currentlyDisplayed != null) {
             TodoAdapter.TaskHolder currentHolder =
-                    (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(currentlyDisplayed);
+                    (TodoAdapter.TaskHolder)
+                            recyclerView.findViewHolderForAdapterPosition(currentlyDisplayed);
             currentHolder.closeUpdateLayout();
             adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
         }
-        if(holder!=null) {
+        if (holder != null) {
             adapter.setCurrentlyDisplayedUpdateLayoutPos(position);
             holder.displayUpdateLayout();
         }

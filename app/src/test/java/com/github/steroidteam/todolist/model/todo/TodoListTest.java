@@ -1,18 +1,25 @@
+<<<<<<< HEAD:app/src/test/java/com/github/steroidteam/todolist/model/todo/TodoListTest.java
 package com.github.steroidteam.todolist.model.todo;
 
 import org.junit.Test;
-
-import java.util.Date;
+=======
+package com.github.steroidteam.todolist.todo;
 
 import static org.junit.Assert.*;
+>>>>>>> cfb7ad8ae27bdf352a8b940ea222365a6ab87dc8:app/src/test/java/com/github/steroidteam/todolist/todo/TodoListTest.java
+
+import java.util.Date;
+import org.junit.Test;
 
 public class TodoListTest {
 
     @Test
     public void quickTodoListTest() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            TodoList t = new TodoList(null);
-        });
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    TodoList t = new TodoList(null);
+                });
 
         Task t1 = new Task("body1");
         Task t2 = new Task("body2");

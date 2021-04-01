@@ -1,7 +1,6 @@
 package com.github.steroidteam.todolist.model.notes;
 
 import androidx.annotation.NonNull;
-
 import java.util.UUID;
 
 public class Note {
@@ -19,16 +18,23 @@ public class Note {
         this.content = "";
     }
 
-    public UUID getId() { return id; }
+    public UUID getId() {
+        return id;
+    }
 
-    public String getTitle() { return title; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getContent() { return content; }
+    public String getContent() {
+        return content;
+    }
 
-    public void setTitle(@NonNull String title) { this.title = title; }
+    public void setTitle(@NonNull String title) {
+        this.title = title;
+    }
 
-    public void setContent(@NonNull String content) { this.content = content; }
-
-
-
+    public void setContent(@NonNull String content) {
+        this.content = content;
+    }
 }

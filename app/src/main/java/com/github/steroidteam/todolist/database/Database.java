@@ -2,12 +2,9 @@ package com.github.steroidteam.todolist.database;
 
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-
 import java.util.UUID;
 
-/**
- * A database that stores pairs of key and value.
- */
+/** A database that stores pairs of key and value. */
 public interface Database {
 
     /**
@@ -58,5 +55,4 @@ public interface Database {
      * @return The task or null if the key does not exist in the database.
      */
     Task getTask(UUID todoListID, Integer taskIndex) throws DatabaseException;
-
 }

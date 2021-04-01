@@ -19,5 +19,6 @@
     <string name="new_task">New task</string>
     <string name="note_activity_title">My notes</string>
     <string name="search_btn_description">Search</string>
+    <string name="new_list_btn_description">Add a new list</string>
     <string name="date_placeholder">xx/yy aa:bb</string>
 </resources>

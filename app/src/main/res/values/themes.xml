@@ -33,25 +33,25 @@
     </style>
     <style name="SelectionList.Entry">
         <item name="android:background">@drawable/rounded_corner_bg</item>
-        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:paddingBottom">18dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
     </style>
     <style name="SelectionList.Entry.Title">
         <item name="android:fontFamily">@font/nunitosans_bold</item>
         <item name="android:textColor">@color/dark_blue</item>
         <item name="android:textSize">22sp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:padding">0dp</item>
     </style>
     <style name="SelectionList.Entry.Subtitle">
         <item name="android:fontFamily">@font/nunitosans_semibold</item>
         <item name="android:textColor">@color/light_grey</item>
         <item name="android:textSize">18sp</item>
-    </style>
-    <style name="TodoListEntry" parent="SelectionList.Entry.Title">
-        <item name="android:background">@drawable/rounded_corner_bg</item>
-        <item name="android:layout_marginBottom">10dp</item>
-        <item name="android:paddingTop">10dp</item>
-        <item name="android:paddingBottom">10dp</item>
-        <item name="android:paddingLeft">20dp</item>
-        <item name="android:paddingRight">15dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:padding">0dp</item>
     </style>
     <style name="TaskEntryCheckbox">
         <item name="android:buttonTint">@color/light_grey</item>

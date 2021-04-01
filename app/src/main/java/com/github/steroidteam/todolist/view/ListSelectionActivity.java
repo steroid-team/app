@@ -13,7 +13,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.firebase.ui.auth.AuthUI;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.todo.TodoList;

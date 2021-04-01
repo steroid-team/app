@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
 import com.github.steroidteam.todolist.viewmodel.ItemViewModel;
-
 import java.util.UUID;
 
 public class ItemViewActivity extends AppCompatActivity {

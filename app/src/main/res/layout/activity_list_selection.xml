@@ -88,6 +88,7 @@
         app:elevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="@string/new_list_btn_description" />
+        android:contentDescription="@string/new_list_btn_description"
+        android:focusable="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

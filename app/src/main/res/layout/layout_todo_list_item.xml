@@ -10,7 +10,38 @@
         android:layout_marginTop="7sp"
         android:layout_marginEnd="7sp"
         android:layout_weight="1"
-        android:onClick="openTodoList"
         android:fontFamily="sans-serif-black"
         android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/layout_todo_list_edit_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="80dp"
+        android:fontFamily="sans-serif-black"
+        android:textSize="24sp"
+        android:ellipsize="end"
+        android:background="@null"
+        android:text=""
+        android:hint="@string/task_edit_hint"
+        android:inputType="text"
+        android:maxLines="1"
+        android:visibility="gone"
+        android:importantForAutofill="no" />
+
+    <Button
+        android:id="@+id/layout_todo_list_save_modif"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:onClick="updateTodo"
+        android:background="@color/green"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/layout_todo_list_delete_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@color/red"
+        android:onClick="removeTodo"
+        android:visibility="gone" />
 </LinearLayout>

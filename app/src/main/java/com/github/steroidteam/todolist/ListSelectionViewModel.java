@@ -38,4 +38,6 @@ public class ListSelectionViewModel extends AndroidViewModel {
     public void removeTodo(UUID id) {
         repository.removeTodo(id);
     }
+
+    public void renameTodo(UUID id, String newTitle) {repository.renameTodo(id, newTitle);}
 }

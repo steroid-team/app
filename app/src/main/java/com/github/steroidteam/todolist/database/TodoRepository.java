@@ -74,4 +74,9 @@ public class TodoRepository {
         this.database.removeTodoList(id);
         this.allTodo.postValue(this.database.getAllTodo());
     }
+
+    public void renameTodo(UUID id, String newTitle) {
+        this.database.renameTodo(id, newTitle);
+        this.allTodo.postValue(this.database.getAllTodo());
+    }
 }

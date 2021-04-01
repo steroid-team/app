@@ -15,11 +15,11 @@ import java.util.UUID;
  */
 public class VolatileDatabase implements Database {
 
-    private Map<UUID, TodoList> database;
+    private ArrayList<TodoList> database;
 
     /** Creates a volatile database. */
     public VolatileDatabase() {
-        this.database = new HashMap<>();
+        this.database = new ArrayList<>();
     }
 
     /**
@@ -33,8 +33,7 @@ public class VolatileDatabase implements Database {
         if (list == null) {
             throw new IllegalArgumentException();
         }
-
-        database.put(list.getId(), list);
+        database.add(list);
     }
 
     /**
@@ -47,7 +46,13 @@ public class VolatileDatabase implements Database {
         if (id == null) {
             throw new IllegalArgumentException();
         }
-        database.remove(id);
+
+        for(int i = 0; i < database.size(); ++i) {
+            if(database.get(i).getId() == id) {
+                database.remove(i);
+                i = database.size();
+            }
+        }
     }
 
     /**
@@ -61,7 +66,14 @@ public class VolatileDatabase implements Database {
         if (todoListID == null) {
             throw new IllegalArgumentException();
         }
-        return database.get(todoListID);
+        TodoList tl;
+        for(int i = 0; i < database.size(); ++i) {
+            tl = database.get(i);
+            if(tl.getId() == todoListID) {
+                return tl;
+            }
+        }
+        return null;
     }
 
     /**
@@ -78,9 +90,9 @@ public class VolatileDatabase implements Database {
             throw new IllegalArgumentException();
         }
         // get the to-do list from the database.
-        TodoList list = database.get(todoListID);
-        if (list != null) {
-            list.addTask(task);
+        TodoList tl = getTodoList(todoListID);
+        if (tl != null) {
+            tl.addTask(task);
         }
     }
 
@@ -96,9 +108,9 @@ public class VolatileDatabase implements Database {
         if (todoListID == null || taskIndex == null) {
             throw new IllegalArgumentException();
         }
-        TodoList list = database.get(todoListID);
-        if (list != null) {
-            list.removeTask(taskIndex);
+        TodoList tl = getTodoList(todoListID);
+        if (tl != null) {
+            tl.removeTask(taskIndex);
         }
     }
 
@@ -114,21 +126,28 @@ public class VolatileDatabase implements Database {
         if (todoListID == null || taskIndex == null) {
             throw new IllegalArgumentException();
         }
-        TodoList list = database.get(todoListID);
-        if (list != null) {
-            return list.getTask(taskIndex);
+        TodoList tl = getTodoList(todoListID);
+        if (tl != null) {
+            return tl.getTask(taskIndex);
         }
         return null;
     }
 
     public void renameTask(UUID todoListID, Integer taskIndex, String newBody) {
-        TodoList list = database.get(todoListID);
-        if (list != null) {
-            list.renameTask(taskIndex, newBody);
+        TodoList tl = getTodoList(todoListID);
+        if (tl != null) {
+            tl.renameTask(taskIndex, newBody);
+        }
+    }
+
+    public void renameTodo(UUID todoListID, String newTitle) {
+        TodoList tl = getTodoList(todoListID);
+        if(tl != null) {
+            tl.setTitle(newTitle);
         }
     }
 
     public ArrayList<TodoList> getAllTodo() {
-        return new ArrayList<>(this.database.values());
+        return this.database;
     }
 }

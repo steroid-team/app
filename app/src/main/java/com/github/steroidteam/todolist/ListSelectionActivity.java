@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.github.steroidteam.todolist.todo.TodoList;
+import com.github.steroidteam.todolist.util.TodoAdapter;
 import com.github.steroidteam.todolist.util.TodoCollectionAdapter;
 
 import java.util.ArrayList;
@@ -50,7 +52,18 @@ public class ListSelectionActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        adapter = new TodoCollectionAdapter();
+        TodoCollectionAdapter.TodoHolder.TodoCustomListener customListener = new TodoCollectionAdapter.TodoHolder.TodoCustomListener() {
+            @Override
+            public void onClickCustom(TodoCollectionAdapter.TodoHolder holder) {
+                openTodoList(holder);
+            }
+
+            @Override
+            public void onLongClickCustom(TodoCollectionAdapter.TodoHolder holder) {
+                updateTodoListener(holder);
+            }
+        };
+        adapter = new TodoCollectionAdapter(customListener);
         recyclerView.setAdapter(adapter);
     }
 
@@ -59,13 +72,7 @@ public class ListSelectionActivity extends AppCompatActivity {
         AuthUI.getInstance().signOut(this).addOnCompleteListener(task -> thisActivity.finish());
     }
 
-    public void openTodoList(View view) {
-        View parentRow = (View) view.getParent();
-        final int position = recyclerView.getChildAdapterPosition(parentRow);
-
-        TodoCollectionAdapter.TodoHolder holder =
-                (TodoCollectionAdapter.TodoHolder) recyclerView.findViewHolderForAdapterPosition(position);
-
+    public void openTodoList(TodoCollectionAdapter.TodoHolder holder) {
         Intent itemViewActivity =
                 new Intent(ListSelectionActivity.this, ItemViewActivity.class);
         itemViewActivity.putExtra("id_todo_list", holder.getIdOfTodo());
@@ -94,5 +101,49 @@ public class ListSelectionActivity extends AppCompatActivity {
                 dialog.cancel();
         });
         titlePopup.show();
+    }
+
+    public void removeTodo(View view) {
+        View parentRow = (View) view.getParent();
+        final int position = recyclerView.getChildAdapterPosition(parentRow);
+
+        TodoCollectionAdapter.TodoHolder holder =
+                (TodoCollectionAdapter.TodoHolder) recyclerView.findViewHolderForAdapterPosition(position);
+        adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
+        if (holder != null) {
+            holder.closeUpdateLayout();
+        }
+        viewModel.removeTodo(holder.getIdOfTodo());
+    }
+
+    public void updateTodo(View view) {
+        View parentRow = (View) view.getParent();
+        final int position = recyclerView.getChildAdapterPosition(parentRow);
+
+        TodoCollectionAdapter.TodoHolder holder =
+                (TodoCollectionAdapter.TodoHolder) recyclerView.findViewHolderForAdapterPosition(position);
+        adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
+        if (holder != null) {
+            holder.closeUpdateLayout();
+            viewModel.renameTodo(holder.getIdOfTodo(), holder.getUserInput());
+        }
+    }
+
+    public void updateTodoListener(TodoCollectionAdapter.TodoHolder holder) {
+        final int position = holder.getAdapterPosition();
+
+        Integer currentlyDisplayed = adapter.getCurrentlyDisplayedUpdateLayoutPos();
+
+        if (currentlyDisplayed != null) {
+            TodoCollectionAdapter.TodoHolder currentHolder =
+                    (TodoCollectionAdapter.TodoHolder)
+                            recyclerView.findViewHolderForAdapterPosition(currentlyDisplayed);
+            currentHolder.closeUpdateLayout();
+            adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
+        }
+        if (holder != null) {
+            adapter.setCurrentlyDisplayedUpdateLayoutPos(position);
+            holder.displayUpdateLayout();
+        }
     }
 }

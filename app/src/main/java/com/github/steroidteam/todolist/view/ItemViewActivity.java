@@ -1,7 +1,6 @@
-package com.github.steroidteam.todolist;
+package com.github.steroidteam.todolist.view;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,7 +13,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.github.steroidteam.todolist.util.TodoAdapter;
+import com.github.steroidteam.todolist.viewmodel.ItemViewModel;
+import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
 
 import java.util.UUID;
 

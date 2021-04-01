@@ -1,10 +1,9 @@
 package com.github.steroidteam.todolist;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
-import com.github.steroidteam.todolist.database.TodoRepository;
-import com.github.steroidteam.todolist.todo.TodoList;
+import com.github.steroidteam.todolist.model.TodoRepository;
+import com.github.steroidteam.todolist.model.todo.TodoList;
 
 import org.junit.Test;
 

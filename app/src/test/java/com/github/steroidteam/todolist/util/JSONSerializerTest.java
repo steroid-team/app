@@ -1,7 +1,7 @@
 package com.github.steroidteam.todolist.util;
 
-import com.github.steroidteam.todolist.todo.Task;
-import com.github.steroidteam.todolist.todo.TodoList;
+import com.github.steroidteam.todolist.model.todo.Task;
+import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.google.gson.JsonSyntaxException;
 
 import org.junit.Test;

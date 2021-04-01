@@ -1,4 +1,4 @@
-package com.github.steroidteam.todolist;
+package com.github.steroidteam.todolist.view;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,7 +7,8 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
-import android.widget.TextView;
+
+import com.github.steroidteam.todolist.R;
 
 import java.util.UUID;
 

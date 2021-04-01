@@ -1,6 +1,6 @@
 package com.github.steroidteam.todolist;
 
-import com.github.steroidteam.todolist.notes.Note;
+import com.github.steroidteam.todolist.model.notes.Note;
 
 import org.junit.Test;
 

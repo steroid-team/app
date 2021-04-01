@@ -1,9 +1,7 @@
 package com.github.steroidteam.todolist.database;
 
-import com.github.steroidteam.todolist.database.DatabaseException;
-import com.github.steroidteam.todolist.database.VolatileDatabase;
-import com.github.steroidteam.todolist.todo.Task;
-import com.github.steroidteam.todolist.todo.TodoList;
+import com.github.steroidteam.todolist.model.todo.Task;
+import com.github.steroidteam.todolist.model.todo.TodoList;
 
 import org.junit.Test;
 

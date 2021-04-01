@@ -1,4 +1,4 @@
-package com.github.steroidteam.todolist;
+package com.github.steroidteam.todolist.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +13,8 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.github.steroidteam.todolist.notes.Note;
+import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.model.notes.Note;
 
 import java.util.ArrayList;
 

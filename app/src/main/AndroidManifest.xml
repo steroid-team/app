@@ -10,15 +10,15 @@
         android:supportsRtl="true"
 
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".ListSelectionActivity">
+        <activity android:name=".view.ListSelectionActivity">
         </activity>
-        <activity android:name=".NoteDisplayActivity"
-            android:parentActivityName=".NoteSelectionActivity" />
-        <activity android:name=".NoteSelectionActivity" />
+        <activity android:name=".view.NoteDisplayActivity"
+            android:parentActivityName=".view.NoteSelectionActivity" />
+        <activity android:name=".view.NoteSelectionActivity" />
         <activity
-            android:name=".ItemViewActivity"
-            android:parentActivityName=".MainActivity"></activity>
-        <activity android:name=".MainActivity">
+            android:name=".view.ItemViewActivity"
+            android:parentActivityName=".view.MainActivity"></activity>
+        <activity android:name=".view.MainActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

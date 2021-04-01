@@ -6,6 +6,10 @@ import androidx.test.espresso.intent.matcher.IntentMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.github.steroidteam.todolist.view.ListSelectionActivity;
+import com.github.steroidteam.todolist.view.NoteDisplayActivity;
+import com.github.steroidteam.todolist.view.NoteSelectionActivity;
+
 import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;

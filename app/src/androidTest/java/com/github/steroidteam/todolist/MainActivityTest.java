@@ -7,9 +7,10 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.github.steroidteam.todolist.view.MainActivity;
+
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.*;
 
 
 import org.junit.Rule;

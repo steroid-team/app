@@ -1,7 +1,4 @@
-package com.github.steroidteam.todolist.todo;
-
-import com.github.steroidteam.todolist.todo.Task;
-import com.github.steroidteam.todolist.todo.TodoList;
+package com.github.steroidteam.todolist.model.todo;
 
 import org.junit.Test;
 

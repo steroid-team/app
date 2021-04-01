@@ -1,30 +1,23 @@
 package com.github.steroidteam.todolist.database;
 
 import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
-import com.github.steroidteam.todolist.todo.Task;
-import com.github.steroidteam.todolist.todo.TodoList;
+import com.github.steroidteam.todolist.model.todo.Task;
+import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.util.JSONSerializer;
-import com.google.android.gms.tasks.RuntimeExecutionException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyByte;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;

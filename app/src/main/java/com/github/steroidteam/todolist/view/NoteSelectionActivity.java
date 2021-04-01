@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.notes.Note;
@@ -85,9 +86,10 @@ public class NoteSelectionActivity extends AppCompatActivity {
                                 .inflate(R.layout.layout_note_item, parent, false);
             }
 
-            TextView noteView = convertView.findViewById(R.id.layout_note_textview);
-            noteView.setText(note.getTitle());
+            TextView noteViewTitle = convertView.findViewById(R.id.layout_note_title);
+            noteViewTitle.setText(note.getTitle());
 
+            ConstraintLayout noteView = convertView.findViewById(R.id.layout_note);
             noteView.setOnClickListener(
                     (view) -> {
                         // Note note1 = (Note) view.getTag();

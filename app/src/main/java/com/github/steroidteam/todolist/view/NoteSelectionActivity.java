@@ -8,14 +8,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.notes.Note;
-
 import java.util.ArrayList;
 
 public class NoteSelectionActivity extends AppCompatActivity {

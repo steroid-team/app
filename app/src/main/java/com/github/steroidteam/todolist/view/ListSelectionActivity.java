@@ -12,6 +12,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.firebase.ui.auth.AuthUI;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.todo.TodoList;
@@ -100,9 +102,10 @@ public class ListSelectionActivity extends AppCompatActivity {
                                 .inflate(R.layout.layout_todo_list_item, parent, false);
             }
 
-            TextView todoListView = convertView.findViewById(R.id.layout_todo_list_text);
-            todoListView.setText(todoList.getTitle());
+            TextView todoListViewTitle = convertView.findViewById(R.id.layout_todo_list_text);
+            todoListViewTitle.setText(todoList.getTitle());
 
+            ConstraintLayout todoListView = convertView.findViewById(R.id.layout_todo_list);
             todoListView.setOnLongClickListener(
                     view -> {
                         createRenameAlert(todoList);

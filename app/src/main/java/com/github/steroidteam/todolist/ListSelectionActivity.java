@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import androidx.appcompat.app.ActionBar;
@@ -86,9 +87,13 @@ public class ListSelectionActivity extends AppCompatActivity {
     public void addTodoList(View view) {
         AlertDialog.Builder titlePopup = new AlertDialog.Builder(this);
         titlePopup.setTitle("Enter the title of your to-do list");
-        final EditText titleInput = new EditText(this);
-        titleInput.setInputType(InputType.TYPE_CLASS_TEXT);
-        titlePopup.setView(titleInput);
+
+        LayoutInflater inflater = LayoutInflater.from(this.getApplicationContext());
+        View user_input = inflater.inflate(R.layout.alert_dialog_input, null);
+
+        final EditText titleInput = user_input.findViewById(R.id.alert_dialog_edit_text);
+        titlePopup.setView(user_input);
+
         titlePopup.setPositiveButton(
                 "Create",
                 (DialogInterface dialog, int which) -> {

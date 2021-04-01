@@ -5,7 +5,7 @@
         <item name="colorPrimary">@color/dark_blue</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="android:background">@color/light_grey</item>
+        <item name="android:background">@color/bg_grey</item>
         <!-- Status bar color. -->
         <!-- Customize your theme here. -->
         <item name="android:textViewStyle">@style/NunitoTextViewStyle</item>
@@ -29,7 +29,7 @@
         <item name="android:textColor">@color/dark_blue</item>
     </style>
     <style name="TaskEntryCheckbox">
-        <item name="android:buttonTint">@color/dark_grey</item>
+        <item name="android:buttonTint">@color/light_grey</item>
     </style>
     <style name="TaskEntryText">
         <item name="android:fontFamily">@font/nunitosans_semibold</item>

@@ -8,11 +8,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.notes.Note;
+
 import java.util.ArrayList;
 
 public class NoteSelectionActivity extends AppCompatActivity {
@@ -25,10 +27,6 @@ public class NoteSelectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_selection);
-
-        Toolbar toolbar = findViewById(R.id.activity_noteselection_toolbar);
-        setSupportActionBar(toolbar);
-        setTitle("My notes");
 
         // Filler
         ArrayList<Note> notes = new ArrayList<>();

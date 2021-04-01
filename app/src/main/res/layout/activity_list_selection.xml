@@ -87,6 +87,7 @@
         app:backgroundTint="@color/dark_blue"
         app:elevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@string/new_list_btn_description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_add"
+        android:title="@string/add_media_btn"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_share"
+        android:title="@string/share_btn"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_change_type"
+        android:title="@string/change_type_btn"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_delete"
+        android:title="@string/delete_btn"
+        app:showAsAction="ifRoom" />
+</menu>

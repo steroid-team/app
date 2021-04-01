@@ -4,9 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class TodoRepository {
@@ -59,7 +57,7 @@ public class TodoRepository {
     }
 
     public LiveData<ArrayList<TodoList>> getAllTodo() {
-        if(allTodo == null) {
+        if (allTodo == null) {
             allTodo = new MutableLiveData<>(this.database.getAllTodo());
         }
         return allTodo;

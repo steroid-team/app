@@ -8,19 +8,14 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.firebase.ui.auth.AuthUI;
 import com.github.steroidteam.todolist.todo.TodoList;
-import com.github.steroidteam.todolist.util.TodoAdapter;
 import com.github.steroidteam.todolist.util.TodoCollectionAdapter;
-
 import java.util.ArrayList;
 
 public class ListSelectionActivity extends AppCompatActivity {
@@ -28,7 +23,6 @@ public class ListSelectionActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TodoCollectionAdapter adapter;
     private ListSelectionViewModel viewModel;
-
 
     private ArrayList<TodoList> todoLists;
 
@@ -43,26 +37,31 @@ public class ListSelectionActivity extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
 
         viewModel = new ListSelectionViewModel(this.getApplication());
-        viewModel.getListOfTodo().observe(this, (listOfTodo) -> {
-            adapter.setTodoListCollection(listOfTodo);
-        });
+        viewModel
+                .getListOfTodo()
+                .observe(
+                        this,
+                        (listOfTodo) -> {
+                            adapter.setTodoListCollection(listOfTodo);
+                        });
 
         recyclerView = findViewById(R.id.activity_list_selection_itemlist);
         // Set layout manager
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        TodoCollectionAdapter.TodoHolder.TodoCustomListener customListener = new TodoCollectionAdapter.TodoHolder.TodoCustomListener() {
-            @Override
-            public void onClickCustom(TodoCollectionAdapter.TodoHolder holder) {
-                openTodoList(holder);
-            }
+        TodoCollectionAdapter.TodoHolder.TodoCustomListener customListener =
+                new TodoCollectionAdapter.TodoHolder.TodoCustomListener() {
+                    @Override
+                    public void onClickCustom(TodoCollectionAdapter.TodoHolder holder) {
+                        openTodoList(holder);
+                    }
 
-            @Override
-            public void onLongClickCustom(TodoCollectionAdapter.TodoHolder holder) {
-                updateTodoListener(holder);
-            }
-        };
+                    @Override
+                    public void onLongClickCustom(TodoCollectionAdapter.TodoHolder holder) {
+                        updateTodoListener(holder);
+                    }
+                };
         adapter = new TodoCollectionAdapter(customListener);
         recyclerView.setAdapter(adapter);
     }
@@ -73,8 +72,7 @@ public class ListSelectionActivity extends AppCompatActivity {
     }
 
     public void openTodoList(TodoCollectionAdapter.TodoHolder holder) {
-        Intent itemViewActivity =
-                new Intent(ListSelectionActivity.this, ItemViewActivity.class);
+        Intent itemViewActivity = new Intent(ListSelectionActivity.this, ItemViewActivity.class);
         itemViewActivity.putExtra("id_todo_list", holder.getIdOfTodo());
         startActivity(itemViewActivity);
     }
@@ -91,15 +89,19 @@ public class ListSelectionActivity extends AppCompatActivity {
         final EditText titleInput = new EditText(this);
         titleInput.setInputType(InputType.TYPE_CLASS_TEXT);
         titlePopup.setView(titleInput);
-        titlePopup.setPositiveButton("Create", (DialogInterface dialog, int which) -> {
-                String title = titleInput.getText().toString();
-                if(title.length() > 0) viewModel.addTodo(title);
-                titleInput.getText().clear();
-                dialog.cancel();
-        });
-        titlePopup.setNegativeButton("Cancel", (DialogInterface dialog, int which) -> {
-                dialog.cancel();
-        });
+        titlePopup.setPositiveButton(
+                "Create",
+                (DialogInterface dialog, int which) -> {
+                    String title = titleInput.getText().toString();
+                    if (title.length() > 0) viewModel.addTodo(title);
+                    titleInput.getText().clear();
+                    dialog.cancel();
+                });
+        titlePopup.setNegativeButton(
+                "Cancel",
+                (DialogInterface dialog, int which) -> {
+                    dialog.cancel();
+                });
         titlePopup.show();
     }
 
@@ -108,7 +110,8 @@ public class ListSelectionActivity extends AppCompatActivity {
         final int position = recyclerView.getChildAdapterPosition(parentRow);
 
         TodoCollectionAdapter.TodoHolder holder =
-                (TodoCollectionAdapter.TodoHolder) recyclerView.findViewHolderForAdapterPosition(position);
+                (TodoCollectionAdapter.TodoHolder)
+                        recyclerView.findViewHolderForAdapterPosition(position);
         adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
         if (holder != null) {
             holder.closeUpdateLayout();
@@ -121,7 +124,8 @@ public class ListSelectionActivity extends AppCompatActivity {
         final int position = recyclerView.getChildAdapterPosition(parentRow);
 
         TodoCollectionAdapter.TodoHolder holder =
-                (TodoCollectionAdapter.TodoHolder) recyclerView.findViewHolderForAdapterPosition(position);
+                (TodoCollectionAdapter.TodoHolder)
+                        recyclerView.findViewHolderForAdapterPosition(position);
         adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
         if (holder != null) {
             holder.closeUpdateLayout();

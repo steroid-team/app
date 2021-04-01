@@ -58,7 +58,7 @@ public class TodoList {
 
     public void renameTask(int index, String newBody) {
         Task task = list.get(index);
-        if(task!=null) {
+        if (task != null) {
             task.setBody(newBody);
         }
     }

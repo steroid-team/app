@@ -2,11 +2,7 @@ package com.github.steroidteam.todolist.database;
 
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -47,8 +43,8 @@ public class VolatileDatabase implements Database {
             throw new IllegalArgumentException();
         }
 
-        for(int i = 0; i < database.size(); ++i) {
-            if(database.get(i).getId() == id) {
+        for (int i = 0; i < database.size(); ++i) {
+            if (database.get(i).getId() == id) {
                 database.remove(i);
                 i = database.size();
             }
@@ -67,9 +63,9 @@ public class VolatileDatabase implements Database {
             throw new IllegalArgumentException();
         }
         TodoList tl;
-        for(int i = 0; i < database.size(); ++i) {
+        for (int i = 0; i < database.size(); ++i) {
             tl = database.get(i);
-            if(tl.getId() == todoListID) {
+            if (tl.getId() == todoListID) {
                 return tl;
             }
         }
@@ -142,7 +138,7 @@ public class VolatileDatabase implements Database {
 
     public void renameTodo(UUID todoListID, String newTitle) {
         TodoList tl = getTodoList(todoListID);
-        if(tl != null) {
+        if (tl != null) {
             tl.setTitle(newTitle);
         }
     }

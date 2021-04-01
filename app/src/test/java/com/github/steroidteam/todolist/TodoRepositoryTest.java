@@ -1,11 +1,10 @@
 package com.github.steroidteam.todolist;
 
-import androidx.lifecycle.LiveData;
-
-import com.github.steroidteam.todolist.model.TodoRepository;
-import com.github.steroidteam.todolist.model.todo.TodoList;
 import static org.junit.Assert.*;
 
+import androidx.lifecycle.LiveData;
+import com.github.steroidteam.todolist.model.TodoRepository;
+import com.github.steroidteam.todolist.model.todo.TodoList;
 import org.junit.Test;
 
 public class TodoRepositoryTest {

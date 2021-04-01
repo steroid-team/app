@@ -2,7 +2,6 @@ package com.github.steroidteam.todolist.database;
 
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

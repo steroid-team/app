@@ -10,7 +10,6 @@ import com.firebase.ui.auth.IdpResponse;
 import com.github.steroidteam.todolist.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import java.util.Arrays;
 import java.util.List;
 

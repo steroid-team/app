@@ -3,12 +3,10 @@ package com.github.steroidteam.todolist.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
-
-import com.github.steroidteam.todolist.R;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import com.github.steroidteam.todolist.R;
 import java.util.UUID;
 
 public class NoteDisplayActivity extends AppCompatActivity {

@@ -1,13 +1,11 @@
 package com.github.steroidteam.todolist.database;
 
-import com.github.steroidteam.todolist.model.todo.Task;
-import com.github.steroidteam.todolist.model.todo.TodoList;
-
-import org.junit.Test;
-
 import static org.junit.Assert.*;
 
+import com.github.steroidteam.todolist.model.todo.Task;
+import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.UUID;
+import org.junit.Test;
 
 public class VolatileDatabaseTest {
 

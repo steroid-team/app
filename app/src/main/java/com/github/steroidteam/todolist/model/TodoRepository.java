@@ -2,11 +2,9 @@ package com.github.steroidteam.todolist.model;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.github.steroidteam.todolist.database.VolatileDatabase;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-
 import java.util.UUID;
 
 public class TodoRepository {

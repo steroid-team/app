@@ -33,6 +33,12 @@ I think overall this week was fine, I might work some more these vacations to ca
 
 ## Sydney
 
+To be honest I didn't have much time this week to devote to SDP and to work in time as well before the weekly meeting. 
+I still managed to review a few PRs : #83, #86 and #113. Some teammates were expressing worries about writing test code and proposed my help if needed.
+Tasks this week required more work than expected because I realized that they were dependent on issue #69, which in the end I decided to work on myself in order to finish. Since my assigned tasks required integrating lots of pieces of the app together I had to wait on others to finish their code refactoring.
+
+Some additionnal communication and upfront preparation will be needed in the next sprints.
+
 ## Overall team
 
 It was a great week. we have now a great structure (MVVM) for our app and we just kept adding new features. We also focus on sensor usages. This is not fully covered but we made some really good progress in it, and I think in maybe two sprints, all the requirements about sensor usage will be done. With the work of Yago, we also improved a lot the user experience, with a wonderful design.

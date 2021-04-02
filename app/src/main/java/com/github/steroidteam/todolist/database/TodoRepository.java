@@ -2,10 +2,8 @@ package com.github.steroidteam.todolist.database;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
-
 import java.util.UUID;
 
 public class TodoRepository {
@@ -19,7 +17,6 @@ public class TodoRepository {
     // of the todoList in the item view model.
     public UUID id;
     // ========================= END
-
 
     public TodoRepository() {
         this.database = new VolatileDatabase();
@@ -36,7 +33,7 @@ public class TodoRepository {
     }
 
     public LiveData<TodoList> getTodoList(UUID todoListID) {
-        if(oneTodoList==null) {
+        if (oneTodoList == null) {
             oneTodoList = new MutableLiveData<TodoList>(this.database.getTodoList(todoListID));
         }
         return this.oneTodoList;

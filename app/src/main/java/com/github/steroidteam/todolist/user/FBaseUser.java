@@ -1,12 +1,9 @@
 package com.github.steroidteam.todolist.user;
 
-import androidx.annotation.NonNull;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-
 import java.util.ArrayList;
 
 public class FBaseUser implements User {
@@ -20,9 +17,10 @@ public class FBaseUser implements User {
     public FBaseUser(FirebaseAuth auth) {
         stateListeners = new ArrayList<>();
         this.auth = auth;
-        auth.addAuthStateListener(firebaseAuth -> {
-            notifiyListeners();
-        });
+        auth.addAuthStateListener(
+                firebaseAuth -> {
+                    notifiyListeners();
+                });
     }
 
     @Override
@@ -63,17 +61,15 @@ public class FBaseUser implements User {
             throws UserLoginException {
         FirebaseUser user = auth.getCurrentUser();
         checkUserIsLoggedIn(user);
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(newDisplayName)
-                .build();
+        UserProfileChangeRequest profileUpdates =
+                new UserProfileChangeRequest.Builder().setDisplayName(newDisplayName).build();
 
-        user.updateProfile(profileUpdates)
-                .addOnCompleteListener(onComplete);
+        user.updateProfile(profileUpdates).addOnCompleteListener(onComplete);
     }
 
     @Override
     public void updateEmail(String newEmail, OnCompleteListener<Void> onComplete)
-            throws UserLoginException{
+            throws UserLoginException {
         FirebaseUser user = auth.getCurrentUser();
         checkUserIsLoggedIn(user);
         user.updateEmail(newEmail).addOnCompleteListener(onComplete);
@@ -116,7 +112,7 @@ public class FBaseUser implements User {
     @Override
     public void reauthenticate(OnCompleteListener<Void> onComplete) {
         /* TODO : this is tricky. There are multiple providers :
-        *  Google, Facebook for example, email... */
+         *  Google, Facebook for example, email... */
     }
 
     @Override
@@ -135,12 +131,11 @@ public class FBaseUser implements User {
     }
 
     private void checkUserIsLoggedIn(FirebaseUser user) throws UserLoginException {
-        if (user == null)
-            throw new UserLoginException("User is not logged in");
+        if (user == null) throw new UserLoginException("User is not logged in");
     }
 
     private void notifiyListeners() {
-        for (UserStateListener listener: stateListeners) {
+        for (UserStateListener listener : stateListeners) {
             listener.onStateChanged(this);
         }
     }

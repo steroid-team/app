@@ -93,10 +93,7 @@ public class ItemViewActivityTest {
 
             onView(withId(R.id.new_task_btn)).perform(click());
 
-            // Try to remove the first task
-            onView(withId(R.id.activity_itemview_itemlist))
-                    .perform(actionOnItemAtPosition(0, longClick()));
-
+            // Modify a task's body.
             onView(withId(R.id.activity_itemview_itemlist))
                     .perform(actionOnItemAtPosition(0, typeText(" !")));
             onView(withId(R.id.activity_itemview_itemlist))

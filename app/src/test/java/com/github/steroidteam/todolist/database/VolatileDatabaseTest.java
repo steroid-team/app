@@ -159,6 +159,7 @@ public class VolatileDatabaseTest {
     public void renameTaskWorks() {
         TodoList todo = new TodoList("A title!");
         Task task = new Task("A body!");
+        todo.addTask(task);
         VolatileDatabase database = new VolatileDatabase();
         database.putTodoList(todo);
         database.renameTask(UUID.randomUUID(), 0, "new body");

@@ -1,4 +1,4 @@
-package com.github.steroidteam.todolist;
+package com.github.steroidteam.todolist.view;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import com.github.steroidteam.todolist.notes.Note;
+import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.model.notes.Note;
 import java.util.ArrayList;
 
 public class NoteSelectionActivity extends AppCompatActivity {

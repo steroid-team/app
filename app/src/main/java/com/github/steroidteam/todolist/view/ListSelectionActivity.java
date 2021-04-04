@@ -1,4 +1,4 @@
-package com.github.steroidteam.todolist;
+package com.github.steroidteam.todolist.view;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,7 +13,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.firebase.ui.auth.AuthUI;
-import com.github.steroidteam.todolist.todo.TodoList;
+import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.github.steroidteam.todolist.notes;
+package com.github.steroidteam.todolist.model.notes;
 
 import androidx.annotation.NonNull;
 import java.util.UUID;

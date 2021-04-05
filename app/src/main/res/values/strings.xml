@@ -4,9 +4,6 @@
     <string name="task_creation_placeholder">Do something great</string>
     <string name="add_todo">Add todo</string>
     <string name="login_failure_msg">Log in failed. Try again.</string>
-    <string name="categories_btn">Categories</string>
-    <string name="search_btn">Search</string>
-    <string name="sort_btn">Sort</string>
     <string name="todo_list_fixture1_title">Daily todo</string>
     <string name="todo_list_fixture2_title">Homework</string>
     <string name="todo_list_fixture3_title">Shopping list</string>
@@ -18,4 +15,12 @@
     <string name="log_in">Log in</string>
     <string name="welcome_log_in_msg">Welcome ! Please log in.</string>
     <string name="task_edit_hint">Your task…</string>
+    <string name="list_activity_title">My lists</string>
+    <string name="new_task">New task</string>
+    <string name="note_activity_title">My notes</string>
+    <string name="search_btn_description">Search</string>
+    <string name="back_btn_description">Back</string>
+    <string name="new_list_btn_description">Add a new list</string>
+    <string name="date_placeholder">xx/yy aa:bb</string>
+    <string name="note_date_placeholder">Day, Nth Month YEAR</string>
 </resources>

@@ -1,17 +1,17 @@
-package com.github.steroidteam.todolist;
+package com.github.steroidteam.todolist.view;
 
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.github.steroidteam.todolist.util.TodoAdapter;
+import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
+import com.github.steroidteam.todolist.viewmodel.ItemViewModel;
 import java.util.UUID;
 
 public class ItemViewActivity extends AppCompatActivity {
@@ -25,10 +25,9 @@ public class ItemViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_view);
 
-        Toolbar toolbar = findViewById(R.id.activity_itemview_toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
+        // Add a click listener to the "back" button to return to the previous activity.
+        ImageButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener((view) -> finish());
 
         // Instantiate the view model.
         // random UUID because we don't have persistent memory !
@@ -50,6 +49,10 @@ public class ItemViewActivity extends AppCompatActivity {
                 .observe(
                         this,
                         (todoList) -> {
+                            // Change the activity's title.
+                            TextView activityTitle = findViewById(R.id.activity_title);
+                            activityTitle.setText(todoList.getTitle());
+
                             adapter.setTodoList(todoList);
                         });
 
@@ -60,13 +63,6 @@ public class ItemViewActivity extends AppCompatActivity {
 
         this.adapter = new TodoAdapter(this::updateTaskListener);
         this.recyclerView.setAdapter(this.adapter);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_items, menu);
-        return true;
     }
 
     public void addTask(View view) {

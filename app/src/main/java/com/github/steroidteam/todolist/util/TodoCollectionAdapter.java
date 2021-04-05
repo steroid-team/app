@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
-import com.github.steroidteam.todolist.todo.TodoList;
+import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.ArrayList;
 import java.util.UUID;
 

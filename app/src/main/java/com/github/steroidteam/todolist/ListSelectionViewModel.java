@@ -4,8 +4,8 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import com.github.steroidteam.todolist.database.TodoRepository;
-import com.github.steroidteam.todolist.todo.TodoList;
+import com.github.steroidteam.todolist.model.TodoRepository;
+import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.ArrayList;
 import java.util.UUID;
 

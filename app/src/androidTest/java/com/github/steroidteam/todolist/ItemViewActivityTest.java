@@ -28,6 +28,7 @@ import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import com.github.steroidteam.todolist.view.ItemViewActivity;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -92,10 +93,7 @@ public class ItemViewActivityTest {
 
             onView(withId(R.id.new_task_btn)).perform(click());
 
-            // Try to remove the first task
-            onView(withId(R.id.activity_itemview_itemlist))
-                    .perform(actionOnItemAtPosition(0, longClick()));
-
+            // Modify a task's body.
             onView(withId(R.id.activity_itemview_itemlist))
                     .perform(actionOnItemAtPosition(0, typeText(" !")));
             onView(withId(R.id.activity_itemview_itemlist))

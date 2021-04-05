@@ -1,47 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/layout_todo_list_text"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_todo_list"
+        style="@style/SelectionList.Entry"
         android:layout_width="0dp"
-        android:layout_height="55dp"
-        android:layout_marginTop="7sp"
-        android:layout_marginEnd="7sp"
-        android:layout_weight="1"
-        android:fontFamily="sans-serif-black"
-        android:textSize="24sp" />
-
-    <EditText
-        android:id="@+id/layout_todo_list_edit_text"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="80dp"
-        android:fontFamily="sans-serif-black"
-        android:textSize="24sp"
-        android:ellipsize="end"
-        android:background="@null"
-        android:text=""
-        android:hint="@string/task_edit_hint"
-        android:inputType="text"
-        android:maxLines="1"
-        android:visibility="gone"
-        android:importantForAutofill="no" />
+        android:layout_weight="1">
 
-    <Button
-        android:id="@+id/layout_todo_list_save_modif"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:onClick="updateTodo"
-        android:background="@color/green"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/layout_todo_list_text"
+            style="@style/SelectionList.Entry.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/layout_todo_list_delete_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@color/red"
-        android:onClick="removeTodo"
-        android:visibility="gone" />
+        <EditText
+            android:id="@+id/layout_todo_list_edit_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="80dp"
+            android:fontFamily="sans-serif-black"
+            android:textSize="24sp"
+            android:ellipsize="end"
+            android:background="@null"
+            android:text=""
+            android:hint="@string/task_edit_hint"
+            android:inputType="text"
+            android:maxLines="1"
+            android:visibility="gone"
+            android:importantForAutofill="no"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <Button
+            android:id="@+id/layout_todo_list_save_modif"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:onClick="updateTodo"
+            android:background="@color/green"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <Button
+            android:id="@+id/layout_todo_list_delete_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@color/red"
+            android:onClick="removeTodo"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </LinearLayout>

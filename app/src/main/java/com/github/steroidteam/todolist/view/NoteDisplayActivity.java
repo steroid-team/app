@@ -1,11 +1,12 @@
-package com.github.steroidteam.todolist;
+package com.github.steroidteam.todolist.view;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
-import androidx.appcompat.app.ActionBar;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import com.github.steroidteam.todolist.R;
 import java.util.UUID;
 
 public class NoteDisplayActivity extends AppCompatActivity {
@@ -15,15 +16,16 @@ public class NoteDisplayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_display);
 
-        Toolbar toolbar = findViewById(R.id.activity_notedisplay_toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
+        // Add a click listener to the "back" button to return to the previous activity.
+        ImageButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener((view) -> finish());
 
         Intent intent = getIntent();
         UUID id = UUID.fromString(intent.getStringExtra(NoteSelectionActivity.EXTRA_NOTE_ID));
 
-        setTitle("Lorem ipsum");
+        TextView noteTitle = findViewById(R.id.note_title);
+        noteTitle.setText("Lorem ipsum");
+
         EditText view = findViewById(R.id.activity_notedisplay_edittext);
         view.setText(
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"

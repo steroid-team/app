@@ -31,7 +31,7 @@
         android:layout_height="30dp"
         android:layout_alignParentEnd="true"
         android:layout_centerInParent="true"
-        android:background="@color/red"
+        style="@style/TaskDeleteButtonInRecyclerView"
         android:onClick="removeTask"
         android:visibility="gone" />
 </RelativeLayout>

@@ -53,9 +53,11 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
         if (currentTask.isDone()) {
             holder.taskBody.setTextColor(Color.LTGRAY);
+            holder.taskBody.setPaintFlags(holder.taskBody.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.displayDeleteButton();
         } else {
             holder.taskBody.setTextColor(Color.DKGRAY);
+            holder.taskBody.setPaintFlags(0);
             holder.hideDeleteButton();
         }
     }

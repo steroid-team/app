@@ -1,14 +1,19 @@
 package com.github.steroidteam.todolist.view.adapter;
 
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
@@ -27,20 +32,28 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
     @NonNull
     @Override
     public TaskHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView =
+        View layoutNotDone =
                 LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.layout_task_item, parent, false);
-        return new TaskHolder(itemView);
+        return new TaskHolder(layoutNotDone);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TaskHolder holder, int position) {
-        Task currentTask = todoList.getTask(position);
-        holder.taskBody.setText(currentTask.getBody());
-        // Need to add the getChecked in Task class
-        // holder.taskBox.set(currentTask.getChecked())
 
-        holder.itemView.setOnClickListener(v -> listener.onClickCustom(position));
+        System.out.println("position: " + position + " adapter: " + holder.getAdapterPosition() + " layout: " + holder.getLayoutPosition());
+
+        Task currentTask = todoList.getTask(position);
+
+        holder.taskBody.setText(currentTask.getBody());
+        holder.taskBox.setChecked(currentTask.isDone());
+
+
+        if (currentTask.isDone()) {
+            holder.taskBody.setTextColor(Color.LTGRAY);
+        } else {
+            holder.taskBody.setTextColor(Color.DKGRAY);
+        }
     }
 
     @Override
@@ -66,6 +79,8 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
     public interface TaskCustomListener {
         void onClickCustom(int position);
+
+        void onCheckedChangedCustom(int position, boolean isChecked);
     }
 
     public class TaskHolder extends RecyclerView.ViewHolder {
@@ -83,6 +98,20 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
             taskDelete = itemView.findViewById(R.id.layout_task_delete_button);
             inputText = itemView.findViewById(R.id.layout_task_edit_text);
             btn_save = itemView.findViewById(R.id.layout_task_save_modif);
+
+            itemView.setOnClickListener((v) -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    listener.onClickCustom(getAdapterPosition());
+                }
+            });
+
+            taskBox.setOnClickListener((v) -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    listener.onCheckedChangedCustom(getAdapterPosition(), taskBox.isChecked());
+                }
+            });
         }
 
         public void displayUpdateLayout() {

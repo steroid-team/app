@@ -61,7 +61,17 @@ public class ItemViewActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        this.adapter = new TodoAdapter(this::updateTaskListener);
+        this.adapter = new TodoAdapter(new TodoAdapter.TaskCustomListener() {
+            @Override
+            public void onClickCustom(int position) {
+                updateTaskListener(position);
+            }
+
+            @Override
+            public void onCheckedChangedCustom(int position, boolean isChecked) {
+                checkBoxTaskListener(position, isChecked);
+            }
+        });
         this.recyclerView.setAdapter(this.adapter);
     }
 
@@ -117,7 +127,7 @@ public class ItemViewActivity extends AppCompatActivity {
         if (currentlyDisplayed != null) {
             TodoAdapter.TaskHolder currentHolder =
                     (TodoAdapter.TaskHolder)
-                            recyclerView.findViewHolderForAdapterPosition(currentlyDisplayed);
+                            recyclerView.findViewHolderForLayoutPosition(currentlyDisplayed);
             currentHolder.closeUpdateLayout();
             adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
         }
@@ -125,5 +135,12 @@ public class ItemViewActivity extends AppCompatActivity {
             adapter.setCurrentlyDisplayedUpdateLayoutPos(position);
             holder.displayUpdateLayout();
         }
+    }
+
+    public void checkBoxTaskListener(final int position, final boolean isChecked) {
+        TodoAdapter.TaskHolder holder =
+                (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
+
+        model.setTaskDone(position, isChecked);
     }
 }

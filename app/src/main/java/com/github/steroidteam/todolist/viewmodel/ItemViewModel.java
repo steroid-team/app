@@ -44,4 +44,8 @@ public class ItemViewModel extends AndroidViewModel {
     public void renameTask(int index, String newBody) {
         repository.renameTask(todoListID, index, newBody);
     }
+
+    public void setTaskDone(int index, boolean isDone) {
+        repository.setTaskDone(todoListID, index, isDone);
+    }
 }

@@ -86,6 +86,19 @@ public class ItemViewActivity extends AppCompatActivity {
         newTaskET.getText().clear();
     }
 
+    public void removeTask(View view) {
+        View parentRow = (View) view.getParent();
+        RecyclerView recycler = (RecyclerView) parentRow.getParent();
+        final int position = recycler.getChildAdapterPosition(parentRow);
+
+        viewModel.removeTask(position);
+        Toast.makeText(
+                getApplicationContext(),
+                "Successfully removed the task !",
+                Toast.LENGTH_LONG)
+                .show();
+    }
+
     public void closeUpdateLayout(View view) {
         RelativeLayout updateLayout = findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.GONE);

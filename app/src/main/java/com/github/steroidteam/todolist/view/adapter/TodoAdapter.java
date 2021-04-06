@@ -75,14 +75,6 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         notifyDataSetChanged();
     }
 
-    public Integer getCurrentlyDisplayedUpdateLayoutPos() {
-        return this.currentlyDisplayedUpdateLayoutPos;
-    }
-
-    public void setCurrentlyDisplayedUpdateLayoutPos(Integer currentlyDisplayedUpdateLayoutPos) {
-        this.currentlyDisplayedUpdateLayoutPos = currentlyDisplayedUpdateLayoutPos;
-    }
-
     public interface TaskCustomListener {
         void onClickCustom(TaskHolder holder, int position);
         //void onFocusChangedCustom(int position, boolean hasFocus);

@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
@@ -97,12 +98,12 @@ public class ItemViewActivity extends AppCompatActivity {
     }
 
     public void closeUpdateLayout(View view) {
-        RelativeLayout updateLayout = findViewById(R.id.layout_update_task);
+        ConstraintLayout updateLayout = findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.GONE);
     }
 
     public void updateTaskListener(TodoAdapter.TaskHolder holder, final int position) {
-        RelativeLayout updateLayout = findViewById(R.id.layout_update_task);
+        ConstraintLayout updateLayout = findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.VISIBLE);
 
         EditText userInputBody = findViewById(R.id.layout_update_task_body);

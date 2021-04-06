@@ -1,9 +1,7 @@
 package com.github.steroidteam.todolist.view;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -11,11 +9,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
@@ -45,7 +39,8 @@ public class ItemViewActivity extends AppCompatActivity {
 
         // Observe the LiveData todoList from the ViewModel,
         // 'this' refers to the activity so it the ItemViewActivity acts as the LifeCycleOwner,
-        viewModel.getTodoList()
+        viewModel
+                .getTodoList()
                 .observe(
                         this,
                         (todoList) -> {
@@ -61,17 +56,19 @@ public class ItemViewActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        this.adapter = new TodoAdapter(new TodoAdapter.TaskCustomListener() {
-            @Override
-            public void onClickCustom(TodoAdapter.TaskHolder holder, int position) {
-                updateTaskListener(holder, position);
-            }
+        this.adapter =
+                new TodoAdapter(
+                        new TodoAdapter.TaskCustomListener() {
+                            @Override
+                            public void onClickCustom(TodoAdapter.TaskHolder holder, int position) {
+                                updateTaskListener(holder, position);
+                            }
 
-            @Override
-            public void onCheckedChangedCustom(int position, boolean isChecked) {
-                checkBoxTaskListener(position, isChecked);
-            }
-        });
+                            @Override
+                            public void onCheckedChangedCustom(int position, boolean isChecked) {
+                                checkBoxTaskListener(position, isChecked);
+                            }
+                        });
         this.recyclerView.setAdapter(this.adapter);
     }
 
@@ -93,9 +90,9 @@ public class ItemViewActivity extends AppCompatActivity {
 
         viewModel.removeTask(position);
         Toast.makeText(
-                getApplicationContext(),
-                "Successfully removed the task !",
-                Toast.LENGTH_LONG)
+                        getApplicationContext(),
+                        "Successfully removed the task !",
+                        Toast.LENGTH_LONG)
                 .show();
     }
 
@@ -115,22 +112,24 @@ public class ItemViewActivity extends AppCompatActivity {
         taskCheckedBox.setChecked(holder.getTaskDone());
 
         Button saveButton = findViewById(R.id.layout_update_task_save);
-        saveButton.setOnClickListener((v) -> {
-            closeUpdateLayout(v);
-            viewModel.renameTask(position, userInputBody.getText().toString());
-            viewModel.setTaskDone(position, taskCheckedBox.isChecked());
-        });
+        saveButton.setOnClickListener(
+                (v) -> {
+                    closeUpdateLayout(v);
+                    viewModel.renameTask(position, userInputBody.getText().toString());
+                    viewModel.setTaskDone(position, taskCheckedBox.isChecked());
+                });
 
         Button deleteButton = findViewById(R.id.layout_update_task_delete);
-        deleteButton.setOnClickListener((v) -> {
-            closeUpdateLayout(v);
-            viewModel.removeTask(position);
-            Toast.makeText(
-                    getApplicationContext(),
-                    "Successfully removed the task !",
-                    Toast.LENGTH_LONG)
-                    .show();
-        });
+        deleteButton.setOnClickListener(
+                (v) -> {
+                    closeUpdateLayout(v);
+                    viewModel.removeTask(position);
+                    Toast.makeText(
+                                    getApplicationContext(),
+                                    "Successfully removed the task !",
+                                    Toast.LENGTH_LONG)
+                            .show();
+                });
     }
 
     public void checkBoxTaskListener(final int position, final boolean isChecked) {

@@ -2,7 +2,6 @@ package com.github.steroidteam.todolist.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
-
 import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
@@ -41,7 +40,7 @@ public class ItemViewModel extends ViewModel {
     }
 
     public void renameTask(int index, String newBody) {
-        if(!newBody.equals("")) {
+        if (!newBody.equals("")) {
             repository.renameTask(todoListID, index, newBody);
         }
     }

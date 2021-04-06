@@ -2,25 +2,17 @@ package com.github.steroidteam.todolist.view.adapter;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-import com.github.steroidteam.todolist.view.ItemViewActivity;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
@@ -50,10 +42,10 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         holder.taskBody.setText(currentTask.getBody());
         holder.taskBox.setChecked(currentTask.isDone());
 
-
         if (currentTask.isDone()) {
             holder.taskBody.setTextColor(Color.LTGRAY);
-            holder.taskBody.setPaintFlags(holder.taskBody.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.taskBody.setPaintFlags(
+                    holder.taskBody.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.displayDeleteButton();
         } else {
             holder.taskBody.setTextColor(Color.DKGRAY);
@@ -77,7 +69,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
     public interface TaskCustomListener {
         void onClickCustom(TaskHolder holder, int position);
-        //void onFocusChangedCustom(int position, boolean hasFocus);
+        // void onFocusChangedCustom(int position, boolean hasFocus);
         void onCheckedChangedCustom(int position, boolean isChecked);
     }
 
@@ -93,19 +85,22 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
             taskBox = itemView.findViewById(R.id.layout_task_checkbox);
             taskDelete = itemView.findViewById(R.id.layout_task_delete_button);
 
-            taskBox.setOnClickListener((v) -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    listener.onCheckedChangedCustom(getAdapterPosition(), taskBox.isChecked());
-                }
-            });
+            taskBox.setOnClickListener(
+                    (v) -> {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onCheckedChangedCustom(
+                                    getAdapterPosition(), taskBox.isChecked());
+                        }
+                    });
 
-            itemView.setOnClickListener((v) -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    listener.onClickCustom(this, getAdapterPosition());
-                }
-            });
+            itemView.setOnClickListener(
+                    (v) -> {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onClickCustom(this, getAdapterPosition());
+                        }
+                    });
         }
 
         public void displayDeleteButton() {
@@ -120,6 +115,8 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
             return taskBody.getText().toString();
         }
 
-        public boolean getTaskDone() {return taskBox.isChecked();}
+        public boolean getTaskDone() {
+            return taskBox.isChecked();
+        }
     }
 }

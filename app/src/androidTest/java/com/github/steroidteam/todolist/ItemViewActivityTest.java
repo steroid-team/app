@@ -78,18 +78,13 @@ public class ItemViewActivityTest {
         final String TASK_DESCRIPTION = "Buy bananas";
 
         // Type a task description in the "new task" text field.
-        onView(withId(R.id.new_task_text))
-                .perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
+        onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
 
         // Hit the button to create a new task.
         onView(withId(R.id.new_task_btn)).perform(click());
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .perform(
-                        RecyclerViewActions.actionOnItemAtPosition(
-                                0,
-                                click())
-                );
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         onView(withId(R.id.layout_update_task_body)).perform(clearText(), closeSoftKeyboard());
 
@@ -124,22 +119,17 @@ public class ItemViewActivityTest {
                     .perform(
                             RecyclerViewActions.actionOnItemAtPosition(
                                     0,
-                                    MyViewAction.clickChildViewWithId(R.id.layout_task_checkbox)
-                            )
-                    );
+                                    MyViewAction.clickChildViewWithId(R.id.layout_task_checkbox)));
 
             onView(withId(R.id.activity_itemview_itemlist))
-                    .perform(
-                            RecyclerViewActions.actionOnItemAtPosition(
-                                    0,
-                                    click())
-                    );
+                    .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
             onView(withId(R.id.layout_update_task_body)).check(matches(withText(TASK_DESCRIPTION)));
             onView(withId(R.id.layout_update_task_checkbox)).check(matches(isChecked()));
 
             onView(withId(R.id.layout_update_task_checkbox)).perform(click());
-            onView(withId(R.id.layout_update_task_body)).perform(clearText(), typeText(TASK_DESCRIPTION_2), closeSoftKeyboard());
+            onView(withId(R.id.layout_update_task_body))
+                    .perform(clearText(), typeText(TASK_DESCRIPTION_2), closeSoftKeyboard());
 
             onView(withId(R.id.layout_update_task_save)).perform(click());
 
@@ -179,9 +169,7 @@ public class ItemViewActivityTest {
                     .perform(
                             RecyclerViewActions.actionOnItemAtPosition(
                                     0,
-                                    MyViewAction.clickChildViewWithId(R.id.layout_task_checkbox)
-                            )
-                    );
+                                    MyViewAction.clickChildViewWithId(R.id.layout_task_checkbox)));
             onView(withId(R.id.activity_itemview_itemlist))
                     .perform(
                             RecyclerViewActions.actionOnItemAtPosition(
@@ -201,7 +189,7 @@ public class ItemViewActivityTest {
                 new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
 
         try (ActivityScenario<ItemViewActivity> scenario =
-                     ActivityScenario.launch(itemViewActivity)) {
+                ActivityScenario.launch(itemViewActivity)) {
 
             final String TASK_DESCRIPTION = "Buy bananas";
             final String TASK_DESCRIPTION_2 = "Buy cheese";
@@ -220,11 +208,7 @@ public class ItemViewActivityTest {
 
             // Try to remove the first task
             onView(withId(R.id.activity_itemview_itemlist))
-                    .perform(
-                            RecyclerViewActions.actionOnItemAtPosition(
-                                    0,
-                                    click())
-                    );
+                    .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
             onView(withId(R.id.layout_update_task_delete)).perform(click());
 
@@ -306,7 +290,7 @@ public class ItemViewActivityTest {
             protected boolean matchesSafely(final RecyclerView view) {
                 View taskView = view.getChildAt(position);
                 CheckBox boxView = taskView.findViewById(R.id.layout_task_checkbox);
-                return boxView.isChecked()==expectedBox;
+                return boxView.isChecked() == expectedBox;
             }
         };
     }

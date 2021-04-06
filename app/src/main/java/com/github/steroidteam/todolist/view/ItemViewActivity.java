@@ -56,20 +56,22 @@ public class ItemViewActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        this.adapter =
-                new TodoAdapter(
-                        new TodoAdapter.TaskCustomListener() {
-                            @Override
-                            public void onClickCustom(TodoAdapter.TaskHolder holder, int position) {
-                                updateTaskListener(holder, position);
-                            }
-
-                            @Override
-                            public void onCheckedChangedCustom(int position, boolean isChecked) {
-                                checkBoxTaskListener(position, isChecked);
-                            }
-                        });
+        this.adapter = new TodoAdapter(createCustomListener());
         this.recyclerView.setAdapter(this.adapter);
+    }
+
+    public TodoAdapter.TaskCustomListener createCustomListener() {
+        return new TodoAdapter.TaskCustomListener() {
+            @Override
+            public void onClickCustom(TodoAdapter.TaskHolder holder, int position) {
+                updateTaskListener(holder, position);
+            }
+
+            @Override
+            public void onCheckedChangedCustom(int position, boolean isChecked) {
+                checkBoxTaskListener(position, isChecked);
+            }
+        };
     }
 
     public void addTask(View view) {

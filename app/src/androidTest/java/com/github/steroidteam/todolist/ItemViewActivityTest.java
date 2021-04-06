@@ -203,7 +203,7 @@ public class ItemViewActivityTest {
         onView(withId(R.id.activity_itemview_itemlist))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
-        closeSoftKeyboard();
+        onView(withId(R.id.layout_update_task_body)).perform(closeSoftKeyboard());
 
         onView(withId(R.id.layout_update_task_delete)).perform(click());
 

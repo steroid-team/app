@@ -185,39 +185,33 @@ public class ItemViewActivityTest {
 
     @Test
     public void removeTaskWorksInUpdateLayout() {
-        Intent itemViewActivity =
-                new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
+        final String TASK_DESCRIPTION = "Buy bananas";
+        final String TASK_DESCRIPTION_2 = "Buy cheese";
 
-        try (ActivityScenario<ItemViewActivity> scenario =
-                ActivityScenario.launch(itemViewActivity)) {
+        // Type a task description in the "new task" text field.
+        onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
 
-            final String TASK_DESCRIPTION = "Buy bananas";
-            final String TASK_DESCRIPTION_2 = "Buy cheese";
+        // Hit the button to create a new task.
+        onView(withId(R.id.new_task_btn)).perform(click());
 
-            // Type a task description in the "new task" text field.
-            onView(withId(R.id.new_task_text))
-                    .perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
+        onView(withId(R.id.new_task_text))
+                .perform(typeText(TASK_DESCRIPTION_2), closeSoftKeyboard());
 
-            // Hit the button to create a new task.
-            onView(withId(R.id.new_task_btn)).perform(click());
+        onView(withId(R.id.new_task_btn)).perform(click());
 
-            onView(withId(R.id.new_task_text))
-                    .perform(typeText(TASK_DESCRIPTION_2), closeSoftKeyboard());
+        // Try to remove the first task
+        onView(withId(R.id.activity_itemview_itemlist))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
-            onView(withId(R.id.new_task_btn)).perform(click());
+        closeSoftKeyboard();
 
-            // Try to remove the first task
-            onView(withId(R.id.activity_itemview_itemlist))
-                    .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.layout_update_task_delete)).perform(click());
 
-            onView(withId(R.id.layout_update_task_delete)).perform(click());
+        onView(withId(R.id.activity_itemview_itemlist))
+                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
 
-            onView(withId(R.id.activity_itemview_itemlist))
-                    .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
-
-            onView(withId(R.id.activity_itemview_itemlist))
-                    .check(matches(atPositionCheckBox(0, false)));
-        }
+        onView(withId(R.id.activity_itemview_itemlist))
+                .check(matches(atPositionCheckBox(0, false)));
     }
 
     @Test

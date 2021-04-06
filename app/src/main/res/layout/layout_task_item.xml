@@ -23,35 +23,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerInParent="true"
         android:layout_toEndOf="@+id/layout_task_checkbox"
-        android:ellipsize="end"
-        android:visibility="visible" />
-
-    <EditText
-        android:id="@+id/layout_task_edit_text"
-        style="@style/TaskEntryText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerInParent="true"
-        android:layout_marginEnd="80dp"
-        android:layout_toEndOf="@+id/layout_task_checkbox"
-        android:background="@null"
-        android:text=""
-        android:hint="@string/task_edit_hint"
-        android:inputType="text"
-        android:maxLines="1"
-        android:visibility="gone"
-        android:importantForAutofill="no" />
-
-    <Button
-        android:id="@+id/layout_task_save_modif"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_centerInParent="true"
-        android:layout_toStartOf="@+id/layout_task_delete_button"
-        android:background="@color/green"
-        android:onClick="updateTask"
-        android:visibility="gone" />
+        android:ellipsize="end" />
 
     <Button
         android:id="@+id/layout_task_delete_button"

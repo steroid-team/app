@@ -2,6 +2,8 @@ package com.github.steroidteam.todolist.view.adapter;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
+import com.github.steroidteam.todolist.view.ItemViewActivity;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
@@ -41,8 +45,6 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
     @Override
     public void onBindViewHolder(@NonNull TaskHolder holder, int position) {
 
-        System.out.println("position: " + position + " adapter: " + holder.getAdapterPosition() + " layout: " + holder.getLayoutPosition());
-
         Task currentTask = todoList.getTask(position);
 
         holder.taskBody.setText(currentTask.getBody());
@@ -51,8 +53,10 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
         if (currentTask.isDone()) {
             holder.taskBody.setTextColor(Color.LTGRAY);
+            holder.displayDeleteButton();
         } else {
             holder.taskBody.setTextColor(Color.DKGRAY);
+            holder.hideDeleteButton();
         }
     }
 
@@ -78,8 +82,8 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
     }
 
     public interface TaskCustomListener {
-        void onClickCustom(int position);
-
+        void onClickCustom(TaskHolder holder, int position);
+        //void onFocusChangedCustom(int position, boolean hasFocus);
         void onCheckedChangedCustom(int position, boolean isChecked);
     }
 
@@ -88,23 +92,12 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         private final TextView taskBody;
         private final CheckBox taskBox;
         private final Button taskDelete;
-        private final EditText inputText;
-        private final Button btn_save;
 
         public TaskHolder(@NonNull View itemView) {
             super(itemView);
             taskBody = itemView.findViewById(R.id.layout_task_body);
             taskBox = itemView.findViewById(R.id.layout_task_checkbox);
             taskDelete = itemView.findViewById(R.id.layout_task_delete_button);
-            inputText = itemView.findViewById(R.id.layout_task_edit_text);
-            btn_save = itemView.findViewById(R.id.layout_task_save_modif);
-
-            itemView.setOnClickListener((v) -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    listener.onClickCustom(getAdapterPosition());
-                }
-            });
 
             taskBox.setOnClickListener((v) -> {
                 int position = getAdapterPosition();
@@ -112,28 +105,25 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
                     listener.onCheckedChangedCustom(getAdapterPosition(), taskBox.isChecked());
                 }
             });
+
+            itemView.setOnClickListener((v) -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    listener.onClickCustom(this, getAdapterPosition());
+                }
+            });
         }
 
-        public void displayUpdateLayout() {
-            inputText.setText(taskBody.getText().toString());
-
+        public void displayDeleteButton() {
             taskDelete.setVisibility(View.VISIBLE);
-            inputText.setVisibility(View.VISIBLE);
-            btn_save.setVisibility(View.VISIBLE);
-            taskBody.setVisibility(View.GONE);
-
-            inputText.requestFocus();
         }
 
-        public void closeUpdateLayout() {
+        public void hideDeleteButton() {
             taskDelete.setVisibility(View.GONE);
-            inputText.setVisibility(View.GONE);
-            btn_save.setVisibility(View.GONE);
-            taskBody.setVisibility(View.VISIBLE);
         }
 
-        public String getUserInput() {
-            return inputText.getText().toString();
+        public String getTaskBody() {
+            return taskBody.getText().toString();
         }
     }
 }

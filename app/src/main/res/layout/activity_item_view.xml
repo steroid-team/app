@@ -156,18 +156,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="80dp"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp">
+            android:layout_marginEnd="8dp"
+            android:background="@android:color/transparent">
 
             <Button
                 android:id="@+id/layout_update_task_save"
                 android:text="SAVE"
+                style="@style/TaskSaveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>
 
             <Button
                 android:id="@+id/layout_update_task_close"
-                android:text="CLOSE"
+                android:text="UNDO"
+                style="@style/TaskUndoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="closeUpdateLayout"

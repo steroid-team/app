@@ -165,6 +165,7 @@
                 style="@style/TaskSaveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="2dp"
                 android:layout_weight="1"/>
 
             <Button
@@ -173,9 +174,20 @@
                 style="@style/TaskUndoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="2dp"
                 android:onClick="closeUpdateLayout"
                 android:layout_weight="1"/>
         </LinearLayout>
+
+        <Button
+            android:id="@+id/layout_update_task_delete"
+            android:text="DELETE"
+            style="@style/TaskDeleteButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_alignParentBottom="true"
+            android:onClick="removeTask" />
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

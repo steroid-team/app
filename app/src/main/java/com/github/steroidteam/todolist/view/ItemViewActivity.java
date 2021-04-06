@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -85,24 +86,6 @@ public class ItemViewActivity extends AppCompatActivity {
         newTaskET.getText().clear();
     }
 
-    public void removeTask(View view) {
-        View parentRow = (View) view.getParent();
-        RecyclerView recycler = (RecyclerView) parentRow.getParent();
-        final int position = recycler.getChildAdapterPosition(parentRow);
-
-        TodoAdapter.TaskHolder holder =
-                (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
-        if (holder != null) {
-            holder.hideDeleteButton();
-        }
-        viewModel.removeTask(position);
-        Toast.makeText(
-                getApplicationContext(),
-                "Successfully removed the task !",
-                Toast.LENGTH_LONG)
-                .show();
-    }
-
     public void closeUpdateLayout(View view) {
         RelativeLayout updateLayout = findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.GONE);
@@ -115,10 +98,25 @@ public class ItemViewActivity extends AppCompatActivity {
         EditText userInputBody = findViewById(R.id.layout_update_task_body);
         userInputBody.setText(holder.getTaskBody());
 
+        CheckBox taskCheckedBox = findViewById(R.id.layout_update_task_checkbox);
+        taskCheckedBox.setChecked(holder.getTaskDone());
+
         Button saveButton = findViewById(R.id.layout_update_task_save);
         saveButton.setOnClickListener((v) -> {
             closeUpdateLayout(v);
             viewModel.renameTask(position, userInputBody.getText().toString());
+            viewModel.setTaskDone(position, taskCheckedBox.isChecked());
+        });
+
+        Button deleteButton = findViewById(R.id.layout_update_task_delete);
+        deleteButton.setOnClickListener((v) -> {
+            closeUpdateLayout(v);
+            viewModel.removeTask(position);
+            Toast.makeText(
+                    getApplicationContext(),
+                    "Successfully removed the task !",
+                    Toast.LENGTH_LONG)
+                    .show();
         });
     }
 

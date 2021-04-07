@@ -59,20 +59,6 @@ public class ListSelectionActivityTest {
         Intents.release();
     }
 
-    @Test
-    public void createTodoWorks() {
-        final String TODO_DESCRIPTION = "Homework";
-
-        onView(withId(R.id.create_todo_button)).perform(click());
-        onView(withId(R.id.alert_dialog_edit_text))
-                .inRoot(isDialog())
-                .perform(typeText(TODO_DESCRIPTION))
-                .perform(closeSoftKeyboard());
-
-        // positive button = button 1
-        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
-    }
-
     public static Matcher<View> atPositionCheckText(
             final int position, @NonNull final String expectedText) {
         return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {

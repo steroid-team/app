@@ -1,56 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_todo_list"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    style="@style/SelectionList.CardView">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_todo_list"
-        style="@style/SelectionList.Entry"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00FFFFFF">
 
         <TextView
             android:id="@+id/layout_todo_list_text"
-            style="@style/SelectionList.Entry.Title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:background="#00FFFFFF"
+            style="@style/SelectionList.Entry.Title"/>
 
         <EditText
             android:id="@+id/layout_todo_list_edit_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="80dp"
-            android:fontFamily="sans-serif-black"
-            android:textSize="24sp"
-            android:ellipsize="end"
             android:background="@null"
-            android:text=""
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-black"
             android:hint="@string/task_edit_hint"
+            android:importantForAutofill="no"
             android:inputType="text"
             android:maxLines="1"
+            android:text=""
+            android:textSize="24sp"
             android:visibility="gone"
-            android:importantForAutofill="no"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/layout_todo_list_save_modif"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:onClick="updateTodo"
             android:background="@color/green"
+            android:onClick="updateTodo"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/layout_todo_list_delete_button"
@@ -61,7 +58,16 @@
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toTopOf="parent" />
 
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/layout_todo_list_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_todo_list_text"
+            android:layout_marginTop="0dp"
+            android:background="#00FFFFFF" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

@@ -9,22 +9,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.auth.AuthUI;
-import com.github.steroidteam.todolist.ListSelectionViewModel;
+import com.github.steroidteam.todolist.viewmodel.ListSelectionViewModel;
 import com.github.steroidteam.todolist.R;
-import com.github.steroidteam.todolist.model.todo.TodoList;
-import com.github.steroidteam.todolist.util.TodoCollectionAdapter;
-import java.util.ArrayList;
+import com.github.steroidteam.todolist.view.adapter.TodoCollectionAdapter;
+
+import java.util.UUID;
 
 public class ListSelectionActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private TodoCollectionAdapter adapter;
     private ListSelectionViewModel viewModel;
-
-    private ArrayList<TodoList> todoLists;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +50,12 @@ public class ListSelectionActivity extends AppCompatActivity {
                     public void onClickCustom(TodoCollectionAdapter.TodoHolder holder) {
                         openTodoList(holder);
                     }
-
-                    @Override
-                    public void onLongClickCustom(TodoCollectionAdapter.TodoHolder holder) {
-                        updateTodoListener(holder);
-                    }
                 };
         adapter = new TodoCollectionAdapter(customListener);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TodoTouchHelper(this));
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
         recyclerView.setAdapter(adapter);
     }
 
@@ -104,49 +102,49 @@ public class ListSelectionActivity extends AppCompatActivity {
         titlePopup.show();
     }
 
-    public void removeTodo(View view) {
-        View parentRow = (View) view.getParent();
-        final int position = recyclerView.getChildAdapterPosition(parentRow);
+    public void removeTodo(UUID toDoListID, final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Are you sure to delete this to-do ?");
 
-        TodoCollectionAdapter.TodoHolder holder =
-                (TodoCollectionAdapter.TodoHolder)
-                        recyclerView.findViewHolderForAdapterPosition(position);
-        adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
-        if (holder != null) {
-            holder.closeUpdateLayout();
-        }
-        viewModel.removeTodo(holder.getIdOfTodo());
+        builder.setPositiveButton(
+                "Delete",
+                (DialogInterface dialog, int which) -> {
+                    viewModel.removeTodo(toDoListID);
+                    dialog.cancel();
+                });
+        builder.setNegativeButton(
+                "Cancel",
+                (DialogInterface dialog, int which) -> {
+                    adapter.notifyItemChanged(position);
+                    dialog.cancel();
+                });
+        builder.show();
     }
 
-    public void updateTodo(View view) {
-        View parentRow = (View) view.getParent();
-        final int position = recyclerView.getChildAdapterPosition(parentRow);
+    public void renameTodo(UUID toDoListID, final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Rename your to-do list");
 
-        TodoCollectionAdapter.TodoHolder holder =
-                (TodoCollectionAdapter.TodoHolder)
-                        recyclerView.findViewHolderForAdapterPosition(position);
-        adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
-        if (holder != null) {
-            holder.closeUpdateLayout();
-            viewModel.renameTodo(holder.getIdOfTodo(), holder.getUserInput());
-        }
-    }
+        LayoutInflater inflater = LayoutInflater.from(this.getApplicationContext());
+        View user_input = inflater.inflate(R.layout.alert_dialog_input, null);
 
-    public void updateTodoListener(TodoCollectionAdapter.TodoHolder holder) {
-        final int position = holder.getAdapterPosition();
+        final EditText titleInput = user_input.findViewById(R.id.alert_dialog_edit_text);
+        builder.setView(user_input);
 
-        Integer currentlyDisplayed = adapter.getCurrentlyDisplayedUpdateLayoutPos();
-
-        if (currentlyDisplayed != null) {
-            TodoCollectionAdapter.TodoHolder currentHolder =
-                    (TodoCollectionAdapter.TodoHolder)
-                            recyclerView.findViewHolderForAdapterPosition(currentlyDisplayed);
-            currentHolder.closeUpdateLayout();
-            adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
-        }
-        if (holder != null) {
-            adapter.setCurrentlyDisplayedUpdateLayoutPos(position);
-            holder.displayUpdateLayout();
-        }
+        builder.setPositiveButton(
+                "Rename",
+                (DialogInterface dialog, int which) -> {
+                    String title = titleInput.getText().toString();
+                    if (title.length() > 0) viewModel.renameTodo(toDoListID, title);
+                    titleInput.getText().clear();
+                    dialog.cancel();
+                });
+        builder.setNegativeButton(
+                "Cancel",
+                (DialogInterface dialog, int which) -> {
+                    adapter.notifyItemChanged(position);
+                    dialog.cancel();
+                });
+        builder.show();
     }
 }

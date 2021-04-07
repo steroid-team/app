@@ -43,7 +43,6 @@
         <item name="android:fontFamily">@font/nunitosans_bold</item>
         <item name="android:textColor">@color/dark_blue</item>
         <item name="android:textSize">22sp</item>
-        <item name="android:layout_marginBottom">0dp</item>
         <item name="android:padding">0dp</item>
     </style>
     <style name="SelectionList.Entry.Subtitle">
@@ -66,5 +65,12 @@
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:tint">#000000</item>
         <item name="android:scaleType">fitCenter</item>
+    </style>
+    <style name="SelectionList.CardView">
+        <item name="cardCornerRadius">25dp</item>
+        <item name="contentPaddingBottom">18dp</item>
+        <item name="contentPaddingLeft">20dp</item>
+        <item name="contentPaddingRight">15dp</item>
+        <item name="contentPaddingTop">14dp</item>
     </style>
 </resources>

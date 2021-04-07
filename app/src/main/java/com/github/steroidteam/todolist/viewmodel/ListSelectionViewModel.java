@@ -1,4 +1,4 @@
-package com.github.steroidteam.todolist;
+package com.github.steroidteam.todolist.viewmodel;
 
 import android.app.Application;
 import androidx.annotation.NonNull;

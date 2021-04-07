@@ -87,6 +87,10 @@ public class TodoList {
         this.title = newTitle;
     }
 
+    public List<Task> getImportantTask() {
+        return list;
+    }
+
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();

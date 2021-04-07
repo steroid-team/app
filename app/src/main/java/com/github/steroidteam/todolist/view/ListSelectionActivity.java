@@ -13,10 +13,9 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.auth.AuthUI;
-import com.github.steroidteam.todolist.viewmodel.ListSelectionViewModel;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.view.adapter.TodoCollectionAdapter;
-
+import com.github.steroidteam.todolist.viewmodel.ListSelectionViewModel;
 import java.util.UUID;
 
 public class ListSelectionActivity extends AppCompatActivity {

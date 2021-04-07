@@ -31,8 +31,8 @@ public class TodoRepository {
         // in the getTodoList method.
         TodoList tl = new TodoList("A Todo!");
         Task t1 = new Task("task 1");
-        tl.addTask(t1);
         TodoList tl2 = new TodoList("Homework");
+        tl2.addTask(t1);
         TodoList tl3 = new TodoList("Shopping List");
         Task t2 = new Task("Buy Bananas");
         Task t3 = new Task("Buy Cheese");

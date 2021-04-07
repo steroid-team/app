@@ -4,13 +4,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.todo.Task;
-
 import java.util.List;
 
 public class TodoChildAdapter extends RecyclerView.Adapter<TodoChildAdapter.TodoChildViewHolder> {
@@ -23,18 +20,21 @@ public class TodoChildAdapter extends RecyclerView.Adapter<TodoChildAdapter.Todo
 
     @NonNull
     @Override
-    public TodoChildAdapter.TodoChildViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public TodoChildAdapter.TodoChildViewHolder onCreateViewHolder(
+            @NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layout_todo_list_child, parent, false);
+        View view =
+                LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.layout_todo_list_child, parent, false);
 
         return new TodoChildViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TodoChildAdapter.TodoChildViewHolder holder, int position) {
+    public void onBindViewHolder(
+            @NonNull TodoChildAdapter.TodoChildViewHolder holder, int position) {
         Task currentTask = todoChildTaskList.get(position);
-        if(currentTask!=null) {
+        if (currentTask != null) {
             holder.taskBody.setText(currentTask.getBody());
         }
     }

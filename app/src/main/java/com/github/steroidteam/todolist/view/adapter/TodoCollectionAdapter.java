@@ -3,9 +3,6 @@ package com.github.steroidteam.todolist.view.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,14 +41,14 @@ public class TodoCollectionAdapter extends RecyclerView.Adapter<TodoCollectionAd
             holder.idOfTodo = currentTodo.getId();
 
             // Nested layout Manager
-            LinearLayoutManager layoutManager
-                    = new LinearLayoutManager(holder.taskListRecyclerView.getContext(),
-                    LinearLayoutManager.VERTICAL, false);
+            LinearLayoutManager layoutManager =
+                    new LinearLayoutManager(
+                            holder.taskListRecyclerView.getContext(),
+                            LinearLayoutManager.VERTICAL,
+                            false);
 
             // Define how many child we need to prefetch when building the nested recyclerView
-            layoutManager.setInitialPrefetchItemCount(
-                    currentTodo.getImportantTask().size()
-            );
+            layoutManager.setInitialPrefetchItemCount(currentTodo.getImportantTask().size());
 
             // Create a TodoChild adapter as we create a Todo Collection Adapter
             //  in the List Selection Activity

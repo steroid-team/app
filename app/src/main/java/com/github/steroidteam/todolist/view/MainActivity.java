@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             // Sign in successful
         } else {
             // Sign in failed.
-            TextView failMessage = (TextView) findViewById(R.id.loginFailureMessage);
+            TextView failMessage = findViewById(R.id.loginFailureMessage);
             failMessage.setVisibility(View.VISIBLE);
         }
     }

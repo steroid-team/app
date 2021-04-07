@@ -11,9 +11,9 @@ import java.util.UUID;
 
 public class ItemViewModel extends AndroidViewModel {
 
-    private TodoRepository repository;
-    private LiveData<TodoList> todoList;
-    private UUID todoListID;
+    private final TodoRepository repository;
+    private final LiveData<TodoList> todoList;
+    private final UUID todoListID;
 
     public ItemViewModel(@NonNull Application application, UUID todoListID) {
         super(application);

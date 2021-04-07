@@ -7,7 +7,7 @@ import com.github.steroidteam.todolist.view.adapter.TodoCollectionAdapter;
 
 public class TodoTouchHelper extends ItemTouchHelper.SimpleCallback {
 
-    private ListSelectionActivity activity;
+    private final ListSelectionActivity activity;
 
     public TodoTouchHelper(ListSelectionActivity activity) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);

@@ -16,9 +16,9 @@ import java.util.UUID;
 public class TodoList {
 
     private final UUID id;
-    private List<Task> list;
+    private final List<Task> list;
     private String title;
-    private Date date;
+    private final Date date;
 
     /**
      * Constructs a new to-do list.

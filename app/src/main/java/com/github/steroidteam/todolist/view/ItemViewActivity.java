@@ -69,7 +69,7 @@ public class ItemViewActivity extends AppCompatActivity {
     }
 
     public void addTask(View view) {
-        EditText newTaskET = (EditText) findViewById(R.id.new_task_text);
+        EditText newTaskET = findViewById(R.id.new_task_text);
         String taskDescription = newTaskET.getText().toString();
 
         // Make sure that we only add the task if the description has text.

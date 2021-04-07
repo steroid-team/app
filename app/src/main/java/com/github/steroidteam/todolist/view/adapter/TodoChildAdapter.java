@@ -12,7 +12,7 @@ import java.util.List;
 
 public class TodoChildAdapter extends RecyclerView.Adapter<TodoChildAdapter.TodoChildViewHolder> {
 
-    private List<Task> todoChildTaskList;
+    private final List<Task> todoChildTaskList;
 
     TodoChildAdapter(List<Task> list) {
         this.todoChildTaskList = list;

@@ -11,7 +11,7 @@ import java.util.UUID;
  */
 public class VolatileDatabase implements Database {
 
-    private ArrayList<TodoList> database;
+    private final ArrayList<TodoList> database;
 
     /** Creates a volatile database. */
     public VolatileDatabase() {

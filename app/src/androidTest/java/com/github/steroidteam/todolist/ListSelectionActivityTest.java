@@ -82,7 +82,7 @@ public class ListSelectionActivityTest {
             public void describeTo(Description description) {
                 description.appendText(
                         "View holder at position "
-                                + String.valueOf(position)
+                                + position
                                 + ", expected: "
                                 + expectedText
                                 + " ");

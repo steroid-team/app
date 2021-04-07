@@ -15,10 +15,10 @@ import java.util.UUID;
 public class TodoCollectionAdapter extends RecyclerView.Adapter<TodoCollectionAdapter.TodoHolder> {
 
     private ArrayList<TodoList> todoListCollection;
-    private TodoHolder.TodoCustomListener listener;
+    private final TodoHolder.TodoCustomListener listener;
 
     // ViewPool to share view between task and to-do list
-    private RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
+    private final RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
 
     public TodoCollectionAdapter(TodoHolder.TodoCustomListener listener) {
         this.listener = listener;

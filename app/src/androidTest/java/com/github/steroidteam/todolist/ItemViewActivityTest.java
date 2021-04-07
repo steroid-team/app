@@ -188,7 +188,7 @@ public class ItemViewActivityTest {
             public void describeTo(Description description) {
                 description.appendText(
                         "View holder at position "
-                                + String.valueOf(position)
+                                + position
                                 + ", expected: "
                                 + expectedText
                                 + " ");
@@ -240,9 +240,7 @@ public class ItemViewActivityTest {
             if (type == WindowManager.LayoutParams.TYPE_TOAST) {
                 IBinder windowToken = root.getDecorView().getWindowToken();
                 IBinder appToken = root.getDecorView().getApplicationWindowToken();
-                if (windowToken == appToken) {
-                    return true;
-                }
+                return windowToken == appToken;
             }
             return false;
         }

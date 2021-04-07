@@ -16,7 +16,7 @@ import com.github.steroidteam.todolist.model.todo.TodoList;
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
     private TodoList todoList = new TodoList("This should not be displayed");
-    private TaskCustomListener listener;
+    private final TaskCustomListener listener;
     private Integer currentlyDisplayedUpdateLayoutPos;
 
     public TodoAdapter(TaskCustomListener listener) {

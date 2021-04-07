@@ -11,8 +11,8 @@ import java.util.UUID;
 
 public class ListSelectionViewModel extends AndroidViewModel {
 
-    private TodoRepository repository;
-    private LiveData<ArrayList<TodoList>> listOfTodo;
+    private final TodoRepository repository;
+    private final LiveData<ArrayList<TodoList>> listOfTodo;
 
     public ListSelectionViewModel(@NonNull Application application) {
         super(application);

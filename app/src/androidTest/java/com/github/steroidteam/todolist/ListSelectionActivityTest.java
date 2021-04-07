@@ -4,6 +4,7 @@ import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -63,7 +64,7 @@ public class ListSelectionActivityTest {
     @Test
     public void createTodoWorks() {
 
-        final String TODO_DESC = "A todo !";
+        final String TODO_DESC = "A Todo!";
 
         onView(withId(R.id.create_todo_button)).perform(click());
 
@@ -79,17 +80,7 @@ public class ListSelectionActivityTest {
 
     @Test
     public void renameTodoWorks() {
-        final String TODO_DESC = "A todo !";
         final String TODO_DESC_2 = "Homework";
-
-        // Add a to-do
-        onView(withId(R.id.create_todo_button)).perform(click());
-
-        onView(withId(R.id.alert_dialog_edit_text))
-                .inRoot(isDialog())
-                .perform(clearText(), typeText(TODO_DESC));
-        closeSoftKeyboard();
-        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
 
         onView(withId(R.id.activity_list_selection_itemlist))
                 .perform(actionOnItemAtPosition(0, swipeRight()));
@@ -102,6 +93,59 @@ public class ListSelectionActivityTest {
 
         onView(withId(R.id.activity_list_selection_itemlist))
                 .check(matches(atPositionCheckText(0, TODO_DESC_2)));
+    }
+
+    @Test
+    public void cancelRenamingWorks() {
+        final String TODO_DESC = "A Todo!";
+        final String TODO_DESC_2 = "Homework";
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .perform(actionOnItemAtPosition(0, swipeRight()));
+
+        onView(withId(R.id.alert_dialog_edit_text))
+                .inRoot(isDialog())
+                .perform(clearText(), typeText(TODO_DESC_2));
+        closeSoftKeyboard();
+        onView(withId(android.R.id.button2)).inRoot(isDialog()).perform(click());
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .check(matches(atPositionCheckText(0, TODO_DESC)));
+    }
+
+    @Test
+    public void deleteTodoWorks() {
+        final String TODO_DESC = "A Todo!";
+        final String TODO_DESC_2 = "Homework";
+
+        // Add a to-do
+        onView(withId(R.id.create_todo_button)).perform(click());
+
+        onView(withId(R.id.alert_dialog_edit_text))
+                .inRoot(isDialog())
+                .perform(clearText(), typeText(TODO_DESC_2));
+        closeSoftKeyboard();
+        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .perform(actionOnItemAtPosition(0, swipeLeft()));
+
+        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .check(matches(atPositionCheckText(0, TODO_DESC_2)));
+    }
+
+    @Test
+    public void cancelDeletionWorks() {
+        final String TODO_DESC = "A Todo!";
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .perform(actionOnItemAtPosition(0, swipeLeft()));
+
+        onView(withId(android.R.id.button2)).inRoot(isDialog()).perform(click());
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .check(matches(atPositionCheckText(0, TODO_DESC)));
     }
 
     public static Matcher<View> atPositionCheckText(

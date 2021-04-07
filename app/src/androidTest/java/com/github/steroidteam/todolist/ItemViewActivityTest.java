@@ -55,8 +55,6 @@ public class ItemViewActivityTest {
 
         // The task description text field should now be empty.
         onView(withId(R.id.new_task_text)).check(matches(withText("")));
-
-        // TODO: Check that the ListView actually contains a new item with the tested description.
     }
 
     @Test

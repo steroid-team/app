@@ -31,6 +31,7 @@ public class TodoRepository {
         // in the getTodoList method.
         TodoList tl = new TodoList("A Todo!");
         Task t1 = new Task("task 1");
+        /*
         TodoList tl2 = new TodoList("Homework");
         tl2.addTask(t1);
         TodoList tl3 = new TodoList("Shopping List");
@@ -38,9 +39,10 @@ public class TodoRepository {
         Task t3 = new Task("Buy Cheese");
         tl3.addTask(t2);
         tl3.addTask(t3);
-        this.database.putTodoList(tl);
         this.database.putTodoList(tl2);
         this.database.putTodoList(tl3);
+         */
+        this.database.putTodoList(tl);
         id = tl.getId();
         // ========================= END
     }

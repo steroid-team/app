@@ -71,12 +71,6 @@ public class ListSelectionActivityTest {
 
         // positive button = button 1
         onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
-
-        onView(withId(R.id.activity_list_selection_itemlist))
-                .perform(actionOnItemAtPosition(1, scrollTo()));
-
-        onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(1, TODO_DESCRIPTION)));
     }
 
     public static Matcher<View> atPositionCheckText(

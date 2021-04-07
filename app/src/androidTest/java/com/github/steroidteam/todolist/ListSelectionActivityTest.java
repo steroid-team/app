@@ -3,6 +3,7 @@ package com.github.steroidteam.todolist;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
@@ -70,6 +71,9 @@ public class ListSelectionActivityTest {
 
         // positive button = button 1
         onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .perform(actionOnItemAtPosition(1, scrollTo()));
 
         onView(withId(R.id.activity_list_selection_itemlist))
                 .check(matches(atPositionCheckText(1, TODO_DESCRIPTION)));

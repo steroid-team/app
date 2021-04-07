@@ -30,7 +30,7 @@ public class TodoRepository {
         // Otherwise we will get a NullPointerException
         // in the getTodoList method.
         TodoList tl = new TodoList("A Todo!");
-        Task t1 = new Task("task 1");
+        Task t1 = new Task("First Task");
         /*
         TodoList tl2 = new TodoList("Homework");
         tl2.addTask(t1);

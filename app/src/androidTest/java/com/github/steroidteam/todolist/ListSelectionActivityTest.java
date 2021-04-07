@@ -95,6 +95,59 @@ public class ListSelectionActivityTest {
                 .check(matches(atPositionCheckText(0, TODO_DESC_2)));
     }
 
+    @Test
+    public void deleteTodoWorks() {
+        final String TODO_DESC = "A Todo!";
+        final String TODO_DESC_2 = "Homework";
+
+        // Add a to-do
+        onView(withId(R.id.create_todo_button)).perform(click());
+
+        onView(withId(R.id.alert_dialog_edit_text))
+                .inRoot(isDialog())
+                .perform(clearText(), typeText(TODO_DESC_2));
+        closeSoftKeyboard();
+        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .perform(actionOnItemAtPosition(0, swipeLeft()));
+
+        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .check(matches(atPositionCheckText(0, TODO_DESC_2)));
+    }
+
+    @Test
+    public void cancelDeletionWorks() {
+        final String TODO_DESC = "A Todo!";
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .perform(actionOnItemAtPosition(0, swipeLeft()));
+
+        onView(withId(android.R.id.button2)).inRoot(isDialog()).perform(click());
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .check(matches(atPositionCheckText(0, TODO_DESC)));
+    }
+
+    @Test
+    public void cancelRenamingWorks() {
+        final String TODO_DESC = "A Todo!";
+        final String TODO_DESC_2 = "Homework";
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .perform(actionOnItemAtPosition(0, swipeRight()));
+
+        onView(withId(R.id.alert_dialog_edit_text))
+                .inRoot(isDialog())
+                .perform(clearText(), typeText(TODO_DESC_2));
+        closeSoftKeyboard();
+        onView(withId(android.R.id.button2)).inRoot(isDialog()).perform(click());
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .check(matches(atPositionCheckText(0, TODO_DESC)));
+    }
+
     public static Matcher<View> atPositionCheckText(
             final int position, @NonNull final String expectedText) {
         return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {

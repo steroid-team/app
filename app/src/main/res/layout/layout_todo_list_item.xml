@@ -19,47 +19,6 @@
             android:background="#00FFFFFF"
             style="@style/SelectionList.Entry.Title"/>
 
-        <EditText
-            android:id="@+id/layout_todo_list_edit_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="80dp"
-            android:background="@null"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-black"
-            android:hint="@string/task_edit_hint"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:maxLines="1"
-            android:text=""
-            android:textSize="24sp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/layout_todo_list_save_modif"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@color/green"
-            android:onClick="updateTodo"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/layout_todo_list_delete_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@color/red"
-            android:onClick="removeTodo"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/layout_todo_list_recycler_view"
             android:layout_width="match_parent"

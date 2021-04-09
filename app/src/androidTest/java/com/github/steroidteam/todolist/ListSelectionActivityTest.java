@@ -14,10 +14,13 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.core.app.ActivityScenario;
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
 import androidx.test.espresso.matcher.BoundedMatcher;
@@ -65,22 +68,29 @@ public class ListSelectionActivityTest {
     @Test
     public void createTodoWorks() {
 
-        final String TODO_DESC = "A Todo!";
+        Intent activity =
+                new Intent(
+                        ApplicationProvider.getApplicationContext(), ListSelectionActivity.class);
 
-        onView(withId(R.id.create_todo_button)).perform(click());
+        try (ActivityScenario<ListSelectionActivity> scenario = ActivityScenario.launch(activity)) {
 
-        onView(withText("Enter the title of your to-do list")).check(matches(isDisplayed()));
+            final String TODO_DESC = "A Todo!";
 
-        onView(withId(R.id.alert_dialog_edit_text))
-                .inRoot(isDialog())
-                .perform(clearText(), typeText(TODO_DESC));
-        closeSoftKeyboard();
-        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+            onView(withId(R.id.create_todo_button)).perform(click());
 
-        onView(withText("Enter the title of your to-do list")).check(doesNotExist());
+            onView(withText("Enter the title of your to-do list")).check(matches(isDisplayed()));
 
-        onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, TODO_DESC)));
+            onView(withId(R.id.alert_dialog_edit_text))
+                    .inRoot(isDialog())
+                    .perform(clearText(), typeText(TODO_DESC));
+            closeSoftKeyboard();
+            onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+
+            onView(withText("Enter the title of your to-do list")).check(doesNotExist());
+
+            onView(withId(R.id.activity_list_selection_itemlist))
+                    .check(matches(atPositionCheckText(0, TODO_DESC)));
+        }
     }
 
     public static Matcher<View> atPositionCheckText(

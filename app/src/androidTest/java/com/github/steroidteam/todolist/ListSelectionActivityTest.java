@@ -134,25 +134,6 @@ public class ListSelectionActivityTest {
                 .check(matches(atPositionCheckText(0, TODO_DESC)));
     }
 
-    @Test
-    public void cancelRenamingWorks() {
-        final String TODO_DESC = "A Todo!";
-        final String TODO_DESC_2 = "Homework";
-        onView(withId(R.id.activity_list_selection_itemlist))
-                .perform(actionOnItemAtPosition(0, swipeRight()));
-
-        onView(withText("Rename your to-do list")).check(matches(isDisplayed()));
-
-        onView(withId(R.id.alert_dialog_edit_text)).perform(clearText(), typeText(TODO_DESC_2));
-        closeSoftKeyboard();
-        onView(withId(android.R.id.button2)).perform(click());
-
-        onView(withText("Rename your to-do list")).check(doesNotExist());
-
-        onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, TODO_DESC)));
-    }
-
     public static Matcher<View> atPositionCheckText(
             final int position, @NonNull final String expectedText) {
         return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {

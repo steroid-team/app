@@ -82,9 +82,7 @@ public class VolatileDatabase implements Database {
      */
     @Override
     public void putTask(UUID todoListID, Task task) {
-        if (todoListID == null || task == null) {
-            throw new IllegalArgumentException();
-        }
+        checkNotNull(todoListID, task);
         // get the to-do list from the database.
         TodoList tl = getTodoList(todoListID);
         if (tl != null) {
@@ -101,9 +99,7 @@ public class VolatileDatabase implements Database {
      */
     @Override
     public void removeTask(UUID todoListID, Integer taskIndex) {
-        if (todoListID == null || taskIndex == null) {
-            throw new IllegalArgumentException();
-        }
+        checkNotNull(todoListID, taskIndex);
         TodoList tl = getTodoList(todoListID);
         if (tl != null) {
             tl.removeTask(taskIndex);
@@ -119,9 +115,7 @@ public class VolatileDatabase implements Database {
      */
     @Override
     public Task getTask(UUID todoListID, Integer taskIndex) {
-        if (todoListID == null || taskIndex == null) {
-            throw new IllegalArgumentException();
-        }
+        checkNotNull(todoListID, taskIndex);
         TodoList tl = getTodoList(todoListID);
         if (tl != null) {
             return tl.getTask(taskIndex);
@@ -145,5 +139,11 @@ public class VolatileDatabase implements Database {
 
     public ArrayList<TodoList> getAllTodo() {
         return this.database;
+    }
+
+    private void checkNotNull(UUID id, Object o) {
+        if (id == null || o == null) {
+            throw new IllegalArgumentException();
+        }
     }
 }

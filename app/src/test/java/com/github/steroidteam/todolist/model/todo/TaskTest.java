@@ -1,4 +1,4 @@
-package com.github.steroidteam.todolist.todo;
+package com.github.steroidteam.todolist.model.todo;
 
 import static org.junit.Assert.*;
 

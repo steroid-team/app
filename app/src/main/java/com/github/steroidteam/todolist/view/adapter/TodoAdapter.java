@@ -1,4 +1,4 @@
-package com.github.steroidteam.todolist.util;
+package com.github.steroidteam.todolist.view.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
-import com.github.steroidteam.todolist.todo.Task;
-import com.github.steroidteam.todolist.todo.TodoList;
+import com.github.steroidteam.todolist.model.todo.Task;
+import com.github.steroidteam.todolist.model.todo.TodoList;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
@@ -92,6 +92,8 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
             inputText.setVisibility(View.VISIBLE);
             btn_save.setVisibility(View.VISIBLE);
             taskBody.setVisibility(View.GONE);
+
+            inputText.requestFocus();
         }
 
         public void closeUpdateLayout() {

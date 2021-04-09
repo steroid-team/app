@@ -1,7 +1,7 @@
 package com.github.steroidteam.todolist.util;
 
 import androidx.annotation.NonNull;
-import com.github.steroidteam.todolist.todo.TodoList;
+import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.Objects;

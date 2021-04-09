@@ -1,4 +1,4 @@
-package com.github.steroidteam.todolist;
+package com.github.steroidteam.todolist.view;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,14 +13,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import com.firebase.ui.auth.AuthUI;
-import com.github.steroidteam.todolist.database.DatabaseException;
 import com.github.steroidteam.todolist.database.FirebaseDatabase;
 import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
-import com.github.steroidteam.todolist.todo.TodoList;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 
+import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -126,9 +127,10 @@ public class ListSelectionActivity extends AppCompatActivity {
                                 .inflate(R.layout.layout_todo_list_item, parent, false);
             }
 
-            TextView todoListView = convertView.findViewById(R.id.layout_todo_list_text);
-            todoListView.setText(todoList.getTitle());
+            TextView todoListViewTitle = convertView.findViewById(R.id.layout_todo_list_text);
+            todoListViewTitle.setText(todoList.getTitle());
 
+            ConstraintLayout todoListView = convertView.findViewById(R.id.layout_todo_list);
             todoListView.setOnLongClickListener(
                     view -> {
                         createRenameAlert(todoList);

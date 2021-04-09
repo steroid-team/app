@@ -1,10 +1,19 @@
 package com.github.steroidteam.todolist;
 
+import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.swipeRight;
+import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.matcher.RootMatchers.isDialog;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.view.View;
 import android.widget.TextView;
@@ -52,6 +61,27 @@ public class ListSelectionActivityTest {
         intended(
                 Matchers.allOf(IntentMatchers.hasComponent(NoteSelectionActivity.class.getName())));
         Intents.release();
+    }
+
+    @Test
+    public void renameTodoWorks() {
+        final String TODO_DESC_2 = "Homework";
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .perform(actionOnItemAtPosition(0, swipeRight()));
+
+        onView(withText("Rename your to-do list")).check(matches(isDisplayed()));
+
+        onView(withId(R.id.alert_dialog_edit_text))
+                .inRoot(isDialog())
+                .perform(clearText(), typeText(TODO_DESC_2));
+        closeSoftKeyboard();
+        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+
+        onView(withText("Rename your to-do list")).check(doesNotExist());
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .check(matches(atPositionCheckText(0, TODO_DESC_2)));
     }
 
     public static Matcher<View> atPositionCheckText(

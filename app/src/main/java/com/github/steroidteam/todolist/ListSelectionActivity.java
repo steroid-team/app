@@ -3,6 +3,7 @@ package com.github.steroidteam.todolist;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,30 +14,48 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.firebase.ui.auth.AuthUI;
+import com.github.steroidteam.todolist.database.DatabaseException;
+import com.github.steroidteam.todolist.database.FirebaseDatabase;
+import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
 import com.github.steroidteam.todolist.todo.TodoList;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ListSelectionActivity extends AppCompatActivity {
 
     private static todoListAdapter adapter;
     private ArrayList<TodoList> todoLists;
+    private FirebaseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_selection);
 
-        todoLists = new ArrayList<>();
-        TodoList todoList = new TodoList("Sweng project");
-        todoLists.add(todoList);
-        todoLists.add(new TodoList("Homework"));
-        todoLists.add(new TodoList("Some stuff"));
-        setTitle("TODO Lists");
+        database = new FirebaseDatabase(new FirebaseFileStorageService(
+                FirebaseStorage.getInstance(), FirebaseAuth.getInstance().getCurrentUser()));
 
+        todoLists = new ArrayList<>();
+
+        setTitle("TODO Lists");
         ListView listView = findViewById(R.id.activity_list_selection_itemlist);
         adapter = new todoListAdapter(todoLists);
         setListViewSettings(listView);
+
+        database.getTodoListCollection().thenApply((todoListCollection -> {
+            for (int i = 0; i < todoListCollection.getSize(); i++) {
+                database.getTodoList(todoListCollection.getUUID(i)).thenAccept(todoList -> {
+                    todoLists.add(todoList);
+                    adapter.notifyDataSetChanged();
+                });
+            }
+
+            return null;
+        }));
     }
 
     private void setListViewSettings(ListView listView) {
@@ -63,6 +82,14 @@ public class ListSelectionActivity extends AppCompatActivity {
         Intent noteSelectionActivity =
                 new Intent(ListSelectionActivity.this, NoteSelectionActivity.class);
         startActivity(noteSelectionActivity);
+    }
+
+    public void createList(View view) {
+        TodoList todoList = new TodoList("New TodoList");
+        database.putTodoList(todoList).thenAccept(filePath -> {
+            todoLists.add(todoList);
+            adapter.notifyDataSetChanged();
+        });
     }
 
     private class todoListAdapter extends BaseAdapter {

@@ -1,5 +1,7 @@
 package com.github.steroidteam.todolist.filestorage;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
@@ -33,8 +35,9 @@ public class FirebaseFileStorageService implements FileStorageService {
         this.getUserspaceRef(path)
                 .putBytes(bytes)
                 .addOnSuccessListener(
-                        taskSnapshot ->
-                                completableFuture.complete(taskSnapshot.getMetadata().getPath()))
+                        taskSnapshot -> {
+                                completableFuture.complete(taskSnapshot.getMetadata().getPath());
+                        })
                 .addOnFailureListener(completableFuture::completeExceptionally);
 
         return completableFuture;

@@ -2,9 +2,12 @@ package com.github.steroidteam.todolist.database;
 
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
+import com.github.steroidteam.todolist.todo.TodoListCollection;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * A simple volatile implementation of the interface database. The database is just a HashMap
@@ -19,6 +22,11 @@ public class VolatileDatabase implements Database {
         this.database = new HashMap<>();
     }
 
+    @Override
+    public CompletableFuture<TodoListCollection> getTodoListCollection() {
+        return null;
+    }
+
     /**
      * Pushes the to-do list in the database. Updates the to-do list if it's already present in the
      * database (=if there is already a same ID).
@@ -26,12 +34,14 @@ public class VolatileDatabase implements Database {
      * @param list The to-do list to push.
      */
     @Override
-    public void putTodoList(TodoList list) {
+    public CompletableFuture<String> putTodoList(TodoList list) {
         if (list == null) {
             throw new IllegalArgumentException();
         }
 
         database.put(list.getId(), list);
+
+        return new CompletableFuture<>();
     }
 
     /**
@@ -54,11 +64,13 @@ public class VolatileDatabase implements Database {
      * @return The to-do list or null if not present in the database.
      */
     @Override
-    public TodoList getTodoList(UUID todoListID) {
+    public CompletableFuture<TodoList> getTodoList(UUID todoListID) {
         if (todoListID == null) {
             throw new IllegalArgumentException();
         }
-        return database.get(todoListID);
+        CompletableFuture<TodoList> future = new CompletableFuture<>();
+        future.complete(database.get(todoListID));
+        return future;
     }
 
     /**

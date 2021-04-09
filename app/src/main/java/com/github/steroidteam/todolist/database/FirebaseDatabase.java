@@ -4,14 +4,20 @@ import androidx.annotation.NonNull;
 import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
+import com.github.steroidteam.todolist.todo.TodoListCollection;
 import com.github.steroidteam.todolist.util.JSONSerializer;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 public class FirebaseDatabase implements Database {
-    private static final String TODO_LIST_PATH = "/todo-lists";
+    private static final String TODO_LIST_PATH = "/todo-lists/";
     private final FirebaseFileStorageService storageService;
 
     // TODO: Run Database operations asynchronously.
@@ -22,18 +28,25 @@ public class FirebaseDatabase implements Database {
     }
 
     @Override
-    public void putTodoList(@NonNull TodoList list) throws DatabaseException {
+    public CompletableFuture<TodoListCollection> getTodoListCollection() {
+        CompletableFuture<String[]> listDirFuture = storageService.listDir(TODO_LIST_PATH);
+
+        return listDirFuture.thenApply((fileNames) ->
+                new TodoListCollection(Arrays.stream(fileNames)
+                .map((filename) -> filename.split(".json")[0])
+                .map(UUID::fromString)
+                .collect(Collectors.toList())));
+    }
+
+    @Override
+    public CompletableFuture<String> putTodoList(@NonNull TodoList list) {
         Objects.requireNonNull(list);
         String targetPath = TODO_LIST_PATH + list.getId().toString() + ".json";
 
         // Serialize the task as an UTF-8 encoded JSON object.
         byte[] fileBytes = JSONSerializer.serializeTodoList(list).getBytes(StandardCharsets.UTF_8);
 
-        try {
-            this.storageService.upload(fileBytes, targetPath).get();
-        } catch (ExecutionException | InterruptedException e) {
-            throw new DatabaseException(e.toString());
-        }
+        return this.storageService.upload(fileBytes, targetPath);
     }
 
     @Override
@@ -49,18 +62,14 @@ public class FirebaseDatabase implements Database {
     }
 
     @Override
-    public TodoList getTodoList(@NonNull UUID todoListID) throws DatabaseException {
+    public CompletableFuture<TodoList> getTodoList(@NonNull UUID todoListID) {
+        CompletableFuture<TodoList> future = new CompletableFuture<>();
         Objects.requireNonNull(todoListID);
         String targetPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
-        try {
-            String serializedList =
-                    new String(
-                            this.storageService.download(targetPath).get(), StandardCharsets.UTF_8);
-            return JSONSerializer.deserializeTodoList(serializedList);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new DatabaseException(e.toString());
-        }
+        return this.storageService.download(targetPath).thenApply(bytes ->
+            JSONSerializer.deserializeTodoList(new String(bytes, StandardCharsets.UTF_8))
+        );
     }
 
     @Override

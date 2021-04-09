@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class TodoRepository {
 
@@ -34,23 +35,37 @@ public class TodoRepository {
 
     public LiveData<TodoList> getTodoList(UUID todoListID) {
         if (oneTodoList == null) {
-            oneTodoList = new MutableLiveData<TodoList>(this.database.getTodoList(todoListID));
+            try {
+                oneTodoList = new MutableLiveData<TodoList>(this.database.getTodoList(todoListID).get());
+            } catch (ExecutionException | InterruptedException e) {
+                return new MutableLiveData<>();
+            }
         }
         return this.oneTodoList;
     }
 
     public void putTask(UUID todoListID, Task task) {
         this.database.putTask(todoListID, task);
-        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
+        try {
+            this.oneTodoList.setValue(this.database.getTodoList(todoListID).get());
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void removeTask(UUID todoListID, int index) {
         this.database.removeTask(todoListID, index);
-        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
-    }
+        try {
+            this.oneTodoList.setValue(this.database.getTodoList(todoListID).get());
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }    }
 
     public void renameTask(UUID todoListID, int index, String newText) {
         this.database.renameTask(todoListID, index, newText);
-        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
-    }
+        try {
+            this.oneTodoList.setValue(this.database.getTodoList(todoListID).get());
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }    }
 }

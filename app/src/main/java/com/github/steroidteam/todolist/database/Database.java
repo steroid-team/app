@@ -2,17 +2,28 @@ package com.github.steroidteam.todolist.database;
 
 import com.github.steroidteam.todolist.todo.Task;
 import com.github.steroidteam.todolist.todo.TodoList;
+
+import com.github.steroidteam.todolist.todo.TodoListCollection;
+
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /** A database that stores pairs of key and value. */
 public interface Database {
+
+    /**
+     * Returns the unique to-do list collection of the current user
+     *
+     * @return The unique to-do list collection.
+     */
+    CompletableFuture<TodoListCollection> getTodoListCollection();
 
     /**
      * Pushes a new to-do list in the database.
      *
      * @param list The to-do list to push.
      */
-    void putTodoList(TodoList list) throws DatabaseException;
+    CompletableFuture<String> putTodoList(TodoList list);
 
     /**
      * Removes a to-do list from the database.
@@ -28,7 +39,7 @@ public interface Database {
      * @param todoListID The ID of the to-do list.
      * @return The to-do list or null if the ID isn't in the database.
      */
-    TodoList getTodoList(UUID todoListID) throws DatabaseException;
+    CompletableFuture<TodoList> getTodoList(UUID todoListID);
 
     /**
      * Pushes a new task in the database.

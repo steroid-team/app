@@ -70,11 +70,12 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
-        android:foreground="@android:drawable/ic_menu_add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="@string/add_todo"
-        android:focusable="true" />
+        android:focusable="true"
+        android:foreground="@android:drawable/ic_menu_add"
+        android:onClick="createList"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/logoutButton"

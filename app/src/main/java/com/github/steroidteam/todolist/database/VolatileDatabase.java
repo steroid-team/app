@@ -1,5 +1,6 @@
 package com.github.steroidteam.todolist.database;
 
+import androidx.annotation.NonNull;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class VolatileDatabase implements Database {
      * @param id The id of the to-do list.
      */
     @Override
-    public void removeTodoList(UUID id) {
+    public void removeTodoList(@NonNull UUID id) {
         if (id == null) {
             throw new IllegalArgumentException();
         }
@@ -58,7 +59,7 @@ public class VolatileDatabase implements Database {
      * @return The to-do list or null if not present in the database.
      */
     @Override
-    public TodoList getTodoList(UUID todoListID) {
+    public TodoList getTodoList(@NonNull UUID todoListID) {
         if (todoListID == null) {
             throw new IllegalArgumentException();
         }

@@ -134,7 +134,6 @@ public class ListSelectionActivity extends AppCompatActivity {
             todoListView.setOnLongClickListener(
                     view -> {
                         createRenameAlert(todoList);
-                        // Notify database?
                         return false;
                     });
 
@@ -164,6 +163,11 @@ public class ListSelectionActivity extends AppCompatActivity {
                                     return;
                                 }
                                 todoList.setTitle(input.getText().toString());
+                                database.updateTodoList(todoList.getId(), todoList).thenAccept(
+                                        filePath -> {
+                                            Log.println(Log.INFO, "TAG", "TodoList " +
+                                                    filePath + " updated!");
+                                        });
                             })
                     .create()
                     .show();

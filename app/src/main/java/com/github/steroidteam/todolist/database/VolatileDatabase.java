@@ -73,6 +73,14 @@ public class VolatileDatabase implements Database {
         return future;
     }
 
+    @Override
+    public CompletableFuture<String> updateTodoList(UUID todoListID, TodoList todoList) {
+        CompletableFuture<String> future = new CompletableFuture<>();
+        database.put(todoListID, todoList);
+        future.complete("");
+        return future;
+    }
+
     /**
      * Pushes a task in the database. Assign the correct ID to the task (equivalent to its index in
      * the to-do list). Updates the task if it's already present in the database. Do nothing if the

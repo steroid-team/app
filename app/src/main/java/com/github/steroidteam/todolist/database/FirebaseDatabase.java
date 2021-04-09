@@ -75,6 +75,17 @@ public class FirebaseDatabase implements Database {
     }
 
     @Override
+    public CompletableFuture<String> updateTodoList(UUID todoListID, TodoList todoList) {
+        Objects.requireNonNull(todoListID);
+        Objects.requireNonNull(todoList);
+
+        String targetPath = TODO_LIST_PATH + todoListID.toString() + ".json";
+        byte[] fBytes = JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+
+        return this.storageService.upload(fBytes, targetPath);
+    }
+
+    @Override
     public void putTask(@NonNull UUID todoListID, @NonNull Task task) throws DatabaseException {
         Objects.requireNonNull(todoListID);
         Objects.requireNonNull(task);

@@ -40,6 +40,14 @@ public interface Database {
     CompletableFuture<TodoList> getTodoList(UUID todoListID);
 
     /**
+     * Updates the to-do list given the ID.
+     *
+     * @param todoListID The ID of the to-do list.
+     * @return The to-do list or null if the ID isn't in the database.
+     */
+    CompletableFuture<String> updateTodoList(UUID todoListID, TodoList todoList);
+
+    /**
      * Pushes a new task in the database.
      *
      * @param todoListID The id of the associated list of the task.

@@ -14,6 +14,8 @@ import com.github.steroidteam.todolist.view.ItemViewActivity;
 import com.github.steroidteam.todolist.view.ListSelectionActivity;
 import com.github.steroidteam.todolist.view.NoteSelectionActivity;
 import org.hamcrest.Matchers;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,25 +27,31 @@ public class ListSelectionActivityTest {
     public ActivityScenarioRule<ListSelectionActivity> activityRule =
             new ActivityScenarioRule<>(ListSelectionActivity.class);
 
+    @Before
+    public void initIntents() {
+        Intents.init();
+    }
+
+    @After
+    public void closeIntents() {
+        Intents.release();
+    }
+
     @Test
     public void openListWorks() {
-        Intents.init();
         onView(withId(R.id.activity_list_selection_itemlist))
                 .perform(actionOnItemAtPosition(0, click()));
 
         Intents.intended(
                 Matchers.allOf(IntentMatchers.hasComponent(ItemViewActivity.class.getName())));
-        Intents.release();
     }
 
     @Test
     public void openNotesWorks() {
-        Intents.init();
 
         onView(withId(R.id.notes_button)).perform(click());
 
         intended(
                 Matchers.allOf(IntentMatchers.hasComponent(NoteSelectionActivity.class.getName())));
-        Intents.release();
     }
 }

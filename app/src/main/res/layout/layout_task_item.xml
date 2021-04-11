@@ -2,38 +2,40 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
     android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp">
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
+    android:background="@android:color/transparent">
 
     <CheckBox
         android:id="@+id/layout_task_checkbox"
+        style="@style/TaskEntryCheckbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true" />
 
     <TextView
         android:id="@+id/layout_task_body"
+        style="@style/TaskEntryText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
         android:layout_toEndOf="@+id/layout_task_checkbox"
-        android:text=""
         android:ellipsize="end"
-        android:visibility="visible"
-        android:layout_centerInParent="true" />
+        android:visibility="visible" />
 
     <EditText
         android:id="@+id/layout_task_edit_text"
+        style="@style/TaskEntryText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
         android:layout_marginEnd="80dp"
         android:layout_toEndOf="@+id/layout_task_checkbox"
-        android:ellipsize="end"
         android:background="@null"
-        android:layout_centerInParent="true"
         android:text=""
         android:hint="@string/task_edit_hint"
         android:inputType="text"
@@ -47,16 +49,16 @@
         android:layout_height="30dp"
         android:layout_centerInParent="true"
         android:layout_toStartOf="@+id/layout_task_delete_button"
-        android:onClick="updateTask"
         android:background="@color/green"
+        android:onClick="updateTask"
         android:visibility="gone" />
 
     <Button
         android:id="@+id/layout_task_delete_button"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_centerInParent="true"
         android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
         android:background="@color/red"
         android:onClick="removeTask"
         android:visibility="gone" />

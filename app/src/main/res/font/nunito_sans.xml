@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:app="http://schemas.android.com/apk/res-auto">
+    <font
+        app:fontWeight="600"
+        app:font="@font/nunitosans_semibold" />
+    <font
+        app:fontWeight="900"
+        app:font="@font/nunitosans_black" />
+    <font
+        app:fontWeight="900"
+        app:font="@font/nunitosans_blackitalic" />
+    <font
+        app:fontWeight="700"
+        app:font="@font/nunitosans_bold" />
+    <font
+        app:fontWeight="700"
+        app:font="@font/nunitosans_bolditalic" />
+    <font
+        app:fontWeight="400"
+        app:font="@font/nunitosans_italic" />
+    <font
+        app:fontWeight="300"
+        app:font="@font/nunitosans_light" />
+    <font
+        app:fontWeight="300"
+        app:font="@font/nunitosans_lightitalic" />
+    <font
+        app:fontWeight="400"
+        app:font="@font/nunitosans_regular" />
+    <font
+        app:fontWeight="600"
+        app:font="@font/nunitosans_semibold" />
+    <font
+        app:fontWeight="600"
+        app:font="@font/nunitosans_semibolditalic" />
+</font-family>

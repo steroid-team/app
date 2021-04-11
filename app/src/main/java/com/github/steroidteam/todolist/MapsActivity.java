@@ -125,22 +125,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
                     @Override
                     public void onComplete(@NonNull Task<Location> task) {
-                        if (task.isSuccessful()) {
-                            // Set the map's camera position to the current location of the device.
-                            lastKnownLocation = task.getResult();
-                            if (lastKnownLocation != null) {
-                                map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                        new LatLng(lastKnownLocation.getLatitude(),
-                                                lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-                                map.addMarker(new MarkerOptions().position(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude())).title("I'm here"));
-                            }
-                        } else {
-                            Log.d(TAG, "Current location is null. Using defaults.");
-                            Log.e(TAG, "Exception: %s", task.getException());
-                            map.moveCamera(CameraUpdateFactory
-                                    .newLatLngZoom(defaultLocation, DEFAULT_ZOOM));
-                            map.getUiSettings().setMyLocationButtonEnabled(false);
-                        }
+                        onCompleteDeviceLocation(task);
                     }
                 });
             }
@@ -149,6 +134,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
     // [END maps_current_place_get_device_location]
+
+    private void onCompleteDeviceLocation(@NonNull Task<Location> task){
+        if (task.isSuccessful()) {
+            // Set the map's camera position to the current location of the device.
+            lastKnownLocation = task.getResult();
+            if (lastKnownLocation != null) {
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(lastKnownLocation.getLatitude(),
+                                lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                map.addMarker(new MarkerOptions().position(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude())).title("I'm here"));
+            }
+        } else {
+            Log.d(TAG, "Current location is null. Using defaults.");
+            Log.e(TAG, "Exception: %s", task.getException());
+            map.moveCamera(CameraUpdateFactory
+                    .newLatLngZoom(defaultLocation, DEFAULT_ZOOM));
+            map.getUiSettings().setMyLocationButtonEnabled(false);
+        }
+    }
 
     /**
      * Prompts the user for permission to use the device location.

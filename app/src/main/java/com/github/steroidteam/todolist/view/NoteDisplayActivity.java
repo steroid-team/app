@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -39,28 +40,12 @@ public class NoteDisplayActivity extends AppCompatActivity {
                         + " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_note_items, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_note_gps:
-                Intent mapActivity = new Intent(NoteDisplayActivity.this, MapsActivity.class);
-                startActivity(mapActivity);
-                // User chose the "Settings" item, show the app settings UI...
-                return true;
-
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
+    /** This method is called when the user click on the note_header to switch to MapActivity
+     *
+     * @param view 
+     */
+    public void goToMapActivity(View view){
+        Intent mapActivity = new Intent(NoteDisplayActivity.this, MapsActivity.class);
+        startActivity(mapActivity);
     }
 }

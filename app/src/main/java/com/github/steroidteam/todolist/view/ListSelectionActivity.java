@@ -101,7 +101,8 @@ public class ListSelectionActivity extends AppCompatActivity {
                 (DialogInterface dialog, int which) -> {
                     dialog.cancel();
                 });
-        titlePopup.show();
+        titlePopup.show().getWindow().setGravity(0x00000035);
+        ;
     }
 
     public void removeTodo(UUID toDoListID, final int position) {

@@ -106,6 +106,35 @@ public class ListSelectionLogicTest {
         }
     }
 
+    @Test
+    public void createTodoWorks() {
+
+        Intent activity =
+                new Intent(
+                        ApplicationProvider.getApplicationContext(), ListSelectionActivity.class);
+
+        try (ActivityScenario<ListSelectionActivity> scenario = ActivityScenario.launch(activity)) {
+
+            final String TODO_DESC = "A Todo 2!";
+
+            onView(withId(R.id.create_todo_button)).perform(click());
+
+            onView(withText("Enter the title of your to-do list")).check(matches(isDisplayed()));
+
+            onView(withId(R.id.alert_dialog_edit_text))
+                    .inRoot(isDialog())
+                    .perform(typeText(TODO_DESC));
+            onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+
+            onView(withText("Enter the title of your to-do list")).check(doesNotExist());
+
+            onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(1));
+
+            onView(withId(R.id.activity_list_selection_itemlist))
+                    .check(matches(atPositionCheckText(1, TODO_DESC)));
+        }
+    }
+
     public static Matcher<View> atPositionCheckText(
             final int position, @NonNull final String expectedText) {
         return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {

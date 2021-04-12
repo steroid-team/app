@@ -130,11 +130,13 @@ public class ListSelectionActivity extends AppCompatActivity {
 
         LayoutInflater inflater = this.getLayoutInflater();
         View dialog_input = inflater.inflate(R.layout.alert_dialog_input, null);
+        builder.setView(dialog_input);
 
         builder.setPositiveButton(
                 "Rename",
                 (DialogInterface dialog, int which) -> {
-                    EditText titleInput = dialog_input.findViewById(R.id.alert_dialog_edit_text);
+                    EditText titleInput =
+                            (EditText) dialog_input.findViewById(R.id.alert_dialog_edit_text);
                     String title = titleInput.getText().toString();
                     if (title.length() > 0) viewModel.renameTodo(toDoListID, title);
                     titleInput.getText().clear();
@@ -146,7 +148,6 @@ public class ListSelectionActivity extends AppCompatActivity {
                     adapter.notifyItemChanged(position);
                     dialog.dismiss();
                 });
-        builder.setView(dialog_input);
-        builder.show();
+        builder.show().getWindow().setGravity(0x00000035);
     }
 }

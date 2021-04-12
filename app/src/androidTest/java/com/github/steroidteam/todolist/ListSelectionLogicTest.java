@@ -1,9 +1,17 @@
 package com.github.steroidteam.todolist;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.clearText;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.scrollToPosition;
+import static androidx.test.espresso.matcher.RootMatchers.isDialog;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.content.Intent;
 import android.view.View;
@@ -36,6 +44,36 @@ public class ListSelectionLogicTest {
 
             onView(withId(R.id.activity_list_selection_itemlist))
                     .check(matches(atPositionCheckText(0, "A Todo!")));
+        }
+    }
+
+    @Test
+    public void createTodoWorks() {
+
+        Intent activity =
+                new Intent(
+                        ApplicationProvider.getApplicationContext(), ListSelectionActivity.class);
+
+        try (ActivityScenario<ListSelectionActivity> scenario = ActivityScenario.launch(activity)) {
+
+            final String TODO_DESC_2 = "Todo 2";
+
+            onView(withId(R.id.create_todo_button)).perform(click());
+
+            onView(withText("Enter the title of your to-do list")).check(matches(isDisplayed()));
+
+            onView(withId(R.id.alert_dialog_edit_text))
+                    .inRoot(isDialog())
+                    .perform(clearText(), typeText(TODO_DESC_2));
+            closeSoftKeyboard();
+            onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+
+            onView(withText("Enter the title of your to-do list")).check(doesNotExist());
+
+            onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(1));
+
+            onView(withId(R.id.activity_list_selection_itemlist))
+                    .check(matches(atPositionCheckText(1, TODO_DESC_2)));
         }
     }
 

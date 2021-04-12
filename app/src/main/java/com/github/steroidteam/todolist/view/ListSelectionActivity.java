@@ -124,11 +124,11 @@ public class ListSelectionActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Rename your to-do list");
 
-        LayoutInflater inflater = LayoutInflater.from(this.getApplicationContext());
-        View user_input = inflater.inflate(R.layout.alert_dialog_input, null);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialog_input = inflater.inflate(R.layout.alert_dialog_input, null);
+        builder.setView(dialog_input);
 
-        final EditText titleInput = user_input.findViewById(R.id.alert_dialog_edit_text);
-        builder.setView(user_input);
+        EditText titleInput = dialog_input.findViewById(R.id.alert_dialog_edit_text);
 
         builder.setPositiveButton(
                 "Rename",

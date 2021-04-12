@@ -42,7 +42,7 @@ public class NoteDisplayActivity extends AppCompatActivity {
 
     /** This method is called when the user click on the note_header to switch to MapActivity
      *
-     * @param view 
+     * @param view
      */
     public void goToMapActivity(View view){
         Intent mapActivity = new Intent(NoteDisplayActivity.this, MapsActivity.class);

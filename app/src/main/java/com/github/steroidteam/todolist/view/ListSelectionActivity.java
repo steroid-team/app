@@ -136,7 +136,7 @@ public class ListSelectionActivity extends AppCompatActivity {
                 (DialogInterface dialog, int which) -> {
                     EditText titleInput = dialog_input.findViewById(R.id.alert_dialog_edit_text);
                     String title = titleInput.getText().toString();
-                    if (title.length() >= 0) viewModel.renameTodo(toDoListID, "Homework");
+                    if (title.length() > 0) viewModel.renameTodo(toDoListID, title);
                     titleInput.getText().clear();
                     dialog.dismiss();
                 });

@@ -133,7 +133,7 @@ public class ListSelectionActivity extends AppCompatActivity {
                 "Rename",
                 (DialogInterface dialog, int which) -> {
                     String title = titleInput.getText().toString();
-                    if (title.length() > 0) viewModel.renameTodo(toDoListID, "Homework");
+                    if (title.length() >= 0) viewModel.renameTodo(toDoListID, "Homework");
                     titleInput.getText().clear();
                     dialog.cancel();
                 });

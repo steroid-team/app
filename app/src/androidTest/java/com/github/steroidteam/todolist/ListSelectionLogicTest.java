@@ -3,7 +3,6 @@ package com.github.steroidteam.todolist;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -65,7 +64,6 @@ public class ListSelectionLogicTest {
             onView(withId(R.id.alert_dialog_edit_text))
                     .inRoot(isDialog())
                     .perform(clearText(), typeText(TODO_DESC_2));
-            closeSoftKeyboard();
             onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
 
             onView(withText("Enter the title of your to-do list")).check(doesNotExist());

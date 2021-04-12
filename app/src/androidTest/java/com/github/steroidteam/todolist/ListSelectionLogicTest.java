@@ -86,7 +86,7 @@ public class ListSelectionLogicTest {
 
             onView(withId(R.id.alert_dialog_edit_text)).check(matches(isDisplayed()));
 
-            onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+            onView(withText("Rename")).inRoot(isDialog()).perform(click());
 
             onView(withId(R.id.alert_dialog_edit_text)).check(doesNotExist());
 

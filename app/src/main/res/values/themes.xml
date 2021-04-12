@@ -73,4 +73,7 @@
         <item name="contentPaddingRight">15dp</item>
         <item name="contentPaddingTop">14dp</item>
     </style>
+    <style name="Dialog" parent="Theme.MaterialComponents.Light">
+        <item name="colorPrimary">@color/dark_blue</item>
+    </style>
 </resources>

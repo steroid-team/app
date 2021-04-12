@@ -102,29 +102,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (task.isSuccessful()) {
             // Set the map's camera position to the current location of the device.
             lastKnownLocation = task.getResult();
-            if (lastKnownLocation != null) {
-                map.moveCamera(
-                        CameraUpdateFactory.newLatLngZoom(
-                                new LatLng(
-                                        lastKnownLocation.getLatitude(),
-                                        lastKnownLocation.getLongitude()),
-                                DEFAULT_ZOOM));
-                map.addMarker(
-                        new MarkerOptions()
-                                .position(
-                                        new LatLng(
-                                                lastKnownLocation.getLatitude(),
-                                                lastKnownLocation.getLongitude()))
-                                .title("I'm here"));
-            } else {
-                map.moveCamera(CameraUpdateFactory.newLatLng(defaultLocation));
-                map.addMarker(new MarkerOptions().position(defaultLocation).title("Sydney :)"));
-            }
+            deviceLocationMarker(lastKnownLocation);
         } else {
             Log.d(TAG, "Current location is null. Using defaults.");
             Log.e(TAG, "Exception: %s", task.getException());
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, DEFAULT_ZOOM));
             map.getUiSettings().setMyLocationButtonEnabled(false);
+        }
+    }
+
+    private void deviceLocationMarker(Location location) {
+        if (location != null) {
+            map.moveCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                            new LatLng(location.getLatitude(), location.getLongitude()),
+                            DEFAULT_ZOOM));
+            map.addMarker(
+                    new MarkerOptions()
+                            .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                            .title("I'm here"));
+        } else {
+            map.moveCamera(CameraUpdateFactory.newLatLng(defaultLocation));
+            map.addMarker(new MarkerOptions().position(defaultLocation).title("Sydney :)"));
         }
     }
 

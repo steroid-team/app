@@ -1,7 +1,6 @@
 package com.github.steroidteam.todolist;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
@@ -88,10 +87,8 @@ public class ListSelectionLogicTest {
 
             onView(withId(R.id.alert_dialog_edit_text)).check(matches(isDisplayed()));
 
-            onView(withId(R.id.alert_dialog_edit_text))
-                    .inRoot(isDialog())
-                    .perform(clearText(), typeText(TODO_DESC_2));
-            onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+            onView(withId(R.id.alert_dialog_edit_text)).perform(typeText(TODO_DESC_2));
+            onView(withId(android.R.id.button1)).perform(click());
 
             onView(withId(R.id.alert_dialog_edit_text)).check(doesNotExist());
 

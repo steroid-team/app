@@ -4,12 +4,10 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import com.github.steroidteam.todolist.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -69,14 +67,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         // Get the SupportMapFragment and request notification when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
     /**
-     * Manipulates the map when it's available.
-     * This callback is triggered when the map is ready to be used.
+     * Manipulates the map when it's available. This callback is triggered when the map is ready to
+     * be used.
      */
     // [START maps_current_place_on_map_ready]
     @Override
@@ -96,24 +94,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     // [END maps_current_place_on_map_ready]
 
     /**
-     @Override public void onMapReady(GoogleMap googleMap) {
-     // [START_EXCLUDE silent]
-     // Add a marker in Sydney, Australia,
-     // and move the map's camera to the same location.
-     // [END_EXCLUDE]
-     LatLng sydney = new LatLng(-33.852, 151.211);
-     googleMap.addMarker(new MarkerOptions()
-     .position(sydney)
-     .title("Marker in Sydney"));
-     // [START_EXCLUDE silent]
-     googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-     // [END_EXCLUDE]
-     }
-     **/
-
-    /**
-     * Gets the current location of the device, and positions the map's camera.
+     * @Override public void onMapReady(GoogleMap googleMap) { // [START_EXCLUDE silent] // Add a
+     * marker in Sydney, Australia, // and move the map's camera to the same location. //
+     * [END_EXCLUDE] LatLng sydney = new LatLng(-33.852, 151.211); googleMap.addMarker(new
+     * MarkerOptions() .position(sydney) .title("Marker in Sydney")); // [START_EXCLUDE silent]
+     * googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney)); // [END_EXCLUDE] }
      */
+
+    /** Gets the current location of the device, and positions the map's camera. */
     // [START maps_current_place_get_device_location]
     private void getDeviceLocation() {
         /*
@@ -123,12 +111,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         try {
             if (locationPermissionGranted) {
                 Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
-                locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        onCompleteDeviceLocation(task);
-                    }
-                });
+                locationResult.addOnCompleteListener(
+                        this,
+                        new OnCompleteListener<Location>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Location> task) {
+                                onCompleteDeviceLocation(task);
+                            }
+                        });
             }
         } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage(), e);
@@ -136,28 +126,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     // [END maps_current_place_get_device_location]
 
-    private void onCompleteDeviceLocation(@NonNull Task<Location> task){
+    private void onCompleteDeviceLocation(@NonNull Task<Location> task) {
         if (task.isSuccessful()) {
             // Set the map's camera position to the current location of the device.
             lastKnownLocation = task.getResult();
             if (lastKnownLocation != null) {
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(lastKnownLocation.getLatitude(),
-                                lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-                map.addMarker(new MarkerOptions().position(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude())).title("I'm here"));
+                map.moveCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                                new LatLng(
+                                        lastKnownLocation.getLatitude(),
+                                        lastKnownLocation.getLongitude()),
+                                DEFAULT_ZOOM));
+                map.addMarker(
+                        new MarkerOptions()
+                                .position(
+                                        new LatLng(
+                                                lastKnownLocation.getLatitude(),
+                                                lastKnownLocation.getLongitude()))
+                                .title("I'm here"));
             }
         } else {
             Log.d(TAG, "Current location is null. Using defaults.");
             Log.e(TAG, "Exception: %s", task.getException());
-            map.moveCamera(CameraUpdateFactory
-                    .newLatLngZoom(defaultLocation, DEFAULT_ZOOM));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, DEFAULT_ZOOM));
             map.getUiSettings().setMyLocationButtonEnabled(false);
         }
     }
 
-    /**
-     * Prompts the user for permission to use the device location.
-     */
+    /** Prompts the user for permission to use the device location. */
     // [START maps_current_place_location_permission]
     private void getLocationPermission() {
         /*
@@ -165,43 +161,41 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
          * device. The result of the permission request is handled by a callback,
          * onRequestPermissionsResult.
          */
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(
+                        this.getApplicationContext(),
+                        android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true;
         } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
     // [END maps_current_place_location_permission]
 
-    /**
-     * Handles the result of the request for location permissions.
-     */
+    /** Handles the result of the request for location permissions. */
     // [START maps_current_place_on_request_permissions_result]
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(
+            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         locationPermissionGranted = false;
         switch (requestCode) {
-            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    locationPermissionGranted = true;
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:
+                {
+                    // If request is cancelled, the result arrays are empty.
+                    if (grantResults.length > 0
+                            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        locationPermissionGranted = true;
+                    }
                 }
-            }
         }
         updateLocationUI();
     }
     // [END maps_current_place_on_request_permissions_result]
 
-    /**
-     * Updates the map's UI settings based on whether the user has granted location permission.
-     */
+    /** Updates the map's UI settings based on whether the user has granted location permission. */
     // [START maps_current_place_update_location_ui]
     private void updateLocationUI() {
         if (map == null) {

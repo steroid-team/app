@@ -2,9 +2,6 @@ package com.github.steroidteam.todolist.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -14,7 +11,6 @@ import com.github.steroidteam.todolist.R;
 import java.util.UUID;
 
 public class NoteDisplayActivity extends AppCompatActivity {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +36,12 @@ public class NoteDisplayActivity extends AppCompatActivity {
                         + " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
     }
 
-    /** This method is called when the user click on the note_header to switch to MapActivity
+    /**
+     * This method is called when the user click on the note_header to switch to MapActivity
      *
      * @param view
      */
-    public void goToMapActivity(View view){
+    public void goToMapActivity(View view) {
         Intent mapActivity = new Intent(NoteDisplayActivity.this, MapsActivity.class);
         startActivity(mapActivity);
     }

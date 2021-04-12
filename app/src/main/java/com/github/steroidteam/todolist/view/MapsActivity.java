@@ -18,7 +18,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -41,24 +40,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location lastKnownLocation;
 
     // Keys for storing activity state.
-    // [START maps_current_place_state_keys]
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
-    // [END maps_current_place_state_keys]
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // [START_EXCLUDE silent]
-        // [START maps_current_place_on_create_save_instance_state]
         // Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
-        // [END maps_current_place_on_create_save_instance_state]
-        // [END_EXCLUDE]
 
         // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_maps);
@@ -76,14 +69,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      * Manipulates the map when it's available. This callback is triggered when the map is ready to
      * be used.
      */
-    // [START maps_current_place_on_map_ready]
     @Override
     public void onMapReady(GoogleMap map) {
         this.map = map;
-
         // Prompt the user for permission.
         getLocationPermission();
-        // [END_EXCLUDE]
 
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
@@ -91,18 +81,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
     }
-    // [END maps_current_place_on_map_ready]
-
-    /**
-     * @Override public void onMapReady(GoogleMap googleMap) { // [START_EXCLUDE silent] // Add a
-     * marker in Sydney, Australia, // and move the map's camera to the same location. //
-     * [END_EXCLUDE] LatLng sydney = new LatLng(-33.852, 151.211); googleMap.addMarker(new
-     * MarkerOptions() .position(sydney) .title("Marker in Sydney")); // [START_EXCLUDE silent]
-     * googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney)); // [END_EXCLUDE] }
-     */
 
     /** Gets the current location of the device, and positions the map's camera. */
-    // [START maps_current_place_get_device_location]
     private void getDeviceLocation() {
         /*
          * Get the best and most recent location of the device, which may be null in rare
@@ -111,20 +91,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         try {
             if (locationPermissionGranted) {
                 Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
-                locationResult.addOnCompleteListener(
-                        this,
-                        new OnCompleteListener<Location>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Location> task) {
-                                onCompleteDeviceLocation(task);
-                            }
-                        });
+                locationResult.addOnCompleteListener(this, task -> onCompleteDeviceLocation(task));
             }
         } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage(), e);
         }
     }
-    // [END maps_current_place_get_device_location]
 
     private void onCompleteDeviceLocation(@NonNull Task<Location> task) {
         if (task.isSuccessful()) {
@@ -144,6 +116,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                 lastKnownLocation.getLatitude(),
                                                 lastKnownLocation.getLongitude()))
                                 .title("I'm here"));
+            } else {
+                map.moveCamera(CameraUpdateFactory.newLatLng(defaultLocation));
+                map.addMarker(new MarkerOptions().position(defaultLocation).title("Sydney :)"));
             }
         } else {
             Log.d(TAG, "Current location is null. Using defaults.");
@@ -154,7 +129,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /** Prompts the user for permission to use the device location. */
-    // [START maps_current_place_location_permission]
     private void getLocationPermission() {
         /*
          * Request location permission, so that we can get the location of the
@@ -173,10 +147,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
-    // [END maps_current_place_location_permission]
 
     /** Handles the result of the request for location permissions. */
-    // [START maps_current_place_on_request_permissions_result]
     @Override
     public void onRequestPermissionsResult(
             int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -193,10 +165,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         updateLocationUI();
     }
-    // [END maps_current_place_on_request_permissions_result]
 
     /** Updates the map's UI settings based on whether the user has granted location permission. */
-    // [START maps_current_place_update_location_ui]
     private void updateLocationUI() {
         if (map == null) {
             return;
@@ -215,6 +185,4 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.e("Exception: %s", e.getMessage());
         }
     }
-    // [END maps_current_place_update_location_ui]
-
 }

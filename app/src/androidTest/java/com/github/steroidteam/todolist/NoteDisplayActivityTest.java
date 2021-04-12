@@ -10,9 +10,7 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import com.github.steroidteam.todolist.view.ListSelectionActivity;
 import com.github.steroidteam.todolist.view.MapsActivity;
-import com.github.steroidteam.todolist.view.NoteDisplayActivity;
 import com.github.steroidteam.todolist.view.NoteSelectionActivity;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -36,9 +34,7 @@ public class NoteDisplayActivityTest {
 
         onView(withId(R.id.note_header)).perform(click());
 
-        Intents.intended(
-                Matchers.allOf(IntentMatchers.hasComponent(MapsActivity.class.getName())));
+        Intents.intended(Matchers.allOf(IntentMatchers.hasComponent(MapsActivity.class.getName())));
         Intents.release();
     }
-
 }

@@ -10,6 +10,7 @@ import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtP
 import static androidx.test.espresso.contrib.RecyclerViewActions.scrollToPosition;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
@@ -20,11 +21,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.github.steroidteam.todolist.view.ListSelectionActivity;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.core.IsAnything;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -88,6 +92,9 @@ public class ListSelectionLogicTest {
             onView(withId(R.id.alert_dialog_edit_text)).check(matches(isDisplayed()));
 
             onView(withId(R.id.alert_dialog_edit_text)).perform(typeText(TODO_DESC_2));
+
+            onView(isRoot()).perform(waitUntilIdle());
+
             onView(withId(android.R.id.button1)).perform(click());
 
             onView(withId(R.id.alert_dialog_edit_text)).check(doesNotExist());
@@ -115,6 +122,30 @@ public class ListSelectionLogicTest {
                 View todoView = view.getChildAt(position);
                 TextView bodyView = todoView.findViewById(R.id.layout_todo_list_text);
                 return bodyView.getText().toString().equals(expectedText);
+            }
+        };
+    }
+
+    public static ViewAction waitUntilIdle() {
+        return new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return anyView();
+            }
+
+            @NonNull
+            private Matcher<View> anyView() {
+                return new IsAnything<>();
+            }
+
+            @Override
+            public String getDescription() {
+                return "wait until UI thread is free";
+            }
+
+            @Override
+            public void perform(final UiController uiController, final View view) {
+                uiController.loopMainThreadUntilIdle();
             }
         };
     }

@@ -122,7 +122,6 @@ public class ListSelectionActivity extends AppCompatActivity {
 
     public void renameTodo(UUID toDoListID, final int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Rename your to-do list");
 
         LayoutInflater inflater = this.getLayoutInflater();
         View dialog_input = inflater.inflate(R.layout.alert_dialog_input, null);

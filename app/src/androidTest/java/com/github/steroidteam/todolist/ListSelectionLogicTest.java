@@ -86,14 +86,14 @@ public class ListSelectionLogicTest {
             onView(withId(R.id.activity_list_selection_itemlist))
                     .perform(actionOnItemAtPosition(0, swipeRight()));
 
-            onView(withText("Rename your to-do list")).check(matches(isDisplayed()));
+            onView(withId(R.id.alert_dialog_edit_text)).check(matches(isDisplayed()));
 
             onView(withId(R.id.alert_dialog_edit_text))
                     .inRoot(isDialog())
                     .perform(clearText(), typeText(TODO_DESC_2));
             onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
 
-            onView(withText("Rename your to-do list")).check(doesNotExist());
+            onView(withId(R.id.alert_dialog_edit_text)).check(doesNotExist());
 
             onView(withId(R.id.activity_list_selection_itemlist))
                     .check(matches(atPositionCheckText(0, TODO_DESC_2)));

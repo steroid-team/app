@@ -47,7 +47,7 @@ public class ListSelectionLogicTest {
     }
 
     @Test
-    public void createTodoWorks() {
+    public void cancelCreateTodoWorks() {
 
         Intent activity =
                 new Intent(
@@ -64,14 +64,12 @@ public class ListSelectionLogicTest {
             onView(withId(R.id.alert_dialog_edit_text))
                     .inRoot(isDialog())
                     .perform(clearText(), typeText(TODO_DESC_2));
-            onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+            onView(withId(android.R.id.button2)).inRoot(isDialog()).perform(click());
 
             onView(withText("Enter the title of your to-do list")).check(doesNotExist());
 
-            onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(1));
-
             onView(withId(R.id.activity_list_selection_itemlist))
-                    .check(matches(atPositionCheckText(1, TODO_DESC_2)));
+                    .check(matches(atPositionCheckText(0, "A Todo!")));
         }
     }
 

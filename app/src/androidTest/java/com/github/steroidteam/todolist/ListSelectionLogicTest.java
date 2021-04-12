@@ -91,9 +91,11 @@ public class ListSelectionLogicTest {
 
             onView(withId(R.id.alert_dialog_edit_text)).check(matches(isDisplayed()));
 
+            onView(isRoot()).perform(waitAtLeast(500));
+
             onView(withId(R.id.alert_dialog_edit_text)).perform(typeText(TODO_DESC_2));
 
-            onView(isRoot()).perform(waitUntilIdle());
+            onView(isRoot()).perform(waitAtLeast(500));
 
             onView(withId(android.R.id.button1)).perform(click());
 
@@ -122,6 +124,31 @@ public class ListSelectionLogicTest {
                 View todoView = view.getChildAt(position);
                 TextView bodyView = todoView.findViewById(R.id.layout_todo_list_text);
                 return bodyView.getText().toString().equals(expectedText);
+            }
+        };
+    }
+
+    public static ViewAction waitAtLeast(final long millis) {
+        return new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return anyView();
+            }
+
+            @NonNull
+            private Matcher<View> anyView() {
+                return new IsAnything<>();
+            }
+
+            @Override
+            public String getDescription() {
+                return "wait for at least " + millis + " millis.";
+            }
+
+            @Override
+            public void perform(final UiController uiController, final View view) {
+                uiController.loopMainThreadUntilIdle();
+                uiController.loopMainThreadForAtLeast(millis);
             }
         };
     }

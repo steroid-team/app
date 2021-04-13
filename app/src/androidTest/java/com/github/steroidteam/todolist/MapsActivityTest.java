@@ -9,7 +9,6 @@ import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
 import com.github.steroidteam.todolist.view.MapsActivity;
-import java.util.concurrent.TimeUnit;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,16 +22,13 @@ public class MapsActivityTest {
 
     @Test
     public void MarkerIsCorrectlyPlacedAtDefaultLocationOrUserLocation() {
-        try {
-            TimeUnit.SECONDS.sleep(3);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         UiDevice device = UiDevice.getInstance(getInstrumentation());
+        // If we don't have access to the localisation the default marker is placed at Sydney
         UiObject marker = device.findObject(new UiSelector().descriptionContains("Sydney :)"));
         try {
             marker.click();
         } catch (UiObjectNotFoundException e) {
+            // It's the case when we have access to the localisation
             marker = device.findObject(new UiSelector().descriptionContains("I'm here"));
             try {
                 marker.click();

@@ -122,7 +122,8 @@ public class ListSelectionActivity extends AppCompatActivity {
                     adapter.notifyItemChanged(position);
                     dialog.cancel();
                 });
-        builder.show();
+        builder.show().getWindow().setGravity(Gravity.CENTER);
+        ;
     }
 
     public void renameTodo(UUID toDoListID, final int position) {

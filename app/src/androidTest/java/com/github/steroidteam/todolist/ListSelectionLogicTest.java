@@ -1,7 +1,9 @@
 package com.github.steroidteam.todolist;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
@@ -132,6 +134,120 @@ public class ListSelectionLogicTest {
 
             onView(withId(R.id.activity_list_selection_itemlist))
                     .check(matches(atPositionCheckText(1, TODO_DESC)));
+        }
+    }
+
+    @Test
+    public void deleteTodoWorks() {
+        Intent activity =
+                new Intent(
+                        ApplicationProvider.getApplicationContext(), ListSelectionActivity.class);
+
+        try (ActivityScenario<ListSelectionActivity> scenario = ActivityScenario.launch(activity)) {
+            final String TODO_DESC_2 = "Homework";
+
+            // Add a to-do
+            onView(withId(R.id.create_todo_button)).perform(click());
+
+            onView(withText("Enter the title of your to-do list")).check(matches(isDisplayed()));
+
+            onView(withId(R.id.alert_dialog_edit_text))
+                    .inRoot(isDialog())
+                    .perform(clearText(), typeText(TODO_DESC_2));
+            onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+
+            onView(withText("Enter the title of your to-do list")).check(doesNotExist());
+
+            onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(0));
+
+            onView(withId(R.id.activity_list_selection_itemlist))
+                    .perform(actionOnItemAtPosition(0, swipeLeft()));
+
+            onView(withText("Are you sure to delete this to-do ?")).check(matches(isDisplayed()));
+
+            onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+
+            onView(withText("Are you sure to delete this to-do ?")).check(doesNotExist());
+
+            onView(withId(R.id.activity_list_selection_itemlist))
+                    .check(matches(atPositionCheckText(0, TODO_DESC_2)));
+        }
+    }
+
+    @Test
+    public void cancelDeletionWorks() {
+        Intent activity =
+                new Intent(
+                        ApplicationProvider.getApplicationContext(), ListSelectionActivity.class);
+
+        try (ActivityScenario<ListSelectionActivity> scenario = ActivityScenario.launch(activity)) {
+            final String TODO_DESC = "A Todo!";
+
+            onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(0));
+
+            onView(withId(R.id.activity_list_selection_itemlist))
+                    .perform(actionOnItemAtPosition(0, swipeLeft()));
+
+            onView(withText("Are you sure to delete this to-do ?")).check(matches(isDisplayed()));
+
+            onView(withId(android.R.id.button2)).inRoot(isDialog()).perform(click());
+
+            onView(withText("Are you sure to delete this to-do ?")).check(doesNotExist());
+
+            onView(withId(R.id.activity_list_selection_itemlist))
+                    .check(matches(atPositionCheckText(0, TODO_DESC)));
+        }
+    }
+
+    @Test
+    public void cancelRenamingWorks() {
+        Intent activity =
+                new Intent(
+                        ApplicationProvider.getApplicationContext(), ListSelectionActivity.class);
+
+        try (ActivityScenario<ListSelectionActivity> scenario = ActivityScenario.launch(activity)) {
+            final String TODO_DESC = "A Todo!";
+            final String TODO_DESC_2 = "Homework";
+
+            onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(0));
+
+            onView(withId(R.id.activity_list_selection_itemlist))
+                    .perform(actionOnItemAtPosition(0, swipeRight()));
+
+            onView(withText("Rename your to-do list")).check(matches(isDisplayed()));
+
+            onView(withId(R.id.alert_dialog_edit_text)).perform(clearText(), typeText(TODO_DESC_2));
+
+            onView(withId(android.R.id.button2)).perform(click());
+
+            onView(withText("Rename your to-do list")).check(doesNotExist());
+
+            onView(withId(R.id.activity_list_selection_itemlist))
+                    .check(matches(atPositionCheckText(0, TODO_DESC)));
+        }
+    }
+
+    @Test
+    public void cantRenameTodoWithoutText() {
+        Intent activity =
+                new Intent(
+                        ApplicationProvider.getApplicationContext(), ListSelectionActivity.class);
+
+        try (ActivityScenario<ListSelectionActivity> scenario = ActivityScenario.launch(activity)) {
+
+            onView(withId(R.id.activity_list_selection_itemlist))
+                    .perform(actionOnItemAtPosition(0, swipeRight()));
+
+            onView(withId(R.id.alert_dialog_edit_text)).check(matches(isDisplayed()));
+
+            onView(withId(R.id.alert_dialog_edit_text)).perform(typeText(""));
+
+            onView(withId(android.R.id.button1)).perform(click());
+
+            onView(withId(R.id.alert_dialog_edit_text)).check(doesNotExist());
+
+            onView(withId(R.id.activity_list_selection_itemlist))
+                    .check(matches(atPositionCheckText(0, "A Todo!")));
         }
     }
 

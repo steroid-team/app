@@ -62,8 +62,6 @@ public class ListSelectionLogicTest {
 
         try (ActivityScenario<ListSelectionActivity> scenario = ActivityScenario.launch(activity)) {
 
-            final String TODO_DESC_2 = "Todo 2";
-
             onView(withId(R.id.create_todo_button)).perform(click());
 
             onView(withText("Enter the title of your to-do list")).check(matches(isDisplayed()));
@@ -156,6 +154,8 @@ public class ListSelectionLogicTest {
                     .perform(clearText(), typeText(TODO_DESC_2));
             onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
 
+            onView(isRoot()).perform(waitAtLeast(500));
+
             onView(withText("Enter the title of your to-do list")).check(doesNotExist());
 
             onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(0));
@@ -166,6 +166,7 @@ public class ListSelectionLogicTest {
             onView(withText("Are you sure to delete this to-do ?")).check(matches(isDisplayed()));
 
             onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+            onView(isRoot()).perform(waitAtLeast(500));
 
             onView(withText("Are you sure to delete this to-do ?")).check(doesNotExist());
 

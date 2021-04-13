@@ -94,12 +94,12 @@ public class ListSelectionActivity extends AppCompatActivity {
                     String title = titleInput.getText().toString();
                     if (title.length() > 0) viewModel.addTodo(title);
                     titleInput.getText().clear();
-                    dialog.cancel();
+                    dialog.dismiss();
                 });
         titlePopup.setNegativeButton(
                 "Cancel",
                 (DialogInterface dialog, int which) -> {
-                    dialog.cancel();
+                    dialog.dismiss();
                 });
         titlePopup.show().getWindow().setGravity(0x00000035);
         ;
@@ -113,13 +113,13 @@ public class ListSelectionActivity extends AppCompatActivity {
                 "Delete",
                 (DialogInterface dialog, int which) -> {
                     viewModel.removeTodo(toDoListID);
-                    dialog.cancel();
+                    dialog.dismiss();
                 });
         builder.setNegativeButton(
                 "Cancel",
                 (DialogInterface dialog, int which) -> {
                     adapter.notifyItemChanged(position);
-                    dialog.cancel();
+                    dialog.dismiss();
                 });
         builder.show().getWindow().setGravity(0x00000035);
     }

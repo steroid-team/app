@@ -102,7 +102,7 @@ public class ListSelectionActivity extends AppCompatActivity {
                 (DialogInterface dialog, int which) -> {
                     dialog.cancel();
                 });
-        titlePopup.show().getWindow().setGravity(Gravity.CENTER);
+        titlePopup.show().getWindow().setGravity(Gravity.TOP);
         ;
     }
 
@@ -150,6 +150,6 @@ public class ListSelectionActivity extends AppCompatActivity {
                     adapter.notifyItemChanged(position);
                     dialog.dismiss();
                 });
-        builder.show().getWindow().setGravity(0x00000035);
+        builder.show().getWindow().setGravity(Gravity.TOP);
     }
 }

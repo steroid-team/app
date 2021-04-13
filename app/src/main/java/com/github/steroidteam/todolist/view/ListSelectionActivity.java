@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -101,7 +102,7 @@ public class ListSelectionActivity extends AppCompatActivity {
                 (DialogInterface dialog, int which) -> {
                     dialog.cancel();
                 });
-        titlePopup.show().getWindow().setGravity(0x00000035);
+        titlePopup.show().getWindow().setGravity(Gravity.CENTER);
         ;
     }
 

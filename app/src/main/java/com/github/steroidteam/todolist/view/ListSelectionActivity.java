@@ -1,7 +1,7 @@
 package com.github.steroidteam.todolist.view;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -79,77 +79,83 @@ public class ListSelectionActivity extends AppCompatActivity {
     }
 
     public void addTodoList(View view) {
-        AlertDialog.Builder titlePopup = new AlertDialog.Builder(this);
-        titlePopup.setTitle("Enter the title of your to-do list");
+        Context context = new ContextThemeWrapper(ListSelectionActivity.this, R.style.Dialog);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        builder.setTitle(getString(R.string.add_todo_suggestion));
 
         LayoutInflater inflater = LayoutInflater.from(this.getApplicationContext());
         View user_input = inflater.inflate(R.layout.alert_dialog_input, null);
 
-        final EditText titleInput = user_input.findViewById(R.id.alert_dialog_edit_text);
-        titlePopup.setView(user_input);
+        builder.setView(user_input);
 
-        titlePopup.setPositiveButton(
-                "Create",
+        builder.setPositiveButton(
+                getString(R.string.add_todo),
                 (DialogInterface dialog, int which) -> {
+                    EditText titleInput = user_input.findViewById(R.id.alert_dialog_edit_text);
                     String title = titleInput.getText().toString();
                     if (title.length() > 0) viewModel.addTodo(title);
                     titleInput.getText().clear();
                     dialog.dismiss();
                 });
-        titlePopup.setNegativeButton(
-                "Cancel",
+        builder.setNegativeButton(
+                getString(R.string.cancel),
                 (DialogInterface dialog, int which) -> {
                     dialog.dismiss();
                 });
-        titlePopup.show().getWindow().setGravity(0x00000035);
-        ;
+        Dialog dialog = builder.show();
+        dialog.getWindow().setGravity(0x00000035);
+        dialog.setCanceledOnTouchOutside(false);
     }
 
     public void removeTodo(UUID toDoListID, final int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Are you sure to delete this to-do ?");
+        Context context = new ContextThemeWrapper(ListSelectionActivity.this, R.style.Dialog);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        builder.setTitle(getString(R.string.delete_todo_suggestion));
 
         builder.setPositiveButton(
-                "Delete",
+                getString(R.string.delete_btn),
                 (DialogInterface dialog, int which) -> {
                     viewModel.removeTodo(toDoListID);
                     dialog.dismiss();
                 });
         builder.setNegativeButton(
-                "Cancel",
+                getString(R.string.cancel),
                 (DialogInterface dialog, int which) -> {
                     adapter.notifyItemChanged(position);
                     dialog.dismiss();
                 });
-        builder.show().getWindow().setGravity(0x00000035);
+        Dialog dialog = builder.show();
+        dialog.getWindow().setGravity(0x00000035);
+        dialog.setCanceledOnTouchOutside(false);
     }
 
     public void renameTodo(UUID toDoListID, final int position) {
 
         Context context = new ContextThemeWrapper(ListSelectionActivity.this, R.style.Dialog);
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
-        builder.setTitle("Rename your to-do list");
+        builder.setTitle(getString(R.string.rename_todo_suggestion));
 
         LayoutInflater inflater = this.getLayoutInflater();
         View dialog_input = inflater.inflate(R.layout.alert_dialog_input, null);
         builder.setView(dialog_input);
 
         builder.setPositiveButton(
-                "Rename",
+                getString(R.string.rename),
                 (DialogInterface dialog, int which) -> {
-                    EditText titleInput =
-                            (EditText) dialog_input.findViewById(R.id.alert_dialog_edit_text);
+                    EditText titleInput = dialog_input.findViewById(R.id.alert_dialog_edit_text);
                     String title = titleInput.getText().toString();
                     if (title.length() > 0) viewModel.renameTodo(toDoListID, title);
                     titleInput.getText().clear();
                     dialog.dismiss();
                 });
         builder.setNegativeButton(
-                "Cancel",
+                getString(R.string.cancel),
                 (DialogInterface dialog, int which) -> {
                     adapter.notifyItemChanged(position);
                     dialog.dismiss();
                 });
-        builder.show().getWindow().setGravity(0x00000035);
+        Dialog dialog = builder.show();
+        dialog.getWindow().setGravity(0x00000035);
+        dialog.setCanceledOnTouchOutside(false);
     }
 }

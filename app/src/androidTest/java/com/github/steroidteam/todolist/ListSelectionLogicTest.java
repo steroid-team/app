@@ -64,11 +64,12 @@ public class ListSelectionLogicTest {
 
             onView(withId(R.id.create_todo_button)).perform(click());
 
-            onView(withText("Enter the title of your to-do list")).check(matches(isDisplayed()));
+            onView(withText(R.string.add_todo_suggestion)).check(matches(isDisplayed()));
 
+            // button2 = negative button
             onView(withId(android.R.id.button2)).inRoot(isDialog()).perform(click());
 
-            onView(withText("Enter the title of your to-do list")).check(doesNotExist());
+            onView(withText(R.string.add_todo_suggestion)).check(doesNotExist());
 
             onView(withId(R.id.activity_list_selection_itemlist))
                     .check(matches(atPositionCheckText(0, "A Todo!")));
@@ -91,12 +92,13 @@ public class ListSelectionLogicTest {
 
             onView(withId(R.id.alert_dialog_edit_text)).check(matches(isDisplayed()));
 
-            onView(isRoot()).perform(waitAtLeast(500));
+            onView(isRoot()).perform(waitAtLeastHelper(500));
 
             onView(withId(R.id.alert_dialog_edit_text)).perform(typeText(TODO_DESC_2));
 
-            onView(isRoot()).perform(waitAtLeast(500));
+            onView(isRoot()).perform(waitAtLeastHelper(500));
 
+            // button1 = positive button
             onView(withId(android.R.id.button1)).perform(click());
 
             onView(withId(R.id.alert_dialog_edit_text)).check(doesNotExist());
@@ -119,14 +121,14 @@ public class ListSelectionLogicTest {
 
             onView(withId(R.id.create_todo_button)).perform(click());
 
-            onView(withText("Enter the title of your to-do list")).check(matches(isDisplayed()));
+            onView(withText(R.string.add_todo_suggestion)).check(matches(isDisplayed()));
 
             onView(withId(R.id.alert_dialog_edit_text))
                     .inRoot(isDialog())
                     .perform(typeText(TODO_DESC));
             onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
 
-            onView(withText("Enter the title of your to-do list")).check(doesNotExist());
+            onView(withText(R.string.add_todo_suggestion)).check(doesNotExist());
 
             onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(1));
 
@@ -147,28 +149,28 @@ public class ListSelectionLogicTest {
             // Add a to-do
             onView(withId(R.id.create_todo_button)).perform(click());
 
-            onView(withText("Enter the title of your to-do list")).check(matches(isDisplayed()));
+            onView(withText(R.string.add_todo_suggestion)).check(matches(isDisplayed()));
 
             onView(withId(R.id.alert_dialog_edit_text))
                     .inRoot(isDialog())
                     .perform(clearText(), typeText(TODO_DESC_2));
             onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
 
-            onView(isRoot()).perform(waitAtLeast(500));
+            onView(isRoot()).perform(waitAtLeastHelper(500));
 
-            onView(withText("Enter the title of your to-do list")).check(doesNotExist());
+            onView(withText(R.string.add_todo_suggestion)).check(doesNotExist());
 
             onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(0));
 
             onView(withId(R.id.activity_list_selection_itemlist))
                     .perform(actionOnItemAtPosition(0, swipeLeft()));
 
-            onView(withText("Are you sure to delete this to-do ?")).check(matches(isDisplayed()));
+            onView(withText(R.string.delete_todo_suggestion)).check(matches(isDisplayed()));
 
             onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
-            onView(isRoot()).perform(waitAtLeast(500));
+            onView(isRoot()).perform(waitAtLeastHelper(500));
 
-            onView(withText("Are you sure to delete this to-do ?")).check(doesNotExist());
+            onView(withText(R.string.delete_todo_suggestion)).check(doesNotExist());
 
             onView(withId(R.id.activity_list_selection_itemlist))
                     .check(matches(atPositionCheckText(0, TODO_DESC_2)));
@@ -189,11 +191,11 @@ public class ListSelectionLogicTest {
             onView(withId(R.id.activity_list_selection_itemlist))
                     .perform(actionOnItemAtPosition(0, swipeLeft()));
 
-            onView(withText("Are you sure to delete this to-do ?")).check(matches(isDisplayed()));
+            onView(withText(R.string.delete_todo_suggestion)).check(matches(isDisplayed()));
 
             onView(withId(android.R.id.button2)).inRoot(isDialog()).perform(click());
 
-            onView(withText("Are you sure to delete this to-do ?")).check(doesNotExist());
+            onView(withText(R.string.delete_todo_suggestion)).check(doesNotExist());
 
             onView(withId(R.id.activity_list_selection_itemlist))
                     .check(matches(atPositionCheckText(0, TODO_DESC)));
@@ -215,13 +217,13 @@ public class ListSelectionLogicTest {
             onView(withId(R.id.activity_list_selection_itemlist))
                     .perform(actionOnItemAtPosition(0, swipeRight()));
 
-            onView(withText("Rename your to-do list")).check(matches(isDisplayed()));
+            onView(withText(R.string.rename_todo_suggestion)).check(matches(isDisplayed()));
 
             onView(withId(R.id.alert_dialog_edit_text)).perform(clearText(), typeText(TODO_DESC_2));
 
             onView(withId(android.R.id.button2)).perform(click());
 
-            onView(withText("Rename your to-do list")).check(doesNotExist());
+            onView(withText(R.string.rename_todo_suggestion)).check(doesNotExist());
 
             onView(withId(R.id.activity_list_selection_itemlist))
                     .check(matches(atPositionCheckText(0, TODO_DESC)));
@@ -252,6 +254,13 @@ public class ListSelectionLogicTest {
         }
     }
 
+    /**
+     * Helper to check if the given text is the same as the to-do list title at the given position
+     *
+     * @param position the index of the to-do in the recycler view
+     * @param expectedText the text that should be the title of the to-do
+     * @return Mactcher to test the title
+     */
     public static Matcher<View> atPositionCheckText(
             final int position, @NonNull final String expectedText) {
         return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
@@ -274,7 +283,13 @@ public class ListSelectionLogicTest {
         };
     }
 
-    public static ViewAction waitAtLeast(final long millis) {
+    /**
+     * Helper to test dialog
+     *
+     * @param millis time to wait
+     * @return viewAction that wait the given time
+     */
+    public static ViewAction waitAtLeastHelper(final long millis) {
         return new ViewAction() {
             @Override
             public Matcher<View> getConstraints() {
@@ -295,30 +310,6 @@ public class ListSelectionLogicTest {
             public void perform(final UiController uiController, final View view) {
                 uiController.loopMainThreadUntilIdle();
                 uiController.loopMainThreadForAtLeast(millis);
-            }
-        };
-    }
-
-    public static ViewAction waitUntilIdle() {
-        return new ViewAction() {
-            @Override
-            public Matcher<View> getConstraints() {
-                return anyView();
-            }
-
-            @NonNull
-            private Matcher<View> anyView() {
-                return new IsAnything<>();
-            }
-
-            @Override
-            public String getDescription() {
-                return "wait until UI thread is free";
-            }
-
-            @Override
-            public void perform(final UiController uiController, final View view) {
-                uiController.loopMainThreadUntilIdle();
             }
         };
     }

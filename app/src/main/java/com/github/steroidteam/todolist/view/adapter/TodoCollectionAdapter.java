@@ -50,7 +50,7 @@ public class TodoCollectionAdapter extends RecyclerView.Adapter<TodoCollectionAd
             // Define how many child we need to prefetch when building the nested recyclerView
             layoutManager.setInitialPrefetchItemCount(currentTodo.getImportantTask().size());
 
-            // Create a TodoChild adapter as we create a Todo Collection Adapter
+            // Create a TodoChild adapter as we create a To-Do Collection Adapter
             //  in the List Selection Activity
             TodoChildAdapter childAdapter = new TodoChildAdapter(currentTodo.getImportantTask());
             holder.taskListRecyclerView.setLayoutManager(layoutManager);

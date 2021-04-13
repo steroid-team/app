@@ -195,6 +195,8 @@ public class ListSelectionLogicTest {
 
             onView(withId(android.R.id.button2)).inRoot(isDialog()).perform(click());
 
+            onView(isRoot()).perform(waitAtLeastHelper(500));
+
             onView(withText(R.string.delete_todo_suggestion)).check(doesNotExist());
 
             onView(withId(R.id.activity_list_selection_itemlist))
@@ -227,6 +229,8 @@ public class ListSelectionLogicTest {
 
             onView(withId(android.R.id.button2)).perform(click());
 
+            onView(isRoot()).perform(waitAtLeastHelper(500));
+
             onView(withText(R.string.rename_todo_suggestion)).check(doesNotExist());
 
             onView(withId(R.id.activity_list_selection_itemlist))
@@ -250,6 +254,8 @@ public class ListSelectionLogicTest {
             onView(withId(R.id.alert_dialog_edit_text)).perform(typeText(""));
 
             onView(withId(android.R.id.button1)).perform(click());
+
+            onView(isRoot()).perform(waitAtLeastHelper(500));
 
             onView(withId(R.id.alert_dialog_edit_text)).check(doesNotExist());
 

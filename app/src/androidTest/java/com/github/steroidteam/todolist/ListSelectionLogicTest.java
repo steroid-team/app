@@ -217,9 +217,13 @@ public class ListSelectionLogicTest {
             onView(withId(R.id.activity_list_selection_itemlist))
                     .perform(actionOnItemAtPosition(0, swipeRight()));
 
+            onView(isRoot()).perform(waitAtLeastHelper(500));
+
             onView(withText(R.string.rename_todo_suggestion)).check(matches(isDisplayed()));
 
             onView(withId(R.id.alert_dialog_edit_text)).perform(clearText(), typeText(TODO_DESC_2));
+
+            onView(isRoot()).perform(waitAtLeastHelper(500));
 
             onView(withId(android.R.id.button2)).perform(click());
 

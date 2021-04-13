@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -102,7 +101,7 @@ public class ListSelectionActivity extends AppCompatActivity {
                 (DialogInterface dialog, int which) -> {
                     dialog.cancel();
                 });
-        titlePopup.show().getWindow().setGravity(Gravity.TOP);
+        titlePopup.show().getWindow().setGravity(0x00000035);
         ;
     }
 
@@ -122,13 +121,14 @@ public class ListSelectionActivity extends AppCompatActivity {
                     adapter.notifyItemChanged(position);
                     dialog.cancel();
                 });
-        builder.show().getWindow().setGravity(Gravity.TOP);
+        builder.show().getWindow().setGravity(0x00000035);
     }
 
     public void renameTodo(UUID toDoListID, final int position) {
 
         Context context = new ContextThemeWrapper(ListSelectionActivity.this, R.style.Dialog);
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        builder.setTitle("Rename your to-do list");
 
         LayoutInflater inflater = this.getLayoutInflater();
         View dialog_input = inflater.inflate(R.layout.alert_dialog_input, null);
@@ -150,6 +150,6 @@ public class ListSelectionActivity extends AppCompatActivity {
                     adapter.notifyItemChanged(position);
                     dialog.dismiss();
                 });
-        builder.show().getWindow().setGravity(Gravity.TOP);
+        builder.show().getWindow().setGravity(0x00000035);
     }
 }

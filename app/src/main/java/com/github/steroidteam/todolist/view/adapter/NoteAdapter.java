@@ -12,13 +12,16 @@ import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.notes.Note;
 
 import java.util.List;
+import java.util.UUID;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
 
     private List<Note> noteList;
+    private final NoteCustomListener listener;
 
-    public NoteAdapter(List<Note> list) {
+    public NoteAdapter(List<Note> list, NoteCustomListener listener) {
         this.noteList=list;
+        this.listener = listener;
     }
 
     @NonNull
@@ -43,9 +46,12 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
         return noteList.size();
     }
 
-    public void setNoteArrayList(List<Note> noteArrayList) {
-        this.noteList = noteArrayList;
-        notifyDataSetChanged();
+    public UUID getIdOfNote(int index) {
+        return noteList.get(index).getId();
+    }
+
+    public interface NoteCustomListener {
+        void onClickCustom(NoteHolder holder);
     }
 
     public class NoteHolder extends RecyclerView.ViewHolder {
@@ -56,6 +62,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
             super(itemView);
 
             noteTitle = itemView.findViewById(R.id.layout_note_title);
+
+            itemView.setOnClickListener(
+                    (View view) -> {
+                        listener.onClickCustom(NoteHolder.this);
+                    });
         }
     }
 }

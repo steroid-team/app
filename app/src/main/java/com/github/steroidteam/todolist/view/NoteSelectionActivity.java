@@ -54,15 +54,23 @@ public class NoteSelectionActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        adapter = new NoteAdapter(notes);
+        NoteAdapter.NoteCustomListener customListener =
+                new NoteAdapter.NoteCustomListener() {
+                    @Override
+                    public void onClickCustom(NoteAdapter.NoteHolder holder) {
+                        openNotes(holder);
+                    }
+                };
+
+        adapter = new NoteAdapter(notes, customListener);
         recyclerView.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
     }
 
-    public void openNotes(View view) {
-        Intent listSelectionActivity =
-                new Intent(NoteSelectionActivity.this, ListSelectionActivity.class);
-        startActivity(listSelectionActivity);
+    public void openNotes(NoteAdapter.NoteHolder holder) {
+        Intent itemViewActivity = new Intent(NoteSelectionActivity.this, NoteDisplayActivity.class);
+        itemViewActivity.putExtra("id_note", adapter.getIdOfNote(holder.getAdapterPosition()));
+        startActivity(itemViewActivity);
     }
 }

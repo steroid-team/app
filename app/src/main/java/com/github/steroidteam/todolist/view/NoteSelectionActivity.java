@@ -11,15 +11,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.view.adapter.NoteAdapter;
+
 import java.util.ArrayList;
 
 public class NoteSelectionActivity extends AppCompatActivity {
 
     public static final String EXTRA_NOTE_ID = "id";
 
-    private static NoteAdapter adapter;
+    private RecyclerView recyclerView;
+    private NoteAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,60 +50,14 @@ public class NoteSelectionActivity extends AppCompatActivity {
         notes.add(note2);
         notes.add(note3);
 
+        recyclerView = findViewById(R.id.activity_noteselection_notelist);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+
         adapter = new NoteAdapter(notes);
-        ListView listView = findViewById(R.id.activity_noteselection_notelist);
-        listView.setAdapter(adapter);
-    }
+        recyclerView.setAdapter(adapter);
 
-    private class NoteAdapter extends BaseAdapter {
-
-        private final ArrayList<Note> notes;
-
-        public NoteAdapter(@NonNull ArrayList<Note> notes) {
-            this.notes = notes;
-        }
-
-        @Override
-        public int getCount() {
-            return notes.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return notes.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position; // No need to specify a particular ID, we just return the position.
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            Note note = (Note) getItem(position);
-            // Check if an existing view is being reused, otherwise inflate the view
-
-            if (convertView == null) {
-                convertView =
-                        LayoutInflater.from(getBaseContext())
-                                .inflate(R.layout.layout_note_item, parent, false);
-            }
-
-            TextView noteViewTitle = convertView.findViewById(R.id.layout_note_title);
-            noteViewTitle.setText(note.getTitle());
-
-            ConstraintLayout noteView = convertView.findViewById(R.id.layout_note);
-            noteView.setOnClickListener(
-                    (view) -> {
-                        // Note note1 = (Note) view.getTag();
-                        Intent noteDisplayActivity =
-                                new Intent(NoteSelectionActivity.this, NoteDisplayActivity.class);
-                        noteDisplayActivity.putExtra(EXTRA_NOTE_ID, note.getId().toString());
-                        startActivity(noteDisplayActivity);
-                    });
-
-            return convertView;
-        }
+        adapter.notifyDataSetChanged();
     }
 
     public void openNotes(View view) {

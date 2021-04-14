@@ -67,45 +67,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         searchView = findViewById(R.id.sv_location);
 
-        searchView.setOnQueryTextListener(
-                new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String s) {
-                        String location = searchView.getQuery().toString();
-                        List<Address> addressList = null;
-
-                        if (location != null || !location.equals("")) {
-                            Geocoder geocoder = new Geocoder(MapsActivity.this);
-                            try {
-                                addressList = geocoder.getFromLocationName(location, 1);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            Address address = addressList.get(0);
-                            LatLng latLng =
-                                    new LatLng(address.getLatitude(), address.getLongitude());
-                            String locationWithUppercase =
-                                    location.substring(0, 1).toUpperCase() + location.substring(1);
-                            if (marker != null) {
-                                marker.setPosition(latLng);
-                                marker.setTitle(locationWithUppercase);
-                            } else {
-                                marker =
-                                        map.addMarker(
-                                                new MarkerOptions()
-                                                        .position(latLng)
-                                                        .title(locationWithUppercase));
-                            }
-                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
-                        }
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onQueryTextChange(String s) {
-                        return false;
-                    }
-                });
+        searchView.setOnQueryTextListener(createOnQueryTextListener());
         // Construct a FusedLocationProviderClient.
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -113,6 +75,48 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this::onMapReady);
+    }
+
+    private SearchView.OnQueryTextListener createOnQueryTextListener() {
+        return new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                String location = searchView.getQuery().toString();
+                List<Address> addressList = null;
+
+                if (location != null || !location.equals("")) {
+                    markerSearchLocation(location, addressList);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        };
+    }
+
+    private void markerSearchLocation(String location, List<Address> addressList) {
+        Geocoder geocoder = new Geocoder(MapsActivity.this);
+        try {
+            addressList = geocoder.getFromLocationName(location, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Address address = addressList.get(0);
+        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+        String locationWithUppercase =
+                location.substring(0, 1).toUpperCase() + location.substring(1);
+        if (marker != null) {
+            marker.setPosition(latLng);
+            marker.setTitle(locationWithUppercase);
+        } else {
+            marker =
+                    map.addMarker(
+                            new MarkerOptions().position(latLng).title(locationWithUppercase));
+        }
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
     }
 
     /**
@@ -163,34 +167,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void deviceLocationMarker(Location location) {
         if (location != null) {
-            map.moveCamera(
-                    CameraUpdateFactory.newLatLngZoom(
-                            new LatLng(location.getLatitude(), location.getLongitude()),
-                            DEFAULT_ZOOM));
-            if (marker != null) {
-                marker.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
-                marker.setTitle("I'm here");
-            } else {
-                marker =
-                        map.addMarker(
-                                new MarkerOptions()
-                                        .position(
-                                                new LatLng(
-                                                        location.getLatitude(),
-                                                        location.getLongitude()))
-                                        .title("I'm here"));
-            }
-
+            deviceLocationMarkerLocNotNull(location);
         } else {
-            map.moveCamera(CameraUpdateFactory.newLatLng(defaultLocation));
-            if (marker != null) {
-                marker.setPosition(defaultLocation);
-                marker.setTitle("Sydney :)");
-            } else {
-                marker =
-                        map.addMarker(
-                                new MarkerOptions().position(defaultLocation).title("Sydney :)"));
-            }
+            deviceLocationMarkerLocIsNull();
+        }
+    }
+
+    private void deviceLocationMarkerLocNotNull(Location location) {
+        map.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(location.getLatitude(), location.getLongitude()), DEFAULT_ZOOM));
+        if (marker != null) {
+            marker.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
+            marker.setTitle("I'm here");
+        } else {
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            marker = map.addMarker(new MarkerOptions().position(latLng).title("I'm here"));
+        }
+    }
+
+    private void deviceLocationMarkerLocIsNull() {
+        map.moveCamera(CameraUpdateFactory.newLatLng(defaultLocation));
+        if (marker != null) {
+            marker.setPosition(defaultLocation);
+            marker.setTitle("Sydney :)");
+        } else {
+            marker =
+                    map.addMarker(new MarkerOptions().position(defaultLocation).title("Sydney :)"));
         }
     }
 

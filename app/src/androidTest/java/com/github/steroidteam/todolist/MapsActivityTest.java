@@ -1,7 +1,13 @@
 package com.github.steroidteam.todolist;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.pressKey;
+import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
+import android.view.KeyEvent;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -11,6 +17,7 @@ import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
 import com.github.steroidteam.todolist.view.MapsActivity;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,20 +41,55 @@ public class MapsActivityTest {
     }
 
     @Test
-    public void MarkerIsCorrectlyPlacedAtDefaultLocationOrUserLocation() {
+    public void markerIsCorrectlyPlacedAtDefaultLocationOrUserLocation() {
+        waitFor(5000);
+
         UiDevice device = UiDevice.getInstance(getInstrumentation());
         // If we don't have access to the localisation the default marker is placed at Sydney
         UiObject marker = device.findObject(new UiSelector().descriptionContains("Sydney :)"));
         try {
             marker.click();
+            Assert.assertNotNull(marker);
         } catch (UiObjectNotFoundException e) {
             // It's the case when we have access to the localisation
             marker = device.findObject(new UiSelector().descriptionContains("I'm here"));
             try {
                 marker.click();
+                Assert.assertNotNull(marker);
             } catch (UiObjectNotFoundException uiObjectNotFoundException) {
                 uiObjectNotFoundException.printStackTrace();
             }
+        }
+    }
+
+    @Test
+    public void markerIsCorrectlyPlacedWhenACorrectLocationIsSearched() {
+        final String CITY_NAME = "Lausanne";
+
+        // Type a city name in the search bar
+        onView(withId(R.id.sv_location))
+                .perform(
+                        typeText(CITY_NAME), closeSoftKeyboard(), pressKey(KeyEvent.KEYCODE_ENTER));
+
+        waitFor(3000);
+        UiDevice device = UiDevice.getInstance(getInstrumentation());
+        // The marker as the city name as title
+        UiSelector uiSelector = new UiSelector();
+        UiObject marker = device.findObject(uiSelector.descriptionContains(CITY_NAME));
+        try {
+            marker.click();
+            Assert.assertNotNull(marker);
+        } catch (UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
+        // onView(withContentDescription("Google Map")).check(matches(isDisplayed()));
+    }
+
+    private void waitFor(int duration) {
+        try {
+            Thread.sleep(duration);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

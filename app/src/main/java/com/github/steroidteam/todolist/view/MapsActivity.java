@@ -86,6 +86,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 if (location != null || !location.equals("")) {
                     markerSearchLocation(location, addressList);
+                    searchView.setQuery("", false);
                 }
                 return false;
             }

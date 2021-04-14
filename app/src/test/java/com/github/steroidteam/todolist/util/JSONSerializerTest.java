@@ -76,9 +76,13 @@ public class JSONSerializerTest {
                         + "\","
                         + "\"list\":[{\"body\":\""
                         + TASK1_DESC
-                        + "\"},{\"body\":\""
+                        + "\",\"done\":"
+                        + false
+                        + "},{\"body\":\""
                         + TASK2_DESC
-                        + "\"}],"
+                        + "\",\"done\":"
+                        + false
+                        + "}],"
                         + "\"title\":\""
                         + LIST_TITLE
                         + "\","

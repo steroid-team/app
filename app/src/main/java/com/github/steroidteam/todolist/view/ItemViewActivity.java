@@ -2,11 +2,14 @@ package com.github.steroidteam.todolist.view;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
@@ -16,7 +19,7 @@ import java.util.UUID;
 
 public class ItemViewActivity extends AppCompatActivity {
 
-    private ItemViewModel model;
+    private ItemViewModel viewModel;
     private TodoAdapter adapter;
     private RecyclerView recyclerView;
 
@@ -32,7 +35,6 @@ public class ItemViewActivity extends AppCompatActivity {
         // Instantiate the view model.
         // random UUID because we don't have persistent memory !
         // this UUID is not used.
-        model = new ItemViewModel(this.getApplication(), UUID.randomUUID());
 
         /* Use this when the database will be persistent.
         UUID todo_list_id = (UUID) getIntent().getSerializableExtra("id_todo_list");
@@ -45,10 +47,12 @@ public class ItemViewActivity extends AppCompatActivity {
             model = new ItemViewModel(this.getApplication(), UUID.randomUUID());
         }
          */
+        viewModel = new ItemViewModel(UUID.randomUUID());
 
         // Observe the LiveData todoList from the ViewModel,
         // 'this' refers to the activity so it the ItemViewActivity acts as the LifeCycleOwner,
-        model.getTodoList()
+        viewModel
+                .getTodoList()
                 .observe(
                         this,
                         (todoList) -> {
@@ -64,8 +68,22 @@ public class ItemViewActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        this.adapter = new TodoAdapter(this::updateTaskListener);
+        this.adapter = new TodoAdapter(createCustomListener());
         this.recyclerView.setAdapter(this.adapter);
+    }
+
+    public TodoAdapter.TaskCustomListener createCustomListener() {
+        return new TodoAdapter.TaskCustomListener() {
+            @Override
+            public void onClickCustom(TodoAdapter.TaskHolder holder, int position) {
+                updateTaskListener(holder, position);
+            }
+
+            @Override
+            public void onCheckedChangedCustom(int position, boolean isChecked) {
+                checkBoxTaskListener(position, isChecked);
+            }
+        };
     }
 
     public void addTask(View view) {
@@ -73,7 +91,7 @@ public class ItemViewActivity extends AppCompatActivity {
         String taskDescription = newTaskET.getText().toString();
 
         // Make sure that we only add the task if the description has text.
-        if (taskDescription.length() > 0) model.addTask(taskDescription);
+        if (taskDescription.length() > 0) viewModel.addTask(taskDescription);
 
         // Clean the description text box.
         newTaskET.getText().clear();
@@ -84,13 +102,7 @@ public class ItemViewActivity extends AppCompatActivity {
         RecyclerView recycler = (RecyclerView) parentRow.getParent();
         final int position = recycler.getChildAdapterPosition(parentRow);
 
-        TodoAdapter.TaskHolder holder =
-                (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
-        adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
-        if (holder != null) {
-            holder.closeUpdateLayout();
-        }
-        model.removeTask(position);
+        viewModel.removeTask(position);
         Toast.makeText(
                         getApplicationContext(),
                         "Successfully removed the task !",
@@ -98,35 +110,45 @@ public class ItemViewActivity extends AppCompatActivity {
                 .show();
     }
 
-    public void updateTask(View view) {
-        View parentRow = (View) view.getParent();
-        RecyclerView recycler = (RecyclerView) parentRow.getParent();
-        final int position = recycler.getChildAdapterPosition(parentRow);
-
-        TodoAdapter.TaskHolder holder =
-                (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
-        adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
-        if (holder != null) {
-            holder.closeUpdateLayout();
-            model.renameTask(position, holder.getUserInput());
-        }
+    public void closeUpdateLayout(View view) {
+        ConstraintLayout updateLayout = findViewById(R.id.layout_update_task);
+        updateLayout.setVisibility(View.GONE);
     }
 
-    public void updateTaskListener(final int position) {
+    public void updateTaskListener(TodoAdapter.TaskHolder holder, final int position) {
+        ConstraintLayout updateLayout = findViewById(R.id.layout_update_task);
+        updateLayout.setVisibility(View.VISIBLE);
+
+        EditText userInputBody = findViewById(R.id.layout_update_task_body);
+        userInputBody.setText(holder.getTaskBody());
+
+        CheckBox taskCheckedBox = findViewById(R.id.layout_update_task_checkbox);
+        taskCheckedBox.setChecked(holder.getTaskDone());
+
+        Button saveButton = findViewById(R.id.layout_update_task_save);
+        saveButton.setOnClickListener(
+                (v) -> {
+                    closeUpdateLayout(v);
+                    viewModel.renameTask(position, userInputBody.getText().toString());
+                    viewModel.setTaskDone(position, taskCheckedBox.isChecked());
+                });
+
+        Button deleteButton = findViewById(R.id.layout_update_task_delete);
+        deleteButton.setOnClickListener(
+                (v) -> {
+                    closeUpdateLayout(v);
+                    viewModel.removeTask(position);
+                    Toast.makeText(
+                                    getApplicationContext(),
+                                    "Successfully removed the task !",
+                                    Toast.LENGTH_LONG)
+                            .show();
+                });
+    }
+
+    public void checkBoxTaskListener(final int position, final boolean isChecked) {
         TodoAdapter.TaskHolder holder =
                 (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
-        Integer currentlyDisplayed = adapter.getCurrentlyDisplayedUpdateLayoutPos();
-
-        if (currentlyDisplayed != null) {
-            TodoAdapter.TaskHolder currentHolder =
-                    (TodoAdapter.TaskHolder)
-                            recyclerView.findViewHolderForAdapterPosition(currentlyDisplayed);
-            currentHolder.closeUpdateLayout();
-            adapter.setCurrentlyDisplayedUpdateLayoutPos(null);
-        }
-        if (holder != null) {
-            adapter.setCurrentlyDisplayedUpdateLayoutPos(position);
-            holder.displayUpdateLayout();
-        }
+        viewModel.setTaskDone(position, isChecked);
     }
 }

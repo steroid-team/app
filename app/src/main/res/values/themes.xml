@@ -90,4 +90,28 @@
         <item name="android:fontFamily">@font/nunitosans_bold</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
+    <style name="TaskSaveButton">
+        <item name="android:fontFamily">@font/nunitosans_semibold</item>
+        <item name="android:background">@drawable/rounded_corner_bg</item>
+        <item name="android:backgroundTint">@color/colorPrimary</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="TaskDeleteButton">
+        <item name="android:fontFamily">@font/nunitosans_semibold</item>
+        <item name="android:background">@color/red_pastel</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="TaskUndoButton">
+        <item name="android:fontFamily">@font/nunitosans_semibold</item>
+        <item name="android:background">@drawable/rounded_corner_bg</item>
+        <item name="android:backgroundTint">@color/light_grey</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="TaskDeleteButtonInRecyclerView">
+        <item name="android:fontFamily">@font/nunitosans_semibold</item>
+        <item name="android:background">@drawable/rounded_corner_bg</item>
+        <item name="android:backgroundTint">@color/light_grey</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:text">X</item>
+    </style>
 </resources>

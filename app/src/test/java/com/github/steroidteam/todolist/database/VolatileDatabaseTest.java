@@ -180,4 +180,19 @@ public class VolatileDatabaseTest {
         database.renameTodo(todo.getId(), "new title");
         assertEquals("new title", database.getTodoList(todo.getId()).getTitle());
     }
+
+    @Test
+    public void renameDoneTaskDoesNothingOnNullList() {
+        TodoList todo = new TodoList("A title!");
+        Task task = new Task("A body!");
+        VolatileDatabase database = new VolatileDatabase();
+        database.putTodoList(todo);
+        database.putTask(todo.getId(), task);
+
+        database.renameTask(UUID.randomUUID(), 0, "");
+        assertEquals(database.getTask(todo.getId(), 0).getBody(), "A body!");
+
+        database.doneTask(UUID.randomUUID(), 0, true);
+        assertEquals(database.getTask(todo.getId(), 0).isDone(), false);
+    }
 }

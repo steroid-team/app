@@ -2,22 +2,13 @@ package com.github.steroidteam.todolist.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.view.adapter.NoteAdapter;
-
 import java.util.ArrayList;
 
 public class NoteSelectionActivity extends AppCompatActivity {
@@ -50,7 +41,7 @@ public class NoteSelectionActivity extends AppCompatActivity {
         notes.add(note2);
         notes.add(note3);
 
-        recyclerView = findViewById(R.id.activity_noteselection_notelist);
+        recyclerView = findViewById(R.id.activity_noteselection_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
@@ -58,7 +49,7 @@ public class NoteSelectionActivity extends AppCompatActivity {
                 new NoteAdapter.NoteCustomListener() {
                     @Override
                     public void onClickCustom(NoteAdapter.NoteHolder holder) {
-                        openNotes(holder);
+                        openNote(holder);
                     }
                 };
 
@@ -68,9 +59,16 @@ public class NoteSelectionActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    public void openNotes(NoteAdapter.NoteHolder holder) {
+    public void openNote(NoteAdapter.NoteHolder holder) {
         Intent itemViewActivity = new Intent(NoteSelectionActivity.this, NoteDisplayActivity.class);
-        itemViewActivity.putExtra(EXTRA_NOTE_ID, adapter.getIdOfNote(holder.getAdapterPosition()).toString());
+        itemViewActivity.putExtra(
+                EXTRA_NOTE_ID, adapter.getIdOfNote(holder.getAdapterPosition()).toString());
         startActivity(itemViewActivity);
+    }
+
+    public void goToTODOSelection(View view) {
+        Intent listSelectionActivity =
+                new Intent(NoteSelectionActivity.this, ListSelectionActivity.class);
+        startActivity(listSelectionActivity);
     }
 }

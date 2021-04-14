@@ -70,7 +70,7 @@ public class NoteSelectionActivity extends AppCompatActivity {
 
     public void openNotes(NoteAdapter.NoteHolder holder) {
         Intent itemViewActivity = new Intent(NoteSelectionActivity.this, NoteDisplayActivity.class);
-        itemViewActivity.putExtra("id_note", adapter.getIdOfNote(holder.getAdapterPosition()));
+        itemViewActivity.putExtra(EXTRA_NOTE_ID, adapter.getIdOfNote(holder.getAdapterPosition()).toString());
         startActivity(itemViewActivity);
     }
 }

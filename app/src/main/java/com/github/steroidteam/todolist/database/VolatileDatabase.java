@@ -99,8 +99,8 @@ public class VolatileDatabase implements Database {
      */
     @Override
     public void removeTask(UUID todoListID, Integer taskIndex) {
+        // get the to-do list from the database.
         TodoList tl = findTodoList(todoListID, taskIndex);
-        ;
         if (tl != null) {
             tl.removeTask(taskIndex);
         }
@@ -122,6 +122,13 @@ public class VolatileDatabase implements Database {
         return null;
     }
 
+    /**
+     * Rename a task
+     *
+     * @param todoListID The id of the associated list of the task.
+     * @param taskIndex The index of the task within the to-do list.
+     * @param newBody The new body of the task to modify
+     */
     public void renameTask(UUID todoListID, Integer taskIndex, String newBody) {
         TodoList tl = getTodoList(todoListID);
         if (tl != null) {
@@ -129,6 +136,12 @@ public class VolatileDatabase implements Database {
         }
     }
 
+    /**
+     * Rename the title of a to-do list
+     *
+     * @param todoListID The id of the to-do list
+     * @param newTitle The new title of the to-do
+     */
     public void renameTodo(UUID todoListID, String newTitle) {
         TodoList tl = getTodoList(todoListID);
         if (tl != null) {
@@ -136,10 +149,22 @@ public class VolatileDatabase implements Database {
         }
     }
 
+    /**
+     * Return all the todo-list,
+     *
+     * @return the array list containing all the to-do lists
+     */
     public ArrayList<TodoList> getAllTodo() {
         return this.database;
     }
 
+    /**
+     * Helper to check if args not null and find a specific todo list
+     *
+     * @param todoListID The id of the to-do list we want
+     * @param o task index or task object (only check if it is not null)
+     * @return the to-do list with UUID todoListID
+     */
     private TodoList findTodoList(UUID todoListID, Object o) {
         if (todoListID == null || o == null) {
             throw new IllegalArgumentException();

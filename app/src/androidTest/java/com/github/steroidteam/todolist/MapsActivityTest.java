@@ -10,7 +10,6 @@ import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
 import com.github.steroidteam.todolist.view.MapsActivity;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,12 +24,12 @@ public class MapsActivityTest {
             new ActivityScenarioRule<>(MapsActivity.class);
 
     @Before
-    public void before(){
+    public void before() {
         Intents.init();
     }
 
     @After
-    public void after(){
+    public void after() {
         Intents.release();
     }
 

@@ -28,12 +28,12 @@ public class NoteSelectionActivityTest {
             new ActivityScenarioRule<>(NoteSelectionActivity.class);
 
     @Before
-    public void before(){
+    public void before() {
         Intents.init();
     }
 
     @After
-    public void after(){
+    public void after() {
         Intents.release();
     }
 

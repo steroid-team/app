@@ -1,15 +1,29 @@
 package com.github.steroidteam.todolist.view;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.github.steroidteam.todolist.R;
+
+import java.io.File;
 import java.util.UUID;
 
 public class NoteDisplayActivity extends AppCompatActivity {
+
+    public static final int PICK_IMAGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,5 +47,32 @@ public class NoteDisplayActivity extends AppCompatActivity {
                         + " ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in"
                         + " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non"
                         + " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+    }
+
+    public void pickFile(View view) {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE) {
+            Uri uri = data.getData();
+            String path = uri.getPath();
+            //File img = new File(path);
+            ConstraintLayout header = findViewById(R.id.note_header);
+            String newPath = Environment.getExternalStorageDirectory() + path;
+            Bitmap bitmap = BitmapFactory.decodeFile(newPath);
+            int a = header.getWidth();
+            Bitmap resized = Bitmap.createBitmap(bitmap, 0, 0, header.getWidth(), header.getHeight());
+            BitmapDrawable ob = new BitmapDrawable(getResources(), resized);
+            header.setBackground(ob);;
+            //ImageView image = findViewById(R.id.imageView);
+            //image.setImageBitmap(bitmap);
+        }
     }
 }

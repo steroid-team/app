@@ -1,22 +1,20 @@
 package com.github.steroidteam.todolist.viewmodel;
 
-import android.app.Application;
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.UUID;
 
-public class ItemViewModel extends AndroidViewModel {
+public class ItemViewModel extends ViewModel {
 
     private final TodoRepository repository;
     private final LiveData<TodoList> todoList;
     private final UUID todoListID;
 
-    public ItemViewModel(@NonNull Application application, UUID todoListID) {
-        super(application);
+    public ItemViewModel(UUID todoListID) {
+        super();
         repository = new TodoRepository();
 
         // ====== TO DELETE ======== BEGIN
@@ -42,6 +40,12 @@ public class ItemViewModel extends AndroidViewModel {
     }
 
     public void renameTask(int index, String newBody) {
-        repository.renameTask(todoListID, index, newBody);
+        if (!newBody.equals("")) {
+            repository.renameTask(todoListID, index, newBody);
+        }
+    }
+
+    public void setTaskDone(int index, boolean isDone) {
+        repository.setTaskDone(todoListID, index, isDone);
     }
 }

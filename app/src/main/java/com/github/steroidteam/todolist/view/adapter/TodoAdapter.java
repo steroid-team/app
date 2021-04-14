@@ -69,7 +69,6 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
     public interface TaskCustomListener {
         void onClickCustom(TaskHolder holder, int position);
-        // void onFocusChangedCustom(int position, boolean hasFocus);
         void onCheckedChangedCustom(int position, boolean isChecked);
     }
 

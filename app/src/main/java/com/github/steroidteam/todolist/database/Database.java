@@ -55,4 +55,20 @@ public interface Database {
      * @return The task or null if the key does not exist in the database.
      */
     Task getTask(UUID todoListID, Integer taskIndex) throws DatabaseException;
+
+    /**
+     * Assigns the main image of a note.
+     *
+     * @param noteID The id of the note.
+     * @param path The location of the image in the SD card.
+     */
+    void assignMainImage(UUID noteID, String path) throws DatabaseException;
+
+    /**
+     * Gets the main image of a note.
+     *
+     * @param noteID The id of the note.
+     * @return The path of the image in the SD card, or null if the ID isn't in the database.
+     */
+    String getMainImagePath(UUID noteID) throws DatabaseException;
 }

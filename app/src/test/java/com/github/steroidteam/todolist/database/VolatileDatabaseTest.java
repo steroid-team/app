@@ -165,4 +165,36 @@ public class VolatileDatabaseTest {
         database.doneTask(UUID.randomUUID(), 0, true);
         assertEquals(database.getTask(todo.getId(), 0).isDone(), false);
     }
+
+    @Test
+    public void noteMainImageWorks() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    VolatileDatabase database2 = new VolatileDatabase();
+                    database2.assignMainImage(null, "/");
+                });
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    VolatileDatabase database2 = new VolatileDatabase();
+                    database2.assignMainImage(UUID.randomUUID(), null);
+                });
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    VolatileDatabase database2 = new VolatileDatabase();
+                    database2.getMainImagePath(null);
+                });
+
+        VolatileDatabase database = new VolatileDatabase();
+        String path = "/a/path/image.png";
+        UUID noteID = UUID.randomUUID();
+        database.assignMainImage(noteID, path);
+
+        assertNull(database.getMainImagePath(UUID.randomUUID()));
+        assertEquals(path, database.getMainImagePath(noteID));
+    }
 }

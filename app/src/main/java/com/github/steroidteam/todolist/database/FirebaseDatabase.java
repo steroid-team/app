@@ -146,4 +146,13 @@ public class FirebaseDatabase implements Database {
             throw new DatabaseException(e.toString());
         }
     }
+
+    @Override
+    public void assignMainImage(UUID noteID, String path) {
+    }
+
+    @Override
+    public String getMainImagePath(UUID noteID) {
+        return null;
+    }
 }

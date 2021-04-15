@@ -13,10 +13,12 @@ import java.util.UUID;
 public class VolatileDatabase implements Database {
 
     private Map<UUID, TodoList> database;
+    private Map<UUID, String> noteMainImage;
 
     /** Creates a volatile database. */
     public VolatileDatabase() {
         this.database = new HashMap<>();
+        this.noteMainImage = new HashMap<>();
     }
 
     /**
@@ -130,5 +132,33 @@ public class VolatileDatabase implements Database {
         if (list != null) {
             list.getTask(taskIndex).setDone(isDone);
         }
+    }
+
+    /**
+     * Assigns the main image of a note.
+     *
+     * @param noteID The id of the note.
+     * @param path The location of the image in the SD card.
+     */
+    @Override
+    public void assignMainImage(UUID noteID, String path) {
+        if (noteID == null || path == null) {
+            throw new IllegalArgumentException();
+        }
+        noteMainImage.put(noteID, path);
+    }
+
+    /**
+     * Gets the main image of a note.
+     *
+     * @param noteID The id of the note.
+     * @return The path of the image in the SD card, or null if the ID isn't in the database.
+     */
+    @Override
+    public String getMainImagePath(UUID noteID) {
+        if (noteID == null) {
+            throw new IllegalArgumentException();
+        }
+        return noteMainImage.get(noteID);
     }
 }

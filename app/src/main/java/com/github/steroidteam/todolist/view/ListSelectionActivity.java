@@ -28,6 +28,8 @@ import java.util.UUID;
 
 public class ListSelectionActivity extends AppCompatActivity {
 
+    public static final String EXTRA_ID_TODO_LIST = "id_todo_list";
+
     private static todoListAdapter adapter;
     private ArrayList<TodoList> todoLists;
     private FirebaseDatabase database;
@@ -139,7 +141,7 @@ public class ListSelectionActivity extends AppCompatActivity {
                     view -> {
                         Intent itemViewActivity =
                                 new Intent(ListSelectionActivity.this, ItemViewActivity.class);
-                        itemViewActivity.putExtra("id_todo_list", todoList.getId());
+                        itemViewActivity.putExtra(EXTRA_ID_TODO_LIST, todoList.getId());
                         startActivity(itemViewActivity);
                     });
 

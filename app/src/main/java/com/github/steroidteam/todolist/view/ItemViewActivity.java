@@ -1,5 +1,6 @@
 package com.github.steroidteam.todolist.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -33,9 +34,10 @@ public class ItemViewActivity extends AppCompatActivity {
         backButton.setOnClickListener((view) -> finish());
 
         // Instantiate the view model.
-        // random UUID because we don't have persistent memory !
-        // this UUID is not used.
-        viewModel = new ItemViewModel(UUID.randomUUID());
+        Intent intent = getIntent();
+        UUID id = UUID.fromString(intent.getStringExtra(ListSelectionActivity.EXTRA_ID_TODO_LIST));
+
+        viewModel = new ItemViewModel(getApplication(), id);
 
         // Observe the LiveData todoList from the ViewModel,
         // 'this' refers to the activity so it the ItemViewActivity acts as the LifeCycleOwner,

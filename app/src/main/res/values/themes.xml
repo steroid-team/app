@@ -68,6 +68,7 @@
     </style>
     <style name="SelectionList.CardView">
         <item name="cardCornerRadius">25dp</item>
+        <item name="cardElevation">0dp</item>
         <item name="contentPaddingBottom">18dp</item>
         <item name="contentPaddingLeft">20dp</item>
         <item name="contentPaddingRight">15dp</item>

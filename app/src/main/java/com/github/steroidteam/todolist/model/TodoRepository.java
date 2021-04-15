@@ -54,4 +54,9 @@ public class TodoRepository {
         this.database.renameTask(todoListID, index, newText);
         this.oneTodoList.setValue(this.database.getTodoList(todoListID));
     }
+
+    public void setTaskDone(UUID todoListID, int index, boolean isDone) {
+        this.database.doneTask(todoListID, index, isDone);
+        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
+    }
 }

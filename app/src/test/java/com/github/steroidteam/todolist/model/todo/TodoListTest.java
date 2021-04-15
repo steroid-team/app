@@ -19,6 +19,8 @@ public class TodoListTest {
         Task t2 = new Task("body2");
         TodoList td = new TodoList("This is a title!");
 
+        assertNotEquals(null, td);
+
         assertNotNull(td.getDate());
         // Make sure that the difference between the task's date and the current one is not
         // greater than 100ms.

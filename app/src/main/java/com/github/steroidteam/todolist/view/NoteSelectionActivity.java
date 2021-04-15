@@ -10,6 +10,7 @@ import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.view.adapter.NoteAdapter;
 import java.util.ArrayList;
+import java.util.List;
 
 public class NoteSelectionActivity extends AppCompatActivity {
 
@@ -23,6 +24,27 @@ public class NoteSelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_selection);
 
+        recyclerView = findViewById(R.id.activity_noteselection_recycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+
+        NoteAdapter.NoteCustomListener customListener =
+                new NoteAdapter.NoteCustomListener() {
+                    @Override
+                    public void onClickCustom(NoteAdapter.NoteHolder holder) {
+                        openNote(holder);
+                    }
+                };
+
+        adapter = new NoteAdapter(setupSomeNotes(), customListener);
+        recyclerView.setAdapter(adapter);
+
+        adapter.notifyDataSetChanged();
+    }
+
+    // THIS METHOD JUST CREATE A LIST OF NOTE AS I DON'T HAVE THE DATABASE FOR NOTE
+    // THIS WILL BE DELETE
+    private List<Note> setupSomeNotes() {
         // Filler
         ArrayList<Note> notes = new ArrayList<>();
         Note note1 = new Note("Lorem ipsum");
@@ -41,22 +63,7 @@ public class NoteSelectionActivity extends AppCompatActivity {
         notes.add(note2);
         notes.add(note3);
 
-        recyclerView = findViewById(R.id.activity_noteselection_recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
-
-        NoteAdapter.NoteCustomListener customListener =
-                new NoteAdapter.NoteCustomListener() {
-                    @Override
-                    public void onClickCustom(NoteAdapter.NoteHolder holder) {
-                        openNote(holder);
-                    }
-                };
-
-        adapter = new NoteAdapter(notes, customListener);
-        recyclerView.setAdapter(adapter);
-
-        adapter.notifyDataSetChanged();
+        return notes;
     }
 
     public void openNote(NoteAdapter.NoteHolder holder) {

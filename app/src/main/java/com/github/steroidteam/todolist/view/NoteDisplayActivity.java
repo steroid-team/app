@@ -1,30 +1,19 @@
 package com.github.steroidteam.todolist.view;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-
 import com.github.steroidteam.todolist.R;
-
-import java.io.File;
 import java.io.InputStream;
-import java.util.UUID;
 
 public class NoteDisplayActivity extends AppCompatActivity {
 
@@ -40,7 +29,7 @@ public class NoteDisplayActivity extends AppCompatActivity {
         backButton.setOnClickListener((view) -> finish());
 
         Intent intent = getIntent();
-        //UUID id = UUID.fromString(intent.getStringExtra(NoteSelectionActivity.EXTRA_NOTE_ID));
+        // UUID id = UUID.fromString(intent.getStringExtra(NoteSelectionActivity.EXTRA_NOTE_ID));
 
         TextView noteTitle = findViewById(R.id.note_title);
         noteTitle.setText("Lorem ipsum");
@@ -82,8 +71,7 @@ public class NoteDisplayActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE) {
             Uri uri = data.getData();
@@ -93,7 +81,8 @@ public class NoteDisplayActivity extends AppCompatActivity {
                 InputStream is = getContentResolver().openInputStream(uri);
                 bitmap = BitmapFactory.decodeStream(is);
                 is.close();
-            } catch (Exception e) { }
+            } catch (Exception e) {
+            }
             BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
             header.setBackgroundTintList(null);
             header.setBackground(ob);

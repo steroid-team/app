@@ -148,8 +148,7 @@ public class FirebaseDatabase implements Database {
     }
 
     @Override
-    public void assignMainImage(UUID noteID, String path) {
-    }
+    public void assignMainImage(UUID noteID, String path) {}
 
     @Override
     public String getMainImagePath(UUID noteID) {

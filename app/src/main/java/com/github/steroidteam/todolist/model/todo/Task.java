@@ -11,6 +11,7 @@ import java.util.Objects;
 public class Task {
 
     private String body;
+    private Boolean done;
 
     /**
      * Constructs a new Task with a body.
@@ -23,6 +24,7 @@ public class Task {
             throw new IllegalArgumentException();
         }
         this.body = body;
+        this.done = false;
     }
 
     /**
@@ -54,5 +56,13 @@ public class Task {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
         return Objects.equals(body, task.body);
+    }
+
+    public Boolean isDone() {
+        return done;
+    }
+
+    public void setDone(Boolean done) {
+        this.done = done;
     }
 }

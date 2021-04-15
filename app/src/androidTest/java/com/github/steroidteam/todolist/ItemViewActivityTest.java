@@ -8,6 +8,7 @@ import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
+import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -16,6 +17,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -56,7 +58,8 @@ public class ItemViewActivityTest {
         // The task description text field should now be empty.
         onView(withId(R.id.new_task_text)).check(matches(withText("")));
 
-        // TODO: Check that the ListView actually contains a new item with the tested description.
+        onView(withId(R.id.activity_itemview_itemlist))
+                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION)));
     }
 
     @Test
@@ -68,6 +71,30 @@ public class ItemViewActivityTest {
         onView(withId(R.id.new_task_btn)).perform(click());
 
         onView(withId(R.id.activity_itemview_itemlist)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void cannotRenameTaskWithoutText() {
+        final String TASK_DESCRIPTION = "Buy bananas";
+
+        // Type a task description in the "new task" text field.
+        onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
+
+        // Hit the button to create a new task.
+        onView(withId(R.id.new_task_btn)).perform(click());
+
+        onView(withId(R.id.activity_itemview_itemlist))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        onView(withId(R.id.layout_update_task_body)).perform(clearText(), closeSoftKeyboard());
+
+        onView(withId(R.id.layout_update_task_save)).perform(click());
+
+        onView(withId(R.id.activity_itemview_itemlist))
+                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION)));
+
+        onView(withId(R.id.activity_itemview_itemlist))
+                .check(matches(atPositionCheckBox(0, false)));
     }
 
     @Test
@@ -88,25 +115,29 @@ public class ItemViewActivityTest {
             // Hit the button to create a new task.
             onView(withId(R.id.new_task_btn)).perform(click());
 
-            onView(withId(R.id.new_task_text))
-                    .perform(typeText(TASK_DESCRIPTION_2), closeSoftKeyboard());
-
-            onView(withId(R.id.new_task_btn)).perform(click());
-
-            // Modify a task's body.
-            onView(withId(R.id.activity_itemview_itemlist))
-                    .perform(actionOnItemAtPosition(0, typeText(" !")));
             onView(withId(R.id.activity_itemview_itemlist))
                     .perform(
                             RecyclerViewActions.actionOnItemAtPosition(
                                     0,
-                                    MyViewAction.clickChildViewWithId(
-                                            R.id.layout_task_save_modif)));
+                                    MyViewAction.clickChildViewWithId(R.id.layout_task_checkbox)));
 
             onView(withId(R.id.activity_itemview_itemlist))
-                    .check(matches(atPositionCheckText(0, TASK_DESCRIPTION + " !")));
+                    .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+            onView(withId(R.id.layout_update_task_body)).check(matches(withText(TASK_DESCRIPTION)));
+            onView(withId(R.id.layout_update_task_checkbox)).check(matches(isChecked()));
+
+            onView(withId(R.id.layout_update_task_checkbox)).perform(click());
+            onView(withId(R.id.layout_update_task_body))
+                    .perform(clearText(), typeText(TASK_DESCRIPTION_2), closeSoftKeyboard());
+
+            onView(withId(R.id.layout_update_task_save)).perform(click());
+
             onView(withId(R.id.activity_itemview_itemlist))
-                    .check(matches(atPositionCheckText(1, TASK_DESCRIPTION_2)));
+                    .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
+
+            onView(withId(R.id.activity_itemview_itemlist))
+                    .check(matches(atPositionCheckBox(0, false)));
         }
     }
 
@@ -135,8 +166,10 @@ public class ItemViewActivityTest {
 
             // Try to remove the first task
             onView(withId(R.id.activity_itemview_itemlist))
-                    .perform(actionOnItemAtPosition(0, longClick()));
-
+                    .perform(
+                            RecyclerViewActions.actionOnItemAtPosition(
+                                    0,
+                                    MyViewAction.clickChildViewWithId(R.id.layout_task_checkbox)));
             onView(withId(R.id.activity_itemview_itemlist))
                     .perform(
                             RecyclerViewActions.actionOnItemAtPosition(
@@ -148,6 +181,37 @@ public class ItemViewActivityTest {
             onView(withId(R.id.activity_itemview_itemlist))
                     .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
         }
+    }
+
+    @Test
+    public void removeTaskWorksInUpdateLayout() {
+        final String TASK_DESCRIPTION = "Buy bananas";
+        final String TASK_DESCRIPTION_2 = "Buy cheese";
+
+        // Type a task description in the "new task" text field.
+        onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
+
+        // Hit the button to create a new task.
+        onView(withId(R.id.new_task_btn)).perform(click());
+
+        onView(withId(R.id.new_task_text))
+                .perform(typeText(TASK_DESCRIPTION_2), closeSoftKeyboard());
+
+        onView(withId(R.id.new_task_btn)).perform(click());
+
+        // Try to remove the first task
+        onView(withId(R.id.activity_itemview_itemlist))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        onView(withId(R.id.layout_update_task_body)).perform(closeSoftKeyboard());
+
+        onView(withId(R.id.layout_update_task_delete)).perform(click());
+
+        onView(withId(R.id.activity_itemview_itemlist))
+                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
+
+        onView(withId(R.id.activity_itemview_itemlist))
+                .check(matches(atPositionCheckBox(0, false)));
     }
 
     @Test
@@ -199,6 +263,28 @@ public class ItemViewActivityTest {
                 View taskView = view.getChildAt(position);
                 TextView bodyView = taskView.findViewById(R.id.layout_task_body);
                 return bodyView.getText().toString().equals(expectedText);
+            }
+        };
+    }
+
+    public static Matcher<View> atPositionCheckBox(
+            final int position, @NonNull final boolean expectedBox) {
+        return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText(
+                        "View holder at position "
+                                + String.valueOf(position)
+                                + ", expected: "
+                                + expectedBox
+                                + " ");
+            }
+
+            @Override
+            protected boolean matchesSafely(final RecyclerView view) {
+                View taskView = view.getChildAt(position);
+                CheckBox boxView = taskView.findViewById(R.id.layout_task_checkbox);
+                return boxView.isChecked() == expectedBox;
             }
         };
     }

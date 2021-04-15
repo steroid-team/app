@@ -150,4 +150,19 @@ public class VolatileDatabaseTest {
         // Getting existent tasks from an existing list returns the corresponding Task.
         assertEquals(task, database.getTask(todo.getId(), 0));
     }
+
+    @Test
+    public void renameDoneTaskDoesNothingOnNullList() {
+        TodoList todo = new TodoList("A title!");
+        Task task = new Task("A body!");
+        VolatileDatabase database = new VolatileDatabase();
+        database.putTodoList(todo);
+        database.putTask(todo.getId(), task);
+
+        database.renameTask(UUID.randomUUID(), 0, "");
+        assertEquals(database.getTask(todo.getId(), 0).getBody(), "A body!");
+
+        database.doneTask(UUID.randomUUID(), 0, true);
+        assertEquals(database.getTask(todo.getId(), 0).isDone(), false);
+    }
 }

@@ -71,7 +71,7 @@ public class MapsActivityTest {
                 .perform(
                         typeText(CITY_NAME), closeSoftKeyboard(), pressKey(KeyEvent.KEYCODE_ENTER));
 
-        waitFor(3000);
+        //waitFor(3000);
         UiDevice device = UiDevice.getInstance(getInstrumentation());
         // The marker as the city name as title
         UiSelector uiSelector = new UiSelector();

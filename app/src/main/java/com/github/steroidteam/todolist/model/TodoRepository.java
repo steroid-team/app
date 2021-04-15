@@ -48,4 +48,9 @@ public class TodoRepository {
                 .thenCompose(task -> this.database.getTodoList(todoListID))
                 .thenAccept(this.oneTodoList::setValue);
     }
+
+    public void setTaskDone(UUID todoListID, int index, boolean isDone) {
+        this.database.doneTask(todoListID, index, isDone);
+        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
+    }
 }

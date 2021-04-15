@@ -24,4 +24,7 @@
     <string name="new_note_btn_description">Add a new note</string>
     <string name="date_placeholder">xx/yy aa:bb</string>
     <string name="note_date_placeholder">Day, Nth Month YEAR</string>
+    <string name="undo">UNDO</string>
+    <string name="delete">DELETE</string>
+    <string name="save">SAVE</string>
 </resources>

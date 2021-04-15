@@ -40,7 +40,7 @@ public class NoteDisplayActivity extends AppCompatActivity {
         backButton.setOnClickListener((view) -> finish());
 
         Intent intent = getIntent();
-        UUID id = UUID.fromString(intent.getStringExtra(NoteSelectionActivity.EXTRA_NOTE_ID));
+        //UUID id = UUID.fromString(intent.getStringExtra(NoteSelectionActivity.EXTRA_NOTE_ID));
 
         TextView noteTitle = findViewById(R.id.note_title);
         noteTitle.setText("Lorem ipsum");
@@ -53,7 +53,8 @@ public class NoteDisplayActivity extends AppCompatActivity {
                         + " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non"
                         + " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
 
-        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+        // Permissions are actually not needed for now
+        /*if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
             Log.v("perm","Permission READ_EXTERNAL_STORAGE is granted");
         } else {
@@ -69,7 +70,7 @@ public class NoteDisplayActivity extends AppCompatActivity {
 
             Log.v("perm","Permission WRITE_EXTERNAL_STORAGE is revoked");
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-        }
+        }*/
 
     }
 

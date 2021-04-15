@@ -13,6 +13,6 @@
         android:maxLines="1"
         android:backgroundTint="@color/dark_grey"
         android:textCursorDrawable="@drawable/custom_cursor"
-        android:hint="..." />
+        android:hint="@string/title_todo" />
 
 </LinearLayout>

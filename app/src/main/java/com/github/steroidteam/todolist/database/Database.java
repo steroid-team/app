@@ -108,4 +108,15 @@ public interface Database {
      * @return The list of note ids.
      */
     CompletableFuture<List<UUID>> getNotesList();
+
+    /**
+     * Sets "done" flag in a task
+     *
+     * @param todoListID id of the todolist containing the task
+     * @param index of the task inside the todolist
+     * @param isDone the state of the flag to set
+     *
+     * @return the updated task
+     */
+    CompletableFuture<Task> setTaskDone(UUID todoListID, int index, boolean isDone);
 }

@@ -214,4 +214,33 @@ public class FirebaseDatabase implements Database {
                         .map(UUID::fromString)
                         .collect(Collectors.toList()));
     }
+
+    @Override
+    public CompletableFuture<Task> setTaskDone(UUID todoListID, int index, boolean isDone) {
+        Objects.requireNonNull(todoListID);
+        String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
+
+        // Fetch the remote list that we are about to update.
+        return this.storageService
+                .download(listPath)
+                // Deserialize it.
+                .thenApply(serializedList -> new String(serializedList, StandardCharsets.UTF_8))
+                .thenApply(JSONSerializer::deserializeTodoList)
+                // Remove the task from the object.
+                .thenApply(
+                        todoList -> {
+                            Task task = todoList.getTask(index);
+                            task.setDone(isDone);
+                            return todoList;
+                        })
+                // Re-serialize and upload the new object.
+                .thenCompose(todoList -> {
+                    Task updatedTask = todoList.getTask(index);
+                    byte[] bytes = JSONSerializer.serializeTodoList(todoList)
+                            .getBytes(StandardCharsets.UTF_8);
+                    return this.storageService.upload(bytes, listPath)
+                            .thenApply(str -> updatedTask);
+                });
+    }
+
 }

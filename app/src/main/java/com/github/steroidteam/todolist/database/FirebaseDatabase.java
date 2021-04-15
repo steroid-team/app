@@ -94,11 +94,7 @@ public class FirebaseDatabase implements Database {
         String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
         // Fetch the remote list that we are about to update.
-        return this.storageService
-                    .download(listPath)
-                    // Deserialize it.
-                    .thenApply(serializedList -> new String(serializedList, StandardCharsets.UTF_8))
-                    .thenApply(JSONSerializer::deserializeTodoList)
+        return getTodoList(todoListID)
                     // Add the new task to the object.
                     .thenApply(
                             todoList -> {
@@ -121,11 +117,7 @@ public class FirebaseDatabase implements Database {
         String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
         // Fetch the remote list that we are about to update.
-        return this.storageService
-                    .download(listPath)
-                    // Deserialize it.
-                    .thenApply(serializedList -> new String(serializedList, StandardCharsets.UTF_8))
-                    .thenApply(JSONSerializer::deserializeTodoList)
+        return getTodoList(todoListID)
                     // Remove the task from the object.
                     .thenApply(
                             todoList -> {
@@ -146,11 +138,7 @@ public class FirebaseDatabase implements Database {
         String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
         // Fetch the remote list that we are about to update.
-        return this.storageService
-                .download(listPath)
-                // Deserialize it.
-                .thenApply(serializedList -> new String(serializedList, StandardCharsets.UTF_8))
-                .thenApply(JSONSerializer::deserializeTodoList)
+        return getTodoList(todoListID)
                 // Remove the task from the object.
                 .thenApply(
                         todoList -> {
@@ -174,11 +162,7 @@ public class FirebaseDatabase implements Database {
         String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
         // Fetch the remote list that we are about to update.
-        return this.storageService
-            .download(listPath)
-            // Deserialize it.
-           .thenApply(serializedList -> new String(serializedList, StandardCharsets.UTF_8))
-           .thenApply(JSONSerializer::deserializeTodoList)
+        return getTodoList(todoListID)
            .thenApply(todoList -> todoList.getTask(taskIndex));
     }
 
@@ -221,11 +205,7 @@ public class FirebaseDatabase implements Database {
         String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
         // Fetch the remote list that we are about to update.
-        return this.storageService
-                .download(listPath)
-                // Deserialize it.
-                .thenApply(serializedList -> new String(serializedList, StandardCharsets.UTF_8))
-                .thenApply(JSONSerializer::deserializeTodoList)
+        return getTodoList(todoListID)
                 // Remove the task from the object.
                 .thenApply(
                         todoList -> {

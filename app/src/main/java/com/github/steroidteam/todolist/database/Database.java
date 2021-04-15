@@ -1,8 +1,11 @@
 package com.github.steroidteam.todolist.database;
 
+import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.todo.TodoListCollection;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
+
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -21,7 +24,7 @@ public interface Database {
      *
      * @param list The to-do list to push.
      */
-    CompletableFuture<String> putTodoList(TodoList list);
+    CompletableFuture<TodoList> putTodoList(TodoList list);
 
     /**
      * Removes a to-do list from the database.
@@ -45,24 +48,33 @@ public interface Database {
      * @param todoListID The ID of the to-do list.
      * @return The to-do list or null if the ID isn't in the database.
      */
-    CompletableFuture<String> updateTodoList(UUID todoListID, TodoList todoList);
+    CompletableFuture<TodoList> updateTodoList(UUID todoListID, TodoList todoList);
 
     /**
      * Pushes a new task in the database.
      *
      * @param todoListID The id of the associated list of the task.
      * @param task The new task to add.
+     * @return the task put in the database
      */
-    void putTask(UUID todoListID, Task task) throws DatabaseException;
+    CompletableFuture<Task> putTask(UUID todoListID, Task task);
 
     /**
      * Removes a task from the database.
      *
      * @param todoListID The id of the associated list of the task.
      * @param taskIndex The index of the task within the list.
-     * @throws IllegalArgumentException Thrown if one argument is null.
+     * @return the updated todoList
      */
-    void removeTask(UUID todoListID, Integer taskIndex) throws DatabaseException;
+    CompletableFuture<TodoList> removeTask(UUID todoListID, Integer taskIndex);
+
+    /**
+     * Renames a task in the database.
+     *
+     * @param todoListID The id of the associated list of the task.
+     * @param taskIndex The index of the task within the list.
+     */
+    CompletableFuture<Task> renameTask(UUID todoListID, Integer taskIndex, String newName);
 
     /**
      * Gets the task from the database
@@ -71,5 +83,29 @@ public interface Database {
      * @param taskIndex The index of the task you want from a to-do list.
      * @return The task or null if the key does not exist in the database.
      */
-    Task getTask(UUID todoListID, Integer taskIndex) throws DatabaseException;
+    CompletableFuture<Task> getTask(UUID todoListID, Integer taskIndex);
+
+    /**
+     * Gets the note from the database
+     *
+     * @param noteID The id of the note
+     * @return the note
+     */
+    CompletableFuture<Note> getNote(UUID noteID);
+
+    /**
+     * Puts a note to the database
+     *
+     * @param noteID The id of the note
+     * @param note The note object to put
+     * @return the saved note
+     */
+    CompletableFuture<Note> putNote(UUID noteID, Note note);
+
+    /**
+     * Gets the list of note IDs
+     *
+     * @return The list of note ids.
+     */
+    CompletableFuture<List<UUID>> getNotesList();
 }

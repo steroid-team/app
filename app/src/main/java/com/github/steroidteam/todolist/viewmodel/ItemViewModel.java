@@ -11,22 +11,13 @@ import java.util.UUID;
 
 public class ItemViewModel extends AndroidViewModel {
 
-    private TodoRepository repository;
-    private LiveData<TodoList> todoList;
-    private UUID todoListID;
+    private final TodoRepository repository;
+    private final LiveData<TodoList> todoList;
 
     public ItemViewModel(@NonNull Application application, UUID todoListID) {
         super(application);
-        repository = new TodoRepository();
-
-        // ====== TO DELETE ======== BEGIN
-        // We don't have persistent database !
-        this.todoListID = repository.id;
-        // ========================= END
-        // We will do this instead :
-        // this.todoListID = todoListIDD
-
-        todoList = repository.getTodoList(this.todoListID);
+        repository = new TodoRepository(todoListID);
+        todoList = repository.getTodoList();
     }
 
     public LiveData<TodoList> getTodoList() {
@@ -34,14 +25,14 @@ public class ItemViewModel extends AndroidViewModel {
     }
 
     public void addTask(String body) {
-        repository.putTask(todoListID, new Task(body));
+        repository.putTask(new Task(body));
     }
 
     public void removeTask(int index) {
-        repository.removeTask(todoListID, index);
+        repository.removeTask(index);
     }
 
     public void renameTask(int index, String newBody) {
-        repository.renameTask(todoListID, index, newBody);
+        repository.renameTask(index, newBody);
     }
 }

@@ -47,15 +47,13 @@ public class ListSelectionActivity extends AppCompatActivity {
         adapter = new todoListAdapter(todoLists);
         setListViewSettings(listView);
 
-        database.getTodoListCollection().thenApply((todoListCollection -> {
+        database.getTodoListCollection().thenAccept((todoListCollection -> {
             for (int i = 0; i < todoListCollection.getSize(); i++) {
                 database.getTodoList(todoListCollection.getUUID(i)).thenAccept(todoList -> {
                     todoLists.add(todoList);
                     adapter.notifyDataSetChanged();
                 });
             }
-
-            return null;
         }));
     }
 

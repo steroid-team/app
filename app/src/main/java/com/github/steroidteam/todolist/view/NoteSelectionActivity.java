@@ -12,41 +12,53 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.database.FirebaseDatabase;
+import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class NoteSelectionActivity extends AppCompatActivity {
 
     public static final String EXTRA_NOTE_ID = "id";
 
     private static NoteAdapter adapter;
+    private FirebaseDatabase database;
+    ArrayList<Note> notes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_selection);
 
-        // Filler
-        ArrayList<Note> notes = new ArrayList<>();
-        Note note1 = new Note("Lorem ipsum");
-        note1.setContent(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
-                        + " incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation"
-                        + " ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in"
-                        + " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non"
-                        + " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
-        Note note2 = new Note("Note 2");
-        note2.setContent("This is the second note");
-        Note note3 = new Note("Note 3");
-        note3.setContent("This is the third note");
-
-        notes.add(note1);
-        notes.add(note2);
-        notes.add(note3);
-
         adapter = new NoteAdapter(notes);
         ListView listView = findViewById(R.id.activity_noteselection_notelist);
         listView.setAdapter(adapter);
+
+        database = new FirebaseDatabase(new FirebaseFileStorageService(
+                FirebaseStorage.getInstance(), FirebaseAuth.getInstance().getCurrentUser()));
+
+        database.getNotesList().thenAccept(uuids -> {
+            for (UUID uuid : uuids) {
+                database.getNote(uuid).thenAccept(note -> {
+                    notes.add(note);
+                    adapter.notifyDataSetChanged();
+                });
+            }
+        });
+    }
+
+    public void createNote(View view) {
+        Note newNote = new Note("New note");
+
+        database.putNote(newNote.getId(), newNote)
+                .thenAccept(str -> {
+                    notes.add(newNote);
+                    adapter.notifyDataSetChanged();
+                });
     }
 
     private class NoteAdapter extends BaseAdapter {

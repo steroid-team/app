@@ -2,6 +2,7 @@ package com.github.steroidteam.todolist.database;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -21,7 +22,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FirebaseDatabaseTest {
-    private static final String TODO_LIST_PATH = "/todo-lists";
+    private static final String TODO_LIST_PATH = "/todo-lists/";
 
     @Mock FirebaseFileStorageService storageService;
 
@@ -44,7 +45,7 @@ public class FirebaseDatabaseTest {
     }
 
     @Test
-    public void putTodoListWorks() throws DatabaseException {
+    public void putTodoListWorks() {
         final TodoList todoList = new TodoList("My list");
         final String expectedPath = TODO_LIST_PATH + todoList.getId().toString() + ".json";
         final byte[] serializedList =
@@ -58,26 +59,12 @@ public class FirebaseDatabaseTest {
 
         // Try to add a valid list.
         final FirebaseDatabase database = new FirebaseDatabase(storageService);
-        database.putTodoList(todoList);
+        try {
+            assertEquals(todoList, database.putTodoList(todoList).join());
+        } catch (Exception e) {
+            fail();
+        }
 
-        verify(storageService).upload(serializedList, expectedPath);
-    }
-
-    @Test
-    public void putTodoListThrowsDatabaseExceptionOnError() {
-        final TodoList todoList = new TodoList("My list");
-        final String expectedPath = TODO_LIST_PATH + todoList.getId().toString() + ".json";
-        final byte[] serializedList =
-                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
-
-        // Return a future that simulates an error during the upload.
-        final CompletableFuture<String> failingFuture = new CompletableFuture<>();
-        failingFuture.completeExceptionally(new RuntimeException());
-        doReturn(failingFuture).when(storageService).upload(any(), eq(expectedPath));
-
-        final FirebaseDatabase database = new FirebaseDatabase(storageService);
-
-        assertThrows(DatabaseException.class, () -> database.putTodoList(todoList));
         verify(storageService).upload(serializedList, expectedPath);
     }
 
@@ -151,32 +138,20 @@ public class FirebaseDatabaseTest {
 
         // Try to get a valid list.
         final FirebaseDatabase database = new FirebaseDatabase(storageService);
-        final TodoList fetchedList = database.getTodoList(todoList.getId());
+        try {
+            final TodoList fetchedList = database.getTodoList(todoList.getId()).get();
 
-        verify(storageService).download(expectedPath);
-        assertEquals(todoList, fetchedList);
-        assertEquals(todoList.getSize(), fetchedList.getSize());
-        assertEquals(todoList.getDate().getTime(), fetchedList.getDate().getTime());
-        for (int i = 0; i < todoList.getSize(); i++) {
-            assertEquals(todoList.getTask(i), fetchedList.getTask(i));
+            verify(storageService).download(expectedPath);
+            assertEquals(todoList, fetchedList);
+            assertEquals(todoList.getSize(), fetchedList.getSize());
+            assertEquals(todoList.getDate().getTime(), fetchedList.getDate().getTime());
+            for (int i = 0; i < todoList.getSize(); i++) {
+                assertEquals(todoList.getTask(i), fetchedList.getTask(i));
+            }
+        } catch (Exception e) {
+            fail();
         }
-    }
 
-    @Test
-    public void getTodoListThrowsDatabaseExceptionOnError() {
-        final TodoList todoList = new TodoList("My list");
-        final String expectedPath = TODO_LIST_PATH + todoList.getId().toString() + ".json";
-
-        // Return a future that simulates an error during the download.
-        final CompletableFuture<byte[]> failingFuture = new CompletableFuture<>();
-        failingFuture.completeExceptionally(new RuntimeException());
-        doReturn(failingFuture).when(storageService).download(expectedPath);
-
-        // Try to get a valid list.
-        final FirebaseDatabase database = new FirebaseDatabase(storageService);
-
-        assertThrows(DatabaseException.class, () -> database.getTodoList(todoList.getId()));
-        verify(storageService).download(expectedPath);
     }
 
     @Test
@@ -231,25 +206,6 @@ public class FirebaseDatabaseTest {
     }
 
     @Test
-    public void putTaskThrowsDatabaseExceptionOnError() {
-        final TodoList todoList = new TodoList("My list");
-        final Task FIXTURE_TASK_1 = new Task("Buy bananas");
-        final String expectedPath = TODO_LIST_PATH + todoList.getId().toString() + ".json";
-
-        // Return a future that simulates an error during the download.
-        final CompletableFuture<byte[]> failingFuture = new CompletableFuture<>();
-        failingFuture.completeExceptionally(new RuntimeException());
-        doReturn(failingFuture).when(storageService).download(expectedPath);
-
-        // Try to put a task in a valid list.
-        final FirebaseDatabase database = new FirebaseDatabase(storageService);
-
-        assertThrows(
-                DatabaseException.class, () -> database.putTask(todoList.getId(), FIXTURE_TASK_1));
-        verify(storageService).download(expectedPath);
-    }
-
-    @Test
     public void removeTaskRejectsNullArguments() {
         assertThrows(
                 NullPointerException.class,
@@ -300,23 +256,6 @@ public class FirebaseDatabaseTest {
     }
 
     @Test
-    public void removeTaskThrowDatabaseExceptionOnError() {
-        final TodoList todoList = new TodoList("My list");
-        final String expectedPath = TODO_LIST_PATH + todoList.getId().toString() + ".json";
-
-        // Return a future that simulates an error during the download.
-        final CompletableFuture<byte[]> failingFuture = new CompletableFuture<>();
-        failingFuture.completeExceptionally(new RuntimeException());
-        doReturn(failingFuture).when(storageService).download(expectedPath);
-
-        // Try to remove a task from a valid list.
-        final FirebaseDatabase database = new FirebaseDatabase(storageService);
-
-        assertThrows(DatabaseException.class, () -> database.removeTask(todoList.getId(), 0));
-        verify(storageService).download(expectedPath);
-    }
-
-    @Test
     public void getTaskRejectsNullArguments() {
         assertThrows(
                 NullPointerException.class,
@@ -350,25 +289,13 @@ public class FirebaseDatabaseTest {
 
         // Try to get a valid task.
         final FirebaseDatabase database = new FirebaseDatabase(storageService);
-        final Task fetchedTask = database.getTask(todoList.getId(), 1);
 
-        verify(storageService).download(expectedPath);
-        assertEquals(FIXTURE_TASK_2, fetchedTask);
-    }
-
-    @Test
-    public void getTaskThrowsDatabaseExceptionOnError() {
-        final UUID todoListID = UUID.randomUUID();
-        final String expectedPath = TODO_LIST_PATH + todoListID.toString() + ".json";
-
-        // Return a future that simulates an error during the download.
-        final CompletableFuture<Void> failingFuture = new CompletableFuture<>();
-        failingFuture.completeExceptionally(new RuntimeException());
-        doReturn(failingFuture).when(storageService).download(expectedPath);
-
-        final FirebaseDatabase database = new FirebaseDatabase(storageService);
-
-        assertThrows(DatabaseException.class, () -> database.getTask(todoListID, 0));
-        verify(storageService).download(expectedPath);
+        try {
+            final Task fetchedTask = database.getTask(todoList.getId(), 1).get();
+            verify(storageService).download(expectedPath);
+            assertEquals(FIXTURE_TASK_2, fetchedTask);
+        } catch (Exception e) {
+            fail();
+        }
     }
 }

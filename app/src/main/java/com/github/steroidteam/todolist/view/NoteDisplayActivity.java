@@ -7,31 +7,45 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.database.FirebaseDatabase;
+import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
+import com.github.steroidteam.todolist.model.notes.Note;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+
 import java.util.UUID;
 
 public class NoteDisplayActivity extends AppCompatActivity {
+
+    private FirebaseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_display);
 
-        // Add a click listener to the "back" button to return to the previous activity.
-        ImageButton backButton = findViewById(R.id.back_button);
-        backButton.setOnClickListener((view) -> finish());
+        database = new FirebaseDatabase(new FirebaseFileStorageService(
+                FirebaseStorage.getInstance(), FirebaseAuth.getInstance().getCurrentUser()));
 
         Intent intent = getIntent();
         UUID id = UUID.fromString(intent.getStringExtra(NoteSelectionActivity.EXTRA_NOTE_ID));
+        EditText editText = findViewById(R.id.activity_notedisplay_edittext);
 
-        TextView noteTitle = findViewById(R.id.note_title);
-        noteTitle.setText("Lorem ipsum");
+        // Add a click listener to the "back" button to return to the previous activity.
+        ImageButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener((view) -> {
+            TextView noteTitle = findViewById(R.id.note_title);
+            Note updatedNote = new Note(noteTitle.getText().toString());
 
-        EditText view = findViewById(R.id.activity_notedisplay_edittext);
-        view.setText(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
-                        + " incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation"
-                        + " ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in"
-                        + " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non"
-                        + " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+            updatedNote.setContent(editText.getText().toString());
+            database.putNote(id, updatedNote).thenAccept(str -> finish());
+        });
+
+        database.getNote(id).thenAccept(note -> {
+            TextView noteTitle = findViewById(R.id.note_title);
+            noteTitle.setText(note.getTitle());
+
+            editText.setText(note.getContent());
+        });
     }
 }

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:foregroundTint="#FFFFFF"
+    tools:context=".view.DrawingActivity">
+
+    <Button
+        android:id="@+id/erase_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="eraseButton"
+        android:text="Erase"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/drawSpace"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        android:layout_marginTop="191dp"
+        android:background="#ebebeb"
+        android:outlineProvider="paddedBounds"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/colorRed"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="126dp"
+        android:background="#FFFFFF"
+        android:foreground="@android:drawable/radiobutton_off_background"
+        android:foregroundTint="#F44336"
+        android:onClick="redButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/colorBlue"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="126dp"
+        android:background="#FFFFFF"
+        android:foreground="@android:drawable/radiobutton_off_background"
+        android:foregroundTint="#2196F3"
+        android:onClick="blueButton"
+        app:layout_constraintStart_toEndOf="@+id/colorRed"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/colorGreen"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="126dp"
+        android:background="#FFFFFF"
+        android:foreground="@android:drawable/radiobutton_off_background"
+        android:foregroundTint="#4CAF50"
+        android:onClick="greenButton"
+        app:layout_constraintStart_toEndOf="@+id/colorRed"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/colorBlack"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="126dp"
+        android:background="#FFFFFF"
+        android:foreground="@android:drawable/radiobutton_off_background"
+        android:foregroundTint="#000000"
+        android:onClick="blackButton"
+        app:layout_constraintStart_toEndOf="@+id/colorRed"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

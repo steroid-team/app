@@ -67,6 +67,11 @@ public class ListSelectionActivity extends AppCompatActivity {
         startActivity(noteSelectionActivity);
     }
 
+    public void openDrawing(View view) {
+        Intent drawingActivity = new Intent(ListSelectionActivity.this, DrawingActivity.class);
+        startActivity(drawingActivity);
+    }
+
     private class todoListAdapter extends BaseAdapter {
 
         private List<TodoList> todoLists;

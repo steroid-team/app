@@ -12,6 +12,7 @@ Regardless of this hiccup, I tried to keep up with the collaboration & reviews. 
 
 ## Leandro
 
+This week I implemented the drawing activity and added an option to change the trait color. I spent a lot of time on research and on understanding the information I could find. I struggled with the testing part, and will still have to work on that on the next sprint. Because of this I didn’t have enough time to do my third task, which is adding a color picker. I guess taking that task was a little too optimistic. However, I am happy with my work this week. I worked more than eight hours but I think being able to draw on the screen is a great step. I also reviewed PRs #117 and #118.
 
 ## Noah
 

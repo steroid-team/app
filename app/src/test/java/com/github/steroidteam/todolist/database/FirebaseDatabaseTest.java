@@ -151,7 +151,6 @@ public class FirebaseDatabaseTest {
         } catch (Exception e) {
             fail();
         }
-
     }
 
     @Test

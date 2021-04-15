@@ -1,10 +1,9 @@
 package com.github.steroidteam.todolist.database;
 
 import com.github.steroidteam.todolist.model.notes.Note;
-import com.github.steroidteam.todolist.todo.TodoListCollection;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-
+import com.github.steroidteam.todolist.todo.TodoListCollection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -115,7 +114,6 @@ public interface Database {
      * @param todoListID id of the todolist containing the task
      * @param index of the task inside the todolist
      * @param isDone the state of the flag to set
-     *
      * @return the updated task
      */
     CompletableFuture<Task> setTaskDone(UUID todoListID, int index, boolean isDone);

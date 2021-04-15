@@ -15,16 +15,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.firebase.ui.auth.AuthUI;
+import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.database.FirebaseDatabase;
 import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
+import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
-
-import com.github.steroidteam.todolist.R;
-import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class ListSelectionActivity extends AppCompatActivity {
 
@@ -39,8 +37,11 @@ public class ListSelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_selection);
 
-        database = new FirebaseDatabase(new FirebaseFileStorageService(
-                FirebaseStorage.getInstance(), FirebaseAuth.getInstance().getCurrentUser()));
+        database =
+                new FirebaseDatabase(
+                        new FirebaseFileStorageService(
+                                FirebaseStorage.getInstance(),
+                                FirebaseAuth.getInstance().getCurrentUser()));
 
         todoLists = new ArrayList<>();
 
@@ -49,14 +50,18 @@ public class ListSelectionActivity extends AppCompatActivity {
         adapter = new todoListAdapter(todoLists);
         setListViewSettings(listView);
 
-        database.getTodoListCollection().thenAccept((todoListCollection -> {
-            for (int i = 0; i < todoListCollection.getSize(); i++) {
-                database.getTodoList(todoListCollection.getUUID(i)).thenAccept(todoList -> {
-                    todoLists.add(todoList);
-                    adapter.notifyDataSetChanged();
-                });
-            }
-        }));
+        database.getTodoListCollection()
+                .thenAccept(
+                        (todoListCollection -> {
+                            for (int i = 0; i < todoListCollection.getSize(); i++) {
+                                database.getTodoList(todoListCollection.getUUID(i))
+                                        .thenAccept(
+                                                todoList -> {
+                                                    todoLists.add(todoList);
+                                                    adapter.notifyDataSetChanged();
+                                                });
+                            }
+                        }));
     }
 
     private void setListViewSettings(ListView listView) {
@@ -87,10 +92,12 @@ public class ListSelectionActivity extends AppCompatActivity {
 
     public void createList(View view) {
         TodoList todoList = new TodoList("New TodoList");
-        database.putTodoList(todoList).thenAccept(filePath -> {
-            todoLists.add(todoList);
-            adapter.notifyDataSetChanged();
-        });
+        database.putTodoList(todoList)
+                .thenAccept(
+                        filePath -> {
+                            todoLists.add(todoList);
+                            adapter.notifyDataSetChanged();
+                        });
     }
 
     private class todoListAdapter extends BaseAdapter {
@@ -163,11 +170,14 @@ public class ListSelectionActivity extends AppCompatActivity {
                                     return;
                                 }
                                 todoList.setTitle(input.getText().toString());
-                                database.updateTodoList(todoList.getId(), todoList).thenAccept(
-                                        filePath -> {
-                                            Log.println(Log.INFO, "TAG", "TodoList " +
-                                                    filePath + " updated!");
-                                        });
+                                database.updateTodoList(todoList.getId(), todoList)
+                                        .thenAccept(
+                                                filePath -> {
+                                                    Log.println(
+                                                            Log.INFO,
+                                                            "TAG",
+                                                            "TodoList " + filePath + " updated!");
+                                                });
                             })
                     .create()
                     .show();

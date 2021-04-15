@@ -2,22 +2,18 @@ package com.github.steroidteam.todolist.database;
 
 import androidx.annotation.NonNull;
 import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
-
 import com.github.steroidteam.todolist.model.notes.Note;
-import com.github.steroidteam.todolist.todo.TodoListCollection;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-
+import com.github.steroidteam.todolist.todo.TodoListCollection;
 import com.github.steroidteam.todolist.util.JSONSerializer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 public class FirebaseDatabase implements Database {
@@ -35,11 +31,13 @@ public class FirebaseDatabase implements Database {
     public CompletableFuture<TodoListCollection> getTodoListCollection() {
         CompletableFuture<String[]> listDirFuture = storageService.listDir(TODO_LIST_PATH);
 
-        return listDirFuture.thenApply((fileNames) ->
-                new TodoListCollection(Arrays.stream(fileNames)
-                .map((filename) -> filename.split(".json")[0])
-                .map(UUID::fromString)
-                .collect(Collectors.toList())));
+        return listDirFuture.thenApply(
+                (fileNames) ->
+                        new TodoListCollection(
+                                Arrays.stream(fileNames)
+                                        .map((filename) -> filename.split(".json")[0])
+                                        .map(UUID::fromString)
+                                        .collect(Collectors.toList())));
     }
 
     @Override
@@ -71,9 +69,12 @@ public class FirebaseDatabase implements Database {
         Objects.requireNonNull(todoListID);
         String targetPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
-        return this.storageService.download(targetPath).thenApply(bytes ->
-            JSONSerializer.deserializeTodoList(new String(bytes, StandardCharsets.UTF_8))
-        );
+        return this.storageService
+                .download(targetPath)
+                .thenApply(
+                        bytes ->
+                                JSONSerializer.deserializeTodoList(
+                                        new String(bytes, StandardCharsets.UTF_8)));
     }
 
     @Override
@@ -95,40 +96,44 @@ public class FirebaseDatabase implements Database {
 
         // Fetch the remote list that we are about to update.
         return getTodoList(todoListID)
-                    // Add the new task to the object.
-                    .thenApply(
-                            todoList -> {
-                                todoList.addTask(task);
-                                return todoList;
-                            })
-                    // Re-serialize and upload the new object.
-                    .thenApply(JSONSerializer::serializeTodoList)
-                    .thenApply(
-                            serializedTodoList ->
-                                    serializedTodoList.getBytes(StandardCharsets.UTF_8))
-                    .thenCompose(bytes -> this.storageService.upload(bytes, listPath))
-                    .thenApply(str -> task);
+                // Add the new task to the object.
+                .thenApply(
+                        todoList -> {
+                            todoList.addTask(task);
+                            return todoList;
+                        })
+                // Re-serialize and upload the new object.
+                .thenApply(JSONSerializer::serializeTodoList)
+                .thenApply(
+                        serializedTodoList -> serializedTodoList.getBytes(StandardCharsets.UTF_8))
+                .thenCompose(bytes -> this.storageService.upload(bytes, listPath))
+                .thenApply(str -> task);
     }
 
     @Override
-    public CompletableFuture<TodoList> removeTask(@NonNull UUID todoListID, @NonNull Integer taskIndex) {
+    public CompletableFuture<TodoList> removeTask(
+            @NonNull UUID todoListID, @NonNull Integer taskIndex) {
         Objects.requireNonNull(todoListID);
         Objects.requireNonNull(taskIndex);
         String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
         // Fetch the remote list that we are about to update.
         return getTodoList(todoListID)
-                    // Remove the task from the object.
-                    .thenApply(
-                            todoList -> {
-                                todoList.removeTask(taskIndex);
-                                return todoList;
-                            })
-                    .thenCompose(todoList -> {
-                        byte[] bytes = JSONSerializer.serializeTodoList(todoList)
-                                                     .getBytes(StandardCharsets.UTF_8);
-                        return this.storageService.upload(bytes, listPath).thenApply(str -> todoList);
-                    });
+                // Remove the task from the object.
+                .thenApply(
+                        todoList -> {
+                            todoList.removeTask(taskIndex);
+                            return todoList;
+                        })
+                .thenCompose(
+                        todoList -> {
+                            byte[] bytes =
+                                    JSONSerializer.serializeTodoList(todoList)
+                                            .getBytes(StandardCharsets.UTF_8);
+                            return this.storageService
+                                    .upload(bytes, listPath)
+                                    .thenApply(str -> todoList);
+                        });
     }
 
     @Override
@@ -146,13 +151,16 @@ public class FirebaseDatabase implements Database {
                             return todoList;
                         })
                 // Re-serialize and upload the new object.
-                .thenCompose(todoList -> {
-                    Task renamedTask = todoList.getTask(taskIndex);
-                    byte[] bytes = JSONSerializer.serializeTodoList(todoList)
-                                                 .getBytes(StandardCharsets.UTF_8);
-                    return this.storageService.upload(bytes, listPath)
-                                .thenApply(str -> renamedTask);
-                });
+                .thenCompose(
+                        todoList -> {
+                            Task renamedTask = todoList.getTask(taskIndex);
+                            byte[] bytes =
+                                    JSONSerializer.serializeTodoList(todoList)
+                                            .getBytes(StandardCharsets.UTF_8);
+                            return this.storageService
+                                    .upload(bytes, listPath)
+                                    .thenApply(str -> renamedTask);
+                        });
     }
 
     @Override
@@ -162,8 +170,7 @@ public class FirebaseDatabase implements Database {
         String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
         // Fetch the remote list that we are about to update.
-        return getTodoList(todoListID)
-           .thenApply(todoList -> todoList.getTask(taskIndex));
+        return getTodoList(todoListID).thenApply(todoList -> todoList.getTask(taskIndex));
     }
 
     @Override
@@ -183,20 +190,19 @@ public class FirebaseDatabase implements Database {
         String notePath = NOTES_PATH + noteID.toString() + ".json";
         byte[] serializedNote = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
 
-        return this.storageService
-                .upload(serializedNote, notePath)
-                .thenApply(str -> note);
+        return this.storageService.upload(serializedNote, notePath).thenApply(str -> note);
     }
 
     @Override
     public CompletableFuture<List<UUID>> getNotesList() {
         CompletableFuture<String[]> listDir = this.storageService.listDir(NOTES_PATH);
 
-        return listDir.thenApply(fileNames ->
+        return listDir.thenApply(
+                fileNames ->
                         Arrays.stream(fileNames)
-                        .map(fileName -> fileName.split(".json")[0])
-                        .map(UUID::fromString)
-                        .collect(Collectors.toList()));
+                                .map(fileName -> fileName.split(".json")[0])
+                                .map(UUID::fromString)
+                                .collect(Collectors.toList()));
     }
 
     @Override
@@ -214,13 +220,15 @@ public class FirebaseDatabase implements Database {
                             return todoList;
                         })
                 // Re-serialize and upload the new object.
-                .thenCompose(todoList -> {
-                    Task updatedTask = todoList.getTask(index);
-                    byte[] bytes = JSONSerializer.serializeTodoList(todoList)
-                            .getBytes(StandardCharsets.UTF_8);
-                    return this.storageService.upload(bytes, listPath)
-                            .thenApply(str -> updatedTask);
-                });
+                .thenCompose(
+                        todoList -> {
+                            Task updatedTask = todoList.getTask(index);
+                            byte[] bytes =
+                                    JSONSerializer.serializeTodoList(todoList)
+                                            .getBytes(StandardCharsets.UTF_8);
+                            return this.storageService
+                                    .upload(bytes, listPath)
+                                    .thenApply(str -> updatedTask);
+                        });
     }
-
 }

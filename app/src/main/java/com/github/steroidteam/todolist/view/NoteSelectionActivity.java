@@ -17,7 +17,6 @@ import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
-
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -38,27 +37,35 @@ public class NoteSelectionActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.activity_noteselection_notelist);
         listView.setAdapter(adapter);
 
-        database = new FirebaseDatabase(new FirebaseFileStorageService(
-                FirebaseStorage.getInstance(), FirebaseAuth.getInstance().getCurrentUser()));
+        database =
+                new FirebaseDatabase(
+                        new FirebaseFileStorageService(
+                                FirebaseStorage.getInstance(),
+                                FirebaseAuth.getInstance().getCurrentUser()));
 
-        database.getNotesList().thenAccept(uuids -> {
-            for (UUID uuid : uuids) {
-                database.getNote(uuid).thenAccept(note -> {
-                    notes.add(note);
-                    adapter.notifyDataSetChanged();
-                });
-            }
-        });
+        database.getNotesList()
+                .thenAccept(
+                        uuids -> {
+                            for (UUID uuid : uuids) {
+                                database.getNote(uuid)
+                                        .thenAccept(
+                                                note -> {
+                                                    notes.add(note);
+                                                    adapter.notifyDataSetChanged();
+                                                });
+                            }
+                        });
     }
 
     public void createNote(View view) {
         Note newNote = new Note("New note");
 
         database.putNote(newNote.getId(), newNote)
-                .thenAccept(str -> {
-                    notes.add(newNote);
-                    adapter.notifyDataSetChanged();
-                });
+                .thenAccept(
+                        str -> {
+                            notes.add(newNote);
+                            adapter.notifyDataSetChanged();
+                        });
     }
 
     private class NoteAdapter extends BaseAdapter {

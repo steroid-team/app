@@ -35,7 +35,7 @@ public class ItemViewActivity extends AppCompatActivity {
         // Instantiate the view model.
         // random UUID because we don't have persistent memory !
         // this UUID is not used.
-        viewModel = new ItemViewModel(UUID.randomUUID());
+        viewModel = new ItemViewModel(UUID.randomUUID(), getApplicationContext());
 
         // Observe the LiveData todoList from the ViewModel,
         // 'this' refers to the activity so it the ItemViewActivity acts as the LifeCycleOwner,

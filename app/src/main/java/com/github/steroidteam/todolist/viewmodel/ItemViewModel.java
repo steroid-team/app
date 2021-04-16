@@ -1,5 +1,7 @@
 package com.github.steroidteam.todolist.viewmodel;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import com.github.steroidteam.todolist.model.TodoRepository;
@@ -13,9 +15,9 @@ public class ItemViewModel extends ViewModel {
     private LiveData<TodoList> todoList;
     private UUID todoListID;
 
-    public ItemViewModel(UUID todoListID) {
+    public ItemViewModel(UUID todoListID, Context context) {
         super();
-        repository = new TodoRepository();
+        repository = new TodoRepository(context);
 
         // ====== TO DELETE ======== BEGIN
         // We don't have persistent database !

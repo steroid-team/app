@@ -11,7 +11,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class FirebaseDatabase implements Database {
-    private static final String TODO_LIST_PATH = "/todo-lists";
     private final FirebaseFileStorageService storageService;
 
     // TODO: Run Database operations asynchronously.

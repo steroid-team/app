@@ -1,7 +1,6 @@
 package com.github.steroidteam.todolist.viewmodel;
 
 import android.content.Context;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import com.github.steroidteam.todolist.model.TodoRepository;

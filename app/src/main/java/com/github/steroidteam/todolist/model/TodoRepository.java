@@ -1,13 +1,10 @@
 package com.github.steroidteam.todolist.model;
 
 import android.content.Context;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.github.steroidteam.todolist.database.DatabaseException;
 import com.github.steroidteam.todolist.database.LocalDatabase;
-import com.github.steroidteam.todolist.database.VolatileDatabase;
 import com.github.steroidteam.todolist.filestorage.LocalFileStorageService;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;

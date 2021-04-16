@@ -1,9 +1,6 @@
 package com.github.steroidteam.todolist.util;
 
-import android.content.Context;
-
 import com.github.steroidteam.todolist.database.DatabaseException;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,7 +31,7 @@ public class FileStorageUtils {
 
     public static void deleteFileFromStorage(File rootDestination, String path) {
         File file = getFile(rootDestination, path);
-        if(file.exists()) {
+        if (file.exists()) {
             file.delete();
         }
     }
@@ -57,8 +54,7 @@ public class FileStorageUtils {
                     }
                     result = sb.toString();
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new DatabaseException("unable to read file at: " + file);
             }
         }

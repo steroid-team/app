@@ -1,16 +1,14 @@
 package com.github.steroidteam.todolist.database;
 
 import androidx.annotation.NonNull;
-
 import com.github.steroidteam.todolist.filestorage.LocalFileStorageService;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.util.JSONSerializer;
-
 import java.util.Objects;
 import java.util.UUID;
 
-public class LocalDatabase implements Database{
+public class LocalDatabase implements Database {
 
     private final LocalFileStorageService storageService;
 

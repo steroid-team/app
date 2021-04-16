@@ -1,15 +1,8 @@
 package com.github.steroidteam.todolist.filestorage;
 
-import android.app.Application;
 import android.content.Context;
-import android.os.Environment;
-
 import androidx.annotation.NonNull;
-
-import com.github.steroidteam.todolist.database.DatabaseException;
 import com.github.steroidteam.todolist.util.FileStorageUtils;
-
-import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 public class LocalFileStorageService {

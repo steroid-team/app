@@ -63,13 +63,8 @@ public class MapsActivityTest {
                 uiObjectNotFoundException.printStackTrace();
             }
         }
-    }
-
-    // I'm not really sure why this test doesn't work on Cirrus
-    @Test
-    public void TextIsClearedAfterASearched() {
+        // Check that the searchbar clear the text after a query
         final String CITY_NAME = "Lausanne";
-        waitFor(2000);
         onView(isAssignableFrom(AutoCompleteTextView.class))
                 .perform(
                         typeText(CITY_NAME), closeSoftKeyboard(), pressKey(KeyEvent.KEYCODE_ENTER));

@@ -166,7 +166,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void deviceLocationMarker(Location location) {
+    public void deviceLocationMarker(Location location) {
         if (location != null) {
             deviceLocationMarkerLocNotNull(location);
         } else {
@@ -191,10 +191,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         map.moveCamera(CameraUpdateFactory.newLatLng(defaultLocation));
         if (marker != null) {
             marker.setPosition(defaultLocation);
-            marker.setTitle("Sydney :)");
+            marker.setTitle("Sydney");
         } else {
-            marker =
-                    map.addMarker(new MarkerOptions().position(defaultLocation).title("Sydney :)"));
+            marker = map.addMarker(new MarkerOptions().position(defaultLocation).title("Sydney"));
         }
     }
 
@@ -254,5 +253,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
+    }
+
+    public Marker getMarker() {
+        return marker;
     }
 }

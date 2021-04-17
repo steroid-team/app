@@ -1,16 +1,7 @@
 package com.github.steroidteam.todolist;
 
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.pressKey;
-import static androidx.test.espresso.action.ViewActions.typeText;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
-import android.view.KeyEvent;
-import android.widget.AutoCompleteTextView;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -63,12 +54,6 @@ public class MapsActivityTest {
                 uiObjectNotFoundException.printStackTrace();
             }
         }
-        // Check that the searchbar clear the text after a query
-        final String CITY_NAME = "Lausanne";
-        onView(isAssignableFrom(AutoCompleteTextView.class))
-                .perform(
-                        typeText(CITY_NAME), closeSoftKeyboard(), pressKey(KeyEvent.KEYCODE_ENTER));
-        onView(isAssignableFrom(AutoCompleteTextView.class)).check(matches(withText("")));
     }
 
     private void waitFor(int duration) {

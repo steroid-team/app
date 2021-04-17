@@ -6,7 +6,6 @@ import static androidx.test.espresso.action.ViewActions.pressKey;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
@@ -71,7 +70,7 @@ public class MapsActivityTest {
     public void TextIsClearedAfterASearched() {
         final String CITY_NAME = "Lausanne";
         waitFor(2000);
-        onView(withId(R.id.sv_location))
+        onView(isAssignableFrom(AutoCompleteTextView.class))
                 .perform(
                         typeText(CITY_NAME), closeSoftKeyboard(), pressKey(KeyEvent.KEYCODE_ENTER));
         onView(isAssignableFrom(AutoCompleteTextView.class)).check(matches(withText("")));

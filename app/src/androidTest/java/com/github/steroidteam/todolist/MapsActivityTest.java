@@ -46,7 +46,7 @@ public class MapsActivityTest {
 
     @Test
     public void markerIsCorrectlyPlacedAtDefaultLocationOrUserLocation() {
-        waitFor(5000);
+        waitFor(2000);
 
         UiDevice device = UiDevice.getInstance(getInstrumentation());
         // If we don't have access to the localisation the default marker is placed at Sydney
@@ -75,7 +75,6 @@ public class MapsActivityTest {
                 .perform(
                         typeText(CITY_NAME), closeSoftKeyboard(), pressKey(KeyEvent.KEYCODE_ENTER));
         onView(isAssignableFrom(AutoCompleteTextView.class)).check(matches(withText("")));
-        // onView(withContentDescription("Google Map")).check(matches(isDisplayed()));
     }
 
     private void waitFor(int duration) {

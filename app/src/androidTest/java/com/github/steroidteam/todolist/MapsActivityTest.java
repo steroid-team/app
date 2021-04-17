@@ -2,7 +2,6 @@ package com.github.steroidteam.todolist;
 
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
-import android.location.Location;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -11,8 +10,6 @@ import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
 import com.github.steroidteam.todolist.view.MapsActivity;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -67,21 +64,6 @@ public class MapsActivityTest {
      * typeText(CITY_NAME), closeSoftKeyboard(), pressKey(KeyEvent.KEYCODE_ENTER));
      * onView(isAssignableFrom(AutoCompleteTextView.class)).check(matches(withText(""))); }
      */
-    @Test
-    public void TestDeviceLocationMarkerWithNullLocation() {
-        LatLng sydneyLocation = new LatLng(-33.8523341, 151.2106085);
-        activityRule
-                .getScenario()
-                .onActivity(
-                        activity -> {
-                            Location location = null;
-                            activity.deviceLocationMarker(location);
-                            Marker marker = activity.getMarker();
-                            Assert.assertEquals("Sydney", marker.getTitle());
-                            Assert.assertEquals(sydneyLocation, marker.getPosition());
-                        });
-    }
-
     private void waitFor(int duration) {
         try {
             Thread.sleep(duration);

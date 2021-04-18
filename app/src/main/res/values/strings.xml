@@ -26,4 +26,7 @@
     <string name="undo">UNDO</string>
     <string name="delete">DELETE</string>
     <string name="save">SAVE</string>
+    <string name="default_location">Sydney</string>
+    <string name="current_location_message">I\'m here</string>
+    <string name="location_not_found">Location not found !</string>
 </resources>

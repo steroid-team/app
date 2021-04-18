@@ -39,6 +39,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     // not granted.
     private final LatLng defaultLocation = new LatLng(-33.8523341, 151.2106085);
     private static final int DEFAULT_ZOOM = 15;
+    private static final int ZOOM_SEARCH = 10;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean locationPermissionGranted;
 
@@ -107,7 +108,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             e.printStackTrace();
         }
         if (!checkLocationHasBeenFound(addressList)) {
-            Toast.makeText(getApplicationContext(), "Location not found !", Toast.LENGTH_SHORT)
+            Toast.makeText(
+                            getApplicationContext(),
+                            getString(R.string.location_not_found),
+                            Toast.LENGTH_SHORT)
                     .show();
             return;
         }
@@ -131,7 +135,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     map.addMarker(
                             new MarkerOptions().position(latLng).title(locationWithUppercase));
         }
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_SEARCH));
     }
 
     /**
@@ -194,10 +198,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         new LatLng(location.getLatitude(), location.getLongitude()), DEFAULT_ZOOM));
         if (marker != null) {
             marker.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
-            marker.setTitle("I'm here");
+            marker.setTitle(getString(R.string.current_location_message));
         } else {
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            marker = map.addMarker(new MarkerOptions().position(latLng).title("I'm here"));
+            marker =
+                    map.addMarker(
+                            new MarkerOptions()
+                                    .position(latLng)
+                                    .title(getString(R.string.current_location_message)));
         }
     }
 
@@ -205,9 +213,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         map.moveCamera(CameraUpdateFactory.newLatLng(defaultLocation));
         if (marker != null) {
             marker.setPosition(defaultLocation);
-            marker.setTitle("Sydney");
+            marker.setTitle(getString(R.string.default_location));
         } else {
-            marker = map.addMarker(new MarkerOptions().position(defaultLocation).title("Sydney"));
+            marker =
+                    map.addMarker(
+                            new MarkerOptions()
+                                    .position(defaultLocation)
+                                    .title(getString(R.string.default_location)));
         }
     }
 

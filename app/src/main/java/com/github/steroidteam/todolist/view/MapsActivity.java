@@ -66,7 +66,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_maps);
-
         searchView = findViewById(R.id.sv_location);
 
         searchView.setOnQueryTextListener(createOnQueryTextListener());

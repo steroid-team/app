@@ -2,6 +2,7 @@ package com.github.steroidteam.todolist.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -33,5 +34,15 @@ public class NoteDisplayActivity extends AppCompatActivity {
                         + " ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in"
                         + " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non"
                         + " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+    }
+
+    /**
+     * This method is called when the user click on the note_header to switch to MapActivity
+     *
+     * @param view
+     */
+    public void goToMapActivity(View view) {
+        Intent mapActivity = new Intent(NoteDisplayActivity.this, MapsActivity.class);
+        startActivity(mapActivity);
     }
 }

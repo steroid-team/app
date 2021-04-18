@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.SearchView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -105,7 +106,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if (!checkLocationHasBeenFound(addressList)) {
+            Toast.makeText(getApplicationContext(), "Location not found !", Toast.LENGTH_SHORT)
+                    .show();
+            return;
+        }
         Address address = addressList.get(0);
+        locationHasBeenFound(address, location);
+    }
+
+    private boolean checkLocationHasBeenFound(List<Address> addressList) {
+        return addressList.size() > 0;
+    }
+
+    private void locationHasBeenFound(Address address, String location) {
         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
         String locationWithUppercase =
                 location.substring(0, 1).toUpperCase() + location.substring(1);

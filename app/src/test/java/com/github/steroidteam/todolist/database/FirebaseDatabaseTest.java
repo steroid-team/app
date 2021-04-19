@@ -1,54 +1,46 @@
 package com.github.steroidteam.todolist.database;
 
-import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
-import com.github.steroidteam.todolist.todo.Task;
-import com.github.steroidteam.todolist.todo.TodoList;
-import com.github.steroidteam.todolist.util.JSONSerializer;
-import com.google.android.gms.tasks.RuntimeExecutionException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
+import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
+import com.github.steroidteam.todolist.model.todo.Task;
+import com.github.steroidteam.todolist.model.todo.TodoList;
+import com.github.steroidteam.todolist.util.JSONSerializer;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyByte;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FirebaseDatabaseTest {
     private static final String TODO_LIST_PATH = "/todo-lists";
 
-    @Mock
-    FirebaseFileStorageService storageService;
+    @Mock FirebaseFileStorageService storageService;
 
     @Test
     public void constructorRejectsNullStorageService() {
-        assertThrows(NullPointerException.class, () -> {
-            new FirebaseDatabase(null);
-        });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FirebaseDatabase(null);
+                });
     }
 
     @Test
     public void putTodoListRejectsNullList() {
-        assertThrows(NullPointerException.class, () -> {
-            new FirebaseDatabase(storageService).putTodoList(null);
-        });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FirebaseDatabase(storageService).putTodoList(null);
+                });
     }
 
     @Test
@@ -60,7 +52,8 @@ public class FirebaseDatabaseTest {
 
         // Return a future like the one that the FirebaseFileStorageService would produce after
         // successfully uploading the file.
-        final CompletableFuture<String> completedFuture = CompletableFuture.completedFuture(expectedPath);
+        final CompletableFuture<String> completedFuture =
+                CompletableFuture.completedFuture(expectedPath);
         doReturn(completedFuture).when(storageService).upload(any(), eq(expectedPath));
 
         // Try to add a valid list.
@@ -90,9 +83,11 @@ public class FirebaseDatabaseTest {
 
     @Test
     public void removeTodoListRejectsNullTodoListID() {
-        assertThrows(NullPointerException.class, () -> {
-            new FirebaseDatabase(storageService).removeTodoList(null);
-        });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FirebaseDatabase(storageService).removeTodoList(null);
+                });
     }
 
     @Test
@@ -130,9 +125,11 @@ public class FirebaseDatabaseTest {
 
     @Test
     public void getTodoListRejectsNullTodoListID() {
-        assertThrows(NullPointerException.class, () -> {
-            new FirebaseDatabase(storageService).getTodoList(null);
-        });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FirebaseDatabase(storageService).getTodoList(null);
+                });
     }
 
     @Test
@@ -184,13 +181,17 @@ public class FirebaseDatabaseTest {
 
     @Test
     public void putTaskRejectsNullArguments() {
-        assertThrows(NullPointerException.class, () -> {
-            new FirebaseDatabase(storageService).putTask(null, new Task("Some task"));
-        });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FirebaseDatabase(storageService).putTask(null, new Task("Some task"));
+                });
 
-        assertThrows(NullPointerException.class, () -> {
-            new FirebaseDatabase(storageService).putTask(UUID.randomUUID(), null);
-        });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FirebaseDatabase(storageService).putTask(UUID.randomUUID(), null);
+                });
     }
 
     @Test
@@ -244,21 +245,23 @@ public class FirebaseDatabaseTest {
         final FirebaseDatabase database = new FirebaseDatabase(storageService);
 
         assertThrows(
-                DatabaseException.class,
-                () -> database.putTask(todoList.getId(), FIXTURE_TASK_1)
-        );
+                DatabaseException.class, () -> database.putTask(todoList.getId(), FIXTURE_TASK_1));
         verify(storageService).download(expectedPath);
     }
 
     @Test
     public void removeTaskRejectsNullArguments() {
-        assertThrows(NullPointerException.class, () -> {
-            new FirebaseDatabase(storageService).removeTask(null, 0);
-        });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FirebaseDatabase(storageService).removeTask(null, 0);
+                });
 
-        assertThrows(NullPointerException.class, () -> {
-            new FirebaseDatabase(storageService).putTask(UUID.randomUUID(), null);
-        });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FirebaseDatabase(storageService).putTask(UUID.randomUUID(), null);
+                });
     }
 
     @Test
@@ -306,26 +309,26 @@ public class FirebaseDatabaseTest {
         failingFuture.completeExceptionally(new RuntimeException());
         doReturn(failingFuture).when(storageService).download(expectedPath);
 
-
         // Try to remove a task from a valid list.
         final FirebaseDatabase database = new FirebaseDatabase(storageService);
 
-        assertThrows(
-                DatabaseException.class,
-                () -> database.removeTask(todoList.getId(), 0)
-        );
+        assertThrows(DatabaseException.class, () -> database.removeTask(todoList.getId(), 0));
         verify(storageService).download(expectedPath);
     }
 
     @Test
     public void getTaskRejectsNullArguments() {
-        assertThrows(NullPointerException.class, () -> {
-            new FirebaseDatabase(storageService).getTask(null, 0);
-        });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FirebaseDatabase(storageService).getTask(null, 0);
+                });
 
-        assertThrows(NullPointerException.class, () -> {
-            new FirebaseDatabase(storageService).getTask(UUID.randomUUID(), null);
-        });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FirebaseDatabase(storageService).getTask(UUID.randomUUID(), null);
+                });
     }
 
     @Test

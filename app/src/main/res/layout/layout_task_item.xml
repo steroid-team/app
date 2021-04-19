@@ -2,32 +2,36 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
     android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp">
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
+    android:background="@android:color/transparent">
 
     <CheckBox
         android:id="@+id/layout_task_checkbox"
+        style="@style/TaskEntryCheckbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true" />
 
     <TextView
         android:id="@+id/layout_task_body"
+        style="@style/TaskEntryText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
         android:layout_toEndOf="@+id/layout_task_checkbox"
-        android:text="Task body"
-        android:ellipsize="end"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:ellipsize="end" />
 
     <Button
         android:id="@+id/layout_task_delete_button"
-        android:onClick="removeTask"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_alignParentEnd="true"
-        android:visibility="gone"
-        android:background="@drawable/ic_launcher_background"/>
+        android:layout_centerInParent="true"
+        style="@style/TaskDeleteButtonInRecyclerView"
+        android:onClick="removeTask"
+        android:visibility="gone" />
 </RelativeLayout>

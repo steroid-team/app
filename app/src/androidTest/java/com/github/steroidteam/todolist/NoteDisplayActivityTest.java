@@ -32,7 +32,7 @@ public class NoteDisplayActivityTest {
                 .atPosition(1)
                 .perform(click());
 
-        onView(withId(R.id.note_header)).perform(click());
+        onView(withId(R.id.location_button)).perform(click());
 
         Intents.intended(Matchers.allOf(IntentMatchers.hasComponent(MapsActivity.class.getName())));
         Intents.release();

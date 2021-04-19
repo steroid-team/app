@@ -129,9 +129,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             marker.setPosition(latLng);
             marker.setTitle(locationName);
         } else {
-            marker =
-                    map.addMarker(
-                            new MarkerOptions().position(latLng).title(locationName));
+            marker = map.addMarker(new MarkerOptions().position(latLng).title(locationName));
         }
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_SEARCH));
     }

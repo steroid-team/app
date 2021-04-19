@@ -128,6 +128,7 @@ connectedCheck {
 }
 
 spotless {
+    lineEndings 'UNIX'
     format 'misc', {
         // A general formatter for miscellaneous files (Gradle build files, Markdown docs &
         // gitignores).

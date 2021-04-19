@@ -93,11 +93,8 @@ public class FBaseUserTest {
         when(authMock.sendPasswordResetEmail(anyString())).thenReturn(taskMock);
         when(firebaseUserMock.delete()).thenReturn(taskMock);
 
-        OnCompleteListener<Void> onComplete = new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                // Do nothing
-            }
+        OnCompleteListener<Void> onComplete = task -> {
+            // Do nothing
         };
 
         try {

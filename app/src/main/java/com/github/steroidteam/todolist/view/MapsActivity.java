@@ -115,24 +115,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
         Address address = addressList.get(0);
-        locationHasBeenFound(address, location);
+        locationHasBeenFound(address);
     }
 
     private boolean checkLocationHasBeenFound(List<Address> addressList) {
         return addressList.size() > 0;
     }
 
-    private void locationHasBeenFound(Address address, String location) {
+    private void locationHasBeenFound(Address address) {
         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-        String locationWithUppercase =
-                location.substring(0, 1).toUpperCase() + location.substring(1);
+        String locationName = address.getLocality();
         if (marker != null) {
             marker.setPosition(latLng);
-            marker.setTitle(locationWithUppercase);
+            marker.setTitle(locationName);
         } else {
             marker =
                     map.addMarker(
-                            new MarkerOptions().position(latLng).title(locationWithUppercase));
+                            new MarkerOptions().position(latLng).title(locationName));
         }
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_SEARCH));
     }

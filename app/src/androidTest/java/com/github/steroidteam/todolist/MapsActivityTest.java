@@ -4,7 +4,10 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.pressKey;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
 import android.view.KeyEvent;
@@ -63,13 +66,22 @@ public class MapsActivityTest {
     }
 
     @Test
-    public void searchViewWorksCorrectly() {
+    public void searchViewWorksCorrectlyWithCorrectLocation() {
         onView(withId(R.id.sv_location))
                 .perform(click(), typeText("Lausanne"), pressKey(KeyEvent.KEYCODE_ENTER));
         waitFor(4000);
         UiDevice device = UiDevice.getInstance(getInstrumentation());
         UiObject marker = device.findObject(new UiSelector().descriptionContains("Lausanne"));
         Assert.assertNotNull(marker);
+    }
+
+    @Test
+    public void searchViewToastMessageWithIncorrectLocation() {
+        onView(withId(R.id.sv_location))
+                .perform(click(), typeText("ojoiwejfew"), pressKey(KeyEvent.KEYCODE_ENTER));
+        onView(withText("Location not found !"))
+                .inRoot(new ItemViewActivityTest.ToastMatcher())
+                .check(matches(isDisplayed()));
     }
 
     private void waitFor(int duration) {

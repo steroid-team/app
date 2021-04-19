@@ -67,19 +67,23 @@ public class MapsActivityTest {
 
     @Test
     public void searchViewWorksCorrectlyWithCorrectLocation() {
+        String TEST_LOCATION = "Lausanne";
         onView(withId(R.id.sv_location))
-                .perform(click(), typeText("Lausanne"), pressKey(KeyEvent.KEYCODE_ENTER));
+                .perform(click(), typeText(TEST_LOCATION), pressKey(KeyEvent.KEYCODE_ENTER));
         waitFor(4000);
         UiDevice device = UiDevice.getInstance(getInstrumentation());
-        UiObject marker = device.findObject(new UiSelector().descriptionContains("Lausanne"));
+        UiObject marker = device.findObject(new UiSelector().descriptionContains(TEST_LOCATION));
         Assert.assertNotNull(marker);
     }
 
     @Test
     public void searchViewToastMessageWithIncorrectLocation() {
+        String TEST_WRONG_LOCATION = "ojoiwejfew";
+        String TOAST_TEXT = "Location not found !";
+
         onView(withId(R.id.sv_location))
-                .perform(click(), typeText("ojoiwejfew"), pressKey(KeyEvent.KEYCODE_ENTER));
-        onView(withText("Location not found !"))
+                .perform(click(), typeText(TEST_WRONG_LOCATION), pressKey(KeyEvent.KEYCODE_ENTER));
+        onView(withText(TOAST_TEXT))
                 .inRoot(new ItemViewActivityTest.ToastMatcher())
                 .check(matches(isDisplayed()));
     }

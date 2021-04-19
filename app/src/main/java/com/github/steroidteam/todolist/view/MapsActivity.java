@@ -276,8 +276,4 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.e("Exception: %s", e.getMessage());
         }
     }
-
-    public Marker getMarker() {
-        return marker;
-    }
 }

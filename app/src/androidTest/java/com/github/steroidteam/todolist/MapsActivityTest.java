@@ -1,7 +1,13 @@
 package com.github.steroidteam.todolist;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.pressKey;
+import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
+import android.view.KeyEvent;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -54,6 +60,16 @@ public class MapsActivityTest {
                 uiObjectNotFoundException.printStackTrace();
             }
         }
+    }
+
+    @Test
+    public void searchViewWorksCorrectly() {
+        onView(withId(R.id.sv_location))
+                .perform(click(), typeText("Lausanne"), pressKey(KeyEvent.KEYCODE_ENTER));
+        waitFor(4000);
+        UiDevice device = UiDevice.getInstance(getInstrumentation());
+        UiObject marker = device.findObject(new UiSelector().descriptionContains("Lausanne"));
+        Assert.assertNotNull(marker);
     }
 
     private void waitFor(int duration) {

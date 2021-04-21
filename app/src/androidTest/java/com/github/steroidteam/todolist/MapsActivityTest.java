@@ -9,8 +9,10 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static org.junit.Assert.assertEquals;
 
 import android.view.KeyEvent;
+import androidx.lifecycle.Lifecycle;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -86,6 +88,13 @@ public class MapsActivityTest {
         onView(withText(TOAST_TEXT))
                 .inRoot(new ItemViewActivityTest.ToastMatcher())
                 .check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void onBackPressedCorrectlyFinishActivity() {
+        UiDevice device = UiDevice.getInstance(getInstrumentation());
+        device.pressBack();
+        assertEquals(Lifecycle.State.DESTROYED, activityRule.getScenario().getState());
     }
 
     private void waitFor(int duration) {

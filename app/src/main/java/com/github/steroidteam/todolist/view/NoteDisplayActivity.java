@@ -53,9 +53,10 @@ public class NoteDisplayActivity extends AppCompatActivity {
         // TODO : Change the location of the note when the activity will be link with real note
         setContentView(R.layout.activity_note_display);
 
-        // Load and use views afterwards
-        TextView locationText = (TextView) findViewById(R.id.note_location);
-        locationText.setText(location);
+        if (latLng != null && location != null) {
+            TextView locationText = (TextView) findViewById(R.id.note_location);
+            locationText.setText(location);
+        }
     }
 
     @Override

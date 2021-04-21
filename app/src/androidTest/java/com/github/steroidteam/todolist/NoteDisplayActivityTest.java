@@ -1,5 +1,11 @@
 package com.github.steroidteam.todolist;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.intent.Intents.intending;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
@@ -8,31 +14,18 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.intent.Intents.intending;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-
 import androidx.test.espresso.intent.rule.IntentsTestRule;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.GrantPermissionRule;
 import com.github.steroidteam.todolist.view.NoteDisplayActivity;
-
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
 
 @RunWith(AndroidJUnit4.class)
 public class NoteDisplayActivityTest {
@@ -41,7 +34,8 @@ public class NoteDisplayActivityTest {
             new ActivityScenarioRule<>(NoteDisplayActivity.class);*/
 
     @Rule
-    public IntentsTestRule<NoteDisplayActivity> mIntentsRule = new IntentsTestRule<>(NoteDisplayActivity.class);
+    public IntentsTestRule<NoteDisplayActivity> mIntentsRule =
+            new IntentsTestRule<>(NoteDisplayActivity.class);
 
     @Rule
     public GrantPermissionRule permissionRule =
@@ -70,7 +64,10 @@ public class NoteDisplayActivityTest {
     }
 
     private void savePickedImage() {
-        Bitmap bm = BitmapFactory.decodeResource(mIntentsRule.getActivity().getResources(), R.mipmap.asteroid_launcher_foreground);
+        Bitmap bm =
+                BitmapFactory.decodeResource(
+                        mIntentsRule.getActivity().getResources(),
+                        R.mipmap.asteroid_launcher_foreground);
         File dir = mIntentsRule.getActivity().getExternalCacheDir();
         File file = new File(dir.getPath(), "pickImageResult.jpeg");
         FileOutputStream outStream;

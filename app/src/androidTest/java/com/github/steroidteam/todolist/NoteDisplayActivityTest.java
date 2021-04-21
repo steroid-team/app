@@ -29,9 +29,6 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 public class NoteDisplayActivityTest {
-    /*@Rule
-    public ActivityScenarioRule<NoteDisplayActivity> activityRule =
-            new ActivityScenarioRule<>(NoteDisplayActivity.class);*/
 
     @Rule
     public IntentsTestRule<NoteDisplayActivity> mIntentsRule =
@@ -49,17 +46,7 @@ public class NoteDisplayActivityTest {
     }
 
     @Test
-    public void saveTextWorks() {
-        onView(withId(R.id.activity_notedisplay_save)).perform(click());
-    }
-
-    @Test
     public void filePickingWorks() {
-        /*activityRule.getScenario().onActivity( activity -> {
-            savePickedImage(activity);
-            Instrumentation.ActivityResult res = createImageGallerySetResultStub(activity);
-            intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(res);
-        });*/
         onView(withId(R.id.camera_button)).perform(click());
     }
 

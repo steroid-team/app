@@ -61,16 +61,10 @@ public class NoteDisplayActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == LAUNCH_SECOND_ACTIVITY) {
-            if (resultCode == Activity.RESULT_OK) {
-                String location = data.getStringExtra("nameLocation");
-                LatLng latLng = data.getParcelableExtra("location");
-                setLocationNote(latLng, location);
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                // Write your code if there's no result
-            }
+        if (requestCode == LAUNCH_SECOND_ACTIVITY && resultCode == Activity.RESULT_OK) {
+            String location = data.getStringExtra("nameLocation");
+            LatLng latLng = data.getParcelableExtra("location");
+            setLocationNote(latLng, location);
         }
     }
 }

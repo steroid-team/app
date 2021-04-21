@@ -30,4 +30,5 @@
     <string name="current_location_message">I\'m here</string>
     <string name="location_not_found">Location not found !</string>
     <string name="location_btn_description">Location</string>
+    <string name="note_location">No location</string>
 </resources>

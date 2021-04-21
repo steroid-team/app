@@ -1,5 +1,7 @@
 package com.github.steroidteam.todolist.view;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -149,6 +151,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent returnIntent = new Intent();
+        if (marker != null) {
+            returnIntent.putExtra("location", marker.getPosition());
+            returnIntent.putExtra("nameLocation", marker.getTitle());
+        } else {
+            returnIntent.putExtra("location", (LatLng) null);
+            returnIntent.putExtra("nameLocation", (String) null);
+        }
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
     }
 
     /** Gets the current location of the device, and positions the map's camera. */

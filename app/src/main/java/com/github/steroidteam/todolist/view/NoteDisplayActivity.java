@@ -12,6 +12,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
+
 import com.github.steroidteam.todolist.R;
 import java.io.InputStream;
 
@@ -62,7 +65,8 @@ public class NoteDisplayActivity extends AppCompatActivity {
                 is.close();
             } catch (Exception e) {
             }
-            BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
+            RoundedBitmapDrawable ob = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+            ob.setCornerRadius(70);
             header.setBackgroundTintList(null);
             header.setBackground(ob);
         }

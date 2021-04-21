@@ -1,11 +1,17 @@
 package com.github.steroidteam.todolist.view;
 
+import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -13,6 +19,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.github.steroidteam.todolist.R;
+
+import java.io.File;
 import java.io.InputStream;
 
 public class NoteDisplayActivity extends AppCompatActivity {
@@ -29,7 +37,6 @@ public class NoteDisplayActivity extends AppCompatActivity {
         backButton.setOnClickListener((view) -> finish());
 
         Intent intent = getIntent();
-        // UUID id = UUID.fromString(intent.getStringExtra(NoteSelectionActivity.EXTRA_NOTE_ID));
 
         TextView noteTitle = findViewById(R.id.note_title);
         noteTitle.setText("Lorem ipsum");
@@ -41,25 +48,6 @@ public class NoteDisplayActivity extends AppCompatActivity {
                         + " ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in"
                         + " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non"
                         + " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
-
-        // Permissions are actually not needed for now
-        /*if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
-            Log.v("perm","Permission READ_EXTERNAL_STORAGE is granted");
-        } else {
-
-            Log.v("perm","Permission READ_EXTERNAL_STORAGE is revoked");
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 3);
-        }
-
-        if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
-            Log.v("perm","Permission WRITE_EXTERNAL_STORAGE is granted");
-        } else {
-
-            Log.v("perm","Permission WRITE_EXTERNAL_STORAGE is revoked");
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-        }*/
 
     }
 
@@ -88,4 +76,5 @@ public class NoteDisplayActivity extends AppCompatActivity {
             header.setBackground(ob);
         }
     }
+
 }

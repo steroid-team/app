@@ -11,8 +11,10 @@ import android.os.Parcelable;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import androidx.test.espresso.intent.rule.IntentsTestRule;
@@ -20,6 +22,8 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.GrantPermissionRule;
 import com.github.steroidteam.todolist.view.NoteDisplayActivity;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,13 +36,23 @@ import java.util.ArrayList;
 
 @RunWith(AndroidJUnit4.class)
 public class NoteDisplayActivityTest {
-    @Rule
+    /*@Rule
     public ActivityScenarioRule<NoteDisplayActivity> activityRule =
-            new ActivityScenarioRule<>(NoteDisplayActivity.class);
+            new ActivityScenarioRule<>(NoteDisplayActivity.class);*/
+
+    @Rule
+    public IntentsTestRule<NoteDisplayActivity> mIntentsRule = new IntentsTestRule<>(NoteDisplayActivity.class);
 
     @Rule
     public GrantPermissionRule permissionRule =
             GrantPermissionRule.grant(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+    @Before
+    public void stubImagePickerIntent() {
+        savePickedImage();
+        Instrumentation.ActivityResult result = createImageGallerySetResultStub();
+        intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(result);
+    }
 
     @Test
     public void saveTextWorks() {
@@ -47,16 +61,17 @@ public class NoteDisplayActivityTest {
 
     @Test
     public void filePickingWorks() {
-        activityRule.getScenario().onActivity( activity -> {
+        /*activityRule.getScenario().onActivity( activity -> {
             savePickedImage(activity);
             Instrumentation.ActivityResult res = createImageGallerySetResultStub(activity);
             intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(res);
-        });
+        });*/
+        onView(withId(R.id.camera_button)).perform(click());
     }
 
-    public void savePickedImage(Activity activity) {
-        Bitmap bm = BitmapFactory.decodeResource(activity.getResources(), R.mipmap.asteroid_launcher_foreground);
-        File dir = activity.getExternalCacheDir();
+    private void savePickedImage() {
+        Bitmap bm = BitmapFactory.decodeResource(mIntentsRule.getActivity().getResources(), R.mipmap.asteroid_launcher_foreground);
+        File dir = mIntentsRule.getActivity().getExternalCacheDir();
         File file = new File(dir.getPath(), "pickImageResult.jpeg");
         FileOutputStream outStream;
         try {
@@ -69,11 +84,11 @@ public class NoteDisplayActivityTest {
         }
     }
 
-    public Instrumentation.ActivityResult createImageGallerySetResultStub(Activity activity) {
+    private Instrumentation.ActivityResult createImageGallerySetResultStub() {
         Bundle bundle = new Bundle();
         ArrayList<Parcelable> parcels = new ArrayList<>();
         Intent resultData = new Intent();
-        File dir = activity.getExternalCacheDir();
+        File dir = mIntentsRule.getActivity().getExternalCacheDir();
         File file = new File(dir.getPath(), "pickImageResult.jpeg");
         Uri uri = Uri.fromFile(file);
         Parcelable parcelable1 = (Parcelable) uri;

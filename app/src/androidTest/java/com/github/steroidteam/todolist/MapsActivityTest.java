@@ -13,7 +13,6 @@ import static org.junit.Assert.assertEquals;
 
 import android.view.KeyEvent;
 import androidx.lifecycle.Lifecycle;
-import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.uiautomator.UiDevice;

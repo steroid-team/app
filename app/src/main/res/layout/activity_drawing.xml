@@ -79,8 +79,57 @@
         android:background="#FFFFFF"
         android:foreground="@android:drawable/radiobutton_off_background"
         android:foregroundTint="#000000"
-        android:onClick="blackButton"
+        android:onClick="ColorPickerButton"
         app:layout_constraintStart_toEndOf="@+id/colorRed"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/colorPickerWindow"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/erase_button"
+        app:layout_constraintEnd_toEndOf="@+id/drawSpace"
+        app:layout_constraintStart_toStartOf="@+id/drawSpace"
+        app:layout_constraintTop_toTopOf="@+id/drawSpace">
+
+        <com.larswerkman.holocolorpicker.ColorPicker
+            android:id="@+id/colorPicker"
+            android:layout_width="333dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
+
+        <com.larswerkman.holocolorpicker.SaturationBar
+            android:id="@+id/saturationbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <com.larswerkman.holocolorpicker.ValueBar
+            android:id="@+id/valuebar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="cancelColorButton"
+                android:text="Cancel" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="applyColorButton"
+                android:text="Apply" />
+        </TableRow>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -82,6 +82,8 @@ dependencies {
 
     // optional - Test helpers for LiveData
     testImplementation "androidx.arch.core:core-testing:$arch_version"
+
+    implementation 'com.larswerkman:HoloColorPicker:1.5'
 }
 
 tasks.withType(Test) {

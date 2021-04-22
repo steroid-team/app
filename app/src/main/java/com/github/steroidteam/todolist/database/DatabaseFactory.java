@@ -4,7 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import androidx.annotation.VisibleForTesting;
 import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
-import com.google.firebase.auth.FirebaseAuth;
+import com.github.steroidteam.todolist.model.user.UserFactory;
 import com.google.firebase.storage.FirebaseStorage;
 
 public final class DatabaseFactory {
@@ -16,8 +16,7 @@ public final class DatabaseFactory {
         if (customDb == null) {
             return new FirebaseDatabase(
                     new FirebaseFileStorageService(
-                            FirebaseStorage.getInstance(),
-                            FirebaseAuth.getInstance().getCurrentUser()));
+                            FirebaseStorage.getInstance(), UserFactory.get()));
         } else {
             return customDb;
         }

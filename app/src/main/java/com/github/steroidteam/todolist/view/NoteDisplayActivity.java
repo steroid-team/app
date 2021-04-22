@@ -6,8 +6,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.FirebaseDatabase;
 import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
 import com.github.steroidteam.todolist.model.notes.Note;
@@ -17,7 +20,7 @@ import java.util.UUID;
 
 public class NoteDisplayActivity extends AppCompatActivity {
 
-    private FirebaseDatabase database;
+    private Database database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +32,11 @@ public class NoteDisplayActivity extends AppCompatActivity {
                         new FirebaseFileStorageService(
                                 FirebaseStorage.getInstance(),
                                 FirebaseAuth.getInstance().getCurrentUser()));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         Intent intent = getIntent();
         UUID id = UUID.fromString(intent.getStringExtra(NoteSelectionActivity.EXTRA_NOTE_ID));
@@ -63,5 +71,10 @@ public class NoteDisplayActivity extends AppCompatActivity {
     public void goToMapActivity(View view) {
         Intent mapActivity = new Intent(NoteDisplayActivity.this, MapsActivity.class);
         startActivity(mapActivity);
+    }
+
+    @VisibleForTesting(otherwise = MODE_PRIVATE)
+    public void setDatabase(Database database) {
+        this.database = database;
     }
 }

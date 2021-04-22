@@ -17,8 +17,12 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.endsWith;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 
 import android.content.Intent;
+
+import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
@@ -26,48 +30,95 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.model.todo.TodoList;
+import com.github.steroidteam.todolist.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.ItemViewActivity;
 import com.github.steroidteam.todolist.view.ListSelectionActivity;
 import com.github.steroidteam.todolist.view.NoteSelectionActivity;
+
 import org.hamcrest.Matchers;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(AndroidJUnit4.class)
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
+@RunWith(MockitoJUnitRunner.class)
 public class ListSelectionActivityTest {
 
-    @Rule
-    public ActivityScenarioRule<ListSelectionActivity> activityRule =
-            new ActivityScenarioRule<>(ListSelectionActivity.class);
+    @Mock
+    Database databaseMock;
+
+    @Before
+    public void before() {
+        Intents.init();
+
+        TodoListCollection collection = new TodoListCollection();
+        TodoList todoList = new TodoList("Some random title");
+        collection.addUUID(UUID.randomUUID());
+        collection.addUUID(UUID.randomUUID());
+
+        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
+        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+        todoListCollectionFuture.complete(collection);
+        todoListFuture.complete(todoList);
+
+        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListFuture).when(databaseMock).
+                updateTodoList(any(UUID.class), any(TodoList.class));
+    }
+
+    @After
+    public void after() {
+        Intents.release();
+    }
 
     @Test
     public void openListWorks() {
-        Intents.init();
-        Intent listSelectionActivity =
+        Intent intent =
                 new Intent(
                         ApplicationProvider.getApplicationContext(), ListSelectionActivity.class);
 
         try (ActivityScenario<ListSelectionActivity> scenario =
-                ActivityScenario.launch(listSelectionActivity)) {
+                ActivityScenario.launch(intent)) {
+            scenario.moveToState(Lifecycle.State.CREATED);
+            scenario.onActivity(activity -> activity.setDatabase(databaseMock));
+            scenario.moveToState(Lifecycle.State.STARTED);
+            scenario.moveToState(Lifecycle.State.RESUMED);
+
             Espresso.onData(anything())
                     .inAdapterView(withId(R.id.activity_list_selection_itemlist))
                     .atPosition(0)
                     .perform(click());
             intended(hasComponent(ItemViewActivity.class.getName()));
         }
-        Intents.release();
     }
 
     @Test
     public void openNotesWorks() {
-        Intents.init();
+        Intent intent =
+                new Intent(
+                        ApplicationProvider.getApplicationContext(), ListSelectionActivity.class);
 
-        onView(withId(R.id.notes_button2)).perform(click());
+        try (ActivityScenario<ListSelectionActivity> scenario =
+                     ActivityScenario.launch(intent)) {
+            scenario.moveToState(Lifecycle.State.CREATED);
+            scenario.onActivity(activity -> activity.setDatabase(databaseMock));
+            scenario.moveToState(Lifecycle.State.STARTED);
+            scenario.moveToState(Lifecycle.State.RESUMED);
 
-        intended(
-                Matchers.allOf(IntentMatchers.hasComponent(NoteSelectionActivity.class.getName())));
-        Intents.release();
+            onView(withId(R.id.notes_button2)).perform(click());
+
+            intended(hasComponent(NoteSelectionActivity.class.getName()));
+        }
     }
 
     @Test
@@ -76,8 +127,13 @@ public class ListSelectionActivityTest {
                 new Intent(
                         ApplicationProvider.getApplicationContext(), ListSelectionActivity.class);
 
-        try (ActivityScenario<ItemViewActivity> scenario =
+        try (ActivityScenario<ListSelectionActivity> scenario =
                 ActivityScenario.launch(listSelectionActivity)) {
+            scenario.moveToState(Lifecycle.State.CREATED);
+            scenario.onActivity(activity -> activity.setDatabase(databaseMock));
+            scenario.moveToState(Lifecycle.State.STARTED);
+            scenario.moveToState(Lifecycle.State.RESUMED);
+
             Espresso.onData(anything())
                     .inAdapterView(withId(R.id.activity_list_selection_itemlist))
                     .atPosition(0)
@@ -103,8 +159,13 @@ public class ListSelectionActivityTest {
                 new Intent(
                         ApplicationProvider.getApplicationContext(), ListSelectionActivity.class);
 
-        try (ActivityScenario<ItemViewActivity> scenario =
+        try (ActivityScenario<ListSelectionActivity> scenario =
                 ActivityScenario.launch(listSelectionActivity)) {
+            scenario.moveToState(Lifecycle.State.CREATED);
+            scenario.onActivity(activity -> activity.setDatabase(databaseMock));
+            scenario.moveToState(Lifecycle.State.STARTED);
+            scenario.moveToState(Lifecycle.State.RESUMED);
+
             Espresso.onData(anything())
                     .inAdapterView(withId(R.id.activity_list_selection_itemlist))
                     .atPosition(0)

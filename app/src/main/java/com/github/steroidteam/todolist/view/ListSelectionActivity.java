@@ -11,11 +11,14 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.firebase.ui.auth.AuthUI;
 import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.FirebaseDatabase;
 import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
 import com.github.steroidteam.todolist.model.todo.TodoList;
@@ -30,7 +33,7 @@ public class ListSelectionActivity extends AppCompatActivity {
 
     private static todoListAdapter adapter;
     private ArrayList<TodoList> todoLists;
-    private FirebaseDatabase database;
+    private Database database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,19 +52,23 @@ public class ListSelectionActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.activity_list_selection_itemlist);
         adapter = new todoListAdapter(todoLists);
         setListViewSettings(listView);
+    }
 
-        database.getTodoListCollection()
-                .thenAccept(
-                        (todoListCollection -> {
-                            for (int i = 0; i < todoListCollection.getSize(); i++) {
-                                database.getTodoList(todoListCollection.getUUID(i))
-                                        .thenAccept(
-                                                todoList -> {
-                                                    todoLists.add(todoList);
-                                                    adapter.notifyDataSetChanged();
-                                                });
-                            }
-                        }));
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        database.getTodoListCollection().thenAccept(
+                (todoListCollection -> {
+                    for (int i = 0; i < todoListCollection.getSize(); i++) {
+                        database.getTodoList(todoListCollection.getUUID(i))
+                                .thenAccept(
+                                        todoList -> {
+                                            todoLists.add(todoList);
+                                            adapter.notifyDataSetChanged();
+                                        });
+                    }
+                }));
     }
 
     private void setListViewSettings(ListView listView) {
@@ -148,7 +155,7 @@ public class ListSelectionActivity extends AppCompatActivity {
                     view -> {
                         Intent itemViewActivity =
                                 new Intent(ListSelectionActivity.this, ItemViewActivity.class);
-                        itemViewActivity.putExtra(EXTRA_ID_TODO_LIST, todoList.getId());
+                        itemViewActivity.putExtra(EXTRA_ID_TODO_LIST, todoList.getId().toString());
                         startActivity(itemViewActivity);
                     });
 
@@ -172,15 +179,22 @@ public class ListSelectionActivity extends AppCompatActivity {
                                 todoList.setTitle(input.getText().toString());
                                 database.updateTodoList(todoList.getId(), todoList)
                                         .thenAccept(
-                                                filePath -> {
+                                                updatedTodoList -> {
                                                     Log.println(
                                                             Log.INFO,
                                                             "TAG",
-                                                            "TodoList " + filePath + " updated!");
+                                                            "TodoList " +
+                                                                    updatedTodoList.toString() +
+                                                                    " updated!");
                                                 });
                             })
                     .create()
                     .show();
         }
+    }
+
+    @VisibleForTesting(otherwise = MODE_PRIVATE)
+    public void setDatabase(Database database) {
+        this.database = database;
     }
 }

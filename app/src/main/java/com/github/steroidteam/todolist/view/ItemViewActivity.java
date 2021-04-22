@@ -9,18 +9,22 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
 import com.github.steroidteam.todolist.viewmodel.ItemViewModel;
 import java.util.UUID;
 
 public class ItemViewActivity extends AppCompatActivity {
 
-    private ItemViewModel viewModel;
+    private ItemViewModel viewModel = null;
     private TodoAdapter adapter;
     private RecyclerView recyclerView;
 
@@ -35,10 +39,15 @@ public class ItemViewActivity extends AppCompatActivity {
 
         // Instantiate the view model.
         Intent intent = getIntent();
-        UUID id = UUID.fromString(intent.getStringExtra(ListSelectionActivity.EXTRA_ID_TODO_LIST));
+        String uuidStr = intent.getStringExtra(ListSelectionActivity.EXTRA_ID_TODO_LIST);
+        UUID id = UUID.fromString(uuidStr);
 
-        viewModel = new ItemViewModel(getApplication(), id);
+        setViewModel(new ItemViewModel(new TodoRepository(id)));
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         // Observe the LiveData todoList from the ViewModel,
         // 'this' refers to the activity so it the ItemViewActivity acts as the LifeCycleOwner,
         viewModel
@@ -140,5 +149,10 @@ public class ItemViewActivity extends AppCompatActivity {
         TodoAdapter.TaskHolder holder =
                 (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
         viewModel.setTaskDone(position, isChecked);
+    }
+
+    @VisibleForTesting(otherwise = MODE_PRIVATE)
+    public void setViewModel(ItemViewModel vm) {
+        viewModel = vm;
     }
 }

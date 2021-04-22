@@ -14,10 +14,9 @@ public class ItemViewModel extends ViewModel {
     private final TodoRepository repository;
     private final LiveData<TodoList> todoList;
 
-    public ItemViewModel(@NonNull Application application, UUID todoListID) {
+    public ItemViewModel(@NonNull TodoRepository repository) {
         super();
-        repository = new TodoRepository(todoListID);
-
+        this.repository = repository;
         todoList = repository.getTodoList();
     }
 

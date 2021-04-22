@@ -16,23 +16,14 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(AndroidJUnit4.class)
+@RunWith(MockitoJUnitRunner.class)
 public class MapsActivityTest {
 
     @Rule
     public ActivityScenarioRule<MapsActivity> activityRule =
             new ActivityScenarioRule<>(MapsActivity.class);
-
-    @Before
-    public void before() {
-        Intents.init();
-    }
-
-    @After
-    public void after() {
-        Intents.release();
-    }
 
     @Test
     public void markerIsCorrectlyPlacedAtDefaultLocationOrUserLocation() {

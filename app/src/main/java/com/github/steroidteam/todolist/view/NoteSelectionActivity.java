@@ -9,9 +9,11 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.FirebaseDatabase;
 import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
 import com.github.steroidteam.todolist.model.notes.Note;
@@ -25,7 +27,7 @@ public class NoteSelectionActivity extends AppCompatActivity {
     public static final String EXTRA_NOTE_ID = "id";
 
     private static NoteAdapter adapter;
-    private FirebaseDatabase database;
+    private Database database;
     ArrayList<Note> notes = new ArrayList<>();
 
     @Override
@@ -123,5 +125,10 @@ public class NoteSelectionActivity extends AppCompatActivity {
         Intent listSelectionActivity =
                 new Intent(NoteSelectionActivity.this, ListSelectionActivity.class);
         startActivity(listSelectionActivity);
+    }
+
+    @VisibleForTesting(otherwise = MODE_PRIVATE)
+    public void setDatabase(Database database) {
+        this.database = database;
     }
 }

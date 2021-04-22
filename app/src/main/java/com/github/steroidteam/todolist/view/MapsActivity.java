@@ -8,6 +8,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -153,12 +154,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         getDeviceLocation();
     }
 
-    @Override
-    public void onBackPressed() {
+    public void onSavePressed(View view) {
         Intent returnIntent = new Intent();
         if (marker != null) {
-            returnIntent.putExtra("location", marker.getPosition());
-            returnIntent.putExtra("nameLocation", marker.getTitle());
+            LatLng position = marker.getPosition();
+            returnIntent.putExtra("location", position);
+            Geocoder geocoder = new Geocoder(MapsActivity.this);
+            List<Address> addressList = null;
+            try {
+                addressList = geocoder.getFromLocation(position.latitude, position.longitude, 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            returnIntent.putExtra("nameLocation", addressList.get(0).getLocality());
         } else {
             returnIntent.putExtra("location", (LatLng) null);
             returnIntent.putExtra("nameLocation", (String) null);

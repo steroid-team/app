@@ -12,12 +12,6 @@
         android:roundIcon="@mipmap/asteroid_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Asteroid">
-<<<<<<< HEAD
-        <activity android:name=".view.DrawingActivity"></activity>
-        <activity android:name=".view.ListSelectionActivity"></activity>
-        <activity
-            android:name=".view.NoteDisplayActivity"
-=======
         <activity android:name=".view.MapsActivity"></activity>
         <meta-data
             android:name="com.google.android.gms.version"
@@ -30,12 +24,11 @@
         <activity android:name=".view.ListSelectionActivity">
         </activity>
         <activity android:name=".view.NoteDisplayActivity"
->>>>>>> 0f77a44fb3682795cc34d939d90d2525835a52cd
             android:parentActivityName=".view.NoteSelectionActivity" />
         <activity android:name=".view.NoteSelectionActivity" />
         <activity
             android:name=".view.ItemViewActivity"
-            android:parentActivityName=".view.MainActivity" />
+            android:parentActivityName=".view.MainActivity"></activity>
         <activity android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

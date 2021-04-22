@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.google.android.gms.maps.model.LatLng;
 import org.junit.Test;
 
 public class NoteTest {
@@ -44,5 +45,15 @@ public class NoteTest {
         assertEquals("", note.getContent());
         note.setContent(content);
         assertEquals(content, note.getContent());
+    }
+
+    @Test
+    public void getAndSetLocationWorks() {
+        LatLng location = new LatLng(-33.8523341, 151.2106085);
+
+        Note note = new Note("Title");
+        assertEquals(null, note.getLatLng());
+        note.setLatLng(location);
+        assertEquals(location, note.getLatLng());
     }
 }

@@ -5,6 +5,7 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static org.hamcrest.Matchers.anything;
 
 import android.app.Activity;
 import android.app.Instrumentation;
@@ -14,13 +15,18 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import androidx.test.espresso.Espresso;
+import androidx.test.espresso.intent.Intents;
+import androidx.test.espresso.intent.matcher.IntentMatchers;
 import androidx.test.espresso.intent.rule.IntentsTestRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import com.github.steroidteam.todolist.view.MapsActivity;
 import com.github.steroidteam.todolist.view.NoteDisplayActivity;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,6 +44,19 @@ public class NoteDisplayActivityTest {
         savePickedImage();
         Instrumentation.ActivityResult result = createImageGallerySetResultStub();
         intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(result);
+    }
+
+    @Test
+    public void openMapsActivityWorks() {
+
+        Espresso.onData(anything())
+                .inAdapterView(withId(R.id.activity_noteselection_notelist))
+                .atPosition(1)
+                .perform(click());
+
+        onView(withId(R.id.note_header)).perform(click());
+
+        Intents.intended(Matchers.allOf(IntentMatchers.hasComponent(MapsActivity.class.getName())));
     }
 
     @Test

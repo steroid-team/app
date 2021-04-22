@@ -12,7 +12,9 @@
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_corner_just_bottom_bg"
         android:backgroundTint="@color/light_grey"
+        android:clickable="true"
         android:minHeight="200dp"
+        android:onClick="goToMapActivity"
         android:padding="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,13 +39,13 @@
             style="@style/ToolbarActionButton"
             android:layout_width="28dp"
             android:layout_height="28dp"
+            android:contentDescription="@string/back_btn_description"
             android:scaleX="1.2"
             android:scaleY="1.2"
             android:tint="@android:color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="?attr/homeAsUpIndicator"
-            android:contentDescription="@string/back_btn_description" />
+            app:srcCompat="?attr/homeAsUpIndicator" />
 
         <TextView
             android:id="@+id/note_title"

@@ -73,4 +73,14 @@ public class NoteDisplayActivity extends AppCompatActivity {
             header.setBackground(ob);
         }
     }
+
+    /**
+     * This method is called when the user click on the note_header to switch to MapActivity
+     *
+     * @param view
+     */
+    public void goToMapActivity(View view) {
+        Intent mapActivity = new Intent(NoteDisplayActivity.this, MapsActivity.class);
+        startActivity(mapActivity);
+    }
 }

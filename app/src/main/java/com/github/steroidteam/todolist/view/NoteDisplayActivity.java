@@ -53,26 +53,24 @@ public class NoteDisplayActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE) {
-            if (data != null) {
-                Uri uri = data.getData();
-                ConstraintLayout header = findViewById(R.id.note_header);
-                Bitmap bitmap = null;
-                try {
-                    InputStream is = getContentResolver().openInputStream(uri);
-                    bitmap = BitmapFactory.decodeStream(is);
-                    is.close();
-                } catch (Exception e) {
-                    Toast.makeText(
-                                    getApplicationContext(),
-                                    "Error: could not display the image",
-                                    Toast.LENGTH_LONG)
-                            .show();
-                }
-                BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
-                header.setBackgroundTintList(null);
-                header.setBackground(ob);
+        if (requestCode == PICK_IMAGE && data != null) {
+            Uri uri = data.getData();
+            ConstraintLayout header = findViewById(R.id.note_header);
+            Bitmap bitmap = null;
+            try {
+                InputStream is = getContentResolver().openInputStream(uri);
+                bitmap = BitmapFactory.decodeStream(is);
+                is.close();
+            } catch (Exception e) {
+                Toast.makeText(
+                                getApplicationContext(),
+                                "Error: could not display the image",
+                                Toast.LENGTH_LONG)
+                        .show();
             }
+            BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
+            header.setBackgroundTintList(null);
+            header.setBackground(ob);
         }
     }
 

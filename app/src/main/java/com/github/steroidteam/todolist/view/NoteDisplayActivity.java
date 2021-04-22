@@ -1,5 +1,8 @@
 package com.github.steroidteam.todolist.view;
 
+import static com.github.steroidteam.todolist.view.MapsActivity.KEY_LOCATION;
+import static com.github.steroidteam.todolist.view.MapsActivity.KEY_NAME_LOCATION;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -63,8 +66,8 @@ public class NoteDisplayActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == LAUNCH_SECOND_ACTIVITY && resultCode == Activity.RESULT_OK) {
-            String location = data.getStringExtra("nameLocation");
-            LatLng latLng = data.getParcelableExtra("location");
+            String location = data.getStringExtra(KEY_NAME_LOCATION);
+            LatLng latLng = data.getParcelableExtra(KEY_LOCATION);
             setLocationNote(latLng, location);
         }
     }

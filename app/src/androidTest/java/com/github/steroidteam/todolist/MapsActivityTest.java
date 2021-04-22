@@ -91,9 +91,8 @@ public class MapsActivityTest {
     }
 
     @Test
-    public void onBackPressedCorrectlyFinishActivity() {
-        UiDevice device = UiDevice.getInstance(getInstrumentation());
-        device.pressBack();
+    public void clickOnSaveButtonCorrectlyFinishActivity() {
+        onView(withId(R.id.map_save_location)).perform(click());
         assertEquals(Lifecycle.State.DESTROYED, activityRule.getScenario().getState());
     }
 

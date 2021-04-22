@@ -52,7 +52,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // Keys for storing activity state.
     private static final String KEY_CAMERA_POSITION = "camera_position";
-    private static final String KEY_LOCATION = "location";
+    public static final String KEY_LOCATION = "location";
+
+    public static final String KEY_NAME_LOCATION = "nameLocation";
 
     private SearchView searchView;
     private Marker marker;
@@ -158,7 +160,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Intent returnIntent = new Intent();
         if (marker != null) {
             LatLng position = marker.getPosition();
-            returnIntent.putExtra("location", position);
+            returnIntent.putExtra(KEY_LOCATION, position);
             Geocoder geocoder = new Geocoder(MapsActivity.this);
             List<Address> addressList = null;
             try {
@@ -166,10 +168,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            returnIntent.putExtra("nameLocation", addressList.get(0).getLocality());
+            returnIntent.putExtra(KEY_NAME_LOCATION, addressList.get(0).getLocality());
         } else {
-            returnIntent.putExtra("location", (LatLng) null);
-            returnIntent.putExtra("nameLocation", (String) null);
+            returnIntent.putExtra(KEY_LOCATION, (LatLng) null);
+            returnIntent.putExtra(KEY_NAME_LOCATION, (String) null);
         }
         setResult(Activity.RESULT_OK, returnIntent);
         finish();

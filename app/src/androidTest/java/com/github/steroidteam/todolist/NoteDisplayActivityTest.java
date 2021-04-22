@@ -7,6 +7,8 @@ import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.github.steroidteam.todolist.view.MapsActivity.KEY_LOCATION;
+import static com.github.steroidteam.todolist.view.MapsActivity.KEY_NAME_LOCATION;
 import static org.hamcrest.Matchers.anything;
 
 import android.app.Activity;
@@ -20,6 +22,8 @@ import com.github.steroidteam.todolist.view.MapsActivity;
 import com.github.steroidteam.todolist.view.NoteSelectionActivity;
 import com.google.android.gms.maps.model.LatLng;
 import org.hamcrest.Matchers;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,10 +34,18 @@ public class NoteDisplayActivityTest {
     public ActivityScenarioRule<NoteSelectionActivity> activityRule =
             new ActivityScenarioRule<>(NoteSelectionActivity.class);
 
+    @Before
+    public void before() {
+        Intents.init();
+    }
+
+    @After
+    public void after() {
+        Intents.release();
+    }
+
     @Test
     public void openMapsActivityWorks() {
-        Intents.init();
-
         Espresso.onData(anything())
                 .inAdapterView(withId(R.id.activity_noteselection_notelist))
                 .atPosition(1)
@@ -42,16 +54,13 @@ public class NoteDisplayActivityTest {
         onView(withId(R.id.location_button)).perform(click());
 
         Intents.intended(Matchers.allOf(hasComponent(MapsActivity.class.getName())));
-        Intents.release();
     }
 
     @Test
     public void locationNameIsCorrectlyUpdated() {
-        Intents.init();
-
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("location", new LatLng(-33.8523341, 151.2106085));
-        returnIntent.putExtra("nameLocation", "Sydney");
+        returnIntent.putExtra(KEY_LOCATION, new LatLng(-33.8523341, 151.2106085));
+        returnIntent.putExtra(KEY_NAME_LOCATION, "Sydney");
 
         intending(hasComponent(MapsActivity.class.getName()))
                 .respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, returnIntent));
@@ -64,6 +73,5 @@ public class NoteDisplayActivityTest {
         onView(withId(R.id.location_button)).perform(click());
 
         onView(withId(R.id.note_location)).check(matches(withText("Sydney")));
-        Intents.release();
     }
 }

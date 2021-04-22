@@ -21,40 +21,30 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import android.content.Intent;
-
 import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.intent.Intents;
-import androidx.test.espresso.intent.matcher.IntentMatchers;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.ItemViewActivity;
 import com.github.steroidteam.todolist.view.ListSelectionActivity;
 import com.github.steroidteam.todolist.view.NoteSelectionActivity;
-
-import org.hamcrest.Matchers;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-
 @RunWith(MockitoJUnitRunner.class)
 public class ListSelectionActivityTest {
 
-    @Mock
-    Database databaseMock;
+    @Mock Database databaseMock;
 
     @Before
     public void before() {
@@ -72,8 +62,9 @@ public class ListSelectionActivityTest {
 
         doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
         doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
-        doReturn(todoListFuture).when(databaseMock).
-                updateTodoList(any(UUID.class), any(TodoList.class));
+        doReturn(todoListFuture)
+                .when(databaseMock)
+                .updateTodoList(any(UUID.class), any(TodoList.class));
     }
 
     @After
@@ -87,8 +78,7 @@ public class ListSelectionActivityTest {
                 new Intent(
                         ApplicationProvider.getApplicationContext(), ListSelectionActivity.class);
 
-        try (ActivityScenario<ListSelectionActivity> scenario =
-                ActivityScenario.launch(intent)) {
+        try (ActivityScenario<ListSelectionActivity> scenario = ActivityScenario.launch(intent)) {
             scenario.moveToState(Lifecycle.State.CREATED);
             scenario.onActivity(activity -> activity.setDatabase(databaseMock));
             scenario.moveToState(Lifecycle.State.STARTED);
@@ -108,8 +98,7 @@ public class ListSelectionActivityTest {
                 new Intent(
                         ApplicationProvider.getApplicationContext(), ListSelectionActivity.class);
 
-        try (ActivityScenario<ListSelectionActivity> scenario =
-                     ActivityScenario.launch(intent)) {
+        try (ActivityScenario<ListSelectionActivity> scenario = ActivityScenario.launch(intent)) {
             scenario.moveToState(Lifecycle.State.CREATED);
             scenario.onActivity(activity -> activity.setDatabase(databaseMock));
             scenario.moveToState(Lifecycle.State.STARTED);

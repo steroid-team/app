@@ -11,7 +11,6 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,17 +57,18 @@ public class ListSelectionActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        database.getTodoListCollection().thenAccept(
-                (todoListCollection -> {
-                    for (int i = 0; i < todoListCollection.getSize(); i++) {
-                        database.getTodoList(todoListCollection.getUUID(i))
-                                .thenAccept(
-                                        todoList -> {
-                                            todoLists.add(todoList);
-                                            adapter.notifyDataSetChanged();
-                                        });
-                    }
-                }));
+        database.getTodoListCollection()
+                .thenAccept(
+                        (todoListCollection -> {
+                            for (int i = 0; i < todoListCollection.getSize(); i++) {
+                                database.getTodoList(todoListCollection.getUUID(i))
+                                        .thenAccept(
+                                                todoList -> {
+                                                    todoLists.add(todoList);
+                                                    adapter.notifyDataSetChanged();
+                                                });
+                            }
+                        }));
     }
 
     private void setListViewSettings(ListView listView) {
@@ -183,9 +183,9 @@ public class ListSelectionActivity extends AppCompatActivity {
                                                     Log.println(
                                                             Log.INFO,
                                                             "TAG",
-                                                            "TodoList " +
-                                                                    updatedTodoList.toString() +
-                                                                    " updated!");
+                                                            "TodoList "
+                                                                    + updatedTodoList.toString()
+                                                                    + " updated!");
                                                 });
                             })
                     .create()

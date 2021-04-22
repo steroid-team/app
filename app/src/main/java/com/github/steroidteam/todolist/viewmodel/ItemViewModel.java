@@ -1,13 +1,11 @@
 package com.github.steroidteam.todolist.viewmodel;
 
-import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-import java.util.UUID;
 
 public class ItemViewModel extends ViewModel {
 

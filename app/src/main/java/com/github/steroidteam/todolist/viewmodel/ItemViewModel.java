@@ -14,9 +14,9 @@ public class ItemViewModel extends ViewModel {
     private LiveData<TodoList> todoList;
     private UUID todoListID;
 
-    public ItemViewModel(UUID todoListID, Context context) {
+    public ItemViewModel(UUID todoListID) {
         super();
-        repository = new TodoRepository(context);
+        repository = new TodoRepository();
 
         // ====== TO DELETE ======== BEGIN
         // We don't have persistent database !

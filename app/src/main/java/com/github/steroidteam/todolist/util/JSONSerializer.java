@@ -1,6 +1,7 @@
 package com.github.steroidteam.todolist.util;
 
 import androidx.annotation.NonNull;
+import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -34,5 +35,27 @@ public class JSONSerializer {
     public static TodoList deserializeTodoList(@NonNull String serializedTodoList) {
         Objects.requireNonNull(serializedTodoList);
         return JSONSerializer.gson.fromJson(serializedTodoList, TodoList.class);
+    }
+
+    /**
+     * Transforms a Note object into a JSON object.
+     *
+     * @param note The object to serialize. Cannot be null.
+     * @return A string with the corresponding JSON object.
+     */
+    public static String serializeNote(@NonNull Note note) {
+        Objects.requireNonNull(note);
+        return JSONSerializer.gson.toJson(note);
+    }
+
+    /**
+     * Transforms a JSON representation of a TodoList into an actual TodoList object.
+     *
+     * @param serializedNote A JSON string with the object to deserialize. Cannot be null.
+     * @return A Note object that matches the JSON's content.
+     */
+    public static Note deserializeNote(@NonNull String serializedNote) {
+        Objects.requireNonNull(serializedNote);
+        return JSONSerializer.gson.fromJson(serializedNote, Note.class);
     }
 }

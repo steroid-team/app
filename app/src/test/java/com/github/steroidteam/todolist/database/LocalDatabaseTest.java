@@ -1,0 +1,303 @@
+package com.github.steroidteam.todolist.database;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+
+import com.github.steroidteam.todolist.filestorage.LocalFileStorageService;
+import com.github.steroidteam.todolist.model.todo.Task;
+import com.github.steroidteam.todolist.model.todo.TodoList;
+import com.github.steroidteam.todolist.util.JSONSerializer;
+
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+@RunWith(MockitoJUnitRunner.class)
+public class LocalDatabaseTest {
+    private static final String TODO_LIST_PATH = "/todo-lists/";
+
+    @Mock
+    LocalFileStorageService storageService;
+
+    @Test
+    public void constructorRejectsNullStorageService() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new LocalDatabase(null);
+                });
+    }
+
+    @Test
+    public void putTodoListRejectsNullList() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new LocalDatabase(storageService).putTodoList(null);
+                });
+    }
+
+    @Test
+    public void putTodoListWorks() {
+        final TodoList todoList = new TodoList("My list");
+        final String expectedPath = TODO_LIST_PATH + todoList.getId().toString() + ".json";
+        final byte[] serializedList =
+                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+
+        // Return a future like the one that the LocalFileStorageService would produce after
+        // successfully uploading the file.
+        final CompletableFuture<String> completedFuture =
+                CompletableFuture.completedFuture(expectedPath);
+        doReturn(completedFuture).when(storageService).upload(any(), eq(expectedPath));
+
+        // Try to add a valid list.
+        final LocalDatabase database = new LocalDatabase(storageService);
+        try {
+            assertEquals(todoList, database.putTodoList(todoList).join());
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(storageService).upload(serializedList, expectedPath);
+    }
+
+    @Test
+    public void removeTodoListRejectsNullTodoListID() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new LocalDatabase(storageService).removeTodoList(null);
+                });
+    }
+
+    @Test
+    public void removeTodoListWorks() throws DatabaseException {
+        final UUID todoListID = UUID.randomUUID();
+        final String expectedPath = TODO_LIST_PATH + todoListID.toString() + ".json";
+
+        // Return a future like the one that the LocalFileStorageService would produce after
+        // successfully removing the file.
+        final CompletableFuture<Void> completedFuture = CompletableFuture.completedFuture(null);
+        doReturn(completedFuture).when(storageService).delete(expectedPath);
+
+        // Try to remove a list.
+        final LocalDatabase database = new LocalDatabase(storageService);
+        database.removeTodoList(todoListID);
+
+        verify(storageService).delete(expectedPath);
+    }
+
+    @Test
+    public void removeTodoListThrowsDatabaseExceptionOnError() {
+        final UUID todoListID = UUID.randomUUID();
+        final String expectedPath = TODO_LIST_PATH + todoListID.toString() + ".json";
+
+        // Return a future that simulates an error during the deletion.
+        final CompletableFuture<Void> failingFuture = new CompletableFuture<>();
+        failingFuture.completeExceptionally(new RuntimeException());
+        doReturn(failingFuture).when(storageService).delete(expectedPath);
+
+        final LocalDatabase database = new LocalDatabase(storageService);
+
+        assertThrows(DatabaseException.class, () -> database.removeTodoList(todoListID));
+        verify(storageService).delete(expectedPath);
+    }
+
+    @Test
+    public void getTodoListRejectsNullTodoListID() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new LocalDatabase(storageService).getTodoList(null);
+                });
+    }
+
+    @Test
+    public void getTodoListWorks() throws DatabaseException {
+        final TodoList todoList = new TodoList("My list");
+        final Task FIXTURE_TASK_1 = new Task("Buy bananas");
+        final Task FIXTURE_TASK_2 = new Task("Eat bananas");
+        todoList.addTask(FIXTURE_TASK_1);
+        todoList.addTask(FIXTURE_TASK_2);
+        final String expectedPath = TODO_LIST_PATH + todoList.getId().toString() + ".json";
+        final byte[] serializedList =
+                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+
+        // Return a future like the one that the LocalFileStorageService would produce after
+        // successfully downloading the file.
+        final CompletableFuture<byte[]> completedFuture =
+                CompletableFuture.completedFuture(serializedList);
+        doReturn(completedFuture).when(storageService).download(expectedPath);
+
+        // Try to get a valid list.
+        final LocalDatabase database = new LocalDatabase(storageService);
+        try {
+            final TodoList fetchedList = database.getTodoList(todoList.getId()).get();
+
+            verify(storageService).download(expectedPath);
+            assertEquals(todoList, fetchedList);
+            assertEquals(todoList.getSize(), fetchedList.getSize());
+            assertEquals(todoList.getDate().getTime(), fetchedList.getDate().getTime());
+            for (int i = 0; i < todoList.getSize(); i++) {
+                assertEquals(todoList.getTask(i), fetchedList.getTask(i));
+            }
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void putTaskRejectsNullArguments() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new LocalDatabase(storageService).putTask(null, new Task("Some task"));
+                });
+
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new LocalDatabase(storageService).putTask(UUID.randomUUID(), null);
+                });
+    }
+
+    @Test
+    public void putTaskWorks() throws DatabaseException {
+        final TodoList todoList = new TodoList("My list");
+        final Task FIXTURE_TASK_1 = new Task("Buy bananas");
+        final Task FIXTURE_TASK_2 = new Task("Eat bananas");
+        todoList.addTask(FIXTURE_TASK_1);
+        final String expectedPath = TODO_LIST_PATH + todoList.getId().toString() + ".json";
+
+        // Return a future like the one that the LocalFileStorageService would produce after
+        // successfully downloading the file.
+        final byte[] serializedOriginalList =
+                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+        final CompletableFuture<byte[]> completedDownloadFuture =
+                CompletableFuture.completedFuture(serializedOriginalList);
+        doReturn(completedDownloadFuture).when(storageService).download(expectedPath);
+
+        // Return a future like the one that the LocalFileStorageService would produce after
+        // successfully uploading the file.
+        final CompletableFuture<String> completedUploadFuture =
+                CompletableFuture.completedFuture(expectedPath);
+        doReturn(completedUploadFuture).when(storageService).upload(any(), eq(expectedPath));
+
+        // Try to put a task in a valid list.
+        final LocalDatabase database = new LocalDatabase(storageService);
+        database.putTask(todoList.getId(), FIXTURE_TASK_2);
+
+        // Add the new task to the list, to make it look like what we would expect to be stored
+        // in the database.
+        todoList.addTask(FIXTURE_TASK_2);
+        final byte[] serializedNewList =
+                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+
+        verify(storageService).download(expectedPath);
+        verify(storageService).upload(serializedNewList, expectedPath);
+    }
+
+    @Test
+    public void removeTaskRejectsNullArguments() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new LocalDatabase(storageService).removeTask(null, 0);
+                });
+
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new LocalDatabase(storageService).putTask(UUID.randomUUID(), null);
+                });
+    }
+
+    @Test
+    public void removeTaskWorks() throws DatabaseException {
+        final TodoList todoList = new TodoList("My list");
+        final Task FIXTURE_TASK_1 = new Task("Buy bananas");
+        todoList.addTask(FIXTURE_TASK_1);
+        final String expectedPath = TODO_LIST_PATH + todoList.getId().toString() + ".json";
+
+        // Return a future like the one that the LocalFileStorageService would produce after
+        // successfully downloading the file.
+        final byte[] serializedOriginalList =
+                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+        final CompletableFuture<byte[]> completedDownloadFuture =
+                CompletableFuture.completedFuture(serializedOriginalList);
+        doReturn(completedDownloadFuture).when(storageService).download(expectedPath);
+
+        // Return a future like the one that the LocalFileStorageService would produce after
+        // successfully uploading the file.
+        final CompletableFuture<String> completedUploadFuture =
+                CompletableFuture.completedFuture(expectedPath);
+        doReturn(completedUploadFuture).when(storageService).upload(any(), eq(expectedPath));
+
+        // Try to remove a task from valid list.
+        final LocalDatabase database = new LocalDatabase(storageService);
+        database.removeTask(todoList.getId(), 0);
+
+        // Remote the task from list, to make it look like what we would expect to be stored
+        // in the database.
+        todoList.removeTask(0);
+        final byte[] serializedNewList =
+                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+
+        verify(storageService).download(expectedPath);
+        verify(storageService).upload(serializedNewList, expectedPath);
+    }
+
+    @Test
+    public void getTaskRejectsNullArguments() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new LocalDatabase(storageService).getTask(null, 0);
+                });
+
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new LocalDatabase(storageService).getTask(UUID.randomUUID(), null);
+                });
+    }
+
+    @Test
+    public void getTaskWorks() throws DatabaseException {
+        final TodoList todoList = new TodoList("My list");
+        final Task FIXTURE_TASK_1 = new Task("Buy bananas");
+        final Task FIXTURE_TASK_2 = new Task("Eat bananas");
+        todoList.addTask(FIXTURE_TASK_1);
+        todoList.addTask(FIXTURE_TASK_2);
+        final String expectedPath = TODO_LIST_PATH + todoList.getId().toString() + ".json";
+        final byte[] serializedList =
+                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+
+        // Return a future like the one that the LocalFileStorageService would produce after
+        // successfully downloading the file.
+        final CompletableFuture<byte[]> completedFuture =
+                CompletableFuture.completedFuture(serializedList);
+        doReturn(completedFuture).when(storageService).download(expectedPath);
+
+        // Try to get a valid task.
+        final LocalDatabase database = new LocalDatabase(storageService);
+
+        try {
+            final Task fetchedTask = database.getTask(todoList.getId(), 1).get();
+            verify(storageService).download(expectedPath);
+            assertEquals(FIXTURE_TASK_2, fetchedTask);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+}

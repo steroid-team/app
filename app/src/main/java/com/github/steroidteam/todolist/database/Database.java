@@ -7,8 +7,8 @@ import java.util.UUID;
 /** A database that stores pairs of key and value. */
 public interface Database {
 
-    static final String TODO_LIST_PATH = "/todo-lists";
-
+    static final String TODO_LIST_PATH = "/todo-lists/";
+    static final String NOTES_PATH = "/notes/";
     /**
      * Pushes a new to-do list in the database.
      *

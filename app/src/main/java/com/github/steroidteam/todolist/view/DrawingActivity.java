@@ -79,7 +79,7 @@ public class DrawingActivity extends AppCompatActivity {
         drawingCanvas.erase();
     }
 
-    public void backButton(View view){
+    public void backButton(View view) {
         Intent listSelectionActivity =
                 new Intent(DrawingActivity.this, ListSelectionActivity.class);
         startActivity(listSelectionActivity);

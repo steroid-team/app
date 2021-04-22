@@ -19,23 +19,25 @@ import java.util.UUID;
 
 public class NoteDisplayActivity extends AppCompatActivity {
 
-    private Database database;
+    private Database database = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_display);
-
-        database =
-                new FirebaseDatabase(
-                        new FirebaseFileStorageService(
-                                FirebaseStorage.getInstance(),
-                                FirebaseAuth.getInstance().getCurrentUser()));
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
+        if (database == null) {
+            setDatabase(
+                    new FirebaseDatabase(
+                            new FirebaseFileStorageService(
+                                    FirebaseStorage.getInstance(),
+                                    FirebaseAuth.getInstance().getCurrentUser())));
+        }
 
         Intent intent = getIntent();
         UUID id = UUID.fromString(intent.getStringExtra(NoteSelectionActivity.EXTRA_NOTE_ID));

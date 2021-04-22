@@ -32,18 +32,12 @@ public class ListSelectionActivity extends AppCompatActivity {
 
     private static todoListAdapter adapter;
     private ArrayList<TodoList> todoLists;
-    private Database database;
+    private Database database = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_selection);
-
-        database =
-                new FirebaseDatabase(
-                        new FirebaseFileStorageService(
-                                FirebaseStorage.getInstance(),
-                                FirebaseAuth.getInstance().getCurrentUser()));
 
         todoLists = new ArrayList<>();
 
@@ -56,6 +50,14 @@ public class ListSelectionActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        if (database == null) {
+            setDatabase(
+                    new FirebaseDatabase(
+                            new FirebaseFileStorageService(
+                                    FirebaseStorage.getInstance(),
+                                    FirebaseAuth.getInstance().getCurrentUser())));
+        }
 
         database.getTodoListCollection()
                 .thenAccept(

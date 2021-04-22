@@ -34,18 +34,20 @@ public class ItemViewActivity extends AppCompatActivity {
         // Add a click listener to the "back" button to return to the previous activity.
         ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener((view) -> finish());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         // Instantiate the view model.
         Intent intent = getIntent();
         String uuidStr = intent.getStringExtra(ListSelectionActivity.EXTRA_ID_TODO_LIST);
         UUID id = UUID.fromString(uuidStr);
 
-        setViewModel(new ItemViewModel(new TodoRepository(id)));
-    }
+        if (viewModel == null)
+            setViewModel(new ItemViewModel(new TodoRepository(id)));
 
-    @Override
-    protected void onStart() {
-        super.onStart();
         // Observe the LiveData todoList from the ViewModel,
         // 'this' refers to the activity so it the ItemViewActivity acts as the LifeCycleOwner,
         viewModel

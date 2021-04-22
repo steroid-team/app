@@ -27,7 +27,7 @@ public class NoteSelectionActivity extends AppCompatActivity {
     public static final String EXTRA_NOTE_ID = "id";
 
     private static NoteAdapter adapter;
-    private Database database;
+    private Database database = null;
     ArrayList<Note> notes = new ArrayList<>();
 
     @Override
@@ -39,11 +39,20 @@ public class NoteSelectionActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.activity_noteselection_notelist);
         listView.setAdapter(adapter);
 
-        database =
-                new FirebaseDatabase(
-                        new FirebaseFileStorageService(
-                                FirebaseStorage.getInstance(),
-                                FirebaseAuth.getInstance().getCurrentUser()));
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (database == null) {
+            setDatabase(
+                    new FirebaseDatabase(
+                            new FirebaseFileStorageService(
+                                    FirebaseStorage.getInstance(),
+                                    FirebaseAuth.getInstance().getCurrentUser())));
+        }
 
         database.getNotesList()
                 .thenAccept(

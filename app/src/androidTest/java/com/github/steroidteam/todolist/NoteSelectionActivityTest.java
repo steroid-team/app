@@ -13,6 +13,8 @@ import com.github.steroidteam.todolist.view.ListSelectionActivity;
 import com.github.steroidteam.todolist.view.NoteDisplayActivity;
 import com.github.steroidteam.todolist.view.NoteSelectionActivity;
 import org.hamcrest.Matchers;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,25 +26,30 @@ public class NoteSelectionActivityTest {
     public ActivityScenarioRule<NoteSelectionActivity> activityRule =
             new ActivityScenarioRule<>(NoteSelectionActivity.class);
 
-    @Test
-    public void openListWorks() {
+    @Before
+    public void before() {
         Intents.init();
+    }
 
-        onView(withId(R.id.activity_noteselection_recycler))
-                .perform(actionOnItemAtPosition(0, click()));
-        Intents.intended(
-                Matchers.allOf(IntentMatchers.hasComponent(NoteDisplayActivity.class.getName())));
+    @After
+    public void after() {
         Intents.release();
     }
 
     @Test
-    public void openTodoListWorks() {
-        Intents.init();
+    public void openListWorks() {
+        onView(withId(R.id.activity_noteselection_recycler))
+                .perform(actionOnItemAtPosition(0, click()));
 
+        Intents.intended(
+                Matchers.allOf(IntentMatchers.hasComponent(NoteDisplayActivity.class.getName())));
+    }
+
+    @Test
+    public void openTodoListWorks() {
         onView(withId(R.id.activity_noteselection_button)).perform(click());
 
         Intents.intended(
                 Matchers.allOf(IntentMatchers.hasComponent(ListSelectionActivity.class.getName())));
-        Intents.release();
     }
 }

@@ -16,7 +16,9 @@ public class DrawingView extends View {
     private Canvas canvas;
     private Bitmap bitmap;
     private float xPath, yPath;
-    private static final float TOUCH_TOLERANCE = 4;
+    private final float TOUCH_TOLERANCE = 4;
+    private final float STROKE_WIDTH = 12f;
+    private final int BACKGROUND_COLOR = Color.rgb(235, 235, 235);
 
     public DrawingView(Context context) {
         super(context);
@@ -28,7 +30,7 @@ public class DrawingView extends View {
         paint.setStyle(Paint.Style.STROKE); // default: FILL
         paint.setStrokeJoin(Paint.Join.ROUND); // default: MITER
         paint.setStrokeCap(Paint.Cap.ROUND); // default: BUTT
-        paint.setStrokeWidth(12); // default: Hairline-width (really thin)
+        paint.setStrokeWidth(STROKE_WIDTH); // default: Hairline-width (really thin)
     }
 
     @Override
@@ -106,6 +108,6 @@ public class DrawingView extends View {
     }
 
     public void erase() {
-        canvas.drawColor(Color.rgb(235, 235, 235));
+        canvas.drawColor(BACKGROUND_COLOR);
     }
 }

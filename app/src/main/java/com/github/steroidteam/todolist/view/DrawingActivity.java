@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.github.steroidteam.todolist.R;
 import com.larswerkman.holocolorpicker.ColorPicker;
 import com.larswerkman.holocolorpicker.SaturationBar;
@@ -37,7 +35,7 @@ public class DrawingActivity extends AppCompatActivity {
         colorPicker.addValueBar(valueBar);
     }
 
-    private void setPaintColor(int color){
+    private void setPaintColor(int color) {
         System.out.println("SetPaint");
         drawingCanvas.setPaintColor(color);
     }
@@ -59,18 +57,18 @@ public class DrawingActivity extends AppCompatActivity {
         setPaintColor(Color.RED);
     }
 
-    public void ColorPickerButton(View view){
+    public void ColorPickerButton(View view) {
         drawingCanvas.setVisibility(View.GONE);
         colorPickerWindow.setVisibility(View.VISIBLE);
         colorPicker.setOldCenterColor(drawingCanvas.getPaint().getColor());
     }
 
-    public void cancelColorButton(View view){
+    public void cancelColorButton(View view) {
         colorPickerWindow.setVisibility(View.GONE);
         drawingCanvas.setVisibility(View.VISIBLE);
     }
 
-    public void applyColorButton(View view){
+    public void applyColorButton(View view) {
         setPaintColor(colorPicker.getColor());
         colorPickerWindow.setVisibility(View.GONE);
         drawingCanvas.setVisibility(View.VISIBLE);

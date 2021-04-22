@@ -3,16 +3,16 @@ package com.github.steroidteam.todolist.view;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import com.github.steroidteam.todolist.R;
 import java.io.InputStream;
 
@@ -62,9 +62,13 @@ public class NoteDisplayActivity extends AppCompatActivity {
                 bitmap = BitmapFactory.decodeStream(is);
                 is.close();
             } catch (Exception e) {
+                Toast.makeText(
+                                getApplicationContext(),
+                                "Error: could not display the image",
+                                Toast.LENGTH_LONG)
+                        .show();
             }
-            RoundedBitmapDrawable ob = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
-            ob.setCornerRadius(70);
+            BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
             header.setBackgroundTintList(null);
             header.setBackground(ob);
         }

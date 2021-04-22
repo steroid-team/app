@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import androidx.test.espresso.intent.rule.IntentsTestRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.rule.GrantPermissionRule;
 import com.github.steroidteam.todolist.view.NoteDisplayActivity;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,10 +33,6 @@ public class NoteDisplayActivityTest {
     public IntentsTestRule<NoteDisplayActivity> mIntentsRule =
             new IntentsTestRule<>(NoteDisplayActivity.class);
 
-    @Rule
-    public GrantPermissionRule permissionRule =
-            GrantPermissionRule.grant(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
     @Before
     public void stubImagePickerIntent() {
         savePickedImage();
@@ -54,7 +49,7 @@ public class NoteDisplayActivityTest {
         Bitmap bm =
                 BitmapFactory.decodeResource(
                         mIntentsRule.getActivity().getResources(),
-                        R.mipmap.asteroid_launcher_foreground);
+                        R.drawable.note_header_test_image);
         File dir = mIntentsRule.getActivity().getExternalCacheDir();
         File file = new File(dir.getPath(), "pickImageResult.jpeg");
         FileOutputStream outStream;

@@ -22,7 +22,7 @@
             android:id="@+id/camera_button"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:contentDescription="@string/camera_btn_description"
+            android:contentDescription="@string/add_header_photo"
             android:onClick="pickFile"
             android:scaleX="1.2"
             android:scaleY="1.2"

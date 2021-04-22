@@ -20,6 +20,20 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
+            android:id="@+id/camera_button"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:contentDescription="@string/add_header_photo"
+            android:onClick="pickFile"
+            android:scaleX="1.2"
+            android:scaleY="1.2"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/ic_menu_camera" />
+
+        <ImageButton
             android:id="@+id/back_button"
             style="@style/ToolbarActionButton"
             android:layout_width="28dp"
@@ -37,12 +51,14 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_gravity="center"
-            android:scaleType="fitCenter"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="20dp"
             android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
             android:contentDescription="@string/location_btn_description"
             android:onClick="goToMapActivity"
-            android:background="@android:color/transparent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toStartOf="@+id/camera_button"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@android:drawable/ic_menu_mylocation" />
 

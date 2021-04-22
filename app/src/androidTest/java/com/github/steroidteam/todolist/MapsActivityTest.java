@@ -24,16 +24,6 @@ public class MapsActivityTest {
     public ActivityScenarioRule<MapsActivity> activityRule =
             new ActivityScenarioRule<>(MapsActivity.class);
 
-    @Before
-    public void before() {
-        Intents.init();
-    }
-
-    @After
-    public void after() {
-        Intents.release();
-    }
-
     @Test
     public void markerIsCorrectlyPlacedAtDefaultLocationOrUserLocation() {
         waitFor(2000);

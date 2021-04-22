@@ -11,6 +11,8 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.github.steroidteam.todolist.view.DrawingActivity;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,10 +24,19 @@ public class DrawingTest {
     public ActivityScenarioRule<DrawingActivity> activityRule =
             new ActivityScenarioRule<>(DrawingActivity.class);
 
+    @Before
+    public void before() {
+        Intents.init();
+    }
+
+    @After
+    public void after() {
+        Intents.release();
+    }
+
     @Test
     public void drawingWorks() {
         onView(withId(R.id.drawSpace)).perform(ViewActions.swipeRight());
-        Intents.init();
         Intent drawingActivity =
                 new Intent(ApplicationProvider.getApplicationContext(), DrawingActivity.class);
 
@@ -39,7 +50,6 @@ public class DrawingTest {
                         activity.drawingCanvas.touchMove(1000, 1000);
                     });
         }
-        Intents.release();
     }
 
     @Test

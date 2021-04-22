@@ -1,5 +1,6 @@
 package com.github.steroidteam.todolist.view;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -76,5 +77,11 @@ public class DrawingActivity extends AppCompatActivity {
 
     public void eraseButton(View view) {
         drawingCanvas.erase();
+    }
+
+    public void backButton(View view){
+        Intent listSelectionActivity =
+                new Intent(DrawingActivity.this, ListSelectionActivity.class);
+        startActivity(listSelectionActivity);
     }
 }

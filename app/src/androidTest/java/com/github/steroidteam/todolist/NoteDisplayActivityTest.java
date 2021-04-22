@@ -2,9 +2,14 @@ package com.github.steroidteam.todolist;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.github.steroidteam.todolist.view.MapsActivity.KEY_LOCATION;
+import static com.github.steroidteam.todolist.view.MapsActivity.KEY_NAME_LOCATION;
 
 import android.app.Activity;
 import android.app.Instrumentation;
@@ -20,6 +25,7 @@ import androidx.test.espresso.intent.rule.IntentsTestRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.github.steroidteam.todolist.view.MapsActivity;
 import com.github.steroidteam.todolist.view.NoteDisplayActivity;
+import com.google.android.gms.maps.model.LatLng;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,9 +52,23 @@ public class NoteDisplayActivityTest {
 
     @Test
     public void openMapsActivityWorks() {
-        onView(withId(R.id.note_header)).perform(click());
+        onView(withId(R.id.location_button)).perform(click());
 
         Intents.intended(Matchers.allOf(IntentMatchers.hasComponent(MapsActivity.class.getName())));
+    }
+
+    @Test
+    public void locationNameIsCorrectlyUpdated() {
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra(KEY_LOCATION, new LatLng(-33.8523341, 151.2106085));
+        returnIntent.putExtra(KEY_NAME_LOCATION, "Sydney");
+
+        intending(hasComponent(MapsActivity.class.getName()))
+                .respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, returnIntent));
+
+        onView(withId(R.id.location_button)).perform(click());
+
+        onView(withId(R.id.note_location)).check(matches(withText("Sydney")));
     }
 
     @Test

@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.steroidteam.todolist">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/asteroid_launcher"
@@ -9,15 +12,23 @@
         android:roundIcon="@mipmap/asteroid_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Asteroid">
-        <activity android:name=".view.DrawingActivity"></activity>
-        <activity android:name=".view.ListSelectionActivity"></activity>
-        <activity
-            android:name=".view.NoteDisplayActivity"
+        <activity android:name=".view.MapsActivity"></activity>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <!--              The API key for Google Maps-based APIs. -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity android:name=".view.ListSelectionActivity">
+        </activity>
+        <activity android:name=".view.NoteDisplayActivity"
             android:parentActivityName=".view.NoteSelectionActivity" />
         <activity android:name=".view.NoteSelectionActivity" />
         <activity
             android:name=".view.ItemViewActivity"
-            android:parentActivityName=".view.MainActivity" />
+            android:parentActivityName=".view.MainActivity"></activity>
         <activity android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -46,12 +46,6 @@ public class NoteDisplayActivityTest {
 
     @Test
     public void openMapsActivityWorks() {
-
-        /*Espresso.onData(anything())
-        .inAdapterView(withId(R.id.activity_noteselection_notelist))
-        .atPosition(1)
-        .perform(click());*/
-
         onView(withId(R.id.note_header)).perform(click());
 
         Intents.intended(Matchers.allOf(IntentMatchers.hasComponent(MapsActivity.class.getName())));

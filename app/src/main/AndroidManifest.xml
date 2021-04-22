@@ -12,7 +12,6 @@
         android:roundIcon="@mipmap/asteroid_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Asteroid">
-        <activity android:name=".view.MapsActivity"></activity>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -21,21 +20,14 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".view.ListSelectionActivity">
-        </activity>
-        <activity android:name=".view.NoteDisplayActivity"
-            android:parentActivityName=".view.NoteSelectionActivity" />
-        <activity android:name=".view.NoteSelectionActivity" />
-        <activity
-            android:name=".view.ItemViewActivity"
-            android:parentActivityName=".view.MainActivity"></activity>
-        <activity android:name=".view.MainActivity">
+        <activity android:name=".view.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".view.MainActivity" />
     </application>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

@@ -18,7 +18,7 @@ public class DrawingView extends View {
     private float xPath, yPath;
     private final float TOUCH_TOLERANCE = 4;
     private final float STROKE_WIDTH = 12f;
-    private final int BACKGROUND_COLOR = Color.rgb(235, 235, 235);
+    public static final int BACKGROUND_COLOR = Color.argb(255, 235, 235, 235);
 
     public DrawingView(Context context) {
         super(context);
@@ -73,7 +73,7 @@ public class DrawingView extends View {
         return true;
     }
 
-    private void touchStart(float x, float y) {
+    public void touchStart(float x, float y) {
         path.moveTo(x, y);
         xPath = x;
         yPath = y;

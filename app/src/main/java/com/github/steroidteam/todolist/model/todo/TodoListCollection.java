@@ -30,4 +30,15 @@ public class TodoListCollection {
     public void removeUUID(UUID uuid) {
         todoListCollection.remove(uuid);
     }
+
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        str.append("TodoListCollection{");
+        for (UUID uuid : this.todoListCollection) {
+            str.append(uuid.toString()).append(",").append("\n");
+        }
+        str.append("}");
+
+        return str.toString();
+    }
 }

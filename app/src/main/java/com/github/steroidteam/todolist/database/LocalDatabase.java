@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class LocalDatabase {
 
     private final LocalFileStorageService storageService;
-    private static final String TODO_LIST_PATH = "/todo-lists";
+    private static final String TODO_LIST_PATH = "/todo-lists/";
     private static final String NOTES_PATH = "/notes/";
 
     public LocalDatabase(@NonNull LocalFileStorageService storageService) {
@@ -48,7 +48,7 @@ public class LocalDatabase {
         byte[] listSerialized =
                 JSONSerializer.serializeTodoList(list).getBytes(StandardCharsets.UTF_8);
 
-        return this.storageService.upload(listSerialized, targetPath).thenApply(str -> list);
+        return this.storageService.upload(listSerialized, targetPath).thenApply(s -> list);
     }
 
     public void removeTodoList(UUID todoListID) throws DatabaseException {
@@ -133,6 +133,7 @@ public class LocalDatabase {
     public CompletableFuture<Task> renameTask(UUID todoListID, Integer taskIndex, String newName) {
         Objects.requireNonNull(todoListID);
         Objects.requireNonNull(taskIndex);
+        Objects.requireNonNull(newName);
         String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
         // Fetch the remote list that we are about to update.
@@ -175,9 +176,9 @@ public class LocalDatabase {
                 .thenApply(JSONSerializer::deserializeNote);
     }
 
-    public CompletableFuture<Note> putNote(UUID noteID, Note note) {
+    public CompletableFuture<Note> putNote(Note note) {
         Objects.requireNonNull(note);
-        String notePath = NOTES_PATH + noteID.toString() + ".json";
+        String notePath = NOTES_PATH + note.getId().toString() + ".json";
         byte[] serializedNote = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
 
         return this.storageService.upload(serializedNote, notePath).thenApply(str -> note);

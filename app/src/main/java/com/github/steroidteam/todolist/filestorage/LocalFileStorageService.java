@@ -8,6 +8,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -42,10 +44,11 @@ public class LocalFileStorageService implements FileStorageService {
                 () -> {
                     File file = getFile(this.getRootFile(), this.getUserspaceRef(path));
                     try {
-                        writeOnFile(bytes.toString(), file);
+                        writeOnFile(Arrays.toString(bytes), file);
+                        return path;
                     } catch (DatabaseException ignored) {
+                        return "error";
                     }
-                    return null;
                 });
     }
 
@@ -109,6 +112,7 @@ public class LocalFileStorageService implements FileStorageService {
                         line = br.readLine();
                     }
                     result = sb.toString();
+                    br.close();
                 }
             } catch (Exception e) {
                 throw new DatabaseException("unable to read file at: " + file);
@@ -118,14 +122,16 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     private void writeOnFile(String text, File file) throws DatabaseException {
-
         try {
-            file.getParentFile().mkdirs();
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
+            }
             FileOutputStream fos = new FileOutputStream(file);
             try (Writer w = new BufferedWriter(new OutputStreamWriter(fos))) {
                 w.write(text);
                 w.flush();
                 fos.getFD().sync();
+                w.close();
             }
         } catch (Exception e) {
             throw new DatabaseException("unable to write on file at: " + file);

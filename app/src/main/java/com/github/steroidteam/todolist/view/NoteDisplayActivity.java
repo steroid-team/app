@@ -5,18 +5,26 @@ import static com.github.steroidteam.todolist.view.MapsActivity.KEY_NAME_LOCATIO
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import com.github.steroidteam.todolist.R;
 import com.google.android.gms.maps.model.LatLng;
-import java.util.UUID;
+import java.io.InputStream;
 
 public class NoteDisplayActivity extends AppCompatActivity {
-    private int LAUNCH_SECOND_ACTIVITY = 1;
+    private int LAUNCH_SECOND_ACTIVITY = 2;
+
+    public static final int PICK_IMAGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +36,6 @@ public class NoteDisplayActivity extends AppCompatActivity {
         backButton.setOnClickListener((view) -> finish());
 
         Intent intent = getIntent();
-        UUID id = UUID.fromString(intent.getStringExtra(NoteSelectionActivity.EXTRA_NOTE_ID));
 
         TextView noteTitle = findViewById(R.id.note_title);
         noteTitle.setText("Lorem ipsum");
@@ -40,6 +47,42 @@ public class NoteDisplayActivity extends AppCompatActivity {
                         + " ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in"
                         + " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non"
                         + " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+    }
+
+    public void pickFile(View view) {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == LAUNCH_SECOND_ACTIVITY && resultCode == Activity.RESULT_OK) {
+            String location = data.getStringExtra(KEY_NAME_LOCATION);
+            LatLng latLng = data.getParcelableExtra(KEY_LOCATION);
+            setLocationNote(latLng, location);
+        }
+        if (requestCode == PICK_IMAGE && data != null) {
+            Uri uri = data.getData();
+            ConstraintLayout header = findViewById(R.id.note_header);
+            Bitmap bitmap = null;
+            try {
+                InputStream is = getContentResolver().openInputStream(uri);
+                bitmap = BitmapFactory.decodeStream(is);
+                is.close();
+            } catch (Exception e) {
+                Toast.makeText(
+                                getApplicationContext(),
+                                "Error: could not display the image",
+                                Toast.LENGTH_LONG)
+                        .show();
+            }
+            BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
+            header.setBackgroundTintList(null);
+            header.setBackground(ob);
+        }
     }
 
     /**
@@ -59,16 +102,6 @@ public class NoteDisplayActivity extends AppCompatActivity {
         if (latLng != null && location != null) {
             TextView locationText = (TextView) findViewById(R.id.note_location);
             locationText.setText(location);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == LAUNCH_SECOND_ACTIVITY && resultCode == Activity.RESULT_OK) {
-            String location = data.getStringExtra(KEY_NAME_LOCATION);
-            LatLng latLng = data.getParcelableExtra(KEY_LOCATION);
-            setLocationNote(latLng, location);
         }
     }
 }

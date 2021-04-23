@@ -1,7 +1,10 @@
 package com.github.steroidteam.todolist;
 
+import static android.view.View.GONE;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.github.steroidteam.todolist.view.DrawingView.BACKGROUND_COLOR;
 import static org.junit.Assert.assertEquals;
@@ -123,6 +126,23 @@ public class DrawingTest {
                         assertEquals(
                                 BACKGROUND_COLOR,
                                 activity.drawingCanvas.getBitmap().getColor(100, 150).toArgb());
+                    });
+        }
+    }
+
+    @Test
+    public void colorPickerButtonWorks() {
+
+        Intent drawingActivity =
+                new Intent(ApplicationProvider.getApplicationContext(), DrawingActivity.class);
+
+        try (ActivityScenario<DrawingActivity> scenario =
+                ActivityScenario.launch(drawingActivity)) {
+            onView(withId(R.id.colorChoose)).perform(click());
+            onView(withId(R.id.colorPickerWindow)).check(matches(isDisplayed()));
+            scenario.onActivity(
+                    activity -> {
+                        assertEquals(activity.drawingCanvas.getVisibility(), GONE);
                     });
         }
     }

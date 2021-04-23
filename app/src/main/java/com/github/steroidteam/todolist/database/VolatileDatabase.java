@@ -13,10 +13,12 @@ import java.util.UUID;
 public class VolatileDatabase implements Database {
 
     private final ArrayList<TodoList> database;
+    private Map<UUID, String> noteMainImage;
 
     /** Creates a volatile database. */
     public VolatileDatabase() {
         this.database = new ArrayList<>();
+        this.noteMainImage = new HashMap<>();
     }
 
     /**

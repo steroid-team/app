@@ -1,43 +1,42 @@
 package com.github.steroidteam.todolist.database;
 
-import android.content.Context;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 
+import android.content.Context;
 import com.github.steroidteam.todolist.filestorage.LocalFileStorageService;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.ExecutionException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LocalFileStorageTest {
 
     private final File testFile = new File("fileForTesting_canBeDeleted");
 
-    @Mock
-    Context contextMock;
+    @Mock Context contextMock;
 
     @Test
     public void uploadReadWorks() {
 
         when(contextMock.getFilesDir()).thenReturn(testFile);
 
-
-        final LocalFileStorageService localFileStorageService = new LocalFileStorageService(contextMock);
+        final LocalFileStorageService localFileStorageService =
+                new LocalFileStorageService(contextMock);
         final byte[] bytes = "some bytes".getBytes(StandardCharsets.UTF_8);
         final String path = "/a/path";
         localFileStorageService.upload(bytes, path);
 
         try {
             byte[] result = localFileStorageService.download(path).get();
-            assertEquals(new String(bytes, StandardCharsets.UTF_8), new String(bytes, StandardCharsets.UTF_8));
+            assertEquals(
+                    new String(bytes, StandardCharsets.UTF_8),
+                    new String(bytes, StandardCharsets.UTF_8));
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -50,8 +49,8 @@ public class LocalFileStorageTest {
 
         when(contextMock.getFilesDir()).thenReturn(testFile);
 
-
-        final LocalFileStorageService localFileStorageService = new LocalFileStorageService(contextMock);
+        final LocalFileStorageService localFileStorageService =
+                new LocalFileStorageService(contextMock);
         final byte[] bytes = "some bytes".getBytes(StandardCharsets.UTF_8);
         final String path = "/a/path";
         localFileStorageService.upload(bytes, path).join();
@@ -63,7 +62,6 @@ public class LocalFileStorageTest {
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
     @Test
@@ -71,7 +69,8 @@ public class LocalFileStorageTest {
 
         when(contextMock.getFilesDir()).thenReturn(testFile);
 
-        final LocalFileStorageService localFileStorageService = new LocalFileStorageService(contextMock);
+        final LocalFileStorageService localFileStorageService =
+                new LocalFileStorageService(contextMock);
         final byte[] bytes = "some bytes".getBytes(StandardCharsets.UTF_8);
         final byte[] bytes2 = "some bytes".getBytes(StandardCharsets.UTF_8);
         final String mainPath = "/todo-lists/";
@@ -83,11 +82,10 @@ public class LocalFileStorageTest {
         localFileStorageService.upload(bytes2, path2);
 
         String[] result = localFileStorageService.listDir(mainPath).join();
-        assertEquals("A",result[0]);
-        assertEquals("B",result[1]);
+        assertEquals("A", result[0]);
+        assertEquals("B", result[1]);
 
         localFileStorageService.delete(path);
         localFileStorageService.delete(path2);
     }
-
 }

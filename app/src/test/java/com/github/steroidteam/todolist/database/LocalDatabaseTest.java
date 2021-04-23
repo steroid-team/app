@@ -1,25 +1,5 @@
 package com.github.steroidteam.todolist.database;
 
-import com.github.steroidteam.todolist.filestorage.LocalFileStorageService;
-import com.github.steroidteam.todolist.model.notes.Note;
-import com.github.steroidteam.todolist.model.todo.Task;
-import com.github.steroidteam.todolist.model.todo.TodoList;
-import com.github.steroidteam.todolist.model.todo.TodoListCollection;
-import com.github.steroidteam.todolist.util.JSONSerializer;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
@@ -28,6 +8,23 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.github.steroidteam.todolist.filestorage.LocalFileStorageService;
+import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.model.todo.Task;
+import com.github.steroidteam.todolist.model.todo.TodoList;
+import com.github.steroidteam.todolist.model.todo.TodoListCollection;
+import com.github.steroidteam.todolist.util.JSONSerializer;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
 @RunWith(MockitoJUnitRunner.class)
 public class LocalDatabaseTest {
 
@@ -35,8 +32,7 @@ public class LocalDatabaseTest {
     private static final String TODO_LIST_PATH = "/todo-lists/";
     private static final String NOTES_PATH = "/notes/";
 
-    @Mock
-    LocalFileStorageService localFileStorageService;
+    @Mock LocalFileStorageService localFileStorageService;
 
     @Test
     public void constructorRejectsNullStorageService() {
@@ -68,7 +64,8 @@ public class LocalDatabaseTest {
         // successfully uploading the file.
         final CompletableFuture<String> completedFuture =
                 CompletableFuture.completedFuture(expectedPath);
-        when(localFileStorageService.upload(serializedList, expectedPath)).thenReturn(completedFuture);
+        when(localFileStorageService.upload(serializedList, expectedPath))
+                .thenReturn(completedFuture);
 
         // Try to add a valid list.
         final LocalDatabase database = new LocalDatabase(localFileStorageService);
@@ -201,7 +198,8 @@ public class LocalDatabaseTest {
         // successfully uploading the file.
         final CompletableFuture<String> completedUploadFuture =
                 CompletableFuture.completedFuture(expectedPath);
-        when(localFileStorageService.upload(any(), eq(expectedPath))).thenReturn(completedUploadFuture);
+        when(localFileStorageService.upload(any(), eq(expectedPath)))
+                .thenReturn(completedUploadFuture);
 
         // Try to put a task in a valid list.
         final LocalDatabase database = new LocalDatabase(localFileStorageService);
@@ -251,7 +249,8 @@ public class LocalDatabaseTest {
         // successfully uploading the file.
         final CompletableFuture<String> completedUploadFuture =
                 CompletableFuture.completedFuture(expectedPath);
-        when(localFileStorageService.upload(any(), eq(expectedPath))).thenReturn(completedUploadFuture);
+        when(localFileStorageService.upload(any(), eq(expectedPath)))
+                .thenReturn(completedUploadFuture);
 
         // Try to remove a task from valid list.
         final LocalDatabase database = new LocalDatabase(localFileStorageService);
@@ -322,13 +321,15 @@ public class LocalDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new LocalDatabase(localFileStorageService).renameTask(UUID.randomUUID(), null, "name");
+                    new LocalDatabase(localFileStorageService)
+                            .renameTask(UUID.randomUUID(), null, "name");
                 });
 
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new LocalDatabase(localFileStorageService).renameTask(UUID.randomUUID(), 0, null);
+                    new LocalDatabase(localFileStorageService)
+                            .renameTask(UUID.randomUUID(), 0, null);
                 });
     }
 
@@ -357,13 +358,16 @@ public class LocalDatabaseTest {
         // successfully renaming a task.
         final CompletableFuture<String> completedFuture2 =
                 CompletableFuture.completedFuture(expectedPath);
-        when(localFileStorageService.upload(serializedList2, expectedPath)).thenReturn(completedFuture2);
+        when(localFileStorageService.upload(serializedList2, expectedPath))
+                .thenReturn(completedFuture2);
 
         // Try to get a valid task.
         final LocalDatabase database = new LocalDatabase(localFileStorageService);
 
         try {
-            assertEquals(todoList.getTask(0), database.renameTask(todoList.getId(), 0, "new name").get());
+            assertEquals(
+                    todoList.getTask(0),
+                    database.renameTask(todoList.getId(), 0, "new name").get());
         } catch (Exception e) {
             fail();
         }
@@ -376,13 +380,15 @@ public class LocalDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new LocalDatabase(localFileStorageService).updateTodoList(UUID.randomUUID(), null);
+                    new LocalDatabase(localFileStorageService)
+                            .updateTodoList(UUID.randomUUID(), null);
                 });
 
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new LocalDatabase(localFileStorageService).updateTodoList(null, new TodoList("A todo!"));
+                    new LocalDatabase(localFileStorageService)
+                            .updateTodoList(null, new TodoList("A todo!"));
                 });
     }
 
@@ -399,7 +405,8 @@ public class LocalDatabaseTest {
         // successfully updating the to-do.
         final CompletableFuture<String> completedFuture =
                 CompletableFuture.completedFuture(expectedPath);
-        when(localFileStorageService.upload(serializedList, expectedPath)).thenReturn(completedFuture);
+        when(localFileStorageService.upload(serializedList, expectedPath))
+                .thenReturn(completedFuture);
 
         // Try to add a valid list.
         final LocalDatabase database = new LocalDatabase(localFileStorageService);
@@ -433,7 +440,8 @@ public class LocalDatabaseTest {
         // successfully uploading the file.
         final CompletableFuture<String> completedFuture =
                 CompletableFuture.completedFuture(expectedPath);
-        when(localFileStorageService.upload(serializedList, expectedPath)).thenReturn(completedFuture);
+        when(localFileStorageService.upload(serializedList, expectedPath))
+                .thenReturn(completedFuture);
 
         // Try to add a valid list.
         final LocalDatabase database = new LocalDatabase(localFileStorageService);
@@ -512,13 +520,15 @@ public class LocalDatabaseTest {
 
         final CompletableFuture<String> completedFuture2 =
                 CompletableFuture.completedFuture(expectedPath);
-        when(localFileStorageService.upload(serializedList2, expectedPath)).thenReturn(completedFuture2);
+        when(localFileStorageService.upload(serializedList2, expectedPath))
+                .thenReturn(completedFuture2);
 
         // Try to get a valid task.
         final LocalDatabase database = new LocalDatabase(localFileStorageService);
 
         try {
-            assertEquals(todoList.getTask(0), database.setTaskDone(todoList.getId(), 0, true).get());
+            assertEquals(
+                    todoList.getTask(0), database.setTaskDone(todoList.getId(), 0, true).get());
         } catch (Exception e) {
             fail();
         }
@@ -536,8 +546,7 @@ public class LocalDatabaseTest {
         expectedList.add(note2.getId());
 
         String[] list = {note.getId().toString(), note2.getId().toString()};
-        final CompletableFuture<String[]> completedFuture =
-                CompletableFuture.completedFuture(list);
+        final CompletableFuture<String[]> completedFuture = CompletableFuture.completedFuture(list);
         when(localFileStorageService.listDir(NOTES_PATH)).thenReturn(completedFuture);
 
         // Try to add a valid list.
@@ -561,14 +570,15 @@ public class LocalDatabaseTest {
         expectedCollection.addUUID(todo2.getId());
 
         String[] list = {todo.getId().toString(), todo2.getId().toString()};
-        final CompletableFuture<String[]> completedFuture =
-                CompletableFuture.completedFuture(list);
+        final CompletableFuture<String[]> completedFuture = CompletableFuture.completedFuture(list);
         when(localFileStorageService.listDir(TODO_LIST_PATH)).thenReturn(completedFuture);
 
         // Try to add a valid list.
         final LocalDatabase database = new LocalDatabase(localFileStorageService);
         try {
-            assertEquals(expectedCollection.toString(), database.getTodoListCollection().get().toString());
+            assertEquals(
+                    expectedCollection.toString(),
+                    database.getTodoListCollection().get().toString());
         } catch (Exception e) {
             fail();
         }

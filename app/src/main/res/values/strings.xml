@@ -20,6 +20,7 @@
     <string name="note_activity_title">My notes</string>
     <string name="search_btn_description">Search</string>
     <string name="back_btn_description">Back</string>
+    <string name="add_header_photo">Photo</string>
     <string name="new_list_btn_description">Add a new list</string>
     <string name="date_placeholder">xx/yy aa:bb</string>
     <string name="note_date_placeholder">Day, Nth Month YEAR</string>

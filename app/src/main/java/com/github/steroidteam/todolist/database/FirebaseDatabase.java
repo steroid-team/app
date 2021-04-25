@@ -65,7 +65,6 @@ public class FirebaseDatabase implements Database {
 
     @Override
     public CompletableFuture<TodoList> getTodoList(@NonNull UUID todoListID) {
-        CompletableFuture<TodoList> future = new CompletableFuture<>();
         Objects.requireNonNull(todoListID);
         String targetPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
@@ -151,16 +150,7 @@ public class FirebaseDatabase implements Database {
                             return todoList;
                         })
                 // Re-serialize and upload the new object.
-                .thenCompose(
-                        todoList -> {
-                            Task renamedTask = todoList.getTask(taskIndex);
-                            byte[] bytes =
-                                    JSONSerializer.serializeTodoList(todoList)
-                                            .getBytes(StandardCharsets.UTF_8);
-                            return this.storageService
-                                    .upload(bytes, listPath)
-                                    .thenApply(str -> renamedTask);
-                        });
+                .thenCompose(todoList -> uploadTask(todoList, taskIndex, listPath));
     }
 
     @Override
@@ -220,15 +210,20 @@ public class FirebaseDatabase implements Database {
                             return todoList;
                         })
                 // Re-serialize and upload the new object.
-                .thenCompose(
-                        todoList -> {
-                            Task updatedTask = todoList.getTask(index);
-                            byte[] bytes =
-                                    JSONSerializer.serializeTodoList(todoList)
-                                            .getBytes(StandardCharsets.UTF_8);
-                            return this.storageService
-                                    .upload(bytes, listPath)
-                                    .thenApply(str -> updatedTask);
-                        });
+                .thenCompose(todoList -> uploadTask(todoList, index, listPath));
+    }
+
+    private CompletableFuture<Task> uploadTask(TodoList todoList,
+                                               int index,
+                                               String path)
+    {
+        Task updatedTask = todoList.getTask(index);
+        byte[] bytes =
+                JSONSerializer.serializeTodoList(todoList)
+                        .getBytes(StandardCharsets.UTF_8);
+        return this.storageService
+                .upload(bytes, path)
+                .thenApply(str -> updatedTask);
+
     }
 }

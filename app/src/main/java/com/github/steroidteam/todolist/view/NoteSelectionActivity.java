@@ -32,18 +32,10 @@ public class NoteSelectionActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        NoteAdapter.NoteCustomListener customListener =
-                new NoteAdapter.NoteCustomListener() {
-                    @Override
-                    public void onClickCustom(NoteAdapter.NoteHolder holder) {
-                        openNote(holder);
-                    }
-                };
+        NoteAdapter.NoteCustomListener customListener = this::openNote;
 
         adapter = new NoteAdapter(notes, customListener);
         recyclerView.setAdapter(adapter);
-
-        adapter.notifyDataSetChanged();
 
         database = DatabaseFactory.getDb();
         database.getNotesList()

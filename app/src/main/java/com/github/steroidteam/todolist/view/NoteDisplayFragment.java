@@ -27,7 +27,7 @@ import java.util.UUID;
 public class NoteDisplayFragment extends Fragment {
     public static LatLng position;
     public static String locationName;
-    private ActivityResultLauncher<String> filePickerActivityLauncher;
+    private ActivityResultLauncher<String> headerImagePickerActivityLauncher;
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,7 +38,7 @@ public class NoteDisplayFragment extends Fragment {
                 .setOnClickListener(
                         v -> {
                             // Open the file picker limiting selections to image files.
-                            filePickerActivityLauncher.launch("image/*");
+                            headerImagePickerActivityLauncher.launch("image/*");
                         });
         root.findViewById(R.id.location_button)
                 .setOnClickListener(
@@ -76,7 +76,7 @@ public class NoteDisplayFragment extends Fragment {
                             editText.setText(note.getContent());
                         });
 
-        filePickerActivityLauncher =
+        headerImagePickerActivityLauncher =
                 registerForActivityResult(
                         new ActivityResultContracts.GetContent(), this::updateHeaderImage);
 

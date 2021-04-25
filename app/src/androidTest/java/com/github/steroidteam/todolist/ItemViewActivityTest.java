@@ -15,7 +15,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 
 import android.content.Intent;
@@ -25,8 +24,6 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
@@ -35,13 +32,14 @@ import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
-import com.github.steroidteam.todolist.model.TodoRepository;
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.view.ItemViewActivity;
 import com.github.steroidteam.todolist.view.ListSelectionActivity;
-import com.github.steroidteam.todolist.viewmodel.ItemViewModel;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -54,72 +52,41 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ItemViewActivityTest {
 
-    @Mock TodoRepository repository;
+    Intent intent;
 
-    MutableLiveData<TodoList> liveData;
-    TodoList todoList;
+    @Mock Database databaseMock;
 
     @Before
     public void setUp() {
-        todoList = new TodoList("Some random title");
-        liveData = new MutableLiveData<>();
+        TodoList todoList = new TodoList("Some random title");
+        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
 
-        doReturn(liveData).when(repository).getTodoList();
+        Task task = new Task("Random task title");
+        CompletableFuture<Task> taskFuture = new CompletableFuture<>();
+        taskFuture.complete(task);
+        doReturn(taskFuture).when(databaseMock).putTask(any(UUID.class), any(Task.class));
+        doReturn(taskFuture).when(databaseMock).renameTask(any(UUID.class), anyInt(), anyString());
+        doReturn(taskFuture).when(databaseMock).removeTask(any(UUID.class), anyInt());
 
-        /* Stub remove */
-        doAnswer(
-                        invocation -> {
-                            Integer index = invocation.getArgument(0);
+        DatabaseFactory.setCustomDatabase(databaseMock);
 
-                            todoList.removeTask(index);
-                            liveData.setValue(todoList);
-
-                            return null;
-                        })
-                .when(repository)
-                .removeTask(anyInt());
-
-        /* Stub put */
-        doAnswer(
-                        invocation -> {
-                            Task task = invocation.getArgument(0);
-
-                            todoList.addTask(task);
-                            liveData.setValue(todoList);
-
-                            return null;
-                        })
-                .when(repository)
-                .putTask(any(Task.class));
-
-        /* Stub rename */
-        doAnswer(
-                        invocation -> {
-                            Integer index = invocation.getArgument(0);
-                            String newTitle = invocation.getArgument(1);
-
-                            todoList.renameTask(index, newTitle);
-                            liveData.setValue(todoList);
-
-                            return null;
-                        })
-                .when(repository)
-                .renameTask(anyInt(), anyString());
+        intent = new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
+        intent.putExtra(ListSelectionActivity.EXTRA_ID_TODO_LIST, UUID.randomUUID().toString());
     }
 
     @Test
     public void createTaskWorks() {
-        Intent intent =
-                new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
-        intent.putExtra(ListSelectionActivity.EXTRA_ID_TODO_LIST, UUID.randomUUID().toString());
-
         try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(intent)) {
             final String TASK_DESCRIPTION = "Buy bananas";
 
-            scenario.moveToState(Lifecycle.State.CREATED);
-            scenario.onActivity(activity -> activity.setViewModel(new ItemViewModel(repository)));
-            scenario.moveToState(Lifecycle.State.STARTED);
-            scenario.moveToState(Lifecycle.State.RESUMED);
+            TodoList todoList = new TodoList("Some random title");
+            /* We should return a new todoList with this task description once we've created it */
+            todoList.addTask(new Task(TASK_DESCRIPTION));
+            CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+            todoListFuture.complete(todoList);
+            doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
 
             // Type a task description in the "new task" text field.
             onView(withId(R.id.new_task_text))
@@ -138,16 +105,7 @@ public class ItemViewActivityTest {
 
     @Test
     public void cannotCreateTaskWithoutText() {
-        Intent intent =
-                new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
-        intent.putExtra(ListSelectionActivity.EXTRA_ID_TODO_LIST, UUID.randomUUID().toString());
-
         try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(intent)) {
-            scenario.moveToState(Lifecycle.State.CREATED);
-            scenario.onActivity(activity -> activity.setViewModel(new ItemViewModel(repository)));
-            scenario.moveToState(Lifecycle.State.STARTED);
-            scenario.moveToState(Lifecycle.State.RESUMED);
-
             // Clear the text input.
             onView(withId(R.id.new_task_text)).perform(clearText());
 
@@ -160,17 +118,15 @@ public class ItemViewActivityTest {
 
     @Test
     public void cannotRenameTaskWithoutText() {
-        Intent intent =
-                new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
-        intent.putExtra(ListSelectionActivity.EXTRA_ID_TODO_LIST, UUID.randomUUID().toString());
-
         try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(intent)) {
             final String TASK_DESCRIPTION = "Buy bananas";
 
-            scenario.moveToState(Lifecycle.State.CREATED);
-            scenario.onActivity(activity -> activity.setViewModel(new ItemViewModel(repository)));
-            scenario.moveToState(Lifecycle.State.STARTED);
-            scenario.moveToState(Lifecycle.State.RESUMED);
+            TodoList todoList = new TodoList("Some random title");
+            /* We should return a new todoList with this task description once we've created it */
+            todoList.addTask(new Task(TASK_DESCRIPTION));
+            CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+            todoListFuture.complete(todoList);
+            doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
 
             // Type a task description in the "new task" text field.
             onView(withId(R.id.new_task_text))
@@ -196,19 +152,19 @@ public class ItemViewActivityTest {
 
     @Test
     public void updateTaskWorks() {
-        Intent intent =
-                new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
-        intent.putExtra(ListSelectionActivity.EXTRA_ID_TODO_LIST, UUID.randomUUID().toString());
-
         try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(intent)) {
-
-            scenario.moveToState(Lifecycle.State.CREATED);
-            scenario.onActivity(activity -> activity.setViewModel(new ItemViewModel(repository)));
-            scenario.moveToState(Lifecycle.State.STARTED);
-            scenario.moveToState(Lifecycle.State.RESUMED);
 
             final String TASK_DESCRIPTION = "Buy bananas";
             final String TASK_DESCRIPTION_2 = "Buy cheese";
+
+            TodoList todoList = new TodoList("Some random title");
+            /* We should return a new todoList with this task description once we've created it */
+            Task task = new Task(TASK_DESCRIPTION);
+            task.setDone(true);
+            todoList.addTask(task);
+            CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+            todoListFuture.complete(todoList);
+            doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
 
             // Type a task description in the "new task" text field.
             onView(withId(R.id.new_task_text))
@@ -229,6 +185,15 @@ public class ItemViewActivityTest {
             onView(withId(R.id.layout_update_task_body)).check(matches(withText(TASK_DESCRIPTION)));
             onView(withId(R.id.layout_update_task_checkbox)).check(matches(isChecked()));
 
+            todoList = new TodoList("Some random title");
+            /* We should return a new todoList with this task description once we've created it */
+            task = new Task(TASK_DESCRIPTION_2);
+            task.setDone(false);
+            todoList.addTask(task);
+            todoListFuture = new CompletableFuture<>();
+            todoListFuture.complete(todoList);
+            doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+
             onView(withId(R.id.layout_update_task_checkbox)).perform(click());
             onView(withId(R.id.layout_update_task_body))
                     .perform(clearText(), typeText(TASK_DESCRIPTION_2), closeSoftKeyboard());
@@ -245,19 +210,17 @@ public class ItemViewActivityTest {
 
     @Test
     public void removeTaskWorks() {
-        Intent intent =
-                new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
-        intent.putExtra(ListSelectionActivity.EXTRA_ID_TODO_LIST, UUID.randomUUID().toString());
-
         try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(intent)) {
-
-            scenario.moveToState(Lifecycle.State.CREATED);
-            scenario.onActivity(activity -> activity.setViewModel(new ItemViewModel(repository)));
-            scenario.moveToState(Lifecycle.State.STARTED);
-            scenario.moveToState(Lifecycle.State.RESUMED);
-
             final String TASK_DESCRIPTION = "Buy bananas";
             final String TASK_DESCRIPTION_2 = "Buy cheese";
+
+            /* First we should return two tasks */
+            TodoList todoList = new TodoList("Some random title");
+            todoList.addTask(new Task(TASK_DESCRIPTION));
+            todoList.addTask(new Task(TASK_DESCRIPTION_2));
+            CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+            todoListFuture.complete(todoList);
+            doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
 
             // Type a task description in the "new task" text field.
             onView(withId(R.id.new_task_text))
@@ -270,6 +233,13 @@ public class ItemViewActivityTest {
                     .perform(typeText(TASK_DESCRIPTION_2), closeSoftKeyboard());
 
             onView(withId(R.id.new_task_btn)).perform(click());
+
+            /* Then we should return one task */
+            todoList = new TodoList("Some random title");
+            todoList.addTask(new Task(TASK_DESCRIPTION_2));
+            todoListFuture = new CompletableFuture<>();
+            todoListFuture.complete(todoList);
+            doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
 
             // Try to remove the first task
             onView(withId(R.id.activity_itemview_itemlist))
@@ -292,18 +262,15 @@ public class ItemViewActivityTest {
 
     @Test
     public void removeTaskWorksInUpdateLayout() {
-        Intent intent =
-                new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
-        intent.putExtra(ListSelectionActivity.EXTRA_ID_TODO_LIST, UUID.randomUUID().toString());
-
         try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(intent)) {
             final String TASK_DESCRIPTION = "Buy bananas";
             final String TASK_DESCRIPTION_2 = "Buy cheese";
 
-            scenario.moveToState(Lifecycle.State.CREATED);
-            scenario.onActivity(activity -> activity.setViewModel(new ItemViewModel(repository)));
-            scenario.moveToState(Lifecycle.State.STARTED);
-            scenario.moveToState(Lifecycle.State.RESUMED);
+            TodoList todoList = new TodoList("Some random title");
+            todoList.addTask(new Task(TASK_DESCRIPTION_2));
+            CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+            todoListFuture.complete(todoList);
+            doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
 
             // Type a task description in the "new task" text field.
             onView(withId(R.id.new_task_text))
@@ -335,17 +302,14 @@ public class ItemViewActivityTest {
 
     @Test
     public void notificationDeleteWorks() {
-        Intent intent =
-                new Intent(ApplicationProvider.getApplicationContext(), ItemViewActivity.class);
-        intent.putExtra(ListSelectionActivity.EXTRA_ID_TODO_LIST, UUID.randomUUID().toString());
-
         try (ActivityScenario<ItemViewActivity> scenario = ActivityScenario.launch(intent)) {
             final String TASK_DESCRIPTION = "Buy bananas";
 
-            scenario.moveToState(Lifecycle.State.CREATED);
-            scenario.onActivity(activity -> activity.setViewModel(new ItemViewModel(repository)));
-            scenario.moveToState(Lifecycle.State.STARTED);
-            scenario.moveToState(Lifecycle.State.RESUMED);
+            TodoList todoList = new TodoList("Some random title");
+            todoList.addTask(new Task(TASK_DESCRIPTION));
+            CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+            todoListFuture.complete(todoList);
+            doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
 
             // Type a task description in the "new task" text field.
             onView(withId(R.id.new_task_text))

@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import android.content.Intent;
-import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
@@ -16,6 +15,7 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.view.ListSelectionActivity;
 import com.github.steroidteam.todolist.view.NoteDisplayActivity;
@@ -61,11 +61,7 @@ public class NoteSelectionActivityTest {
         doReturn(noteFuture).when(databaseMock).getNote(any(UUID.class));
         doReturn(noteFuture).when(databaseMock).putNote(any(UUID.class), any(Note.class));
 
-        ActivityScenario<NoteSelectionActivity> scenario = activityRule.getScenario();
-        scenario.moveToState(Lifecycle.State.CREATED);
-        scenario.onActivity(activity -> activity.setDatabase(databaseMock));
-        scenario.moveToState(Lifecycle.State.STARTED);
-        scenario.moveToState(Lifecycle.State.RESUMED);
+        DatabaseFactory.setCustomDatabase(databaseMock);
     }
 
     @After

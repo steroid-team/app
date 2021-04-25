@@ -9,7 +9,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,7 +21,7 @@ import java.util.UUID;
 
 public class ItemViewActivity extends AppCompatActivity {
 
-    private ItemViewModel viewModel = null;
+    private ItemViewModel viewModel;
     private TodoAdapter adapter;
     private RecyclerView recyclerView;
 
@@ -45,7 +44,7 @@ public class ItemViewActivity extends AppCompatActivity {
         String uuidStr = intent.getStringExtra(ListSelectionActivity.EXTRA_ID_TODO_LIST);
         UUID id = UUID.fromString(uuidStr);
 
-        if (viewModel == null) setViewModel(new ItemViewModel(new TodoRepository(id)));
+        viewModel = new ItemViewModel(new TodoRepository(id));
 
         // Observe the LiveData todoList from the ViewModel,
         // 'this' refers to the activity so it the ItemViewActivity acts as the LifeCycleOwner,
@@ -148,10 +147,5 @@ public class ItemViewActivity extends AppCompatActivity {
         TodoAdapter.TaskHolder holder =
                 (TodoAdapter.TaskHolder) recyclerView.findViewHolderForAdapterPosition(position);
         viewModel.setTaskDone(position, isChecked);
-    }
-
-    @VisibleForTesting(otherwise = MODE_PRIVATE)
-    public void setViewModel(ItemViewModel vm) {
-        viewModel = vm;
     }
 }

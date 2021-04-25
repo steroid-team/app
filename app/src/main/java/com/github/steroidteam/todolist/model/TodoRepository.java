@@ -2,25 +2,19 @@ package com.github.steroidteam.todolist.model;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.github.steroidteam.todolist.database.FirebaseDatabase;
-import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.FirebaseStorage;
 import java.util.UUID;
 
 public class TodoRepository {
-    private final FirebaseDatabase database;
+    private final Database database;
     private final MutableLiveData<TodoList> oneTodoList;
     private final UUID todoListID;
 
     public TodoRepository(UUID todoListID) {
-        this.database =
-                new FirebaseDatabase(
-                        new FirebaseFileStorageService(
-                                FirebaseStorage.getInstance(),
-                                FirebaseAuth.getInstance().getCurrentUser()));
+        this.database = DatabaseFactory.getDb();
         oneTodoList = new MutableLiveData<>();
         this.todoListID = todoListID;
 

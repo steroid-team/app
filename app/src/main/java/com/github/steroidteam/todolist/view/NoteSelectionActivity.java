@@ -9,16 +9,12 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.database.Database;
-import com.github.steroidteam.todolist.database.FirebaseDatabase;
-import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.FirebaseStorage;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -44,14 +40,7 @@ public class NoteSelectionActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        if (database == null) {
-            setDatabase(
-                    new FirebaseDatabase(
-                            new FirebaseFileStorageService(
-                                    FirebaseStorage.getInstance(),
-                                    FirebaseAuth.getInstance().getCurrentUser())));
-        }
-
+        database = DatabaseFactory.getDb();
         database.getNotesList()
                 .thenAccept(
                         uuids -> {
@@ -132,10 +121,5 @@ public class NoteSelectionActivity extends AppCompatActivity {
         Intent listSelectionActivity =
                 new Intent(NoteSelectionActivity.this, ListSelectionActivity.class);
         startActivity(listSelectionActivity);
-    }
-
-    @VisibleForTesting(otherwise = MODE_PRIVATE)
-    public void setDatabase(Database database) {
-        this.database = database;
     }
 }

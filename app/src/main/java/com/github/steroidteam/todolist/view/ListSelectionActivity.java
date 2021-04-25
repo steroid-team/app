@@ -11,18 +11,14 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.firebase.ui.auth.AuthUI;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.database.Database;
-import com.github.steroidteam.todolist.database.FirebaseDatabase;
-import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.FirebaseStorage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +28,7 @@ public class ListSelectionActivity extends AppCompatActivity {
 
     private static todoListAdapter adapter;
     private ArrayList<TodoList> todoLists;
-    private Database database = null;
+    private Database database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +47,7 @@ public class ListSelectionActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        if (database == null) {
-            setDatabase(
-                    new FirebaseDatabase(
-                            new FirebaseFileStorageService(
-                                    FirebaseStorage.getInstance(),
-                                    FirebaseAuth.getInstance().getCurrentUser())));
-        }
+        database = DatabaseFactory.getDb();
 
         database.getTodoListCollection()
                 .thenAccept(
@@ -193,10 +183,5 @@ public class ListSelectionActivity extends AppCompatActivity {
                     .create()
                     .show();
         }
-    }
-
-    @VisibleForTesting(otherwise = MODE_PRIVATE)
-    public void setDatabase(Database database) {
-        this.database = database;
     }
 }

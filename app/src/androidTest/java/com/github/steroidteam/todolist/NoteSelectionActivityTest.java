@@ -13,10 +13,11 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.model.todo.TodoList;
+import com.github.steroidteam.todolist.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.ListSelectionActivity;
 import com.github.steroidteam.todolist.view.NoteDisplayActivity;
 import com.github.steroidteam.todolist.view.NoteSelectionActivity;
@@ -27,7 +28,6 @@ import java.util.concurrent.CompletableFuture;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -36,12 +36,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class NoteSelectionActivityTest {
 
-    @Rule
-    public ActivityScenarioRule<NoteSelectionActivity> activityRule =
-            new ActivityScenarioRule<>(
-                    new Intent(
-                            ApplicationProvider.getApplicationContext(),
-                            NoteSelectionActivity.class));
+    Intent intent;
 
     @Mock Database databaseMock;
 
@@ -57,36 +52,56 @@ public class NoteSelectionActivityTest {
         CompletableFuture<Note> noteFuture = new CompletableFuture<>();
         noteFuture.complete(note);
 
+        TodoListCollection collection = new TodoListCollection();
+        TodoList todoList = new TodoList("Some random title");
+        collection.addUUID(UUID.randomUUID());
+        collection.addUUID(UUID.randomUUID());
+
+        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
+        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+        todoListCollectionFuture.complete(collection);
+        todoListFuture.complete(todoList);
+
         doReturn(notesFuture).when(databaseMock).getNotesList();
         doReturn(noteFuture).when(databaseMock).getNote(any(UUID.class));
         doReturn(noteFuture).when(databaseMock).putNote(any(UUID.class), any(Note.class));
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
 
         DatabaseFactory.setCustomDatabase(databaseMock);
+
+        intent =
+                new Intent(
+                        ApplicationProvider.getApplicationContext(), NoteSelectionActivity.class);
     }
 
     @After
     public void after() {
         Intents.release();
-        ActivityScenario<NoteSelectionActivity> scenario = activityRule.getScenario();
-        scenario.close();
     }
 
     @Test
     public void openListWorks() {
-        Espresso.onData(anything())
-                .inAdapterView(withId(R.id.activity_noteselection_notelist))
-                .atPosition(1)
-                .perform(click());
+        try (ActivityScenario<ListSelectionActivity> scenario = ActivityScenario.launch(intent)) {
+            Espresso.onData(anything())
+                    .inAdapterView(withId(R.id.activity_noteselection_notelist))
+                    .atPosition(1)
+                    .perform(click());
 
-        Intents.intended(
-                Matchers.allOf(IntentMatchers.hasComponent(NoteDisplayActivity.class.getName())));
+            Intents.intended(
+                    Matchers.allOf(
+                            IntentMatchers.hasComponent(NoteDisplayActivity.class.getName())));
+        }
     }
 
     @Test
     public void openTodoListWorks() {
-        onView(withId(R.id.activity_noteselection_button)).perform(click());
+        try (ActivityScenario<ListSelectionActivity> scenario = ActivityScenario.launch(intent)) {
+            onView(withId(R.id.activity_noteselection_button)).perform(click());
 
-        Intents.intended(
-                Matchers.allOf(IntentMatchers.hasComponent(ListSelectionActivity.class.getName())));
+            Intents.intended(
+                    Matchers.allOf(
+                            IntentMatchers.hasComponent(ListSelectionActivity.class.getName())));
+        }
     }
 }

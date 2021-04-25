@@ -5,7 +5,7 @@
         <item name="colorPrimary">@color/dark_blue</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="android:background">@color/bg_grey</item>
+        <item name="android:windowBackground">@color/bg_grey</item>
         <!-- Status bar color. -->
         <!-- Customize your theme here. -->
         <item name="android:textViewStyle">@style/NunitoTextViewStyle</item>

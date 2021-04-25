@@ -1,15 +1,13 @@
 package com.github.steroidteam.todolist.model.todo;
 
-import com.github.steroidteam.todolist.todo.TodoListCollection;
+import static org.junit.Assert.assertEquals;
 
+import com.github.steroidteam.todolist.todo.TodoListCollection;
+import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
 public class TodoListCollectionTest {

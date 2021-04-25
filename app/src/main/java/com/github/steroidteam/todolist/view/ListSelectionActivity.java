@@ -3,7 +3,6 @@ package com.github.steroidteam.todolist.view;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,11 +40,6 @@ public class ListSelectionActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.activity_list_selection_itemlist);
         adapter = new todoListAdapter(todoLists);
         setListViewSettings(listView);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
 
         database = DatabaseFactory.getDb();
 

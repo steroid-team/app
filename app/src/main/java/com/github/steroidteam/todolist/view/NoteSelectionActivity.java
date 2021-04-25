@@ -44,11 +44,6 @@ public class NoteSelectionActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
 
         database = DatabaseFactory.getDb();
         database.getNotesList()

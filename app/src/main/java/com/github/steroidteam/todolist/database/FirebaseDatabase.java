@@ -213,17 +213,9 @@ public class FirebaseDatabase implements Database {
                 .thenCompose(todoList -> uploadTask(todoList, index, listPath));
     }
 
-    private CompletableFuture<Task> uploadTask(TodoList todoList,
-                                               int index,
-                                               String path)
-    {
+    private CompletableFuture<Task> uploadTask(TodoList todoList, int index, String path) {
         Task updatedTask = todoList.getTask(index);
-        byte[] bytes =
-                JSONSerializer.serializeTodoList(todoList)
-                        .getBytes(StandardCharsets.UTF_8);
-        return this.storageService
-                .upload(bytes, path)
-                .thenApply(str -> updatedTask);
-
+        byte[] bytes = JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+        return this.storageService.upload(bytes, path).thenApply(str -> updatedTask);
     }
 }

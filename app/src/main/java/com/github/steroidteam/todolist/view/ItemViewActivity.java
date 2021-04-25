@@ -33,11 +33,6 @@ public class ItemViewActivity extends AppCompatActivity {
         // Add a click listener to the "back" button to return to the previous activity.
         ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener((view) -> finish());
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
 
         // Instantiate the view model.
         Intent intent = getIntent();

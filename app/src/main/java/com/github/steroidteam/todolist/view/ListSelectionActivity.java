@@ -169,16 +169,7 @@ public class ListSelectionActivity extends AppCompatActivity {
                                     return;
                                 }
                                 todoList.setTitle(input.getText().toString());
-                                database.updateTodoList(todoList.getId(), todoList)
-                                        .thenAccept(
-                                                updatedTodoList -> {
-                                                    Log.println(
-                                                            Log.INFO,
-                                                            "TAG",
-                                                            "TodoList "
-                                                                    + updatedTodoList.toString()
-                                                                    + " updated!");
-                                                });
+                                database.updateTodoList(todoList.getId(), todoList);
                             })
                     .create()
                     .show();

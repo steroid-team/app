@@ -131,12 +131,12 @@ public class FirebaseDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).removeTodoList(null);
+                    database.removeTodoList(null);
                 });
     }
 
     @Test
-    public void removeTodoListWorks() throws DatabaseException {
+    public void removeTodoListWorks() {
         final UUID todoListID = UUID.randomUUID();
         final String expectedPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
@@ -146,25 +146,12 @@ public class FirebaseDatabaseTest {
         doReturn(completedFuture).when(storageServiceMock).delete(expectedPath);
 
         // Try to remove a list.
-        final FirebaseDatabase database = new FirebaseDatabase(storageServiceMock);
-        database.removeTodoList(todoListID);
+        try {
+            database.removeTodoList(todoListID).join();
+        } catch (Exception e) {
+            fail();
+        }
 
-        verify(storageServiceMock).delete(expectedPath);
-    }
-
-    @Test
-    public void removeTodoListThrowsDatabaseExceptionOnError() {
-        final UUID todoListID = UUID.randomUUID();
-        final String expectedPath = TODO_LIST_PATH + todoListID.toString() + ".json";
-
-        // Return a future that simulates an error during the deletion.
-        final CompletableFuture<Void> failingFuture = new CompletableFuture<>();
-        failingFuture.completeExceptionally(new RuntimeException());
-        doReturn(failingFuture).when(storageServiceMock).delete(expectedPath);
-
-        final FirebaseDatabase database = new FirebaseDatabase(storageServiceMock);
-
-        assertThrows(DatabaseException.class, () -> database.removeTodoList(todoListID));
         verify(storageServiceMock).delete(expectedPath);
     }
 

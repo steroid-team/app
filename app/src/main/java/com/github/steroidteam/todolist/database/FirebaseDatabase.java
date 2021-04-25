@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class FirebaseDatabase implements Database {
@@ -52,15 +51,18 @@ public class FirebaseDatabase implements Database {
     }
 
     @Override
-    public void removeTodoList(@NonNull UUID todoListID) throws DatabaseException {
+    public CompletableFuture<Void> removeTodoList(@NonNull UUID todoListID) {
         Objects.requireNonNull(todoListID);
         String targetPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
-        try {
-            this.storageService.delete(targetPath).get();
-        } catch (ExecutionException | InterruptedException e) {
-            throw new DatabaseException(e.toString());
-        }
+        return this.storageService
+                .delete(targetPath)
+                .thenCompose(
+                        str -> {
+                            CompletableFuture<Void> future = new CompletableFuture<>();
+                            future.complete(null);
+                            return future;
+                        });
     }
 
     @Override

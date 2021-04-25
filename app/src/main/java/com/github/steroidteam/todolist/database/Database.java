@@ -31,7 +31,7 @@ public interface Database {
      * @param todoListID The ID of the to-do list to remove.
      * @throws IllegalArgumentException Thrown if the argument is null.
      */
-    void removeTodoList(UUID todoListID) throws DatabaseException;
+    CompletableFuture<Void> removeTodoList(UUID todoListID);
 
     /**
      * Gets the to-do list given the ID.

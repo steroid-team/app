@@ -33,4 +33,6 @@
     <string name="location_not_found">Location not found !</string>
     <string name="location_btn_description">Location</string>
     <string name="note_location">No location</string>
+    <string name="new_todolist_title">New list</string>
+
 </resources>

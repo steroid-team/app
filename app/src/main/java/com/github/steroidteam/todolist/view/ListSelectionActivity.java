@@ -84,7 +84,7 @@ public class ListSelectionActivity extends AppCompatActivity {
     }
 
     public void createList(View view) {
-        TodoList todoList = new TodoList("New TodoList");
+        TodoList todoList = new TodoList(getString(R.string.new_todolist_title));
         database.putTodoList(todoList)
                 .thenAccept(
                         filePath -> {

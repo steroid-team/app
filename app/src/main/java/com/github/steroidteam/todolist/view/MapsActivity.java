@@ -1,11 +1,14 @@
 package com.github.steroidteam.todolist.view;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -49,7 +52,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // Keys for storing activity state.
     private static final String KEY_CAMERA_POSITION = "camera_position";
-    private static final String KEY_LOCATION = "location";
+    public static final String KEY_LOCATION = "location";
+
+    public static final String KEY_NAME_LOCATION = "nameLocation";
 
     private SearchView searchView;
     private Marker marker;
@@ -115,24 +120,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
         Address address = addressList.get(0);
-        locationHasBeenFound(address, location);
+        locationHasBeenFound(address);
     }
 
     private boolean checkLocationHasBeenFound(List<Address> addressList) {
         return addressList.size() > 0;
     }
 
-    private void locationHasBeenFound(Address address, String location) {
+    private void locationHasBeenFound(Address address) {
         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-        String locationWithUppercase =
-                location.substring(0, 1).toUpperCase() + location.substring(1);
+        String locationName = address.getLocality();
         if (marker != null) {
             marker.setPosition(latLng);
-            marker.setTitle(locationWithUppercase);
+            marker.setTitle(locationName);
         } else {
-            marker =
-                    map.addMarker(
-                            new MarkerOptions().position(latLng).title(locationWithUppercase));
+            marker = map.addMarker(new MarkerOptions().position(latLng).title(locationName));
         }
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_SEARCH));
     }
@@ -152,6 +154,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
+    }
+
+    public void onSavePressed(View view) {
+        Intent returnIntent = new Intent();
+        if (marker != null) {
+            LatLng position = marker.getPosition();
+            returnIntent.putExtra(KEY_LOCATION, position);
+            Geocoder geocoder = new Geocoder(MapsActivity.this);
+            List<Address> addressList = null;
+            try {
+                addressList = geocoder.getFromLocation(position.latitude, position.longitude, 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            returnIntent.putExtra(KEY_NAME_LOCATION, addressList.get(0).getLocality());
+        } else {
+            returnIntent.putExtra(KEY_LOCATION, (LatLng) null);
+            returnIntent.putExtra(KEY_NAME_LOCATION, (String) null);
+        }
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
     }
 
     /** Gets the current location of the device, and positions the map's camera. */
@@ -278,9 +301,5 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
-    }
-
-    public Marker getMarker() {
-        return marker;
     }
 }

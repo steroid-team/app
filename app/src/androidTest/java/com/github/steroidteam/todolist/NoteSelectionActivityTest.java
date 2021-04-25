@@ -2,15 +2,14 @@ package com.github.steroidteam.todolist;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static org.hamcrest.Matchers.anything;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import android.content.Intent;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.Espresso;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
 import com.github.steroidteam.todolist.database.Database;
@@ -83,10 +82,8 @@ public class NoteSelectionActivityTest {
     @Test
     public void openListWorks() {
         try (ActivityScenario<ListSelectionActivity> scenario = ActivityScenario.launch(intent)) {
-            Espresso.onData(anything())
-                    .inAdapterView(withId(R.id.activity_noteselection_notelist))
-                    .atPosition(1)
-                    .perform(click());
+            onView(withId(R.id.activity_noteselection_recycler))
+                    .perform(actionOnItemAtPosition(0, click()));
 
             Intents.intended(
                     Matchers.allOf(

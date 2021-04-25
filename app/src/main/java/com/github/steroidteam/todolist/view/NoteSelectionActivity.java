@@ -2,19 +2,15 @@ package com.github.steroidteam.todolist.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.view.adapter.NoteAdapter;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -22,18 +18,32 @@ public class NoteSelectionActivity extends AppCompatActivity {
 
     public static final String EXTRA_NOTE_ID = "id";
 
-    private static NoteAdapter adapter;
     private Database database = null;
     ArrayList<Note> notes = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private NoteAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_selection);
 
-        adapter = new NoteAdapter(notes);
-        ListView listView = findViewById(R.id.activity_noteselection_notelist);
-        listView.setAdapter(adapter);
+        recyclerView = findViewById(R.id.activity_noteselection_recycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+
+        NoteAdapter.NoteCustomListener customListener =
+                new NoteAdapter.NoteCustomListener() {
+                    @Override
+                    public void onClickCustom(NoteAdapter.NoteHolder holder) {
+                        openNote(holder);
+                    }
+                };
+
+        adapter = new NoteAdapter(notes, customListener);
+        recyclerView.setAdapter(adapter);
+
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -66,58 +76,14 @@ public class NoteSelectionActivity extends AppCompatActivity {
                         });
     }
 
-    private class NoteAdapter extends BaseAdapter {
-
-        private final ArrayList<Note> notes;
-
-        public NoteAdapter(@NonNull ArrayList<Note> notes) {
-            this.notes = notes;
-        }
-
-        @Override
-        public int getCount() {
-            return notes.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return notes.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position; // No need to specify a particular ID, we just return the position.
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            Note note = (Note) getItem(position);
-            // Check if an existing view is being reused, otherwise inflate the view
-
-            if (convertView == null) {
-                convertView =
-                        LayoutInflater.from(getBaseContext())
-                                .inflate(R.layout.layout_note_item, parent, false);
-            }
-
-            TextView noteViewTitle = convertView.findViewById(R.id.layout_note_title);
-            noteViewTitle.setText(note.getTitle());
-
-            ConstraintLayout noteView = convertView.findViewById(R.id.layout_note);
-            noteView.setOnClickListener(
-                    (view) -> {
-                        // Note note1 = (Note) view.getTag();
-                        Intent noteDisplayActivity =
-                                new Intent(NoteSelectionActivity.this, NoteDisplayActivity.class);
-                        noteDisplayActivity.putExtra(EXTRA_NOTE_ID, note.getId().toString());
-                        startActivity(noteDisplayActivity);
-                    });
-
-            return convertView;
-        }
+    public void openNote(NoteAdapter.NoteHolder holder) {
+        Intent itemViewActivity = new Intent(NoteSelectionActivity.this, NoteDisplayActivity.class);
+        itemViewActivity.putExtra(
+                EXTRA_NOTE_ID, adapter.getIdOfNote(holder.getAdapterPosition()).toString());
+        startActivity(itemViewActivity);
     }
 
-    public void openNotes(View view) {
+    public void goToTODOSelection(View view) {
         Intent listSelectionActivity =
                 new Intent(NoteSelectionActivity.this, ListSelectionActivity.class);
         startActivity(listSelectionActivity);

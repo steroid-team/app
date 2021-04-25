@@ -20,7 +20,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
-import com.github.steroidteam.todolist.model.notes.Note;
 import com.google.android.gms.maps.model.LatLng;
 import java.io.InputStream;
 import java.util.UUID;
@@ -47,11 +46,7 @@ public class NoteDisplayActivity extends AppCompatActivity {
         ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(
                 (view) -> {
-                    TextView noteTitle = findViewById(R.id.note_title);
-                    Note updatedNote = new Note(noteTitle.getText().toString());
-
-                    updatedNote.setContent(editText.getText().toString());
-                    database.putNote(id, updatedNote).thenAccept(str -> finish());
+                    finish();
                 });
 
         database.getNote(id)
@@ -61,6 +56,26 @@ public class NoteDisplayActivity extends AppCompatActivity {
                             noteTitle.setText(note.getTitle());
 
                             editText.setText(note.getContent());
+                        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Intent intent = getIntent();
+        UUID id = UUID.fromString(intent.getStringExtra(NoteSelectionActivity.EXTRA_NOTE_ID));
+
+        EditText editText = findViewById(R.id.activity_notedisplay_edittext);
+        TextView noteTitle = findViewById(R.id.note_title);
+
+        database.getNote(id)
+                .thenCompose(
+                        note -> {
+                            note.setTitle(noteTitle.getText().toString());
+                            note.setContent(editText.getText().toString());
+
+                            return database.putNote(id, note);
                         });
     }
 

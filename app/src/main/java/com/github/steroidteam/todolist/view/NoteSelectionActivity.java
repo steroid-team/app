@@ -19,7 +19,7 @@ public class NoteSelectionActivity extends AppCompatActivity {
     public static final String EXTRA_NOTE_ID = "id";
 
     private Database database = null;
-    ArrayList<Note> notes = new ArrayList<>();
+    ArrayList<Note> notes;
     private RecyclerView recyclerView;
     private NoteAdapter adapter;
 
@@ -32,6 +32,7 @@ public class NoteSelectionActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
+        notes = new ArrayList<>();
         NoteAdapter.NoteCustomListener customListener = this::openNote;
 
         adapter = new NoteAdapter(notes, customListener);

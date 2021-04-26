@@ -2,18 +2,10 @@ package com.github.steroidteam.todolist.filestorage;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -82,12 +74,9 @@ public class LocalFileStorageService implements FileStorageService {
         return CompletableFuture.supplyAsync(
                 () -> {
                     File[] fileList = file.listFiles();
-                    if(fileList!=null) {
-                        return Arrays.stream(fileList)
-                                .map(File::getName)
-                                .toArray(String[]::new);
-                    }
-                    else {
+                    if (fileList != null) {
+                        return Arrays.stream(fileList).map(File::getName).toArray(String[]::new);
+                    } else {
                         return new String[0];
                     }
                 });

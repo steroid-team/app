@@ -88,7 +88,7 @@ public class LocalDatabaseTest {
     }
 
     @Test
-    public void removeTodoListWorks()  {
+    public void removeTodoListWorks() {
         final UUID todoListID = UUID.randomUUID();
         final String expectedPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
@@ -266,7 +266,7 @@ public class LocalDatabaseTest {
     }
 
     @Test
-    public void getTaskWorks()  {
+    public void getTaskWorks() {
         final TodoList todoList = new TodoList("My list");
         final Task FIXTURE_TASK_1 = new Task("Buy bananas");
         final Task FIXTURE_TASK_2 = new Task("Eat bananas");

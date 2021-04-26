@@ -1,23 +1,19 @@
 package com.github.steroidteam.todolist;
 
-import android.content.Context;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 
+import android.content.Context;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
-
 import com.github.steroidteam.todolist.filestorage.LocalFileStorageService;
-
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
 
 @RunWith(AndroidJUnit4.class)
 public class LocalFileStorageTest {
@@ -37,16 +33,16 @@ public class LocalFileStorageTest {
     public void removeAllTestFiles() {
         File[] files = appContext.getFilesDir().listFiles();
         if (files != null) {
-            for(File f1: files) {
-                //LEVEL: f1 = user-data-local
+            for (File f1 : files) {
+                // LEVEL: f1 = user-data-local
                 File[] list1 = f1.listFiles();
-                if(list1!=null) {
+                if (list1 != null) {
                     for (File f2 : f1.listFiles()) {
-                        //LEVEL: f2 = test-data
+                        // LEVEL: f2 = test-data
                         File[] list2 = f2.listFiles();
-                        if(list2!=null) {
+                        if (list2 != null) {
                             for (File f3 : list2) {
-                                //LEVEL: f3 = data1,...
+                                // LEVEL: f3 = data1,...
                                 f3.delete();
                             }
                         }
@@ -96,7 +92,9 @@ public class LocalFileStorageTest {
         final String PATH_1 = PATH + "data1";
         localFileStorageService.upload(TEST_DATA_1, PATH_1).join();
         byte[] res = localFileStorageService.download(PATH_1).join();
-        assertEquals(new String(TEST_DATA_1, StandardCharsets.UTF_8), new String(res, StandardCharsets.UTF_8));
+        assertEquals(
+                new String(TEST_DATA_1, StandardCharsets.UTF_8),
+                new String(res, StandardCharsets.UTF_8));
     }
 
     @Test

@@ -127,14 +127,14 @@
             android:layout_height="match_parent">
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/cancelColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="cancelColorButton"
                 android:text="Cancel" />
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/applyColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="applyColorButton"

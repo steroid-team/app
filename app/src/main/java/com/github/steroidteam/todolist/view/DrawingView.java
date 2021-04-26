@@ -38,6 +38,7 @@ public class DrawingView extends View {
         super.onSizeChanged(width, height, oldWidth, oldHeight);
         bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
+        canvas.drawColor(BACKGROUND_COLOR);
     }
 
     @Override

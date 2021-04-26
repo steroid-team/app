@@ -13,10 +13,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public class LocalDatabase {
+public class LocalDatabase implements Database {
 
     private final LocalFileStorageService storageService;
     private static final String TODO_LIST_PATH = "/todo-lists/";
@@ -28,6 +27,7 @@ public class LocalDatabase {
         this.storageService = storageService;
     }
 
+    @Override
     public CompletableFuture<TodoListCollection> getTodoListCollection() {
         CompletableFuture<String[]> listDirFuture = storageService.listDir(TODO_LIST_PATH);
 
@@ -40,6 +40,7 @@ public class LocalDatabase {
                                         .collect(Collectors.toList())));
     }
 
+    @Override
     public CompletableFuture<TodoList> putTodoList(TodoList list) {
         Objects.requireNonNull(list);
         String targetPath = TODO_LIST_PATH + list.getId().toString() + ".json";
@@ -51,17 +52,22 @@ public class LocalDatabase {
         return this.storageService.upload(listSerialized, targetPath).thenApply(s -> list);
     }
 
-    public void removeTodoList(UUID todoListID) throws DatabaseException {
+    @Override
+    public CompletableFuture<Void> removeTodoList(UUID todoListID) {
         Objects.requireNonNull(todoListID);
         String targetPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
-        try {
-            this.storageService.delete(targetPath).get();
-        } catch (ExecutionException | InterruptedException e) {
-            throw new DatabaseException(e.toString());
-        }
+        return this.storageService
+                .delete(targetPath)
+                .thenCompose(
+                        str -> {
+                            CompletableFuture<Void> future = new CompletableFuture<>();
+                            future.complete(null);
+                            return future;
+                        });
     }
 
+    @Override
     public CompletableFuture<TodoList> getTodoList(UUID todoListID) {
         Objects.requireNonNull(todoListID);
         String targetPath = TODO_LIST_PATH + todoListID.toString() + ".json";
@@ -74,6 +80,7 @@ public class LocalDatabase {
                                         new String(bytes, StandardCharsets.UTF_8)));
     }
 
+    @Override
     public CompletableFuture<TodoList> updateTodoList(UUID todoListID, TodoList todoList) {
         Objects.requireNonNull(todoListID);
         Objects.requireNonNull(todoList);
@@ -84,7 +91,8 @@ public class LocalDatabase {
         return this.storageService.upload(fBytes, targetPath).thenApply(str -> todoList);
     }
 
-    public CompletableFuture<Task> putTask(UUID todoListID, Task task) throws DatabaseException {
+    @Override
+    public CompletableFuture<Task> putTask(UUID todoListID, Task task) {
         Objects.requireNonNull(todoListID);
         Objects.requireNonNull(task);
         String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
@@ -105,6 +113,7 @@ public class LocalDatabase {
                 .thenApply(str -> task);
     }
 
+    @Override
     public CompletableFuture<TodoList> removeTask(
             @NonNull UUID todoListID, @NonNull Integer taskIndex) {
         Objects.requireNonNull(todoListID);
@@ -130,10 +139,10 @@ public class LocalDatabase {
                         });
     }
 
+    @Override
     public CompletableFuture<Task> renameTask(UUID todoListID, Integer taskIndex, String newName) {
         Objects.requireNonNull(todoListID);
         Objects.requireNonNull(taskIndex);
-        Objects.requireNonNull(newName);
         String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
         // Fetch the remote list that we are about to update.
@@ -145,18 +154,10 @@ public class LocalDatabase {
                             return todoList;
                         })
                 // Re-serialize and upload the new object.
-                .thenCompose(
-                        todoList -> {
-                            Task renamedTask = todoList.getTask(taskIndex);
-                            byte[] bytes =
-                                    JSONSerializer.serializeTodoList(todoList)
-                                            .getBytes(StandardCharsets.UTF_8);
-                            return this.storageService
-                                    .upload(bytes, listPath)
-                                    .thenApply(str -> renamedTask);
-                        });
+                .thenCompose(todoList -> uploadTask(todoList, taskIndex, listPath));
     }
 
+    @Override
     public CompletableFuture<Task> getTask(@NonNull UUID todoListID, @NonNull Integer taskIndex) {
         Objects.requireNonNull(todoListID);
         Objects.requireNonNull(taskIndex);
@@ -166,6 +167,7 @@ public class LocalDatabase {
         return getTodoList(todoListID).thenApply(todoList -> todoList.getTask(taskIndex));
     }
 
+    @Override
     public CompletableFuture<Note> getNote(UUID noteID) {
         Objects.requireNonNull(noteID);
         String notePath = NOTES_PATH + noteID.toString() + ".json";
@@ -176,14 +178,16 @@ public class LocalDatabase {
                 .thenApply(JSONSerializer::deserializeNote);
     }
 
-    public CompletableFuture<Note> putNote(Note note) {
+    @Override
+    public CompletableFuture<Note> putNote(UUID noteID, Note note) {
         Objects.requireNonNull(note);
-        String notePath = NOTES_PATH + note.getId().toString() + ".json";
+        String notePath = NOTES_PATH + noteID.toString() + ".json";
         byte[] serializedNote = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
 
         return this.storageService.upload(serializedNote, notePath).thenApply(str -> note);
     }
 
+    @Override
     public CompletableFuture<List<UUID>> getNotesList() {
         CompletableFuture<String[]> listDir = this.storageService.listDir(NOTES_PATH);
 
@@ -195,6 +199,7 @@ public class LocalDatabase {
                                 .collect(Collectors.toList()));
     }
 
+    @Override
     public CompletableFuture<Task> setTaskDone(UUID todoListID, int index, boolean isDone) {
         Objects.requireNonNull(todoListID);
         String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
@@ -209,15 +214,12 @@ public class LocalDatabase {
                             return todoList;
                         })
                 // Re-serialize and upload the new object.
-                .thenCompose(
-                        todoList -> {
-                            Task updatedTask = todoList.getTask(index);
-                            byte[] bytes =
-                                    JSONSerializer.serializeTodoList(todoList)
-                                            .getBytes(StandardCharsets.UTF_8);
-                            return this.storageService
-                                    .upload(bytes, listPath)
-                                    .thenApply(str -> updatedTask);
-                        });
+                .thenCompose(todoList -> uploadTask(todoList, index, listPath));
+    }
+
+    private CompletableFuture<Task> uploadTask(TodoList todoList, int index, String path) {
+        Task updatedTask = todoList.getTask(index);
+        byte[] bytes = JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+        return this.storageService.upload(bytes, path).thenApply(str -> updatedTask);
     }
 }

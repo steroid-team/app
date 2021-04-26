@@ -2,12 +2,15 @@ package com.github.steroidteam.todolist.filestorage;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
-import com.github.steroidteam.todolist.database.DatabaseException;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -18,8 +21,10 @@ import java.util.concurrent.CompletableFuture;
 public class LocalFileStorageService implements FileStorageService {
 
     private final Context context;
+    private final String USER_SPACE = "user-data-local/";
 
-    public LocalFileStorageService(Context context) {
+    public LocalFileStorageService(@NonNull Context context) {
+        Objects.requireNonNull(context);
         this.context = context;
     }
 
@@ -29,9 +34,7 @@ public class LocalFileStorageService implements FileStorageService {
 
     private String getUserspaceRef(@NonNull String path) {
         Objects.requireNonNull(path);
-        // When we will have a user interface:
-        // "user-data/" + this.user.getUid() + "/" + path
-        return "user-data/" + path;
+        return USER_SPACE + path;
     }
 
     @Override
@@ -41,12 +44,8 @@ public class LocalFileStorageService implements FileStorageService {
         return CompletableFuture.supplyAsync(
                 () -> {
                     File file = getFile(this.getRootFile(), this.getUserspaceRef(path));
-                    try {
-                        writeOnFile(Arrays.toString(bytes), file);
-                        return path;
-                    } catch (DatabaseException ignored) {
-                        return "error";
-                    }
+                    writeOnFile(bytes, file);
+                    return path;
                 });
     }
 
@@ -57,11 +56,7 @@ public class LocalFileStorageService implements FileStorageService {
         return CompletableFuture.supplyAsync(
                 () -> {
                     File file = getFile(this.getRootFile(), this.getUserspaceRef(path));
-                    try {
-                        return readOnFile(file).getBytes(StandardCharsets.UTF_8);
-                    } catch (DatabaseException e) {
-                        return null;
-                    }
+                    return readOnFile(file);
                 });
     }
 
@@ -86,9 +81,15 @@ public class LocalFileStorageService implements FileStorageService {
 
         return CompletableFuture.supplyAsync(
                 () -> {
-                    return Arrays.stream(file.listFiles())
-                            .map(File::getName)
-                            .toArray(String[]::new);
+                    File[] fileList = file.listFiles();
+                    if(fileList!=null) {
+                        return Arrays.stream(fileList)
+                                .map(File::getName)
+                                .toArray(String[]::new);
+                    }
+                    else {
+                        return new String[0];
+                    }
                 });
     }
 
@@ -97,42 +98,31 @@ public class LocalFileStorageService implements FileStorageService {
         return new File(rootDestination, path);
     }
 
-    private String readOnFile(File file) throws DatabaseException {
-        String result = null;
+    private byte[] readOnFile(File file) {
+        byte[] data = null;
         if (file.exists()) {
             try {
-                try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                    StringBuilder sb = new StringBuilder();
-                    String line = br.readLine();
-                    while (line != null) {
-                        sb.append(line);
-                        sb.append("\n");
-                        line = br.readLine();
-                    }
-                    result = sb.toString();
-                    br.close();
-                }
-            } catch (Exception e) {
-                throw new DatabaseException("unable to read file at: " + file);
+                FileInputStream fis = new FileInputStream(file);
+                data = new byte[(int) file.length()];
+                fis.read(data);
+                fis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        return result;
+        return data;
     }
 
-    private void writeOnFile(String text, File file) throws DatabaseException {
+    private void writeOnFile(byte[] data, File file) {
         try {
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
             }
             FileOutputStream fos = new FileOutputStream(file);
-            try (Writer w = new BufferedWriter(new OutputStreamWriter(fos))) {
-                w.write(text);
-                w.flush();
-                fos.getFD().sync();
-                w.close();
-            }
-        } catch (Exception e) {
-            throw new DatabaseException("unable to write on file at: " + file);
+            fos.write(data);
+            fos.flush();
+            fos.close();
+        } catch (Exception ignored) {
         }
     }
 }

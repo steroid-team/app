@@ -88,7 +88,7 @@ public class LocalDatabaseTest {
     }
 
     @Test
-    public void removeTodoListWorks() throws DatabaseException {
+    public void removeTodoListWorks()  {
         final UUID todoListID = UUID.randomUUID();
         final String expectedPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
@@ -105,22 +105,6 @@ public class LocalDatabaseTest {
     }
 
     @Test
-    public void removeTodoListThrowsDatabaseExceptionOnError() {
-        final UUID todoListID = UUID.randomUUID();
-        final String expectedPath = TODO_LIST_PATH + todoListID.toString() + ".json";
-
-        // Return a future that simulates an error during the deletion.
-        final CompletableFuture<Void> failingFuture = new CompletableFuture<>();
-        failingFuture.completeExceptionally(new RuntimeException());
-        when(localFileStorageService.delete(expectedPath)).thenReturn(failingFuture);
-
-        final LocalDatabase database = new LocalDatabase(localFileStorageService);
-
-        assertThrows(DatabaseException.class, () -> database.removeTodoList(todoListID));
-        verify(localFileStorageService).delete(expectedPath);
-    }
-
-    @Test
     public void getTodoListRejectsNullTodoListID() {
         assertThrows(
                 NullPointerException.class,
@@ -130,7 +114,7 @@ public class LocalDatabaseTest {
     }
 
     @Test
-    public void getTodoListWorks() throws DatabaseException {
+    public void getTodoListWorks() {
         final TodoList todoList = new TodoList("My list");
         final Task FIXTURE_TASK_1 = new Task("Buy bananas");
         final Task FIXTURE_TASK_2 = new Task("Eat bananas");
@@ -179,7 +163,7 @@ public class LocalDatabaseTest {
     }
 
     @Test
-    public void putTaskWorks() throws DatabaseException {
+    public void putTaskWorks() {
         final TodoList todoList = new TodoList("My list");
         final Task FIXTURE_TASK_1 = new Task("Buy bananas");
         final Task FIXTURE_TASK_2 = new Task("Eat bananas");
@@ -231,7 +215,7 @@ public class LocalDatabaseTest {
     }
 
     @Test
-    public void removeTaskWorks() throws DatabaseException {
+    public void removeTaskWorks() {
         final TodoList todoList = new TodoList("My list");
         final Task FIXTURE_TASK_1 = new Task("Buy bananas");
         todoList.addTask(FIXTURE_TASK_1);
@@ -282,7 +266,7 @@ public class LocalDatabaseTest {
     }
 
     @Test
-    public void getTaskWorks() throws DatabaseException {
+    public void getTaskWorks()  {
         final TodoList todoList = new TodoList("My list");
         final Task FIXTURE_TASK_1 = new Task("Buy bananas");
         final Task FIXTURE_TASK_2 = new Task("Eat bananas");
@@ -424,7 +408,12 @@ public class LocalDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new LocalDatabase(localFileStorageService).putNote(null);
+                    new LocalDatabase(localFileStorageService).putNote(null, new Note("a"));
+                });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new LocalDatabase(localFileStorageService).putNote(UUID.randomUUID(), null);
                 });
     }
 
@@ -446,7 +435,7 @@ public class LocalDatabaseTest {
         // Try to add a valid list.
         final LocalDatabase database = new LocalDatabase(localFileStorageService);
         try {
-            assertEquals(note, database.putNote(note).get());
+            assertEquals(note, database.putNote(note.getId(), note).get());
         } catch (Exception e) {
             fail();
         }

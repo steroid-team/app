@@ -16,7 +16,7 @@ import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-import com.github.steroidteam.todolist.todo.TodoListCollection;
+import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.ListSelectionActivity;
 import com.github.steroidteam.todolist.view.NoteDisplayActivity;
 import com.github.steroidteam.todolist.view.NoteSelectionActivity;

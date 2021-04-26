@@ -28,7 +28,7 @@ import androidx.test.espresso.intent.Intents;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-import com.github.steroidteam.todolist.todo.TodoListCollection;
+import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.ItemViewActivity;
 import com.github.steroidteam.todolist.view.ListSelectionActivity;
 import com.github.steroidteam.todolist.view.NoteSelectionActivity;

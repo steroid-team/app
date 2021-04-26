@@ -9,7 +9,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.github.steroidteam.todolist.view.DrawingView.BACKGROUND_COLOR;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -66,9 +65,9 @@ public class DrawingTest {
                     activity -> {
                         boolean draw = false;
                         Bitmap bitmap = activity.drawingCanvas.getBitmap();
-                        for(int x = 0; x < bitmap.getWidth() && !draw; x++){
-                            for(int y = 0; y < bitmap.getHeight() && !draw; y++){
-                                if (bitmap.getPixel(x, y) == Color.BLACK){
+                        for (int x = 0; x < bitmap.getWidth() && !draw; x++) {
+                            for (int y = 0; y < bitmap.getHeight() && !draw; y++) {
+                                if (bitmap.getPixel(x, y) == Color.BLACK) {
                                     draw = true;
                                 }
                             }

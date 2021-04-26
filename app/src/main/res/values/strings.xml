@@ -32,4 +32,7 @@
     <string name="location_not_found">Location not found !</string>
     <string name="location_btn_description">Location</string>
     <string name="note_location">No location</string>
+    <string name="is_recording">Recording...</string>
+    <string name="stop_recording">Stopped the recording</string>
+    <string name="pause_recording">Paused the recording</string>
 </resources>

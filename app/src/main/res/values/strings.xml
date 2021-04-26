@@ -20,7 +20,9 @@
     <string name="note_activity_title">My notes</string>
     <string name="search_btn_description">Search</string>
     <string name="back_btn_description">Back</string>
+    <string name="add_header_photo">Photo</string>
     <string name="new_list_btn_description">Add a new list</string>
+    <string name="new_note_btn_description">Add a new note</string>
     <string name="date_placeholder">xx/yy aa:bb</string>
     <string name="note_date_placeholder">Day, Nth Month YEAR</string>
     <string name="undo">UNDO</string>
@@ -29,4 +31,8 @@
     <string name="default_location">Sydney</string>
     <string name="current_location_message">I\'m here</string>
     <string name="location_not_found">Location not found !</string>
+    <string name="location_btn_description">Location</string>
+    <string name="note_location">No location</string>
+    <string name="new_todolist_title">New list</string>
+
 </resources>

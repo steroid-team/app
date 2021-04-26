@@ -9,6 +9,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.github.steroidteam.todolist.view.DrawingView.BACKGROUND_COLOR;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -52,19 +53,27 @@ public class DrawingTest {
                 ActivityScenario.launch(drawingActivity)) {
             scenario.onActivity(
                     activity -> {
-                        activity.drawingCanvas.touchStart(100, 100);
-                        activity.drawingCanvas.touchMove(100, 200);
+                        activity.drawingCanvas.touchStart(5, 5);
+                        activity.drawingCanvas.touchMove(5, 15);
                         assertEquals(
                                 Color.BLACK,
-                                activity.drawingCanvas.getBitmap().getColor(100, 150).toArgb());
+                                activity.drawingCanvas.getBitmap().getColor(5, 10).toArgb());
+                        activity.drawingCanvas.erase();
                     });
-
             onView(withId(R.id.drawSpace)).perform(ViewActions.swipeRight());
+
             scenario.onActivity(
                     activity -> {
-                        assertEquals(
-                                Color.BLACK,
-                                activity.drawingCanvas.getBitmap().getColor(200, 392).toArgb());
+                        boolean draw = false;
+                        Bitmap bitmap = activity.drawingCanvas.getBitmap();
+                        for(int x = 0; x < bitmap.getWidth() && !draw; x++){
+                            for(int y = 0; y < bitmap.getHeight() && !draw; y++){
+                                if (bitmap.getPixel(x, y) == Color.BLACK){
+                                    draw = true;
+                                }
+                            }
+                        }
+                        assertTrue(draw);
                     });
         }
     }

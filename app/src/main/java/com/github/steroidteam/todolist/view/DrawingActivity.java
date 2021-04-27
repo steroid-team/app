@@ -100,41 +100,41 @@ public class DrawingActivity extends AppCompatActivity {
         startActivity(listSelectionActivity);
     }
 
-    private void setButtonFocus(boolean firstBtnHasFocus, boolean secondBtnHasFocus, boolean thirdBtnHasFocus, boolean fourthBtnHasFocus, boolean colorBtnHasFocus) {
+    private void setButtonFocus(
+            boolean firstBtnHasFocus,
+            boolean secondBtnHasFocus,
+            boolean thirdBtnHasFocus,
+            boolean fourthBtnHasFocus,
+            boolean colorBtnHasFocus) {
         Button firstButton = findViewById(R.id.drawing_first_button);
         Button secondButton = findViewById(R.id.drawing_second_button);
         Button thirdButton = findViewById(R.id.drawing_third_button);
         Button fourthButton = findViewById(R.id.drawing_fourth_button);
         Button colorChooseButton = findViewById(R.id.colorChoose);
 
-        if(firstBtnHasFocus) {
+        if (firstBtnHasFocus) {
             firstButton.setBackground(getDrawable(R.drawable.first_button_drawing_onfocus));
-        }
-        else {
+        } else {
             firstButton.setBackground(getDrawable(R.drawable.first_button_drawing));
         }
-        if(secondBtnHasFocus) {
+        if (secondBtnHasFocus) {
             secondButton.setBackground(getDrawable(R.drawable.second_button_drawing_onfocus));
-        }
-        else {
+        } else {
             secondButton.setBackground(getDrawable(R.drawable.second_button_drawing));
         }
-        if(thirdBtnHasFocus) {
+        if (thirdBtnHasFocus) {
             thirdButton.setBackground(getDrawable(R.drawable.third_button_drawing_onfocus));
-        }
-        else {
+        } else {
             thirdButton.setBackground(getDrawable(R.drawable.third_button_drawing));
         }
-        if(fourthBtnHasFocus) {
+        if (fourthBtnHasFocus) {
             fourthButton.setBackground(getDrawable(R.drawable.fourth_button_drawing_onfocus));
-        }
-        else {
+        } else {
             fourthButton.setBackground(getDrawable(R.drawable.fourth_button_drawing));
         }
-        if(colorBtnHasFocus) {
+        if (colorBtnHasFocus) {
             colorChooseButton.setBackground(getDrawable(R.drawable.colorpicker_button));
-        }
-        else {
+        } else {
             colorChooseButton.setBackground(getDrawable(R.drawable.colorpicker_button_onfocus));
         }
     }

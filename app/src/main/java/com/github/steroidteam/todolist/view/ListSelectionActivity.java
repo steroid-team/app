@@ -87,7 +87,7 @@ public class ListSelectionActivity extends AppCompatActivity {
         Intent drawingActivity = new Intent(ListSelectionActivity.this, DrawingActivity.class);
         startActivity(drawingActivity);
     }
-  
+
     public void createList(View view) {
         TodoList todoList = new TodoList(getString(R.string.new_todolist_title));
         database.putTodoList(todoList)

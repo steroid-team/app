@@ -18,35 +18,65 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.google.android.gms.maps.model.LatLng;
 import java.io.InputStream;
+import java.util.UUID;
 
 public class NoteDisplayActivity extends AppCompatActivity {
     private int LAUNCH_SECOND_ACTIVITY = 2;
 
     public static final int PICK_IMAGE = 1;
 
+    private Database database = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_display);
 
-        // Add a click listener to the "back" button to return to the previous activity.
-        ImageButton backButton = findViewById(R.id.back_button);
-        backButton.setOnClickListener((view) -> finish());
+        database = DatabaseFactory.getDb();
 
         Intent intent = getIntent();
+        UUID id = UUID.fromString(intent.getStringExtra(NoteSelectionActivity.EXTRA_NOTE_ID));
+        EditText editText = findViewById(R.id.activity_notedisplay_edittext);
 
+        // Add a click listener to the "back" button to return to the previous activity.
+        ImageButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(
+                (view) -> {
+                    finish();
+                });
+
+        database.getNote(id)
+                .thenAccept(
+                        note -> {
+                            TextView noteTitle = findViewById(R.id.note_title);
+                            noteTitle.setText(note.getTitle());
+
+                            editText.setText(note.getContent());
+                        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Intent intent = getIntent();
+        UUID id = UUID.fromString(intent.getStringExtra(NoteSelectionActivity.EXTRA_NOTE_ID));
+
+        EditText editText = findViewById(R.id.activity_notedisplay_edittext);
         TextView noteTitle = findViewById(R.id.note_title);
-        noteTitle.setText("Lorem ipsum");
 
-        EditText view = findViewById(R.id.activity_notedisplay_edittext);
-        view.setText(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
-                        + " incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation"
-                        + " ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in"
-                        + " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non"
-                        + " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+        database.getNote(id)
+                .thenCompose(
+                        note -> {
+                            note.setTitle(noteTitle.getText().toString());
+                            note.setContent(editText.getText().toString());
+
+                            return database.putNote(id, note);
+                        });
     }
 
     public void pickFile(View view) {

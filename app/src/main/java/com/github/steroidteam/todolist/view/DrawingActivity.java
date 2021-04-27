@@ -133,9 +133,9 @@ public class DrawingActivity extends AppCompatActivity {
             fourthButton.setBackground(getDrawable(R.drawable.fourth_button_drawing));
         }
         if (colorBtnHasFocus) {
-            colorChooseButton.setBackground(getDrawable(R.drawable.colorpicker_button));
-        } else {
             colorChooseButton.setBackground(getDrawable(R.drawable.colorpicker_button_onfocus));
+        } else {
+            colorChooseButton.setBackground(getDrawable(R.drawable.colorpicker_button));
         }
     }
 }

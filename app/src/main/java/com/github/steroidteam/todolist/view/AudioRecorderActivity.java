@@ -7,6 +7,7 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,16 +35,8 @@ public class AudioRecorderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_recorder);
-        playButton = findViewById(R.id.play_button);
-        playButton.setOnClickListener(view -> {
-            if (isPlaying){
-                stopPlayingAudio();
-                isPlaying = false;
-            } else {
-                startPlayingAudio();
-                isPlaying = true;
-            }
-        });
+        ImageButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener((view) -> finish());
         fileName = getExternalCacheDir().getAbsolutePath();
         fileName += "/audioTest.3gp";
 
@@ -109,6 +102,23 @@ public class AudioRecorderActivity extends AppCompatActivity {
                 .show();
     }
 
+    public void playingOnClick(View view) {
+        if (isPlaying) {
+            pausePlayingAudio();
+            isPlaying = false;
+        } else {
+            startPlayingAudio();
+            isPlaying = true;
+        }
+    }
+
+    private void pausePlayingAudio() {
+        player.pause();
+        ImageButton playButton = findViewById(R.id.play_button);
+        playButton.setImageResource(android.R.drawable.ic_media_play);
+        //Change icon
+    }
+
     private void startPlayingAudio() {
         player = new MediaPlayer();
         try {
@@ -118,6 +128,8 @@ public class AudioRecorderActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        ImageButton playButton = findViewById(R.id.play_button);
+        playButton.setImageResource(android.R.drawable.ic_media_pause);
     }
 
     private void stopPlayingAudio() {

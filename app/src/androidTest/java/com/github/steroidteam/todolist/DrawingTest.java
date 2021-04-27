@@ -86,7 +86,9 @@ public class DrawingTest {
             onView(withId(R.id.drawing_first_button)).perform(click());
             scenario.onActivity(
                     activity -> {
-                        assertEquals(R.color.first_drawing_button, activity.drawingCanvas.getPaint().getColor());
+                        assertEquals(
+                                R.color.first_drawing_button,
+                                activity.drawingCanvas.getPaint().getColor());
                     });
         }
     }
@@ -100,7 +102,9 @@ public class DrawingTest {
             onView(withId(R.id.drawing_second_button)).perform(click());
             scenario.onActivity(
                     activity -> {
-                        assertEquals(R.color.second_drawing_button, activity.drawingCanvas.getPaint().getColor());
+                        assertEquals(
+                                R.color.second_drawing_button,
+                                activity.drawingCanvas.getPaint().getColor());
                     });
         }
     }
@@ -114,7 +118,9 @@ public class DrawingTest {
             onView(withId(R.id.drawing_third_button)).perform(click());
             scenario.onActivity(
                     activity -> {
-                        assertEquals(R.color.third_drawing_button, activity.drawingCanvas.getPaint().getColor());
+                        assertEquals(
+                                R.color.third_drawing_button,
+                                activity.drawingCanvas.getPaint().getColor());
                     });
         }
     }
@@ -128,7 +134,9 @@ public class DrawingTest {
             onView(withId(R.id.drawing_fourth_button)).perform(click());
             scenario.onActivity(
                     activity -> {
-                        assertEquals(R.color.fourth_drawing_button, activity.drawingCanvas.getPaint().getColor());
+                        assertEquals(
+                                R.color.fourth_drawing_button,
+                                activity.drawingCanvas.getPaint().getColor());
                     });
         }
     }

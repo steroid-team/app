@@ -87,7 +87,7 @@ public class DrawingTest {
             scenario.onActivity(
                     activity -> {
                         assertEquals(
-                                R.color.first_drawing_button,
+                                activity.getColor(R.color.first_drawing_button),
                                 activity.drawingCanvas.getPaint().getColor());
                     });
         }
@@ -103,7 +103,7 @@ public class DrawingTest {
             scenario.onActivity(
                     activity -> {
                         assertEquals(
-                                R.color.second_drawing_button,
+                                activity.getColor(R.color.second_drawing_button),
                                 activity.drawingCanvas.getPaint().getColor());
                     });
         }
@@ -119,7 +119,7 @@ public class DrawingTest {
             scenario.onActivity(
                     activity -> {
                         assertEquals(
-                                R.color.third_drawing_button,
+                                activity.getColor(R.color.third_drawing_button),
                                 activity.drawingCanvas.getPaint().getColor());
                     });
         }
@@ -135,7 +135,7 @@ public class DrawingTest {
             scenario.onActivity(
                     activity -> {
                         assertEquals(
-                                R.color.fourth_drawing_button,
+                                activity.getColor(R.color.fourth_drawing_button),
                                 activity.drawingCanvas.getPaint().getColor());
                     });
         }

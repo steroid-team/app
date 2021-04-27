@@ -41,10 +41,10 @@ public class DrawingActivity extends AppCompatActivity {
         colorPicker.addValueBar(valueBar);
 
         // SET COLOR OF BUTTONS:
-        firstButtonColor = R.color.first_drawing_button;
-        secondButtonColor = R.color.second_drawing_button;
-        thirdButtonColor = R.color.third_drawing_button;
-        fourthButtonColor = R.color.fourth_drawing_button;
+        firstButtonColor = getColor(R.color.first_drawing_button);
+        secondButtonColor = getColor(R.color.second_drawing_button);
+        thirdButtonColor = getColor(R.color.third_drawing_button);
+        fourthButtonColor = getColor(R.color.fourth_drawing_button);
         setFocusBackground(5);
     }
 

@@ -18,7 +18,7 @@ public class DrawingView extends View {
     private float xPath, yPath;
     private final float TOUCH_TOLERANCE = 4;
     private final float STROKE_WIDTH = 12f;
-    public static final int BACKGROUND_COLOR = Color.argb(255, 235, 235, 235);
+    public static final int BACKGROUND_COLOR = Color.argb(255, 255, 255, 250);
 
     public DrawingView(Context context) {
         super(context);

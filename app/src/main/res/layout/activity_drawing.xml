@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:foregroundTint="#FFFFFF"
     tools:context=".view.DrawingActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -48,10 +47,13 @@
         android:id="@+id/erase_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/TaskDeleteButton"
         android:onClick="eraseButton"
         android:text="Erase"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/drawSpace" />
 
     <FrameLayout
         android:id="@+id/drawSpace"
@@ -61,7 +63,6 @@
         android:layout_marginTop="180dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="180dp"
-        android:background="#ebebeb"
         android:outlineProvider="paddedBounds"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -73,58 +74,46 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="120dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="10dp"
         android:orientation="horizontal"
+        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/drawSpace"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
         <Button
-            android:id="@+id/colorRed"
+            android:id="@+id/drawing_first_button"
             style="?attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:foreground="@android:drawable/radiobutton_off_background"
-            android:foregroundTint="#F44336"
-            android:onClick="redButton" />
+            android:onClick="firstButton" />
 
         <Button
-            android:id="@+id/colorGreen"
+            android:id="@+id/drawing_second_button"
             style="?attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:foreground="@android:drawable/radiobutton_off_background"
-            android:foregroundTint="#4CAF50"
-            android:onClick="greenButton" />
+            android:onClick="secondButton" />
 
         <Button
-            android:id="@+id/colorBlue"
+            android:id="@+id/drawing_third_button"
             style="?attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:foreground="@android:drawable/radiobutton_off_background"
-            android:foregroundTint="#2196F3"
-            android:onClick="blueButton" />
+            android:onClick="thirdButton" />
 
         <Button
-            android:id="@+id/colorBlack"
+            android:id="@+id/drawing_fourth_button"
             style="?attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:foreground="@android:drawable/radiobutton_off_background"
-            android:foregroundTint="#000000"
-            android:onClick="blackButton" />
+            android:onClick="fourthButton" />
 
         <Button
             android:id="@+id/colorChoose"
             style="?attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:foreground="@drawable/cp"
             android:onClick="ColorPickerButton"
             android:scaleX="0.8"
             android:scaleY="0.8" />
@@ -161,12 +150,15 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:gravity="center">
 
             <Button
                 android:id="@+id/cancelColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="@style/TaskUndoButton"
+                android:layout_margin="5dp"
                 android:onClick="cancelColorButton"
                 android:text="Cancel" />
 
@@ -174,6 +166,8 @@
                 android:id="@+id/applyColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="@style/TaskSaveButton"
+                android:layout_margin="5dp"
                 android:onClick="applyColorButton"
                 android:text="Apply" />
         </TableRow>

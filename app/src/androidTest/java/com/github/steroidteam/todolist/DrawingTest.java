@@ -78,57 +78,57 @@ public class DrawingTest {
     }
 
     @Test
-    public void redButtonWorks() {
+    public void firstButtonWorks() {
         Intent redActivity =
                 new Intent(ApplicationProvider.getApplicationContext(), DrawingActivity.class);
 
         try (ActivityScenario<DrawingActivity> scenario = ActivityScenario.launch(redActivity)) {
-            onView(withId(R.id.colorRed)).perform(click());
+            onView(withId(R.id.drawing_first_button)).perform(click());
             scenario.onActivity(
                     activity -> {
-                        assertEquals(Color.RED, activity.drawingCanvas.getPaint().getColor());
+                        assertEquals(R.color.first_drawing_button, activity.drawingCanvas.getPaint().getColor());
                     });
         }
     }
 
     @Test
-    public void greenButtonWorks() {
+    public void secondButtonWorks() {
         Intent greenActivity =
                 new Intent(ApplicationProvider.getApplicationContext(), DrawingActivity.class);
 
         try (ActivityScenario<DrawingActivity> scenario = ActivityScenario.launch(greenActivity)) {
-            onView(withId(R.id.colorGreen)).perform(click());
+            onView(withId(R.id.drawing_second_button)).perform(click());
             scenario.onActivity(
                     activity -> {
-                        assertEquals(Color.GREEN, activity.drawingCanvas.getPaint().getColor());
+                        assertEquals(R.color.second_drawing_button, activity.drawingCanvas.getPaint().getColor());
                     });
         }
     }
 
     @Test
-    public void blueButtonWorks() {
+    public void thirdButtonWorks() {
         Intent blueActivity =
                 new Intent(ApplicationProvider.getApplicationContext(), DrawingActivity.class);
 
         try (ActivityScenario<DrawingActivity> scenario = ActivityScenario.launch(blueActivity)) {
-            onView(withId(R.id.colorBlue)).perform(click());
+            onView(withId(R.id.drawing_third_button)).perform(click());
             scenario.onActivity(
                     activity -> {
-                        assertEquals(Color.BLUE, activity.drawingCanvas.getPaint().getColor());
+                        assertEquals(R.color.third_drawing_button, activity.drawingCanvas.getPaint().getColor());
                     });
         }
     }
 
     @Test
-    public void blackButtonWorks() {
+    public void fourthButtonWorks() {
         Intent blackActivity =
                 new Intent(ApplicationProvider.getApplicationContext(), DrawingActivity.class);
 
         try (ActivityScenario<DrawingActivity> scenario = ActivityScenario.launch(blackActivity)) {
-            onView(withId(R.id.colorBlack)).perform(click());
+            onView(withId(R.id.drawing_fourth_button)).perform(click());
             scenario.onActivity(
                     activity -> {
-                        assertEquals(Color.BLACK, activity.drawingCanvas.getPaint().getColor());
+                        assertEquals(R.color.fourth_drawing_button, activity.drawingCanvas.getPaint().getColor());
                     });
         }
     }

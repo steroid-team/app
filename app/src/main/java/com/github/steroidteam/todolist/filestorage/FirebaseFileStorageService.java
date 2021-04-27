@@ -33,8 +33,9 @@ public class FirebaseFileStorageService implements FileStorageService {
         this.getUserspaceRef(path)
                 .putBytes(bytes)
                 .addOnSuccessListener(
-                        taskSnapshot ->
-                                completableFuture.complete(taskSnapshot.getMetadata().getPath()))
+                        taskSnapshot -> {
+                            completableFuture.complete(taskSnapshot.getMetadata().getPath());
+                        })
                 .addOnFailureListener(completableFuture::completeExceptionally);
 
         return completableFuture;

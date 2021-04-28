@@ -22,12 +22,12 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
-
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.DrawingActivity;
 import com.github.steroidteam.todolist.view.ListSelectionActivity;
+import java.util.concurrent.CompletableFuture;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
@@ -36,13 +36,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.concurrent.CompletableFuture;
-
 @RunWith(MockitoJUnitRunner.class)
 public class DrawingTest {
 
-    @Mock
-    Database databaseMock;
+    @Mock Database databaseMock;
 
     @Before
     public void before() {

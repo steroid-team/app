@@ -7,15 +7,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.view.adapter.NoteAdapter;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.UUID;
 
 public class NoteSelectionActivity extends AppCompatActivity {
 
     public static final String EXTRA_NOTE_ID = "id";
 
+    private Database database = null;
+    ArrayList<Note> notes;
     private RecyclerView recyclerView;
     private NoteAdapter adapter;
 
@@ -28,42 +32,36 @@ public class NoteSelectionActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        NoteAdapter.NoteCustomListener customListener =
-                new NoteAdapter.NoteCustomListener() {
-                    @Override
-                    public void onClickCustom(NoteAdapter.NoteHolder holder) {
-                        openNote(holder);
-                    }
-                };
+        notes = new ArrayList<>();
+        NoteAdapter.NoteCustomListener customListener = this::openNote;
 
-        adapter = new NoteAdapter(setupSomeNotes(), customListener);
+        adapter = new NoteAdapter(notes, customListener);
         recyclerView.setAdapter(adapter);
 
-        adapter.notifyDataSetChanged();
+        database = DatabaseFactory.getDb();
+        database.getNotesList()
+                .thenAccept(
+                        uuids -> {
+                            for (UUID uuid : uuids) {
+                                database.getNote(uuid)
+                                        .thenAccept(
+                                                note -> {
+                                                    notes.add(note);
+                                                    adapter.notifyDataSetChanged();
+                                                });
+                            }
+                        });
     }
 
-    // THIS METHOD JUST CREATE A LIST OF NOTE AS I DON'T HAVE THE DATABASE FOR NOTE
-    // THIS WILL BE DELETE
-    private List<Note> setupSomeNotes() {
-        // Filler
-        ArrayList<Note> notes = new ArrayList<>();
-        Note note1 = new Note("Lorem ipsum");
-        note1.setContent(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
-                        + " incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation"
-                        + " ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in"
-                        + " voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non"
-                        + " proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
-        Note note2 = new Note("Note 2");
-        note2.setContent("This is the second note");
-        Note note3 = new Note("Note 3");
-        note3.setContent("This is the third note");
+    public void createNote(View view) {
+        Note newNote = new Note("New note");
 
-        notes.add(note1);
-        notes.add(note2);
-        notes.add(note3);
-
-        return notes;
+        database.putNote(newNote.getId(), newNote)
+                .thenAccept(
+                        str -> {
+                            notes.add(newNote);
+                            adapter.notifyDataSetChanged();
+                        });
     }
 
     public void openNote(NoteAdapter.NoteHolder holder) {

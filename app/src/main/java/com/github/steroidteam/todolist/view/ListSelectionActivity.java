@@ -15,14 +15,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.firebase.ui.auth.AuthUI;
 import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListSelectionActivity extends AppCompatActivity {
 
+    public static final String EXTRA_ID_TODO_LIST = "id_todo_list";
+
     private static todoListAdapter adapter;
     private ArrayList<TodoList> todoLists;
+    private Database database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +35,26 @@ public class ListSelectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_selection);
 
         todoLists = new ArrayList<>();
-        TodoList todoList = new TodoList("Sweng project");
-        todoLists.add(todoList);
-        todoLists.add(new TodoList("Homework"));
-        todoLists.add(new TodoList("Some stuff"));
-        setTitle("TODO Lists");
 
+        setTitle("TODO Lists");
         ListView listView = findViewById(R.id.activity_list_selection_itemlist);
         adapter = new todoListAdapter(todoLists);
         setListViewSettings(listView);
+
+        database = DatabaseFactory.getDb();
+
+        database.getTodoListCollection()
+                .thenAccept(
+                        (todoListCollection -> {
+                            for (int i = 0; i < todoListCollection.getSize(); i++) {
+                                database.getTodoList(todoListCollection.getUUID(i))
+                                        .thenAccept(
+                                                todoList -> {
+                                                    todoLists.add(todoList);
+                                                    adapter.notifyDataSetChanged();
+                                                });
+                            }
+                        }));
     }
 
     private void setListViewSettings(ListView listView) {
@@ -65,6 +81,16 @@ public class ListSelectionActivity extends AppCompatActivity {
         Intent noteSelectionActivity =
                 new Intent(ListSelectionActivity.this, NoteSelectionActivity.class);
         startActivity(noteSelectionActivity);
+    }
+
+    public void createList(View view) {
+        TodoList todoList = new TodoList(getString(R.string.new_todolist_title));
+        database.putTodoList(todoList)
+                .thenAccept(
+                        filePath -> {
+                            todoLists.add(todoList);
+                            adapter.notifyDataSetChanged();
+                        });
     }
 
     private class todoListAdapter extends BaseAdapter {
@@ -108,7 +134,6 @@ public class ListSelectionActivity extends AppCompatActivity {
             todoListView.setOnLongClickListener(
                     view -> {
                         createRenameAlert(todoList);
-                        // Notify database?
                         return false;
                     });
 
@@ -116,7 +141,7 @@ public class ListSelectionActivity extends AppCompatActivity {
                     view -> {
                         Intent itemViewActivity =
                                 new Intent(ListSelectionActivity.this, ItemViewActivity.class);
-                        itemViewActivity.putExtra("id_todo_list", todoList.getId());
+                        itemViewActivity.putExtra(EXTRA_ID_TODO_LIST, todoList.getId().toString());
                         startActivity(itemViewActivity);
                     });
 
@@ -138,6 +163,7 @@ public class ListSelectionActivity extends AppCompatActivity {
                                     return;
                                 }
                                 todoList.setTitle(input.getText().toString());
+                                database.updateTodoList(todoList.getId(), todoList);
                             })
                     .create()
                     .show();

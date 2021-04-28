@@ -104,4 +104,10 @@ public class NoteDisplayActivity extends AppCompatActivity {
             locationText.setText(location);
         }
     }
+
+    public void goToAudioRecorder(View view) {
+        Intent audioRecorder = new Intent(NoteDisplayActivity.this, AudioRecorderActivity.class);
+        startActivity(audioRecorder);
+        // TODO: Use the audio in the note maybe
+    }
 }

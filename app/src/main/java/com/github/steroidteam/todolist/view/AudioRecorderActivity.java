@@ -69,10 +69,10 @@ public class AudioRecorderActivity extends AppCompatActivity {
 
     public void recordOnClick(View view) {
         if (isRecording) {
-            stopRecording();
-            isRecording = false;
             TextView textView = findViewById(R.id.record_text);
+            stopRecording();
             textView.setText(getText(R.string.record_button));
+            isRecording = false;
         } else {
             startRecording();
             isRecording = true;

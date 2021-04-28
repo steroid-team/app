@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -137,7 +136,7 @@ public class AudioRecorderActivity extends AppCompatActivity {
                 player.prepare();
                 isFirstTime = false;
             }
-            //player.seekTo(currPos);
+            // player.seekTo(currPos);
             player.start();
         } catch (IOException e) {
             e.printStackTrace();

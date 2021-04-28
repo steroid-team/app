@@ -24,10 +24,8 @@ public class AudioRecorderActivity extends AppCompatActivity {
     private boolean isRecording = false;
     private MediaRecorder recorder;
 
-    private boolean isPlaying = false;
     private boolean isFirstTime = true;
     private MediaPlayer player;
-    private int currPos = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +37,17 @@ public class AudioRecorderActivity extends AppCompatActivity {
         fileName += "/audioTest.3gp";
 
         player = new MediaPlayer();
+        player.setOnCompletionListener(player -> onCompletePlaying());
 
         ActivityCompat.requestPermissions(
                 this, new String[] {Manifest.permission.RECORD_AUDIO}, AUDIO_PERMISSION);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        player.release();
+        player = null;
     }
 
     @Override
@@ -93,10 +99,6 @@ public class AudioRecorderActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void pauseRecording() {
-        recorder.pause();
-    }
-
     private void stopRecording() {
         recorder.stop();
         recorder.release();
@@ -108,15 +110,20 @@ public class AudioRecorderActivity extends AppCompatActivity {
                 .show();
     }
 
+    private void onCompletePlaying() {
+        ImageButton playButton = findViewById(R.id.play_button);
+        playButton.setImageResource(android.R.drawable.ic_media_play);
+        TextView textView = findViewById(R.id.play_text);
+        textView.setText("Play");
+    }
+
     public void playingOnClick(View view) {
-        if (isPlaying) {
+        if (player.isPlaying()) {
             pausePlayingAudio();
-            isPlaying = false;
             TextView textView = findViewById(R.id.play_text);
             textView.setText("Play");
         } else {
             playingAudio();
-            isPlaying = true;
             TextView textView = findViewById(R.id.play_text);
             textView.setText("Pause");
         }
@@ -124,7 +131,6 @@ public class AudioRecorderActivity extends AppCompatActivity {
 
     private void pausePlayingAudio() {
         player.pause();
-        currPos = player.getCurrentPosition();
         ImageButton playButton = findViewById(R.id.play_button);
         playButton.setImageResource(android.R.drawable.ic_media_play);
     }
@@ -136,17 +142,11 @@ public class AudioRecorderActivity extends AppCompatActivity {
                 player.prepare();
                 isFirstTime = false;
             }
-            // player.seekTo(currPos);
             player.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
         ImageButton playButton = findViewById(R.id.play_button);
         playButton.setImageResource(android.R.drawable.ic_media_pause);
-    }
-
-    private void stopPlayingAudio() {
-        player.release();
-        player = null;
     }
 }

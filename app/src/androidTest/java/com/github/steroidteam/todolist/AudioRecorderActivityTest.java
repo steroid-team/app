@@ -57,6 +57,20 @@ public class AudioRecorderActivityTest {
         onView(withId(R.id.record_text)).check(matches(withText(R.string.record_button)));
     }
 
+    @Test
+    public void textWhenPlayShowsCorrectly() {
+        onView(withId(R.id.play_text)).check(matches(withText(R.string.play_button)));
+        onView(withId(R.id.play_button)).perform(click(), click());
+        // Test that after the second click the text displays correctly "Play"
+        onView(withId(R.id.play_text)).check(matches(withText(R.string.play_button)));
+    }
+
+    @Test
+    public void textWhenPauseShowsCorrectly() {
+        onView(withId(R.id.play_button)).perform(click());
+        onView(withId(R.id.play_text)).check(matches(withText(R.string.pause_button)));
+    }
+
     private void waitFor(int duration) {
         try {
             Thread.sleep(duration);

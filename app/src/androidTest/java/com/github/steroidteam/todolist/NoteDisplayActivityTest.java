@@ -24,6 +24,7 @@ import androidx.test.espresso.intent.matcher.IntentMatchers;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.view.AudioRecorderActivity;
 import com.github.steroidteam.todolist.view.MapsActivity;
 import com.github.steroidteam.todolist.view.NoteDisplayActivity;
 import com.github.steroidteam.todolist.view.NoteSelectionActivity;
@@ -86,6 +87,14 @@ public class NoteDisplayActivityTest {
         onView(withId(R.id.location_button)).perform(click());
 
         Intents.intended(Matchers.allOf(IntentMatchers.hasComponent(MapsActivity.class.getName())));
+    }
+
+    @Test
+    public void openAudioRecorderActivityWorks() {
+        onView(withId(R.id.audio_button)).perform(click());
+
+        Intents.intended(
+                Matchers.allOf(IntentMatchers.hasComponent(AudioRecorderActivity.class.getName())));
     }
 
     @Test

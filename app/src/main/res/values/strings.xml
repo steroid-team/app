@@ -40,5 +40,6 @@
     <string name="pause_button">Pause</string>
     <string name="record_button">Record</string>
     <string name="stop_record_button">Stop recording</string>
+    <string name="audio_btn_description">Audio</string>
     <string name="new_todolist_title">New list</string>
 </resources>

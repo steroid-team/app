@@ -17,6 +17,9 @@ import java.io.IOException;
 
 public class AudioRecorderActivity extends AppCompatActivity {
     private String fileName;
+    // Maybe change that later to have multiple audios
+    private String testFileName = "/audioTest.3gp";
+
     private static final int AUDIO_PERMISSION = 200;
 
     private boolean isPermissionGiven = false;
@@ -34,7 +37,7 @@ public class AudioRecorderActivity extends AppCompatActivity {
         ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener((view) -> finish());
         fileName = getExternalCacheDir().getAbsolutePath();
-        fileName += "/audioTest.3gp";
+        fileName += testFileName;
 
         player = new MediaPlayer();
         player.setOnCompletionListener(player -> onCompletePlaying());
@@ -69,12 +72,12 @@ public class AudioRecorderActivity extends AppCompatActivity {
             stopRecording();
             isRecording = false;
             TextView textView = findViewById(R.id.record_text);
-            textView.setText("Record");
+            textView.setText(getText(R.string.record_button));
         } else {
             startRecording();
             isRecording = true;
             TextView textView = findViewById(R.id.record_text);
-            textView.setText("Stop recording");
+            textView.setText(getText(R.string.stop_record_button));
         }
     }
 
@@ -114,18 +117,18 @@ public class AudioRecorderActivity extends AppCompatActivity {
         ImageButton playButton = findViewById(R.id.play_button);
         playButton.setImageResource(android.R.drawable.ic_media_play);
         TextView textView = findViewById(R.id.play_text);
-        textView.setText("Play");
+        textView.setText(getText(R.string.play_button));
     }
 
     public void playingOnClick(View view) {
         if (player.isPlaying()) {
             pausePlayingAudio();
             TextView textView = findViewById(R.id.play_text);
-            textView.setText("Play");
+            textView.setText(getText(R.string.play_button));
         } else {
             playingAudio();
             TextView textView = findViewById(R.id.play_text);
-            textView.setText("Pause");
+            textView.setText(getText(R.string.pause_button));
         }
     }
 

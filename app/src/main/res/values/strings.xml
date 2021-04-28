@@ -35,4 +35,8 @@
     <string name="is_recording">Recording...</string>
     <string name="stop_recording">Stopped the recording</string>
     <string name="pause_recording">Paused the recording</string>
+    <string name="play_button">Play</string>
+    <string name="pause_button">Pause</string>
+    <string name="record_button">Record</string>
+    <string name="stop_record_button">Stop recording</string>
 </resources>

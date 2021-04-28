@@ -11,6 +11,7 @@ import static com.github.steroidteam.todolist.view.DrawingView.BACKGROUND_COLOR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,7 +22,10 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.DrawingActivity;
 import com.github.steroidteam.todolist.view.ListSelectionActivity;
 import org.hamcrest.Matchers;
@@ -29,9 +33,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(AndroidJUnit4.class)
+import java.util.concurrent.CompletableFuture;
+
+@RunWith(MockitoJUnitRunner.class)
 public class DrawingTest {
+
+    @Mock
+    Database databaseMock;
 
     @Before
     public void before() {
@@ -183,6 +194,13 @@ public class DrawingTest {
     public void backButtonWorks() {
         Intent drawingActivity =
                 new Intent(ApplicationProvider.getApplicationContext(), DrawingActivity.class);
+
+        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
+        TodoListCollection collection = new TodoListCollection();
+        todoListCollectionFuture.complete(collection);
+        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
+
+        DatabaseFactory.setCustomDatabase(databaseMock);
 
         try (ActivityScenario<DrawingActivity> scenario =
                 ActivityScenario.launch(drawingActivity)) {

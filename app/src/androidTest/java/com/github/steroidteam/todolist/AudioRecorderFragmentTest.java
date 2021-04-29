@@ -7,10 +7,10 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import androidx.test.espresso.intent.Intents;
+import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import com.github.steroidteam.todolist.view.AudioRecorderFragment;
-import org.junit.After;
+import com.github.steroidteam.todolist.view.MainActivity;
+import com.github.steroidteam.todolist.view.MapFragment;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,17 +21,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class AudioRecorderFragmentTest {
 
     @Rule
-    public ActivityScenarioRule<AudioRecorderFragment> activityRule =
-            new ActivityScenarioRule<>(AudioRecorderFragment.class);
+    public ActivityScenarioRule<MainActivity> activityRule =
+            new ActivityScenarioRule<>(MainActivity.class);
 
     @Before
-    public void before() {
-        Intents.init();
-    }
-
-    @After
-    public void after() {
-        Intents.release();
+    public void init() {
+        FragmentScenario<MapFragment> scenario =
+                FragmentScenario.launchInContainer(MapFragment.class, null, R.style.Theme_Asteroid);
     }
 
     @Test

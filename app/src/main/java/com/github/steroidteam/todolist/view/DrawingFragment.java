@@ -139,29 +139,25 @@ public class DrawingFragment extends Fragment {
             firstButton.setBackground(
                     getActivity().getDrawable(R.drawable.first_button_drawing_onfocus));
         } else {
-            firstButton.setBackground(
-                    getActivity().getDrawable(R.drawable.first_button_drawing));
+            firstButton.setBackground(getActivity().getDrawable(R.drawable.first_button_drawing));
         }
         if (secondBtnHasFocus) {
             secondButton.setBackground(
                     getActivity().getDrawable(R.drawable.second_button_drawing_onfocus));
         } else {
-            secondButton.setBackground(
-                    getActivity().getDrawable(R.drawable.second_button_drawing));
+            secondButton.setBackground(getActivity().getDrawable(R.drawable.second_button_drawing));
         }
         if (thirdBtnHasFocus) {
             thirdButton.setBackground(
                     getActivity().getDrawable(R.drawable.third_button_drawing_onfocus));
         } else {
-            thirdButton.setBackground(
-                    getActivity().getDrawable(R.drawable.third_button_drawing));
+            thirdButton.setBackground(getActivity().getDrawable(R.drawable.third_button_drawing));
         }
         if (fourthBtnHasFocus) {
             fourthButton.setBackground(
                     getActivity().getDrawable(R.drawable.fourth_button_drawing_onfocus));
         } else {
-            fourthButton.setBackground(
-                    getActivity().getDrawable(R.drawable.fourth_button_drawing));
+            fourthButton.setBackground(getActivity().getDrawable(R.drawable.fourth_button_drawing));
         }
         if (colorBtnHasFocus) {
             colorChooseButton.setBackground(

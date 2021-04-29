@@ -10,17 +10,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.ArrayList;
-import java.util.UUID;
 
-public class TodoCollectionAdapter extends RecyclerView.Adapter<TodoCollectionAdapter.TodoHolder> {
+public class TodoArrayListAdapter extends RecyclerView.Adapter<TodoArrayListAdapter.TodoHolder> {
 
-    private ArrayList<TodoList> todoListCollection;
+    private ArrayList<TodoList> todoListArrayList;
     private final TodoHolder.TodoCustomListener listener;
 
     // ViewPool to share view between task and to-do list
     private final RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
 
-    public TodoCollectionAdapter(TodoHolder.TodoCustomListener listener) {
+    public TodoArrayListAdapter(TodoHolder.TodoCustomListener listener) {
         this.listener = listener;
     }
 
@@ -35,10 +34,10 @@ public class TodoCollectionAdapter extends RecyclerView.Adapter<TodoCollectionAd
 
     @Override
     public void onBindViewHolder(@NonNull TodoHolder holder, int position) {
-        TodoList currentTodo = todoListCollection.get(position);
+        TodoList currentTodo = todoListArrayList.get(position);
         if (currentTodo != null) {
             holder.todoTitle.setText(currentTodo.getTitle());
-            holder.idOfTodo = currentTodo.getId();
+            holder.todoList = currentTodo;
 
             // Nested layout Manager
             LinearLayoutManager layoutManager =
@@ -61,15 +60,15 @@ public class TodoCollectionAdapter extends RecyclerView.Adapter<TodoCollectionAd
 
     @Override
     public int getItemCount() {
-        if (todoListCollection == null) {
+        if (todoListArrayList == null) {
             return 0;
         } else {
-            return todoListCollection.size();
+            return todoListArrayList.size();
         }
     }
 
     public void setTodoListCollection(ArrayList<TodoList> todoListCollection) {
-        this.todoListCollection = todoListCollection;
+        this.todoListArrayList = todoListCollection;
         notifyDataSetChanged();
     }
 
@@ -78,7 +77,7 @@ public class TodoCollectionAdapter extends RecyclerView.Adapter<TodoCollectionAd
         private final RecyclerView taskListRecyclerView;
 
         private final TextView todoTitle;
-        private UUID idOfTodo;
+        private TodoList todoList;
 
         public TodoHolder(@NonNull View itemView, final TodoCustomListener listener) {
             super(itemView);
@@ -93,8 +92,8 @@ public class TodoCollectionAdapter extends RecyclerView.Adapter<TodoCollectionAd
                     });
         }
 
-        public UUID getIdOfTodo() {
-            return idOfTodo;
+        public TodoList getTodo() {
+            return todoList;
         }
 
         public interface TodoCustomListener {

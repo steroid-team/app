@@ -10,15 +10,15 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
-import com.github.steroidteam.todolist.view.adapter.TodoCollectionAdapter;
+import com.github.steroidteam.todolist.view.adapter.TodoArrayListAdapter;
 
 public class TodoTouchHelper extends ItemTouchHelper.SimpleCallback {
 
-    private final ListSelectionActivity activity;
+    private final ListSelectionFragment fragment;
 
-    public TodoTouchHelper(ListSelectionActivity activity) {
+    public TodoTouchHelper(ListSelectionFragment activity) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
-        this.activity = activity;
+        this.fragment = activity;
     }
 
     @Override
@@ -34,12 +34,12 @@ public class TodoTouchHelper extends ItemTouchHelper.SimpleCallback {
         final int position = viewHolder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
             if (direction == ItemTouchHelper.LEFT) {
-                activity.removeTodo(
-                        ((TodoCollectionAdapter.TodoHolder) viewHolder).getIdOfTodo(), position);
+                fragment.removeTodo(
+                        ((TodoArrayListAdapter.TodoHolder) viewHolder).getTodo().getId(), position);
             } else {
                 // direction == ItemTouchHelper.RIGHT
-                activity.renameTodo(
-                        ((TodoCollectionAdapter.TodoHolder) viewHolder).getIdOfTodo(), position);
+                fragment.renameTodo(
+                        ((TodoArrayListAdapter.TodoHolder) viewHolder).getTodo(), position);
             }
         }
     }

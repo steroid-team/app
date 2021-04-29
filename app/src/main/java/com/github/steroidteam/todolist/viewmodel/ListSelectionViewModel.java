@@ -1,28 +1,26 @@
 package com.github.steroidteam.todolist.viewmodel;
 
-import android.app.Application;
 import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class ListSelectionViewModel extends AndroidViewModel {
+public class ListSelectionViewModel extends ViewModel {
 
     private final TodoRepository repository;
-    private final LiveData<ArrayList<TodoList>> listOfTodo;
+    private final LiveData<ArrayList<TodoList>> arrayOfTodoList;
 
-    public ListSelectionViewModel(@NonNull Application application) {
-        super(application);
-        repository = new TodoRepository();
-
-        listOfTodo = repository.getAllTodo();
+    public ListSelectionViewModel(@NonNull TodoRepository repository) {
+        super();
+        this.repository = repository;
+        this.arrayOfTodoList = repository.getAllTodo();
     }
 
     public LiveData<ArrayList<TodoList>> getListOfTodo() {
-        return this.listOfTodo;
+        return this.arrayOfTodoList;
     }
 
     public void addTodo(String title) {
@@ -33,7 +31,7 @@ public class ListSelectionViewModel extends AndroidViewModel {
         repository.removeTodo(id);
     }
 
-    public void renameTodo(UUID id, String newTitle) {
-        repository.renameTodo(id, newTitle);
+    public void renameTodo(UUID id, TodoList todoListUpdated) {
+        repository.renameTodo(id, todoListUpdated);
     }
 }

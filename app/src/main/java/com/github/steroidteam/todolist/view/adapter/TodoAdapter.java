@@ -16,13 +16,11 @@ import com.github.steroidteam.todolist.model.todo.TodoList;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
-    private TodoList todoList = new TodoList("This should not be displayed");
-    private final TaskCustomListener listener;
-    private Integer currentlyDisplayedUpdateLayoutPos;
+    private TodoList todoList;
+    private TaskCustomListener listener;
 
     public TodoAdapter(TaskCustomListener listener) {
         this.listener = listener;
-        this.currentlyDisplayedUpdateLayoutPos = null;
     }
 
     @NonNull
@@ -36,7 +34,6 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull TaskHolder holder, int position) {
-
         Task currentTask = todoList.getTask(position);
 
         holder.taskBody.setText(currentTask.getBody());
@@ -68,7 +65,9 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
     }
 
     public interface TaskCustomListener {
-        void onClickCustom(TaskHolder holder, int position);
+        void onItemClick(TaskHolder holder, final int position);
+
+        void onItemDelete(final int position);
 
         void onCheckedChangedCustom(int position, boolean isChecked);
     }
@@ -94,11 +93,13 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
                         }
                     });
 
+            taskDelete.setOnClickListener(v -> listener.onItemDelete(getAdapterPosition()));
+
             itemView.setOnClickListener(
                     (v) -> {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
-                            listener.onClickCustom(this, getAdapterPosition());
+                            listener.onItemClick(this, getAdapterPosition());
                         }
                     });
         }

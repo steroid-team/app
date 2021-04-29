@@ -83,8 +83,9 @@ public class TodoList {
         return title;
     }
 
-    public void setTitle(String newTitle) {
+    public TodoList setTitle(String newTitle) {
         this.title = newTitle;
+        return this;
     }
 
     public List<Task> getImportantTask() {

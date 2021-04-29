@@ -5,71 +5,68 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
 import com.github.steroidteam.todolist.R;
-import com.google.firebase.auth.FirebaseAuth;
+import com.github.steroidteam.todolist.model.user.UserFactory;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String EXTRA_USER_NAME = "username";
-    private static final int RC_SIGN_IN = 123;
+    private DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+        FirebaseUser user = UserFactory.get();
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            startApp();
+        if (user == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
         }
+
+        drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+
+        NavHostFragment navHostFragment =
+                (NavHostFragment)
+                        getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavController navController = navHostFragment.getNavController();
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        new AppBarConfiguration.Builder(navController.getGraph()).setOpenableLayout(drawer).build();
+        NavigationUI.setupWithNavController(navigationView, navController);
+
+        // Inflate drawer's header with the user profile data.
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUserName = headerView.findViewById(R.id.nav_user_name);
+        navUserName.setText(user.getDisplayName());
+        TextView navUserEmail = headerView.findViewById(R.id.nav_user_email);
+        navUserEmail.setText(user.getEmail());
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        IdpResponse response = IdpResponse.fromResultIntent(data);
-
-        if (resultCode == RESULT_OK) {
-            // Sign in successful
-        } else {
-            // Sign in failed.
-            TextView failMessage = findViewById(R.id.loginFailureMessage);
-            failMessage.setVisibility(View.VISIBLE);
-        }
+    public void logOut(View view) {
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(
+                        task -> {
+                            Intent intent = new Intent(this, LoginActivity.class);
+                            startActivity(intent);
+                            finish();
+                        });
     }
 
-    public void startLoginProcess(View view) {
-        // Choose authentication providers
-        List<AuthUI.IdpConfig> providers =
-                Arrays.asList(
-                        new AuthUI.IdpConfig.EmailBuilder().build(),
-                        new AuthUI.IdpConfig.GoogleBuilder().build());
-
-        // Create and launch sign-in intent
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .setTheme(R.style.LoginTheme)
-                        .setLogo(R.drawable.asteroid_banner)
-                        .build(),
-                RC_SIGN_IN);
-    }
-
-    private void startApp() {
-        // Placeholder: The main To do activity not available yet => go directly to ItemViewActivity
-        Intent listViewActivity = new Intent(MainActivity.this, ListSelectionActivity.class);
-        startActivity(listViewActivity);
+    public void openDrawer(View view) {
+        drawer.openDrawer(GravityCompat.START);
     }
 }

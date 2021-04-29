@@ -2,9 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_list_selection"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.ListSelectionActivity">
+    tools:context=".view.ListSelectionFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/list_selection_toolbar"
@@ -13,6 +14,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/menu_button2"
+            style="@style/ToolbarActionButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="24dp"
+            android:contentDescription="@string/menu_btn_description"
+            android:onClick="openDrawer"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/hamburger"
+            tools:ignore="OnClick" />
 
         <TextView
             android:id="@+id/activity_title"
@@ -31,11 +46,11 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_marginEnd="24dp"
+            android:contentDescription="@string/search_btn_description"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/search_icon"
-            android:contentDescription="@string/search_btn_description" />
+            app:srcCompat="@drawable/search_icon" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -53,28 +68,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/list_selection_toolbar"/>
 
-    <Button
-        android:id="@+id/notes_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:onClick="openNotes"
-        android:text="My notes"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/logoutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:onClick="logOut"
-        android:text="Log out"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/create_todo_button"
         android:layout_width="wrap_content"
@@ -82,7 +75,6 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
-        android:onClick="addTodoList"
         android:src="@drawable/plus_icon"
         app:backgroundTint="@color/dark_blue"
         app:elevation="0dp"

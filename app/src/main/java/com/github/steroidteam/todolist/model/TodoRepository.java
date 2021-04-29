@@ -2,87 +2,91 @@ package com.github.steroidteam.todolist.model;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.github.steroidteam.todolist.database.VolatileDatabase;
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
+import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class TodoRepository {
+    private final Database database;
+    private final MutableLiveData<TodoList> oneTodoList;
+    private final MutableLiveData<ArrayList<TodoList>> arrayOfTodoList;
+    private final UUID todoListID;
 
-    private VolatileDatabase database;
-    private MutableLiveData<TodoList> oneTodoList;
-    private MutableLiveData<ArrayList<TodoList>> allTodo;
+    public TodoRepository(UUID todoListID) {
+        this.database = DatabaseFactory.getDb();
+        oneTodoList = new MutableLiveData<>();
+        arrayOfTodoList = new MutableLiveData<>();
+        this.todoListID = todoListID;
 
-    // ====== TO DELETE ======== BEGIN
-    // We don't have persistent database !
-    // So we set a public attribute to gets the ID
-    // of the todoList in the item view model.
-    public UUID id;
-    // ========================= END
-
-    public TodoRepository() {
-        this.database = new VolatileDatabase();
-
-        // ====== TO DELETE ======== BEGIN
-        // We don't have persistent database !
-        // We need to add a todoList,
-        // Otherwise we will get a NullPointerException
-        // in the getTodoList method.
-
-        TodoList tl = new TodoList("A Todo!");
-
-        this.database.putTodoList(tl);
-        id = tl.getId();
-        // ========================= END
-    }
-
-    public LiveData<TodoList> getTodoList(UUID todoListID) {
-        if (oneTodoList == null) {
-            oneTodoList = new MutableLiveData<TodoList>(this.database.getTodoList(todoListID));
-        }
-        return this.oneTodoList;
-    }
-
-    public void putTask(UUID todoListID, Task task) {
-        this.database.putTask(todoListID, task);
-        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
-    }
-
-    public void removeTask(UUID todoListID, int index) {
-        this.database.removeTask(todoListID, index);
-        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
-    }
-
-    public void renameTask(UUID todoListID, int index, String newText) {
-        this.database.renameTask(todoListID, index, newText);
-        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
+        this.oneTodoList.setValue(new TodoList("Placeholder"));
+        this.database.getTodoList(todoListID).thenAccept(this.oneTodoList::setValue);
+        this.database.getTodoListCollection().thenAccept(this::setArrayOfTodoList);
     }
 
     public LiveData<ArrayList<TodoList>> getAllTodo() {
-        if (allTodo == null) {
-            allTodo = new MutableLiveData<>(this.database.getAllTodo());
+        return this.arrayOfTodoList;
+    }
+
+    private void setArrayOfTodoList(TodoListCollection todoListCollection) {
+        ArrayList<TodoList> tmpList = new ArrayList<>();
+        for (int i = 0; i < todoListCollection.getSize(); i++) {
+            database.getTodoList(todoListCollection.getUUID(i)).thenAccept(tmpList::add);
         }
-        return allTodo;
+        arrayOfTodoList.setValue(tmpList);
+    }
+
+    public LiveData<TodoList> getTodoList() {
+        return this.oneTodoList;
     }
 
     public void putTodo(TodoList todoList) {
-        this.database.putTodoList(todoList);
-        this.allTodo.postValue(this.database.getAllTodo());
+        this.database
+                .putTodoList(todoList)
+                .thenCompose(str -> this.database.getTodoListCollection())
+                .thenAccept(this::setArrayOfTodoList);
     }
 
     public void removeTodo(UUID id) {
-        this.database.removeTodoList(id);
-        this.allTodo.postValue(this.database.getAllTodo());
+        this.database
+                .removeTodoList(id)
+                .thenCompose(str -> this.database.getTodoListCollection())
+                .thenAccept(this::setArrayOfTodoList);
     }
 
-    public void renameTodo(UUID id, String newTitle) {
-        this.database.renameTodo(id, newTitle);
-        this.allTodo.postValue(this.database.getAllTodo());
+    public void renameTodo(UUID id, TodoList todoListUpdated) {
+        this.database
+                .updateTodoList(id, todoListUpdated)
+                .thenCompose(str -> this.database.getTodoListCollection())
+                .thenAccept(this::setArrayOfTodoList);
     }
 
-    public void setTaskDone(UUID todoListID, int index, boolean isDone) {
-        this.database.doneTask(todoListID, index, isDone);
-        this.oneTodoList.setValue(this.database.getTodoList(todoListID));
+    public void putTask(Task task) {
+        this.database
+                .putTask(todoListID, task)
+                .thenCompose(str -> this.database.getTodoList(todoListID))
+                .thenAccept(this.oneTodoList::setValue);
+    }
+
+    public void removeTask(int index) {
+        this.database
+                .removeTask(todoListID, index)
+                .thenCompose(str -> this.database.getTodoList(todoListID))
+                .thenAccept(this.oneTodoList::setValue);
+    }
+
+    public void renameTask(int index, String newText) {
+        this.database
+                .renameTask(todoListID, index, newText)
+                .thenCompose(task -> this.database.getTodoList(todoListID))
+                .thenAccept(this.oneTodoList::setValue);
+    }
+
+    public void setTaskDone(int index, boolean isDone) {
+        this.database.setTaskDone(todoListID, index, isDone);
+        this.database.getTodoList(todoListID).thenAccept(this.oneTodoList::setValue);
     }
 }

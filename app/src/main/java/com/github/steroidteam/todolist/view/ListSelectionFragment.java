@@ -1,89 +1,83 @@
 package com.github.steroidteam.todolist.view;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.firebase.ui.auth.AuthUI;
 import com.github.steroidteam.todolist.R;
-import com.github.steroidteam.todolist.view.adapter.TodoCollectionAdapter;
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.model.TodoRepository;
+import com.github.steroidteam.todolist.model.todo.TodoList;
+import com.github.steroidteam.todolist.view.adapter.TodoArrayListAdapter;
 import com.github.steroidteam.todolist.viewmodel.ListSelectionViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.UUID;
 
-public class ListSelectionActivity extends AppCompatActivity {
+public class ListSelectionFragment extends Fragment {
 
-    private RecyclerView recyclerView;
-    private TodoCollectionAdapter adapter;
+    private TodoArrayListAdapter adapter;
     private ListSelectionViewModel viewModel;
+    private Database database;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_selection);
+        View root = inflater.inflate(R.layout.fragment_list_selection, container, false);
 
-        viewModel = new ListSelectionViewModel(this.getApplication());
+        root.findViewById(R.id.create_note_button).setOnClickListener(this::createList);
+
+        RecyclerView recyclerView = root.findViewById(R.id.activity_list_selection_itemlist);
+        // Set layout manager
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
+
+        adapter = new TodoArrayListAdapter(createCustomListener());
+        recyclerView.setAdapter(adapter);
+
+        TodoRepository repository = new TodoRepository(UUID.randomUUID());
+        viewModel = new ListSelectionViewModel(repository);
         viewModel
                 .getListOfTodo()
                 .observe(
-                        this,
-                        (listOfTodo) -> {
-                            adapter.setTodoListCollection(listOfTodo);
+                        getActivity(),
+                        (todoListArrayList) -> {
+                            adapter.setTodoListCollection(todoListArrayList);
                         });
-
-        recyclerView = findViewById(R.id.activity_list_selection_itemlist);
-        // Set layout manager
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
-
-        TodoCollectionAdapter.TodoHolder.TodoCustomListener customListener =
-                new TodoCollectionAdapter.TodoHolder.TodoCustomListener() {
-                    @Override
-                    public void onClickCustom(TodoCollectionAdapter.TodoHolder holder) {
-                        openTodoList(holder);
-                    }
-                };
-        adapter = new TodoCollectionAdapter(customListener);
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TodoTouchHelper(this));
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
-        recyclerView.setAdapter(adapter);
+        return root;
     }
 
-    public void logOut(View view) {
-        Activity thisActivity = this;
-        AuthUI.getInstance().signOut(this).addOnCompleteListener(task -> thisActivity.finish());
+    public TodoArrayListAdapter.TodoHolder.TodoCustomListener createCustomListener() {
+        return new TodoArrayListAdapter.TodoHolder.TodoCustomListener() {
+            @Override
+            public void onClickCustom(TodoArrayListAdapter.TodoHolder holder) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("list_id", holder.getTodo().getId());
+                Navigation.findNavController(holder.itemView).navigate(R.id.nav_item_view, bundle);
+            }
+        };
     }
 
-    public void openTodoList(TodoCollectionAdapter.TodoHolder holder) {
-        Intent itemViewActivity = new Intent(ListSelectionActivity.this, ItemViewActivity.class);
-        itemViewActivity.putExtra("id_todo_list", holder.getIdOfTodo());
-        startActivity(itemViewActivity);
-    }
-
-    public void openNotes(View view) {
-        Intent noteSelectionActivity =
-                new Intent(ListSelectionActivity.this, NoteSelectionActivity.class);
-        startActivity(noteSelectionActivity);
-    }
-
-    public void addTodoList(View view) {
-        Context context = new ContextThemeWrapper(ListSelectionActivity.this, R.style.Dialog);
+    public void createList(View view) {
+        Context context = new ContextThemeWrapper(getActivity(), R.style.Dialog);
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         builder.setTitle(getString(R.string.add_todo_suggestion));
 
-        LayoutInflater inflater = LayoutInflater.from(this.getApplicationContext());
+        LayoutInflater inflater = this.getLayoutInflater();
         View user_input = inflater.inflate(R.layout.alert_dialog_input, null);
 
         builder.setView(user_input);
@@ -108,12 +102,12 @@ public class ListSelectionActivity extends AppCompatActivity {
     }
 
     public void removeTodo(UUID toDoListID, final int position) {
-        Context context = new ContextThemeWrapper(ListSelectionActivity.this, R.style.Dialog);
+        Context context = new ContextThemeWrapper(getActivity(), R.style.Dialog);
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         builder.setTitle(getString(R.string.delete_todo_suggestion));
 
         builder.setPositiveButton(
-                getString(R.string.delete_btn),
+                getString(R.string.delete),
                 (DialogInterface dialog, int which) -> {
                     viewModel.removeTodo(toDoListID);
                     dialog.dismiss();
@@ -129,9 +123,9 @@ public class ListSelectionActivity extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(false);
     }
 
-    public void renameTodo(UUID toDoListID, final int position) {
+    public void renameTodo(TodoList todoList, final int position) {
 
-        Context context = new ContextThemeWrapper(ListSelectionActivity.this, R.style.Dialog);
+        Context context = new ContextThemeWrapper(getActivity(), R.style.Dialog);
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         builder.setTitle(getString(R.string.rename_todo_suggestion));
 
@@ -144,7 +138,8 @@ public class ListSelectionActivity extends AppCompatActivity {
                 (DialogInterface dialog, int which) -> {
                     EditText titleInput = dialog_input.findViewById(R.id.alert_dialog_edit_text);
                     String title = titleInput.getText().toString();
-                    if (title.length() > 0) viewModel.renameTodo(toDoListID, title);
+                    if (title.length() > 0)
+                        viewModel.renameTodo(todoList.getId(), todoList.setTitle(title));
                     titleInput.getText().clear();
                     dialog.dismiss();
                 });

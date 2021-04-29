@@ -10,27 +10,46 @@
         <!-- Customize your theme here. -->
         <item name="android:textViewStyle">@style/NunitoTextViewStyle</item>
     </style>
+
     <style name="LoginTheme" parent="FirebaseUI">
         <item name="android:fontFamily">@font/nunitosans_regular</item>
         <item name="colorAccent">@color/dark_grey</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
     <style name="FirebaseUI.AuthMethodPicker.Logo">
-        <item name="android:padding">60dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:padding">50dp</item>
     </style>
+
     <style name="NunitoTextViewStyle">
         <item name="android:fontFamily">@font/nunitosans_regular</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
+
+    <style name="NavigationView">
+        <item name="android:background">@color/white</item>
+        <item name="itemBackground">@color/white</item>
+    </style>
+    <style name="DrawerMenuEntry">
+        <item name="android:fontFamily">@font/nunitosans_bold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
     <style name="ActivityTitle">
         <item name="android:textColor">@color/activity_title</item>
         <item name="android:textSize">30sp</item>
         <item name="android:fontFamily">@font/nunitosans_bold</item>
     </style>
+
     <style name="SelectionList">
         <item name="android:divider">@null</item>
         <item name="android:dividerHeight">0dp</item>
     </style>
+
     <style name="SelectionList.Entry">
         <item name="android:background">@drawable/rounded_corner_bg</item>
         <item name="android:paddingLeft">20dp</item>
@@ -39,12 +58,14 @@
         <item name="android:paddingBottom">18dp</item>
         <item name="android:layout_marginBottom">16dp</item>
     </style>
+
     <style name="SelectionList.Entry.Title">
         <item name="android:fontFamily">@font/nunitosans_bold</item>
         <item name="android:textColor">@color/dark_blue</item>
         <item name="android:textSize">22sp</item>
         <item name="android:padding">0dp</item>
     </style>
+
     <style name="SelectionList.Entry.Subtitle">
         <item name="android:fontFamily">@font/nunitosans_semibold</item>
         <item name="android:textColor">@color/light_grey</item>
@@ -52,15 +73,18 @@
         <item name="android:layout_marginBottom">0dp</item>
         <item name="android:padding">0dp</item>
     </style>
+
     <style name="TaskEntryCheckbox">
         <item name="android:buttonTint">@color/light_grey</item>
     </style>
+
     <style name="TaskEntryText">
         <item name="android:fontFamily">@font/nunitosans_semibold</item>
         <item name="android:textSize">20sp</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:background">@android:color/transparent</item>
     </style>
+
     <style name="ToolbarActionButton">
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:tint">#000000</item>
@@ -115,4 +139,5 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:text">X</item>
     </style>
+
 </resources>

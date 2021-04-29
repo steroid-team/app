@@ -32,9 +32,6 @@ public class ListSelectionFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_list_selection, container, false);
 
         root.findViewById(R.id.create_note_button).setOnClickListener(this::createList);
-        root.findViewById(R.id.floatingActionButton).setOnClickListener(v -> {
-                    Navigation.findNavController(getView()).navigate(R.id.nav_drawing);
-                });
 
         todoLists = new ArrayList<>();
         ListView listView = root.findViewById(R.id.activity_list_selection_itemlist);

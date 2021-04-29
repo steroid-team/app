@@ -7,10 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
 import com.github.steroidteam.todolist.R;
 import com.larswerkman.holocolorpicker.ColorPicker;
 import com.larswerkman.holocolorpicker.SaturationBar;
@@ -44,7 +42,8 @@ public class DrawingFragment extends Fragment {
         root.findViewById(R.id.colorChoose).setOnClickListener(this::ColorPickerButton);
         root.findViewById(R.id.cancelColor).setOnClickListener(this::cancelColorButton);
         root.findViewById(R.id.applyColor).setOnClickListener(this::applyColorButton);
-        root.findViewById(R.id.backButton).setOnClickListener((view) -> getParentFragmentManager().popBackStack());
+        root.findViewById(R.id.backButton)
+                .setOnClickListener((view) -> getParentFragmentManager().popBackStack());
 
         drawingCanvas = new DrawingView(getContext());
         canvasLayout.addView(drawingCanvas);

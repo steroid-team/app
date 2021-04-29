@@ -48,10 +48,10 @@ public class NoteDisplayFragment extends Fragment {
                         });
         root.findViewById(R.id.editor_action_drawing_btn)
                 .setOnClickListener(
-                v -> {
-                    // Go to the drawing view.
-                    Navigation.findNavController(getView()).navigate(R.id.nav_drawing);
-                });
+                        v -> {
+                            // Go to the drawing view.
+                            Navigation.findNavController(getView()).navigate(R.id.nav_drawing);
+                        });
         // Add a click listener to the "back" button to return to the previous activity.
         root.findViewById(R.id.back_button)
                 .setOnClickListener((view) -> getParentFragmentManager().popBackStack());

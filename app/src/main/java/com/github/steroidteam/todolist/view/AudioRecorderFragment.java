@@ -1,7 +1,5 @@
 package com.github.steroidteam.todolist.view;
 
-import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
@@ -101,22 +99,14 @@ public class AudioRecorderFragment extends Fragment {
         }
 
         recorder.start();
-        Toast.makeText(
-                        getApplicationContext(),
-                        getString(R.string.is_recording),
-                        Toast.LENGTH_SHORT)
-                .show();
+        Toast.makeText(getContext(), getString(R.string.is_recording), Toast.LENGTH_SHORT).show();
     }
 
     private void stopRecording() {
         recorder.stop();
         recorder.release();
         recorder = null;
-        Toast.makeText(
-                        getApplicationContext(),
-                        getString(R.string.stop_recording),
-                        Toast.LENGTH_SHORT)
-                .show();
+        Toast.makeText(getContext(), getString(R.string.stop_recording), Toast.LENGTH_SHORT).show();
     }
 
     private void onCompletePlaying() {

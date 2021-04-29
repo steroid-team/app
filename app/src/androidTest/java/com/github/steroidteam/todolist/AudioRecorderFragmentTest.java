@@ -9,8 +9,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import com.github.steroidteam.todolist.view.AudioRecorderFragment;
 import com.github.steroidteam.todolist.view.MainActivity;
-import com.github.steroidteam.todolist.view.MapFragment;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,8 +26,9 @@ public class AudioRecorderFragmentTest {
 
     @Before
     public void init() {
-        FragmentScenario<MapFragment> scenario =
-                FragmentScenario.launchInContainer(MapFragment.class, null, R.style.Theme_Asteroid);
+        FragmentScenario<AudioRecorderFragment> scenario =
+                FragmentScenario.launchInContainer(
+                        AudioRecorderFragment.class, null, R.style.Theme_Asteroid);
     }
 
     @Test

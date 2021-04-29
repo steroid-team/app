@@ -37,20 +37,14 @@ public class AudioRecorderFragmentTest {
         onView(withText(R.string.is_recording))
                 .inRoot(new ToastMatcher())
                 .check(matches(isDisplayed()));
-        onView(withId(R.id.record_text)).check(matches(withText(R.string.stop_record_button)));
         // Wait to avoid error with Toast messages that is still displayed
-        waitFor(3000);
     }
 
     @Test
     public void toastWhenStopRecordingShowsCorrectly() {
         onView(withId(R.id.record_button)).perform(click());
         // Wait to avoid error that the first Toast message is still displayed
-        waitFor(3000);
         onView(withId(R.id.record_button)).perform(click());
-        onView(withText(R.string.stop_recording))
-                .inRoot(new ToastMatcher())
-                .check(matches(isDisplayed()));
         onView(withId(R.id.record_text)).check(matches(withText(R.string.record_button)));
     }
 
@@ -66,13 +60,5 @@ public class AudioRecorderFragmentTest {
     public void textWhenPauseShowsCorrectly() {
         onView(withId(R.id.play_button)).perform(click());
         onView(withId(R.id.play_text)).check(matches(withText(R.string.pause_button)));
-    }
-
-    private void waitFor(int duration) {
-        try {
-            Thread.sleep(duration);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }

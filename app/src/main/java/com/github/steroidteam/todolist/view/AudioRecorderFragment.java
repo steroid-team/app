@@ -1,5 +1,7 @@
 package com.github.steroidteam.todolist.view;
 
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
@@ -12,21 +14,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.github.steroidteam.todolist.R;
-import com.github.steroidteam.todolist.database.DatabaseFactory;
-import com.github.steroidteam.todolist.view.adapter.NoteAdapter;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.UUID;
-
-import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
 public class AudioRecorderFragment extends Fragment {
 
@@ -49,7 +40,8 @@ public class AudioRecorderFragment extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         root = inflater.inflate(R.layout.fragment_audio_recorder, container, false);
-        root.findViewById(R.id.back_button).setOnClickListener(v -> getParentFragmentManager().popBackStack());
+        root.findViewById(R.id.back_button)
+                .setOnClickListener(v -> getParentFragmentManager().popBackStack());
         fileName = getActivity().getExternalCacheDir().getAbsolutePath();
         fileName += testFileName;
 

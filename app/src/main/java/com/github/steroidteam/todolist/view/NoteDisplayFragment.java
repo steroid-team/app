@@ -46,9 +46,11 @@ public class NoteDisplayFragment extends Fragment {
                             // Go to the map view.
                             Navigation.findNavController(getView()).navigate(R.id.nav_map);
                         });
-        root.findViewById(R.id.audio_button).setOnClickListener(v -> {
-            Navigation.findNavController(getView()).navigate(R.id.nav_audio);
-        });
+        root.findViewById(R.id.audio_button)
+                .setOnClickListener(
+                        v -> {
+                            Navigation.findNavController(getView()).navigate(R.id.nav_audio);
+                        });
 
         // Add a click listener to the "back" button to return to the previous activity.
         root.findViewById(R.id.back_button)
@@ -113,5 +115,4 @@ public class NoteDisplayFragment extends Fragment {
             locationText.setText(location);
         }
     }
-
 }

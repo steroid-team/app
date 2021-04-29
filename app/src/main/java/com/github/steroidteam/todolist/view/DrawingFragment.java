@@ -33,8 +33,8 @@ public class DrawingFragment extends Fragment {
         canvasLayout = root.findViewById(R.id.drawSpace);
         colorPicker = root.findViewById(R.id.colorPicker);
         colorPickerWindow = root.findViewById(R.id.colorPickerWindow);
-        saturationBar = (SaturationBar) root.findViewById(R.id.saturationbar);
-        valueBar = (ValueBar) root.findViewById(R.id.valuebar);
+        saturationBar = root.findViewById(R.id.saturationbar);
+        valueBar = root.findViewById(R.id.valuebar);
 
         root.findViewById(R.id.colorRed).setOnClickListener(this::redButton);
         root.findViewById(R.id.colorGreen).setOnClickListener(this::greenButton);

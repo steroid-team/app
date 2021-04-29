@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
-import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.view.adapter.TodoArrayListAdapter;
@@ -28,14 +27,13 @@ public class ListSelectionFragment extends Fragment {
 
     private TodoArrayListAdapter adapter;
     private ListSelectionViewModel viewModel;
-    private Database database;
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View root = inflater.inflate(R.layout.fragment_list_selection, container, false);
 
-        root.findViewById(R.id.create_note_button).setOnClickListener(this::createList);
+        root.findViewById(R.id.create_todo_button).setOnClickListener(this::createList);
 
         RecyclerView recyclerView = root.findViewById(R.id.activity_list_selection_itemlist);
         // Set layout manager

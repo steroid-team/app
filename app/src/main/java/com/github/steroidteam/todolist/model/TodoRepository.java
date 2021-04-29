@@ -23,6 +23,9 @@ public class TodoRepository {
         this.todoListID = todoListID;
 
         this.oneTodoList.setValue(new TodoList("Placeholder"));
+        // ArrayList<TodoList> tmp = new ArrayList<>();
+        // tmp.add(new TodoList("Placeholder"));
+        // this.arrayOfTodoList.setValue(tmp);
         this.database.getTodoList(todoListID).thenAccept(this.oneTodoList::setValue);
         this.database.getTodoListCollection().thenAccept(this::setArrayOfTodoList);
     }

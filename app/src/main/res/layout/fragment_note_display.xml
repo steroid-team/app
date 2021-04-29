@@ -2,9 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_note_display"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.NoteDisplayActivity">
+    tools:context=".view.NoteDisplayFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/note_header"
@@ -23,12 +24,11 @@
             android:id="@+id/camera_button"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:contentDescription="@string/add_header_photo"
-            android:onClick="pickFile"
-            android:scaleX="1.2"
-            android:scaleY="1.2"
             android:layout_marginTop="1dp"
             android:layout_marginEnd="1dp"
+            android:contentDescription="@string/add_header_photo"
+            android:scaleX="1.2"
+            android:scaleY="1.2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@android:drawable/ic_menu_camera" />
@@ -56,7 +56,6 @@
             android:adjustViewBounds="true"
             android:background="@android:color/transparent"
             android:contentDescription="@string/location_btn_description"
-            android:onClick="goToMapActivity"
             android:scaleType="fitCenter"
             app:layout_constraintEnd_toStartOf="@+id/camera_button"
             app:layout_constraintTop_toTopOf="parent"
@@ -106,7 +105,7 @@
         android:background="@null"
         android:focusableInTouchMode="true"
         android:fontFamily="@font/nunitosans_regular"
-        android:gravity="top|left"
+        android:gravity="top|start"
         android:importantForAutofill="no"
         android:inputType="textMultiLine|textCapSentences"
         android:singleLine="false"
@@ -125,5 +124,34 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="?android:attr/textCheckMark" />
+
+    <HorizontalScrollView
+        android:id="@+id/editor_toolbar"
+        style="@style/NoteEditorToolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fadeScrollbars="false"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:forceHasOverlappingRendering="true"
+            android:orientation="horizontal"
+            android:overScrollMode="always">
+
+            <ImageButton
+                android:id="@+id/editor_action_drawing_btn"
+                style="@style/NoteEditorToolbar.Button"
+                android:contentDescription="Add drawing"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                app:srcCompat="@drawable/plus_icon" />
+        </LinearLayout>
+    </HorizontalScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

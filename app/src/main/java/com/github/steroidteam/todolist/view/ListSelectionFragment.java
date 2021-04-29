@@ -1,7 +1,6 @@
 package com.github.steroidteam.todolist.view;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +9,10 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import com.firebase.ui.auth.AuthUI;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
@@ -21,23 +20,21 @@ import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListSelectionActivity extends AppCompatActivity {
-
-    public static final String EXTRA_ID_TODO_LIST = "id_todo_list";
+public class ListSelectionFragment extends Fragment {
 
     private static todoListAdapter adapter;
     private ArrayList<TodoList> todoLists;
     private Database database;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_selection);
+        View root = inflater.inflate(R.layout.fragment_list_selection, container, false);
+
+        root.findViewById(R.id.create_note_button).setOnClickListener(this::createList);
 
         todoLists = new ArrayList<>();
-
-        setTitle("TODO Lists");
-        ListView listView = findViewById(R.id.activity_list_selection_itemlist);
+        ListView listView = root.findViewById(R.id.activity_list_selection_itemlist);
         adapter = new todoListAdapter(todoLists);
         setListViewSettings(listView);
 
@@ -55,37 +52,15 @@ public class ListSelectionActivity extends AppCompatActivity {
                                                 });
                             }
                         }));
+
+        return root;
     }
 
     private void setListViewSettings(ListView listView) {
         listView.setAdapter(adapter);
         listView.setLongClickable(true);
 
-        listView.setOnItemLongClickListener(
-                (adapterView, view, i, l) -> {
-                    return true;
-                });
-    }
-
-    public void logOut(View view) {
-        Activity thisActivity = this;
-        AuthUI.getInstance().signOut(this).addOnCompleteListener(task -> thisActivity.finish());
-    }
-
-    public void openList(View view) {
-        Intent itemViewActivity = new Intent(ListSelectionActivity.this, ItemViewActivity.class);
-        startActivity(itemViewActivity);
-    }
-
-    public void openNotes(View view) {
-        Intent noteSelectionActivity =
-                new Intent(ListSelectionActivity.this, NoteSelectionActivity.class);
-        startActivity(noteSelectionActivity);
-    }
-
-    public void openDrawing(View view) {
-        Intent drawingActivity = new Intent(ListSelectionActivity.this, DrawingActivity.class);
-        startActivity(drawingActivity);
+        listView.setOnItemLongClickListener((adapterView, view, i, l) -> true);
     }
 
     public void createList(View view) {
@@ -128,7 +103,7 @@ public class ListSelectionActivity extends AppCompatActivity {
 
             if (convertView == null) {
                 convertView =
-                        LayoutInflater.from(getBaseContext())
+                        LayoutInflater.from(getActivity())
                                 .inflate(R.layout.layout_todo_list_item, parent, false);
             }
 
@@ -144,18 +119,17 @@ public class ListSelectionActivity extends AppCompatActivity {
 
             todoListView.setOnClickListener(
                     view -> {
-                        Intent itemViewActivity =
-                                new Intent(ListSelectionActivity.this, ItemViewActivity.class);
-                        itemViewActivity.putExtra(EXTRA_ID_TODO_LIST, todoList.getId().toString());
-                        startActivity(itemViewActivity);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("list_id", todoList.getId());
+                        Navigation.findNavController(view).navigate(R.id.nav_item_view, bundle);
                     });
 
             return convertView;
         }
 
         private void createRenameAlert(TodoList todoList) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(ListSelectionActivity.this);
-            final EditText input = new EditText(getBaseContext());
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+            final EditText input = new EditText(getActivity());
             input.setSingleLine(true);
             input.setText(todoList.getTitle());
             alert.setTitle("Please enter a new name")

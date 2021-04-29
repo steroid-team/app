@@ -12,25 +12,34 @@ import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentat
 import static org.junit.Assert.assertEquals;
 
 import android.view.KeyEvent;
+import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
-import com.github.steroidteam.todolist.view.MapsActivity;
+import com.github.steroidteam.todolist.view.MainActivity;
+import com.github.steroidteam.todolist.view.MapFragment;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class)
-public class MapsActivityTest {
+@RunWith(AndroidJUnit4.class)
+public class MapFragmentTest {
 
     @Rule
-    public ActivityScenarioRule<MapsActivity> activityRule =
-            new ActivityScenarioRule<>(MapsActivity.class);
+    public ActivityScenarioRule<MainActivity> activityRule =
+            new ActivityScenarioRule<>(MainActivity.class);
+
+    @Before
+    public void init() {
+        FragmentScenario<MapFragment> scenario =
+                FragmentScenario.launchInContainer(MapFragment.class, null, R.style.Theme_Asteroid);
+    }
 
     @Test
     public void markerIsCorrectlyPlacedAtDefaultLocationOrUserLocation() {
@@ -72,9 +81,7 @@ public class MapsActivityTest {
 
         onView(withId(R.id.sv_location))
                 .perform(click(), typeText(TEST_WRONG_LOCATION), pressKey(KeyEvent.KEYCODE_ENTER));
-        onView(withText(TOAST_TEXT))
-                .inRoot(new ItemViewActivityTest.ToastMatcher())
-                .check(matches(isDisplayed()));
+        onView(withText(TOAST_TEXT)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
     }
 
     @Test

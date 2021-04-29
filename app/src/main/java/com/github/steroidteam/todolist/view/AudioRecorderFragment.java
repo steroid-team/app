@@ -40,6 +40,8 @@ public class AudioRecorderFragment extends Fragment {
         root = inflater.inflate(R.layout.fragment_audio_recorder, container, false);
         root.findViewById(R.id.back_button)
                 .setOnClickListener(v -> getParentFragmentManager().popBackStack());
+        root.findViewById(R.id.record_button).setOnClickListener(v -> recordOnClick(v));
+        root.findViewById(R.id.play_button).setOnClickListener(v -> playingOnClick(v));
         fileName = getActivity().getExternalCacheDir().getAbsolutePath();
         fileName += testFileName;
 

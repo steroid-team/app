@@ -5,17 +5,32 @@ import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import com.github.steroidteam.todolist.R;
-import java.io.IOException;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-public class AudioRecorderActivity extends AppCompatActivity {
+import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.view.adapter.NoteAdapter;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.UUID;
+
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
+
+public class AudioRecorderFragment extends Fragment {
+
+    private View root;
     private String fileName;
     // Maybe change that later to have multiple audios
     private String testFileName = "/audioTest.3gp";
@@ -30,24 +45,23 @@ public class AudioRecorderActivity extends AppCompatActivity {
     private boolean isFirstTime = true;
     private MediaPlayer player;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_audio_recorder);
-        ImageButton backButton = findViewById(R.id.back_button);
-        backButton.setOnClickListener((view) -> finish());
-        fileName = getExternalCacheDir().getAbsolutePath();
+        root = inflater.inflate(R.layout.fragment_audio_recorder, container, false);
+        root.findViewById(R.id.back_button).setOnClickListener(v -> getParentFragmentManager().popBackStack());
+        fileName = getActivity().getExternalCacheDir().getAbsolutePath();
         fileName += testFileName;
 
         player = new MediaPlayer();
         player.setOnCompletionListener(player -> onCompletePlaying());
-
         ActivityCompat.requestPermissions(
-                this, new String[] {Manifest.permission.RECORD_AUDIO}, AUDIO_PERMISSION);
+                getActivity(), new String[] {Manifest.permission.RECORD_AUDIO}, AUDIO_PERMISSION);
+        return root;
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         player.release();
         player = null;
@@ -63,20 +77,20 @@ public class AudioRecorderActivity extends AppCompatActivity {
                 break;
         }
         if (!isPermissionGiven) {
-            finish();
+            getActivity().finish();
         }
     }
 
     public void recordOnClick(View view) {
         if (isRecording) {
-            TextView textView = findViewById(R.id.record_text);
+            TextView textView = root.findViewById(R.id.record_text);
             stopRecording();
             textView.setText(getText(R.string.record_button));
             isRecording = false;
         } else {
             startRecording();
             isRecording = true;
-            TextView textView = findViewById(R.id.record_text);
+            TextView textView = root.findViewById(R.id.record_text);
             textView.setText(getText(R.string.stop_record_button));
         }
     }
@@ -114,27 +128,27 @@ public class AudioRecorderActivity extends AppCompatActivity {
     }
 
     private void onCompletePlaying() {
-        ImageButton playButton = findViewById(R.id.play_button);
+        ImageButton playButton = root.findViewById(R.id.play_button);
         playButton.setImageResource(android.R.drawable.ic_media_play);
-        TextView textView = findViewById(R.id.play_text);
+        TextView textView = root.findViewById(R.id.play_text);
         textView.setText(getText(R.string.play_button));
     }
 
     public void playingOnClick(View view) {
         if (player.isPlaying()) {
             pausePlayingAudio();
-            TextView textView = findViewById(R.id.play_text);
+            TextView textView = root.findViewById(R.id.play_text);
             textView.setText(getText(R.string.play_button));
         } else {
             playingAudio();
-            TextView textView = findViewById(R.id.play_text);
+            TextView textView = root.findViewById(R.id.play_text);
             textView.setText(getText(R.string.pause_button));
         }
     }
 
     private void pausePlayingAudio() {
         player.pause();
-        ImageButton playButton = findViewById(R.id.play_button);
+        ImageButton playButton = root.findViewById(R.id.play_button);
         playButton.setImageResource(android.R.drawable.ic_media_play);
     }
 
@@ -149,7 +163,7 @@ public class AudioRecorderActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ImageButton playButton = findViewById(R.id.play_button);
+        ImageButton playButton = root.findViewById(R.id.play_button);
         playButton.setImageResource(android.R.drawable.ic_media_pause);
     }
 }

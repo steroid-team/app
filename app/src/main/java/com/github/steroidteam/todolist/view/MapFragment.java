@@ -1,20 +1,20 @@
 package com.github.steroidteam.todolist.view;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import com.github.steroidteam.todolist.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -22,7 +22,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -30,12 +29,11 @@ import com.google.android.gms.tasks.Task;
 import java.io.IOException;
 import java.util.List;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-    private static final String TAG = MapsActivity.class.getSimpleName();
+    private static final String TAG = MapFragment.class.getSimpleName();
 
     private GoogleMap map;
-    private CameraPosition cameraPosition;
     // The entry point to the Fused Location Provider.
     private FusedLocationProviderClient fusedLocationProviderClient;
     // A default location (Sydney, Australia) and default zoom to use when location permission is
@@ -51,36 +49,38 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location lastKnownLocation;
 
     // Keys for storing activity state.
-    private static final String KEY_CAMERA_POSITION = "camera_position";
-    public static final String KEY_LOCATION = "location";
-
-    public static final String KEY_NAME_LOCATION = "nameLocation";
+    private static final String KEY_LOCATION = "location";
 
     private SearchView searchView;
     private Marker marker;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        View root = inflater.inflate(R.layout.fragment_map, container, false);
+
+        root.findViewById(R.id.map_save_location).setOnClickListener(this::onSavePressed);
 
         // Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
-            cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
 
         // Retrieve the content view that renders the map.
-        setContentView(R.layout.activity_maps);
-        searchView = findViewById(R.id.sv_location);
+        // setContentView(R.layout.fragment_map);
+        searchView = root.findViewById(R.id.sv_location);
 
         searchView.setOnQueryTextListener(createOnQueryTextListener());
         // Construct a FusedLocationProviderClient.
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
 
         // Get the SupportMapFragment and request notification when the map is ready to be used.
         SupportMapFragment mapFragment =
-                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this::onMapReady);
+                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        return root;
     }
 
     private SearchView.OnQueryTextListener createOnQueryTextListener() {
@@ -105,17 +105,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void markerSearchLocation(String location, List<Address> addressList) {
-        Geocoder geocoder = new Geocoder(MapsActivity.this);
+        Geocoder geocoder = new Geocoder(getContext());
         try {
             addressList = geocoder.getFromLocationName(location, 1);
         } catch (IOException e) {
             e.printStackTrace();
         }
         if (!checkLocationHasBeenFound(addressList)) {
-            Toast.makeText(
-                            getApplicationContext(),
-                            getString(R.string.location_not_found),
-                            Toast.LENGTH_SHORT)
+            Toast.makeText(getContext(), getString(R.string.location_not_found), Toast.LENGTH_SHORT)
                     .show();
             return;
         }
@@ -157,24 +154,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void onSavePressed(View view) {
-        Intent returnIntent = new Intent();
         if (marker != null) {
             LatLng position = marker.getPosition();
-            returnIntent.putExtra(KEY_LOCATION, position);
-            Geocoder geocoder = new Geocoder(MapsActivity.this);
+            Log.d("mapfragment", "onSavePressed");
+
+            Geocoder geocoder = new Geocoder(getContext());
             List<Address> addressList = null;
             try {
-                addressList = geocoder.getFromLocation(position.latitude, position.longitude, 1);
+                addressList = geocoder.getFromLocation(position.latitude, position.longitude, 2);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            returnIntent.putExtra(KEY_NAME_LOCATION, addressList.get(0).getLocality());
-        } else {
-            returnIntent.putExtra(KEY_LOCATION, (LatLng) null);
-            returnIntent.putExtra(KEY_NAME_LOCATION, (String) null);
+            NoteDisplayFragment.position = position;
+            NoteDisplayFragment.locationName = addressList.get(0).getLocality();
+            Log.d("mapfragment", "data stored");
         }
-        setResult(Activity.RESULT_OK, returnIntent);
-        finish();
+        // Go back to the original fragment.
+        getParentFragmentManager().popBackStack();
     }
 
     /** Gets the current location of the device, and positions the map's camera. */
@@ -186,7 +182,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         try {
             if (locationPermissionGranted) {
                 Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
-                locationResult.addOnCompleteListener(this, task -> onCompleteDeviceLocation(task));
+                locationResult.addOnCompleteListener(getActivity(), this::onCompleteDeviceLocation);
             }
         } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage(), e);
@@ -253,13 +249,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
          * onRequestPermissionsResult.
          */
         if (ContextCompat.checkSelfPermission(
-                        this.getApplicationContext(),
-                        android.Manifest.permission.ACCESS_FINE_LOCATION)
+                        getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true;
         } else {
             ActivityCompat.requestPermissions(
-                    this,
+                    getActivity(),
                     new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }

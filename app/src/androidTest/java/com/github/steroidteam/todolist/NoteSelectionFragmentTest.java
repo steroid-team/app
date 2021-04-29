@@ -3,29 +3,26 @@ package com.github.steroidteam.todolist;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
+import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
-import android.content.Intent;
-import androidx.test.core.app.ActivityScenario;
+import androidx.fragment.app.testing.FragmentScenario;
+import androidx.navigation.Navigation;
+import androidx.navigation.testing.TestNavHostController;
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.intent.Intents;
-import androidx.test.espresso.intent.matcher.IntentMatchers;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.todo.TodoListCollection;
-import com.github.steroidteam.todolist.view.ListSelectionActivity;
-import com.github.steroidteam.todolist.view.NoteDisplayActivity;
-import com.github.steroidteam.todolist.view.NoteSelectionActivity;
+import com.github.steroidteam.todolist.view.NoteSelectionFragment;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import org.hamcrest.Matchers;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,16 +30,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class NoteSelectionActivityTest {
+public class NoteSelectionFragmentTest {
 
-    Intent intent;
-
+    private FragmentScenario<NoteSelectionFragment> scenario;
     @Mock Database databaseMock;
 
     @Before
-    public void before() {
-        Intents.init();
-
+    public void init() {
         List<UUID> notes = Arrays.asList(UUID.randomUUID(), UUID.randomUUID());
         CompletableFuture<List<UUID>> notesFuture = new CompletableFuture<>();
         notesFuture.complete(notes);
@@ -69,36 +63,27 @@ public class NoteSelectionActivityTest {
 
         DatabaseFactory.setCustomDatabase(databaseMock);
 
-        intent =
-                new Intent(
-                        ApplicationProvider.getApplicationContext(), NoteSelectionActivity.class);
-    }
-
-    @After
-    public void after() {
-        Intents.release();
+        scenario =
+                FragmentScenario.launchInContainer(
+                        NoteSelectionFragment.class, null, R.style.Theme_Asteroid);
     }
 
     @Test
     public void openListWorks() {
-        try (ActivityScenario<ListSelectionActivity> scenario = ActivityScenario.launch(intent)) {
-            onView(withId(R.id.activity_noteselection_recycler))
-                    .perform(actionOnItemAtPosition(0, click()));
+        // Set a test NavController in the fragment to check the navigation flow.
+        TestNavHostController navController =
+                new TestNavHostController(ApplicationProvider.getApplicationContext());
 
-            Intents.intended(
-                    Matchers.allOf(
-                            IntentMatchers.hasComponent(NoteDisplayActivity.class.getName())));
-        }
-    }
+        scenario.onFragment(
+                fragment -> {
+                    navController.setGraph(R.navigation.mobile_navigation);
+                    Navigation.setViewNavController(fragment.requireView(), navController);
+                });
 
-    @Test
-    public void openTodoListWorks() {
-        try (ActivityScenario<ListSelectionActivity> scenario = ActivityScenario.launch(intent)) {
-            onView(withId(R.id.activity_noteselection_button)).perform(click());
+        onView(withId(R.id.activity_noteselection_recycler))
+                .perform(actionOnItemAtPosition(0, click()));
 
-            Intents.intended(
-                    Matchers.allOf(
-                            IntentMatchers.hasComponent(ListSelectionActivity.class.getName())));
-        }
+        // Check that we are now in the note display view.
+        assertThat(navController.getCurrentDestination().getId(), equalTo(R.id.nav_note_display));
     }
 }

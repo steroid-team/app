@@ -18,6 +18,7 @@ public class TodoRepository {
         oneTodoList = new MutableLiveData<>();
         this.todoListID = todoListID;
 
+        this.oneTodoList.setValue(new TodoList("Placeholder"));
         this.database.getTodoList(todoListID).thenAccept(this.oneTodoList::setValue);
     }
 

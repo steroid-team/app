@@ -9,7 +9,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import com.github.steroidteam.todolist.view.AudioRecorderActivity;
+import com.github.steroidteam.todolist.view.AudioRecorderFragment;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -18,11 +18,11 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AudioRecorderActivityTest {
+public class AudioRecorderFragmentTest {
 
     @Rule
-    public ActivityScenarioRule<AudioRecorderActivity> activityRule =
-            new ActivityScenarioRule<>(AudioRecorderActivity.class);
+    public ActivityScenarioRule<AudioRecorderFragment> activityRule =
+            new ActivityScenarioRule<>(AudioRecorderFragment.class);
 
     @Before
     public void before() {

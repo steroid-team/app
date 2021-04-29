@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_list_selection">
+
+    <fragment
+        android:id="@+id/nav_list_selection"
+        android:name="com.github.steroidteam.todolist.view.ListSelectionFragment"
+        android:label="@string/menu_todo_lists"
+        tools:layout="@layout/fragment_list_selection" >
+        <action
+            android:id="@+id/action_nav_list_selection_to_nav_item_view"
+            app:destination="@id/nav_item_view" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_item_view"
+        android:name="com.github.steroidteam.todolist.view.ItemViewFragment"
+        tools:layout="@layout/fragment_item_view" />
+
+    <fragment
+        android:id="@+id/nav_note_selection"
+        android:name="com.github.steroidteam.todolist.view.NoteSelectionFragment"
+        android:label="@string/menu_notes"
+        tools:layout="@layout/fragment_note_selection" >
+        <action
+            android:id="@+id/action_nav_note_selection_to_nav_note_display"
+            app:destination="@id/nav_note_display" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_note_display"
+        android:name="com.github.steroidteam.todolist.view.NoteDisplayFragment"
+        tools:layout="@layout/fragment_note_display" >
+        <action
+            android:id="@+id/action_nav_note_display_to_nav_map"
+            app:destination="@id/nav_map" />
+        <action
+            android:id="@+id/action_nav_note_display_to_nav_audio"
+            app:destination="@id/nav_audio" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_map"
+        android:name="com.github.steroidteam.todolist.view.MapFragment"
+        tools:layout="@layout/fragment_map" />
+
+    <fragment
+        android:id="@+id/nav_audio"
+        android:name="com.github.steroidteam.todolist.view.AudioRecorderFragment"
+        tools:layout="@layout/fragment_audio_recorder" />
+
+</navigation>

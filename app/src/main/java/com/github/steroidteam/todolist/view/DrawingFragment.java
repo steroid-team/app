@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import com.github.steroidteam.todolist.R;
 import com.larswerkman.holocolorpicker.ColorPicker;
@@ -125,34 +126,38 @@ public class DrawingFragment extends Fragment {
 
         if (firstBtnHasFocus) {
             firstButton.setBackground(
-                    getActivity().getDrawable(R.drawable.first_button_drawing_onfocus));
+                    ResourcesCompat.getDrawable(requireActivity().getResources(), R.drawable.first_button_drawing_onfocus, null));
         } else {
-            firstButton.setBackground(getActivity().getDrawable(R.drawable.first_button_drawing));
+            firstButton.setBackground(
+                    ResourcesCompat.getDrawable(requireActivity().getResources(), R.drawable.first_button_drawing, null));
         }
         if (secondBtnHasFocus) {
             secondButton.setBackground(
-                    getActivity().getDrawable(R.drawable.second_button_drawing_onfocus));
+                    ResourcesCompat.getDrawable(requireActivity().getResources(), R.drawable.second_button_drawing_onfocus, null));
         } else {
-            secondButton.setBackground(getActivity().getDrawable(R.drawable.second_button_drawing));
+            secondButton.setBackground(
+                    ResourcesCompat.getDrawable(requireActivity().getResources(), R.drawable.second_button_drawing, null));
         }
         if (thirdBtnHasFocus) {
             thirdButton.setBackground(
-                    getActivity().getDrawable(R.drawable.third_button_drawing_onfocus));
+                    ResourcesCompat.getDrawable(requireActivity().getResources(), R.drawable.third_button_drawing_onfocus, null));
         } else {
-            thirdButton.setBackground(getActivity().getDrawable(R.drawable.third_button_drawing));
+            thirdButton.setBackground(
+                    ResourcesCompat.getDrawable(requireActivity().getResources(), R.drawable.third_button_drawing, null));
         }
         if (fourthBtnHasFocus) {
             fourthButton.setBackground(
-                    getActivity().getDrawable(R.drawable.fourth_button_drawing_onfocus));
+                    ResourcesCompat.getDrawable(requireActivity().getResources(), R.drawable.fourth_button_drawing_onfocus, null));
         } else {
-            fourthButton.setBackground(getActivity().getDrawable(R.drawable.fourth_button_drawing));
+            fourthButton.setBackground(
+                    ResourcesCompat.getDrawable(requireActivity().getResources(), R.drawable.fourth_button_drawing, null));
         }
         if (colorBtnHasFocus) {
             colorChooseButton.setBackground(
-                    getActivity().getDrawable(R.drawable.colorpicker_button_onfocus));
+                    ResourcesCompat.getDrawable(requireActivity().getResources(), R.drawable.colorpicker_button_onfocus, null));
         } else {
             colorChooseButton.setBackground(
-                    getActivity().getDrawable(R.drawable.colorpicker_button));
+                    ResourcesCompat.getDrawable(requireActivity().getResources(), R.drawable.colorpicker_button, null));
         }
     }
 }

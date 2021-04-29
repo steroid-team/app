@@ -51,5 +51,9 @@
         android:id="@+id/nav_audio"
         android:name="com.github.steroidteam.todolist.view.AudioRecorderFragment"
         tools:layout="@layout/fragment_audio_recorder" />
+    <fragment
+        android:id="@+id/nav_drawing"
+        android:name="com.github.steroidteam.todolist.view.DrawingFragment"
+        tools:layout="@layout/fragment_drawing" />
 
 </navigation>

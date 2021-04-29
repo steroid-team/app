@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Theme.Asteroid" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Primary brand color. -->
@@ -34,6 +34,7 @@
         <item name="android:background">@color/white</item>
         <item name="itemBackground">@color/white</item>
     </style>
+
     <style name="DrawerMenuEntry">
         <item name="android:fontFamily">@font/nunitosans_bold</item>
         <item name="android:textSize">20sp</item>
@@ -91,29 +92,43 @@
         <item name="android:tint">#000000</item>
         <item name="android:scaleType">fitCenter</item>
     </style>
+
     <style name="TaskSaveButton">
         <item name="android:fontFamily">@font/nunitosans_semibold</item>
         <item name="android:background">@drawable/rounded_corner_bg</item>
         <item name="android:backgroundTint">@color/colorPrimary</item>
         <item name="android:textColor">@color/white</item>
     </style>
+
     <style name="TaskDeleteButton">
         <item name="android:fontFamily">@font/nunitosans_semibold</item>
         <item name="android:background">@color/red_pastel</item>
         <item name="android:textColor">@color/white</item>
     </style>
+
     <style name="TaskUndoButton">
         <item name="android:fontFamily">@font/nunitosans_semibold</item>
         <item name="android:background">@drawable/rounded_corner_bg</item>
         <item name="android:backgroundTint">@color/light_grey</item>
         <item name="android:textColor">@color/white</item>
     </style>
+
     <style name="TaskDeleteButtonInRecyclerView">
         <item name="android:fontFamily">@font/nunitosans_semibold</item>
         <item name="android:background">@drawable/rounded_corner_bg</item>
         <item name="android:backgroundTint">@color/light_grey</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:text">X</item>
+    </style>
+
+    <style name="NoteEditorToolbar">
+        <item name="android:background">@color/dark_grey</item>
+    </style>
+
+    <style name="NoteEditorToolbar.Button">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
     </style>
 
 </resources>

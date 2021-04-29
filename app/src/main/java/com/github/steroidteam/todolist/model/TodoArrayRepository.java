@@ -12,7 +12,7 @@ import java.util.UUID;
 public class TodoArrayRepository {
     private final Database database;
     private final MutableLiveData<ArrayList<TodoList>> arrayOfTodoList;
-    //private final ArrayList<TodoList> privateArrayList;
+    // private final ArrayList<TodoList> privateArrayList;
 
     public TodoArrayRepository() {
         this.database = DatabaseFactory.getDb();
@@ -27,10 +27,13 @@ public class TodoArrayRepository {
     private void setArrayOfTodoList(TodoListCollection todoListCollection) {
         ArrayList<TodoList> privateArrayList = new ArrayList<>();
         for (int i = 0; i < todoListCollection.getSize(); i++) {
-            this.database.getTodoList(todoListCollection.getUUID(i)).thenAccept(todoList -> {
-                privateArrayList.add(todoList);
-                arrayOfTodoList.setValue(privateArrayList);
-            });
+            this.database
+                    .getTodoList(todoListCollection.getUUID(i))
+                    .thenAccept(
+                            todoList -> {
+                                privateArrayList.add(todoList);
+                                arrayOfTodoList.setValue(privateArrayList);
+                            });
         }
     }
 

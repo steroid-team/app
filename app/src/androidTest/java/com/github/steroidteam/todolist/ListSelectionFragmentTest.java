@@ -48,13 +48,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class ListSelectionFragmentTest {
 
     private FragmentScenario<ListSelectionFragment> scenario;
+    private final String TODO_1_TITLE = "Some random title";
+    private final String TODO_2_TITLE = "Some random title 2";
 
     @Mock Database databaseMock;
 
     @Before
     public void init() {
         TodoListCollection collection = new TodoListCollection();
-        TodoList todoList = new TodoList("Some random title");
+        TodoList todoList = new TodoList(TODO_1_TITLE);
         collection.addUUID(UUID.randomUUID());
         collection.addUUID(UUID.randomUUID());
 
@@ -94,13 +96,11 @@ public class ListSelectionFragmentTest {
         onView(withText(R.string.add_todo_suggestion)).check(doesNotExist());
 
         onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, "A Todo!")));
+                .check(matches(atPositionCheckText(0, TODO_1_TITLE)));
     }
 
     @Test
     public void renameTodoWorks() {
-
-        final String TODO_DESC_2 = "Homework";
 
         onView(withId(R.id.activity_list_selection_itemlist))
                 .perform(actionOnItemAtPosition(0, swipeRight()));
@@ -109,9 +109,22 @@ public class ListSelectionFragmentTest {
 
         onView(isRoot()).perform(waitAtLeastHelper(500));
 
-        onView(withId(R.id.alert_dialog_edit_text)).perform(typeText(TODO_DESC_2));
+        onView(withId(R.id.alert_dialog_edit_text)).perform(typeText(TODO_2_TITLE));
 
         onView(isRoot()).perform(waitAtLeastHelper(500));
+
+        TodoListCollection collection = new TodoListCollection();
+        TodoList todoList = new TodoList(TODO_2_TITLE);
+        collection.addUUID(UUID.randomUUID());
+        collection.addUUID(UUID.randomUUID());
+
+        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
+        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+        todoListCollectionFuture.complete(collection);
+        todoListFuture.complete(todoList);
+
+        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
 
         // button1 = positive button
         onView(withId(android.R.id.button1)).perform(click());
@@ -119,46 +132,56 @@ public class ListSelectionFragmentTest {
         onView(withId(R.id.alert_dialog_edit_text)).check(doesNotExist());
 
         onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, TODO_DESC_2)));
+                .check(matches(atPositionCheckText(0, TODO_2_TITLE)));
     }
 
     @Test
     public void createTodoWorks() {
 
-        final String TODO_DESC = "A Todo 2!";
-
-        onView(withId(R.id.create_todo_button)).perform(click());
-
-        onView(withText(R.string.add_todo_suggestion)).check(matches(isDisplayed()));
-
-        onView(withId(R.id.alert_dialog_edit_text)).inRoot(isDialog()).perform(typeText(TODO_DESC));
-        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
-
-        onView(withText(R.string.add_todo_suggestion)).check(doesNotExist());
-
-        onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(1));
-
         onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(1, TODO_DESC)));
-    }
+                .check(matches(atPositionCheckText(0, TODO_1_TITLE)));
 
-    @Test
-    public void deleteTodoWorks() {
-        final String TODO_DESC_2 = "Homework";
+        TodoListCollection collection = new TodoListCollection();
+        TodoList todoList = new TodoList(TODO_2_TITLE);
+        collection.addUUID(UUID.randomUUID());
+        collection.addUUID(UUID.randomUUID());
 
-        // Add a to-do
+        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
+        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+        todoListCollectionFuture.complete(collection);
+        todoListFuture.complete(todoList);
+
+        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListFuture).when(databaseMock).putTodoList(any(TodoList.class));
+
         onView(withId(R.id.create_todo_button)).perform(click());
 
         onView(withText(R.string.add_todo_suggestion)).check(matches(isDisplayed()));
 
         onView(withId(R.id.alert_dialog_edit_text))
                 .inRoot(isDialog())
-                .perform(clearText(), typeText(TODO_DESC_2));
-        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
-
-        onView(isRoot()).perform(waitAtLeastHelper(500));
+                .perform(typeText(TODO_2_TITLE));
+        onView(withText(R.string.add_todo)).inRoot(isDialog()).perform(click());
 
         onView(withText(R.string.add_todo_suggestion)).check(doesNotExist());
+
+        onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(0));
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .check(matches(atPositionCheckText(0, TODO_2_TITLE)));
+
+        onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(1));
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .check(matches(atPositionCheckText(1, TODO_2_TITLE)));
+    }
+
+    @Test
+    public void deleteTodoWorks() {
+
+        onView(withId(R.id.activity_list_selection_itemlist))
+                .check(matches(atPositionCheckText(0, TODO_1_TITLE)));
 
         onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(0));
 
@@ -167,18 +190,33 @@ public class ListSelectionFragmentTest {
 
         onView(withText(R.string.delete_todo_suggestion)).check(matches(isDisplayed()));
 
+        TodoListCollection collection = new TodoListCollection();
+        TodoList todoList = new TodoList(TODO_2_TITLE);
+        collection.addUUID(UUID.randomUUID());
+        collection.addUUID(UUID.randomUUID());
+
+        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
+        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+        todoListCollectionFuture.complete(collection);
+        todoListFuture.complete(todoList);
+
+        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        future.complete(null);
+        doReturn(future).when(databaseMock).removeTodoList(any());
+
         onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
         onView(isRoot()).perform(waitAtLeastHelper(500));
 
         onView(withText(R.string.delete_todo_suggestion)).check(doesNotExist());
 
         onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, TODO_DESC_2)));
+                .check(matches(atPositionCheckText(0, TODO_2_TITLE)));
     }
 
     @Test
     public void cancelDeletionWorks() {
-        final String TODO_DESC = "A Todo!";
 
         onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(0));
 
@@ -194,13 +232,11 @@ public class ListSelectionFragmentTest {
         onView(withText(R.string.delete_todo_suggestion)).check(doesNotExist());
 
         onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, TODO_DESC)));
+                .check(matches(atPositionCheckText(0, TODO_1_TITLE)));
     }
 
     @Test
     public void cancelRenamingWorks() {
-        final String TODO_DESC = "A Todo!";
-        final String TODO_DESC_2 = "Homework";
 
         onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(0));
 
@@ -211,7 +247,7 @@ public class ListSelectionFragmentTest {
 
         onView(withText(R.string.rename_todo_suggestion)).check(matches(isDisplayed()));
 
-        onView(withId(R.id.alert_dialog_edit_text)).perform(clearText(), typeText(TODO_DESC_2));
+        onView(withId(R.id.alert_dialog_edit_text)).perform(clearText(), typeText(TODO_2_TITLE));
 
         onView(isRoot()).perform(waitAtLeastHelper(500));
 
@@ -222,7 +258,7 @@ public class ListSelectionFragmentTest {
         onView(withText(R.string.rename_todo_suggestion)).check(doesNotExist());
 
         onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, TODO_DESC)));
+                .check(matches(atPositionCheckText(0, TODO_1_TITLE)));
     }
 
     @Test
@@ -242,7 +278,7 @@ public class ListSelectionFragmentTest {
         onView(withId(R.id.alert_dialog_edit_text)).check(doesNotExist());
 
         onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, "A Todo!")));
+                .check(matches(atPositionCheckText(0, TODO_1_TITLE)));
     }
 
     /**

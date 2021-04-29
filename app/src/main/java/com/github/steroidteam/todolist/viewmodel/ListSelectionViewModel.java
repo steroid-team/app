@@ -3,9 +3,7 @@ package com.github.steroidteam.todolist.viewmodel;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
-
 import com.github.steroidteam.todolist.model.TodoArrayRepository;
-import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.ArrayList;
 import java.util.UUID;

@@ -3,6 +3,8 @@ package com.github.steroidteam.todolist.viewmodel;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.github.steroidteam.todolist.model.TodoArrayRepository;
 import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.ArrayList;
@@ -10,10 +12,10 @@ import java.util.UUID;
 
 public class ListSelectionViewModel extends ViewModel {
 
-    private final TodoRepository repository;
+    private final TodoArrayRepository repository;
     private final LiveData<ArrayList<TodoList>> arrayOfTodoList;
 
-    public ListSelectionViewModel(@NonNull TodoRepository repository) {
+    public ListSelectionViewModel(@NonNull TodoArrayRepository repository) {
         super();
         this.repository = repository;
         this.arrayOfTodoList = repository.getAllTodo();

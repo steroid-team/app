@@ -6,65 +6,24 @@ import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-import com.github.steroidteam.todolist.model.todo.TodoListCollection;
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class TodoRepository {
     private final Database database;
     private final MutableLiveData<TodoList> oneTodoList;
-    private final MutableLiveData<ArrayList<TodoList>> arrayOfTodoList;
     private final UUID todoListID;
 
     public TodoRepository(UUID todoListID) {
         this.database = DatabaseFactory.getDb();
         oneTodoList = new MutableLiveData<>();
-        arrayOfTodoList = new MutableLiveData<>();
         this.todoListID = todoListID;
 
         this.oneTodoList.setValue(new TodoList("Placeholder"));
-        // ArrayList<TodoList> tmp = new ArrayList<>();
-        // tmp.add(new TodoList("Placeholder"));
-        // this.arrayOfTodoList.setValue(tmp);
         this.database.getTodoList(todoListID).thenAccept(this.oneTodoList::setValue);
-        this.database.getTodoListCollection().thenAccept(this::setArrayOfTodoList);
-    }
-
-    public LiveData<ArrayList<TodoList>> getAllTodo() {
-        return this.arrayOfTodoList;
-    }
-
-    private void setArrayOfTodoList(TodoListCollection todoListCollection) {
-        ArrayList<TodoList> tmpList = new ArrayList<>();
-        for (int i = 0; i < todoListCollection.getSize(); i++) {
-            database.getTodoList(todoListCollection.getUUID(i)).thenAccept(tmpList::add);
-        }
-        arrayOfTodoList.setValue(tmpList);
     }
 
     public LiveData<TodoList> getTodoList() {
         return this.oneTodoList;
-    }
-
-    public void putTodo(TodoList todoList) {
-        this.database
-                .putTodoList(todoList)
-                .thenCompose(str -> this.database.getTodoListCollection())
-                .thenAccept(this::setArrayOfTodoList);
-    }
-
-    public void removeTodo(UUID id) {
-        this.database
-                .removeTodoList(id)
-                .thenCompose(str -> this.database.getTodoListCollection())
-                .thenAccept(this::setArrayOfTodoList);
-    }
-
-    public void renameTodo(UUID id, TodoList todoListUpdated) {
-        this.database
-                .updateTodoList(id, todoListUpdated)
-                .thenCompose(str -> this.database.getTodoListCollection())
-                .thenAccept(this::setArrayOfTodoList);
     }
 
     public void putTask(Task task) {

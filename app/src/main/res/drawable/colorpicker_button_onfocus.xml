@@ -27,7 +27,7 @@
     </path>
 
     <path
-        android:fillColor="#ffffff"
+        android:fillColor="@color/white"
         android:pathData="M3,12
         A9,9 0 1,1 21,12
         A9,9 0 1,1 3,12 Z" />

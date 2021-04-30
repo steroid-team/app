@@ -83,35 +83,23 @@
 
         <Button
             android:id="@+id/drawing_first_button"
-            style="?attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            style="@style/DrawingButton" />
 
         <Button
             android:id="@+id/drawing_second_button"
-            style="?attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            style="@style/DrawingButton" />
 
         <Button
             android:id="@+id/drawing_third_button"
-            style="?attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            style="@style/DrawingButton" />
 
         <Button
             android:id="@+id/drawing_fourth_button"
-            style="?attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            style="@style/DrawingButton" />
 
         <Button
             android:id="@+id/colorChoose"
-            style="?attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleX="0.8"
-            android:scaleY="0.8" />
+            style="@style/DrawingButton" />
     </LinearLayout>
 
     <LinearLayout
@@ -119,7 +107,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/erase_button"
         app:layout_constraintEnd_toEndOf="@+id/drawSpace"
         app:layout_constraintStart_toStartOf="@+id/drawSpace"

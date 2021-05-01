@@ -62,7 +62,9 @@ public class ItemViewFragmentTest {
         doReturn(taskFuture).when(databaseMock).putTask(any(UUID.class), any(Task.class));
         doReturn(taskFuture).when(databaseMock).renameTask(any(UUID.class), anyInt(), anyString());
         doReturn(taskFuture).when(databaseMock).removeTask(any(UUID.class), anyInt());
-        doReturn(taskFuture).when(databaseMock).setTaskDone(any(UUID.class), anyInt(), anyBoolean());
+        doReturn(taskFuture)
+                .when(databaseMock)
+                .setTaskDone(any(UUID.class), anyInt(), anyBoolean());
 
         DatabaseFactory.setCustomDatabase(databaseMock);
 

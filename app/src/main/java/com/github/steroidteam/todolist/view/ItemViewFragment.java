@@ -42,7 +42,7 @@ public class ItemViewFragment extends Fragment {
         adapter = new TodoAdapter(createCustomListener());
         recyclerView.setAdapter(adapter);
 
-        UUID id = (UUID) getArguments().getSerializable("list_id");
+        UUID id = (UUID) getArguments().getSerializable(ListSelectionFragment.EXTRA_LIST_KEY);
         TodoRepository repository = new TodoRepository(id);
         itemViewModel = new ItemViewModel(repository);
         itemViewModel

@@ -10,13 +10,13 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#00FFFFFF">
+        android:background="@color/white">
 
         <TextView
             android:id="@+id/layout_todo_list_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#00FFFFFF"
+            android:background="@color/white"
             style="@style/SelectionList.Entry.Title"/>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -25,7 +25,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/layout_todo_list_text"
             android:layout_marginTop="0dp"
-            android:background="#00FFFFFF" />
+            android:layout_marginStart="16dp"
+            android:background="@color/white" />
 
     </RelativeLayout>
 

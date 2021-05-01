@@ -28,6 +28,8 @@ public class ListSelectionFragment extends Fragment {
     private TodoArrayListAdapter adapter;
     private ListSelectionViewModel viewModel;
 
+    public static final String EXTRA_LIST_KEY = "list_id";
+
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +66,7 @@ public class ListSelectionFragment extends Fragment {
             @Override
             public void onClickCustom(TodoArrayListAdapter.TodoHolder holder) {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("list_id", holder.getTodo().getId());
+                bundle.putSerializable(EXTRA_LIST_KEY, holder.getTodo().getId());
                 Navigation.findNavController(holder.itemView).navigate(R.id.nav_item_view, bundle);
             }
         };

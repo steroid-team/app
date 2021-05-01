@@ -28,6 +28,7 @@ import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.ListSelectionFragment;
@@ -57,6 +58,7 @@ public class ListSelectionFragmentTest {
     public void init() {
         TodoListCollection collection = new TodoListCollection();
         TodoList todoList = new TodoList(TODO_1_TITLE);
+        todoList.addTask(new Task("A simple task"));
         collection.addUUID(UUID.randomUUID());
         collection.addUUID(UUID.randomUUID());
 

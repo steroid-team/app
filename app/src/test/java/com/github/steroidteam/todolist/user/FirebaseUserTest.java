@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,23 +20,23 @@ import org.mockito.junit.MockitoRule;
 import org.mockito.quality.Strictness;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FBaseUserTest {
+public class FirebaseUserTest {
 
     @Rule public MockitoRule rule = MockitoJUnit.rule().strictness(Strictness.STRICT_STUBS);
 
     @Mock FirebaseAuth authMock;
 
-    FBaseUser fBaseUser;
+    FirebaseUser firebaseUser;
 
     @Before
     public void before() {
-        fBaseUser = new FBaseUser((authMock));
+        firebaseUser = new FirebaseUser((authMock));
     }
 
     @Test
     public void isLoggedOutFirst() {
         when(authMock.getCurrentUser()).thenReturn(null);
-        assertFalse(fBaseUser.isLoggedIn());
+        assertFalse(firebaseUser.isLoggedIn());
     }
 
     @Test
@@ -46,53 +46,53 @@ public class FBaseUserTest {
         assertThrows(
                 User.UserLoginException.class,
                 () -> {
-                    fBaseUser.getUserId();
+                    firebaseUser.getUserId();
                 });
         assertThrows(
                 User.UserLoginException.class,
                 () -> {
-                    fBaseUser.getDisplayName();
+                    firebaseUser.getDisplayName();
                 });
         assertThrows(
                 User.UserLoginException.class,
                 () -> {
-                    fBaseUser.getEmail();
+                    firebaseUser.getEmail();
                 });
         assertThrows(
                 User.UserLoginException.class,
                 () -> {
-                    fBaseUser.isEmailVerified();
+                    firebaseUser.isEmailVerified();
                 });
         assertThrows(
                 User.UserLoginException.class,
                 () -> {
-                    fBaseUser.updateDisplayName("", null);
+                    firebaseUser.updateDisplayName("", null);
                 });
         assertThrows(
                 User.UserLoginException.class,
                 () -> {
-                    fBaseUser.updateEmail("", null);
+                    firebaseUser.updateEmail("", null);
                 });
         assertThrows(
                 User.UserLoginException.class,
                 () -> {
-                    fBaseUser.sendEmailVerification(null);
+                    firebaseUser.sendEmailVerification(null);
                 });
         assertThrows(
                 User.UserLoginException.class,
                 () -> {
-                    fBaseUser.sendPasswordResetEmail(null);
+                    firebaseUser.sendPasswordResetEmail(null);
                 });
         assertThrows(
                 User.UserLoginException.class,
                 () -> {
-                    fBaseUser.deleteUser(null);
+                    firebaseUser.deleteUser(null);
                 });
     }
 
     @Test
     public void noExceptionWhenLoggIn() {
-        FirebaseUser firebaseUserMock = Mockito.mock(FirebaseUser.class);
+        com.google.firebase.auth.FirebaseUser firebaseUserMock = Mockito.mock(com.google.firebase.auth.FirebaseUser.class);
         when(authMock.getCurrentUser()).thenReturn(firebaseUserMock);
 
         Task<Void> taskMock = Mockito.mock(Task.class);
@@ -109,49 +109,49 @@ public class FBaseUserTest {
                 };
 
         try {
-            fBaseUser.getUserId();
+            firebaseUser.getUserId();
         } catch (User.UserLoginException ule) {
             fail();
         }
         try {
-            fBaseUser.getDisplayName();
+            firebaseUser.getDisplayName();
         } catch (User.UserLoginException ule) {
             fail();
         }
         try {
-            fBaseUser.getEmail();
+            firebaseUser.getEmail();
         } catch (User.UserLoginException ule) {
             fail();
         }
         try {
-            fBaseUser.isEmailVerified();
+            firebaseUser.isEmailVerified();
         } catch (User.UserLoginException ule) {
             fail();
         }
         // FIXME : test fails because some android.text.TextUtils is not mocked
         // fBaseUser.updateDisplayName("", null);
         try {
-            fBaseUser.updateEmail("", onComplete);
+            firebaseUser.updateEmail("", onComplete);
         } catch (User.UserLoginException ule) {
             fail();
         }
         try {
-            fBaseUser.sendEmailVerification(onComplete);
+            firebaseUser.sendEmailVerification(onComplete);
         } catch (User.UserLoginException ule) {
             fail();
         }
         try {
-            fBaseUser.setUserPassword("", onComplete);
+            firebaseUser.setUserPassword("", onComplete);
         } catch (User.UserLoginException ule) {
             fail();
         }
         try {
-            fBaseUser.sendPasswordResetEmail(onComplete);
+            firebaseUser.sendPasswordResetEmail(onComplete);
         } catch (User.UserLoginException ule) {
             fail();
         }
         try {
-            fBaseUser.deleteUser(onComplete);
+            firebaseUser.deleteUser(onComplete);
         } catch (User.UserLoginException ule) {
             fail();
         }

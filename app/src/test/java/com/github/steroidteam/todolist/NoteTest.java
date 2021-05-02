@@ -56,4 +56,21 @@ public class NoteTest {
         note.setLatLng(location);
         assertEquals(location, note.getLatLng());
     }
+
+    @Test
+    public void toStringWorks() {
+        Note note = new Note("Title");
+        note.setContent("body");
+        assertEquals("Note{\ntitle='Title',\ncontent='body',\ncoordinates='null'\n}", note.toString());
+    }
+
+    @Test
+    public void equalsWorks() {
+        Note note1 = new Note("Title");
+        Note note2 = new Note("Title");
+        Note note3 = note1;
+        assertEquals(note1, note3);
+        assertNotEquals(note1, note2);
+        assertNotEquals(note1, null);
+    }
 }

@@ -53,7 +53,7 @@ public class Note {
 
     @Override
     public String toString() {
-        return "Note{\n" + "title='" + title + "',\n" + "content='" + content + "',\n" + "coordinates='" + latLng.toString() + "',\n}";
+        return "Note{\n" + "title='" + title + "',\n" + "content='" + content + "',\n" + "coordinates='" + latLng.toString() + "'\n}";
     }
 
     @Override

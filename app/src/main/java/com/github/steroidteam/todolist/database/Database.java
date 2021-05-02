@@ -1,5 +1,7 @@
 package com.github.steroidteam.todolist.database;
 
+import androidx.annotation.NonNull;
+
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
@@ -100,6 +102,13 @@ public interface Database {
      * @return the saved note
      */
     CompletableFuture<Note> putNote(UUID noteID, Note note);
+
+    /**
+     * Removes a note from the database
+     *
+     * @param noteID The id of the note
+     */
+    CompletableFuture<Void> removeNote(UUID noteID);
 
     /**
      * Gets the list of note IDs

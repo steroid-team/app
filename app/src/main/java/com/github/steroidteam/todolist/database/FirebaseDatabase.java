@@ -186,6 +186,21 @@ public class FirebaseDatabase implements Database {
     }
 
     @Override
+    public CompletableFuture<Void> removeNote(@NonNull UUID noteID) {
+        Objects.requireNonNull(noteID);
+        String targetPath = TODO_LIST_PATH + noteID.toString() + ".json";
+
+        return this.storageService
+                .delete(targetPath)
+                .thenCompose(
+                        str -> {
+                            CompletableFuture<Void> future = new CompletableFuture<>();
+                            future.complete(null);
+                            return future;
+                        });
+    }
+
+    @Override
     public CompletableFuture<List<UUID>> getNotesList() {
         CompletableFuture<String[]> listDir = this.storageService.listDir(NOTES_PATH);
 

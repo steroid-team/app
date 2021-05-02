@@ -2,7 +2,6 @@ package com.github.steroidteam.todolist.model.notes;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.google.android.gms.maps.model.LatLng;
 import java.util.UUID;
 
@@ -55,7 +54,16 @@ public class Note {
     public String toString() {
         String latLngstr = "null";
         if (latLng != null) latLngstr = latLng.toString();
-        return "Note{\n" + "title='" + title + "',\n" + "content='" + content + "',\n" + "coordinates='" + latLngstr + "'\n}";
+        return "Note{\n"
+                + "title='"
+                + title
+                + "',\n"
+                + "content='"
+                + content
+                + "',\n"
+                + "coordinates='"
+                + latLngstr
+                + "'\n}";
     }
 
     @Override

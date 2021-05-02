@@ -2,13 +2,10 @@ package com.github.steroidteam.todolist;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -21,33 +18,23 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.navigation.Navigation;
 import androidx.navigation.testing.TestNavHostController;
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.intent.Intents;
-import androidx.test.espresso.intent.matcher.IntentMatchers;
-import androidx.test.espresso.intent.rule.IntentsTestRule;
-
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.view.NoteDisplayFragment;
 import com.github.steroidteam.todolist.view.NoteSelectionFragment;
-import com.google.android.gms.maps.model.LatLng;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
-import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -95,11 +82,13 @@ public class NoteDisplayFragmentTest {
 
     @Test
     public void filePickingWorks() {
-        scenario.onFragment(fragment -> {
-            savePickedImage(fragment);
-            Instrumentation.ActivityResult result = createImageGallerySetResultStub(fragment);
-            intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(result);
-        });
+        scenario.onFragment(
+                fragment -> {
+                    savePickedImage(fragment);
+                    Instrumentation.ActivityResult result =
+                            createImageGallerySetResultStub(fragment);
+                    intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(result);
+                });
 
         onView(withId(R.id.camera_button)).perform(click());
     }
@@ -107,8 +96,7 @@ public class NoteDisplayFragmentTest {
     private void savePickedImage(Fragment fragment) {
         Bitmap bm =
                 BitmapFactory.decodeResource(
-                        fragment.getResources(),
-                        R.drawable.note_header_test_image);
+                        fragment.getResources(), R.drawable.note_header_test_image);
         File dir = fragment.getActivity().getExternalCacheDir();
         File file = new File(dir.getPath(), "pickImageResult.jpeg");
         FileOutputStream outStream;

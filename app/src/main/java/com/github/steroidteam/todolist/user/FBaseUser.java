@@ -6,7 +6,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import java.util.ArrayList;
 
-public class FirebaseUser implements User {
+public class FBaseUser implements User {
     /* FIXME : There are some cases where getCurrentUser will return a non-null FirebaseUser
      * but the underlying token is not valid. In this case, you may get a valid user
      * getCurrentUser but subsequent calls to authenticated resources will fail.
@@ -14,7 +14,7 @@ public class FirebaseUser implements User {
     private final FirebaseAuth auth;
     private final ArrayList<UserStateListener> stateListeners;
 
-    public FirebaseUser(FirebaseAuth auth) {
+    public FBaseUser(FirebaseAuth auth) {
         stateListeners = new ArrayList<>();
         this.auth = auth;
         auth.addAuthStateListener(
@@ -30,28 +30,28 @@ public class FirebaseUser implements User {
 
     @Override
     public String getUserId() throws UserLoginException {
-        com.google.firebase.auth.FirebaseUser user = auth.getCurrentUser();
+        FirebaseUser user = auth.getCurrentUser();
         checkUserIsLoggedIn(user);
         return user.getUid();
     }
 
     @Override
     public String getDisplayName() throws UserLoginException {
-        com.google.firebase.auth.FirebaseUser user = auth.getCurrentUser();
+        FirebaseUser user = auth.getCurrentUser();
         checkUserIsLoggedIn(user);
         return user.getDisplayName();
     }
 
     @Override
     public String getEmail() throws UserLoginException {
-        com.google.firebase.auth.FirebaseUser user = auth.getCurrentUser();
+        FirebaseUser user = auth.getCurrentUser();
         checkUserIsLoggedIn(user);
         return user.getEmail();
     }
 
     @Override
     public boolean isEmailVerified() throws UserLoginException {
-        com.google.firebase.auth.FirebaseUser user = auth.getCurrentUser();
+        FirebaseUser user = auth.getCurrentUser();
         checkUserIsLoggedIn(user);
         return user.isEmailVerified();
     }
@@ -59,7 +59,7 @@ public class FirebaseUser implements User {
     @Override
     public void updateDisplayName(String newDisplayName, OnCompleteListener<Void> onComplete)
             throws UserLoginException {
-        com.google.firebase.auth.FirebaseUser user = auth.getCurrentUser();
+        FirebaseUser user = auth.getCurrentUser();
         checkUserIsLoggedIn(user);
         UserProfileChangeRequest profileUpdates =
                 new UserProfileChangeRequest.Builder().setDisplayName(newDisplayName).build();
@@ -70,7 +70,7 @@ public class FirebaseUser implements User {
     @Override
     public void updateEmail(String newEmail, OnCompleteListener<Void> onComplete)
             throws UserLoginException {
-        com.google.firebase.auth.FirebaseUser user = auth.getCurrentUser();
+        FirebaseUser user = auth.getCurrentUser();
         checkUserIsLoggedIn(user);
         user.updateEmail(newEmail).addOnCompleteListener(onComplete);
     }
@@ -78,7 +78,7 @@ public class FirebaseUser implements User {
     @Override
     public void sendEmailVerification(OnCompleteListener<Void> onComplete)
             throws UserLoginException {
-        com.google.firebase.auth.FirebaseUser user = auth.getCurrentUser();
+        FirebaseUser user = auth.getCurrentUser();
         checkUserIsLoggedIn(user);
         user.sendEmailVerification().addOnCompleteListener(onComplete);
     }
@@ -86,7 +86,7 @@ public class FirebaseUser implements User {
     @Override
     public void setUserPassword(String newPassword, OnCompleteListener<Void> onComplete)
             throws UserLoginException {
-        com.google.firebase.auth.FirebaseUser user = auth.getCurrentUser();
+        FirebaseUser user = auth.getCurrentUser();
         checkUserIsLoggedIn(user);
         user.updatePassword(newPassword).addOnCompleteListener(onComplete);
     }
@@ -94,7 +94,7 @@ public class FirebaseUser implements User {
     @Override
     public void sendPasswordResetEmail(OnCompleteListener<Void> onComplete)
             throws UserLoginException {
-        com.google.firebase.auth.FirebaseUser user = auth.getCurrentUser();
+        FirebaseUser user = auth.getCurrentUser();
         checkUserIsLoggedIn(user);
         String email = user.getEmail();
         if (email != null) {
@@ -104,7 +104,7 @@ public class FirebaseUser implements User {
 
     @Override
     public void deleteUser(OnCompleteListener<Void> onComplete) throws UserLoginException {
-        com.google.firebase.auth.FirebaseUser user = auth.getCurrentUser();
+        FirebaseUser user = auth.getCurrentUser();
         checkUserIsLoggedIn(user);
         user.delete().addOnCompleteListener(onComplete);
     }
@@ -130,7 +130,7 @@ public class FirebaseUser implements User {
         stateListeners.remove(listener);
     }
 
-    private void checkUserIsLoggedIn(com.google.firebase.auth.FirebaseUser user) throws UserLoginException {
+    private void checkUserIsLoggedIn(FirebaseUser user) throws UserLoginException {
         if (user == null) throw new UserLoginException("User is not logged in");
     }
 

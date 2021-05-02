@@ -53,7 +53,9 @@ public class Note {
 
     @Override
     public String toString() {
-        return "Note{\n" + "title='" + title + "',\n" + "content='" + content + "',\n" + "coordinates='" + latLng.toString() + "'\n}";
+        String latLngstr = "null";
+        if (latLng != null) latLngstr = latLng.toString();
+        return "Note{\n" + "title='" + title + "',\n" + "content='" + content + "',\n" + "coordinates='" + latLngstr + "'\n}";
     }
 
     @Override

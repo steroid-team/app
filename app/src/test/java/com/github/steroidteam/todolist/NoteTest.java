@@ -62,6 +62,10 @@ public class NoteTest {
         Note note = new Note("Title");
         note.setContent("body");
         assertEquals("Note{\ntitle='Title',\ncontent='body',\ncoordinates='null'\n}", note.toString());
+
+        LatLng location = new LatLng(-33.8523341, 151.2106085);
+        note.setLatLng(location);
+        assertEquals("Note{\ntitle='Title',\ncontent='body',\ncoordinates='" + location.toString() + "'\n}", note.toString());
     }
 
     @Test

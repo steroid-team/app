@@ -26,10 +26,9 @@ public class TodoArrayRepository {
 
     private void setArrayOfTodoList(TodoListCollection todoListCollection) {
         ArrayList<TodoList> privateArrayList = new ArrayList<>();
-        if(todoListCollection.getSize()==0) {
+        if (todoListCollection.getSize() == 0) {
             arrayOfTodoList.setValue(privateArrayList);
-        }
-        else {
+        } else {
             for (int i = 0; i < todoListCollection.getSize(); i++) {
                 this.database
                         .getTodoList(todoListCollection.getUUID(i))

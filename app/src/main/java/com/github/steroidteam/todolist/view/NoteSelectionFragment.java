@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.Fragment;
@@ -20,7 +19,6 @@ import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.view.adapter.NoteArrayListAdapter;
 import com.github.steroidteam.todolist.viewmodel.NoteSelectionViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
 import java.util.UUID;
 
 public class NoteSelectionFragment extends Fragment {
@@ -63,7 +61,8 @@ public class NoteSelectionFragment extends Fragment {
             public void onClickCustom(NoteArrayListAdapter.NoteHolder holder) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(NOTE_ID_KEY, holder.getId());
-                Navigation.findNavController(holder.itemView).navigate(R.id.nav_note_display, bundle);
+                Navigation.findNavController(holder.itemView)
+                        .navigate(R.id.nav_note_display, bundle);
             }
 
             @Override
@@ -142,8 +141,7 @@ public class NoteSelectionFragment extends Fragment {
                 (DialogInterface dialog, int which) -> {
                     EditText titleInput = dialog_input.findViewById(R.id.alert_dialog_edit_text);
                     String title = titleInput.getText().toString();
-                    if (title.length() > 0)
-                        viewModel.renameNote(note, title);
+                    if (title.length() > 0) viewModel.renameNote(note, title);
                     titleInput.getText().clear();
                     dialog.dismiss();
                 });

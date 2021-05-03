@@ -23,7 +23,8 @@ public class NoteArrayListAdapter extends RecyclerView.Adapter<NoteArrayListAdap
 
     @NonNull
     @Override
-    public NoteArrayListAdapter.NoteHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public NoteArrayListAdapter.NoteHolder onCreateViewHolder(
+            @NonNull ViewGroup parent, int viewType) {
         View noteView =
                 LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.layout_note_item, parent, false);
@@ -35,17 +36,17 @@ public class NoteArrayListAdapter extends RecyclerView.Adapter<NoteArrayListAdap
         Note currentNote = noteList.get(position);
         if (currentNote != null) {
             holder.noteTitle.setText(currentNote.getTitle());
-            holder.note=currentNote;
+            holder.note = currentNote;
         }
     }
 
     @Override
     public int getItemCount() {
-        return (noteList==null) ? 0 : noteList.size();
+        return (noteList == null) ? 0 : noteList.size();
     }
 
     public void setNoteList(List<Note> noteList) {
-        this.noteList=noteList;
+        this.noteList = noteList;
     }
 
     public static class NoteHolder extends RecyclerView.ViewHolder {
@@ -80,7 +81,9 @@ public class NoteArrayListAdapter extends RecyclerView.Adapter<NoteArrayListAdap
 
         public interface NoteCustomListener {
             void onClickCustom(final NoteHolder holder);
+
             void onNoteDelete(final NoteHolder holder);
+
             void onLongClickCustom(final Note note);
         }
     }

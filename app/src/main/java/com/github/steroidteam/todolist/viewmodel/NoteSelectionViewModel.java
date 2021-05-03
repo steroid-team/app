@@ -3,17 +3,12 @@ package com.github.steroidteam.todolist.viewmodel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 public class NoteSelectionViewModel extends ViewModel {
 
@@ -33,10 +28,9 @@ public class NoteSelectionViewModel extends ViewModel {
 
     private void setArrayOfNote(List<UUID> noteIDList) {
         ArrayList<Note> privateArrayList = new ArrayList<>();
-        if(noteIDList.size()==0) {
+        if (noteIDList.size() == 0) {
             noteList.setValue(privateArrayList);
-        }
-        else {
+        } else {
             for (int i = 0; i < noteIDList.size(); i++) {
                 this.database
                         .getNote(noteIDList.get(i))

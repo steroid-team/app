@@ -118,6 +118,14 @@ public interface Database {
     CompletableFuture<List<UUID>> getNotesList();
 
     /**
+     * Updates the note list given the ID.
+     *
+     * @param noteID The ID of the note.
+     * @return The note or null if the ID isn't in the database.
+     */
+    CompletableFuture<Note> updateNote(UUID noteID, Note newNote);
+
+    /**
      * Sets "done" flag in a task
      *
      * @param todoListID id of the todolist containing the task

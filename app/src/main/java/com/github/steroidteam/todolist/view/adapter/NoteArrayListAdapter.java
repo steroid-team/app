@@ -35,7 +35,7 @@ public class NoteArrayListAdapter extends RecyclerView.Adapter<NoteArrayListAdap
         Note currentNote = noteList.get(position);
         if (currentNote != null) {
             holder.noteTitle.setText(currentNote.getTitle());
-            holder.noteID=currentNote.getId();
+            holder.note=currentNote;
         }
     }
 
@@ -51,7 +51,7 @@ public class NoteArrayListAdapter extends RecyclerView.Adapter<NoteArrayListAdap
     public static class NoteHolder extends RecyclerView.ViewHolder {
 
         private TextView noteTitle;
-        private UUID noteID;
+        private Note note;
         private final Button deleteBtn;
 
         public NoteHolder(@NonNull View itemView, final NoteCustomListener listener) {
@@ -65,17 +65,23 @@ public class NoteArrayListAdapter extends RecyclerView.Adapter<NoteArrayListAdap
                         listener.onClickCustom(NoteHolder.this);
                     });
 
+            itemView.setOnLongClickListener(
+                    (View view) -> {
+                        listener.onLongClickCustom(this.note);
+                        return true;
+                    });
 
-            deleteBtn.setOnClickListener(v -> listener.onNoteDelete(noteID));
+            deleteBtn.setOnClickListener(v -> listener.onNoteDelete(NoteHolder.this));
         }
 
         public UUID getId() {
-            return noteID;
+            return note.getId();
         }
 
         public interface NoteCustomListener {
-            void onClickCustom(NoteHolder holder);
-            void onNoteDelete(final UUID position);
+            void onClickCustom(final NoteHolder holder);
+            void onNoteDelete(final NoteHolder holder);
+            void onLongClickCustom(final Note note);
         }
     }
 }

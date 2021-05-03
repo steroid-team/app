@@ -34,4 +34,5 @@
     <string name="menu_btn_description">Open menu</string>
 
     <string name="delete_note_suggestion">Are you sure to delete this note ?</string>
+    <string name="rename_note_suggestion">Enter a new title for your Note:</string>
 </resources>

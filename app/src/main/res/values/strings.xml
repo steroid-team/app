@@ -16,6 +16,9 @@
     <string name="undo">UNDO</string>
     <string name="delete">DELETE</string>
     <string name="save">SAVE</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="hint">...</string>
     <string name="default_location">Sydney</string>
     <string name="current_location_message">I\'m here</string>
     <string name="location_not_found">Location not found !</string>
@@ -29,4 +32,6 @@
     <string name="menu_notes">Notes</string>
     <string name="menu_todo_lists">Todos</string>
     <string name="menu_btn_description">Open menu</string>
+
+    <string name="delete_note_suggestion">Are you sure to delete this note ?</string>
 </resources>

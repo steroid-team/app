@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -29,7 +30,7 @@ import java.util.UUID;
 public class NoteSelectionFragment extends Fragment {
 
     public static final String NOTE_ID_KEY = "id";
-    ArrayList<Note> notes;
+
     private NoteSelectionViewModel viewModel;
     private NoteArrayListAdapter adapter;
 
@@ -53,7 +54,9 @@ public class NoteSelectionFragment extends Fragment {
                 .observe(
                         getActivity(),
                         (noteList) -> {
+                            System.err.println("ONAAAAAAAAAAAAAAAAAAAAAAAA " + noteList.toString());
                             adapter.setNoteList(noteList);
+                            adapter.notifyDataSetChanged();
                         });
 
         return root;
@@ -67,13 +70,18 @@ public class NoteSelectionFragment extends Fragment {
                 bundle.putSerializable(NOTE_ID_KEY, holder.getId());
                 Navigation.findNavController(holder.itemView).navigate(R.id.nav_note_display, bundle);
             }
-        }
+
+            @Override
+            public void onNoteDelete(UUID id) {
+                removeNote(id);
+            }
+        };
     }
 
-    public void createNote(View view) {
+    private void createNote(View view) {
         Context context = new ContextThemeWrapper(getActivity(), R.style.Dialog);
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
-        builder.setTitle(getString(R.string.add_todo_suggestion));
+        builder.setTitle(getString(R.string.new_note_btn_description));
 
         LayoutInflater inflater = this.getLayoutInflater();
         View user_input = inflater.inflate(R.layout.alert_dialog_input, null);
@@ -81,12 +89,33 @@ public class NoteSelectionFragment extends Fragment {
         builder.setView(user_input);
 
         builder.setPositiveButton(
-                getString(R.string.add_note),
+                getString(R.string.add),
                 (DialogInterface dialog, int which) -> {
                     EditText titleInput = user_input.findViewById(R.id.alert_dialog_edit_text);
                     String title = titleInput.getText().toString();
                     if (title.length() > 0) viewModel.putNote(title);
                     titleInput.getText().clear();
+                    dialog.dismiss();
+                });
+        builder.setNegativeButton(
+                getString(R.string.cancel),
+                (DialogInterface dialog, int which) -> {
+                    dialog.dismiss();
+                });
+        Dialog dialog = builder.show();
+        dialog.getWindow().setGravity(0x00000035);
+        dialog.setCanceledOnTouchOutside(false);
+    }
+
+    private void removeNote(final UUID id) {
+        Context context = new ContextThemeWrapper(getActivity(), R.style.Dialog);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        builder.setTitle(getString(R.string.delete_note_suggestion));
+
+        builder.setPositiveButton(
+                getString(R.string.delete),
+                (DialogInterface dialog, int which) -> {
+                    viewModel.removeNote(id);
                     dialog.dismiss();
                 });
         builder.setNegativeButton(

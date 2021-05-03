@@ -58,7 +58,7 @@ public class NoteDisplayFragment extends Fragment {
 
         Database database = DatabaseFactory.getDb();
 
-        UUID id = UUID.fromString(getArguments().getString(NoteSelectionFragment.NOTE_ID_KEY));
+        UUID id = (UUID) getArguments().getSerializable(NoteSelectionFragment.NOTE_ID_KEY);
         EditText editText = root.findViewById(R.id.activity_notedisplay_edittext);
 
         database.getNote(id)

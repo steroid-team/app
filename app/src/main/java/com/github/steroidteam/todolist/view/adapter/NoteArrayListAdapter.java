@@ -3,6 +3,7 @@ package com.github.steroidteam.todolist.view.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,16 +52,21 @@ public class NoteArrayListAdapter extends RecyclerView.Adapter<NoteArrayListAdap
 
         private TextView noteTitle;
         private UUID noteID;
+        private final Button deleteBtn;
 
         public NoteHolder(@NonNull View itemView, final NoteCustomListener listener) {
             super(itemView);
 
             noteTitle = itemView.findViewById(R.id.layout_note_title);
+            deleteBtn = itemView.findViewById(R.id.layout_note_delete_btn);
 
             itemView.setOnClickListener(
                     (View view) -> {
                         listener.onClickCustom(NoteHolder.this);
                     });
+
+
+            deleteBtn.setOnClickListener(v -> listener.onNoteDelete(noteID));
         }
 
         public UUID getId() {
@@ -69,6 +75,7 @@ public class NoteArrayListAdapter extends RecyclerView.Adapter<NoteArrayListAdap
 
         public interface NoteCustomListener {
             void onClickCustom(NoteHolder holder);
+            void onNoteDelete(final UUID position);
         }
     }
 }

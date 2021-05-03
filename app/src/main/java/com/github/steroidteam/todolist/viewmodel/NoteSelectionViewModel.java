@@ -20,7 +20,7 @@ public class NoteSelectionViewModel extends ViewModel {
     public NoteSelectionViewModel() {
         super();
         this.database = DatabaseFactory.getDb();
-        this.noteList = new MutableLiveData<>();
+        this.noteList = new MutableLiveData<>(new ArrayList<>());
         this.database.getNotesList().thenAccept(this::setArrayOfNote);
     }
 
@@ -30,6 +30,7 @@ public class NoteSelectionViewModel extends ViewModel {
 
     private void setArrayOfNote(List<UUID> noteIDList) {
         ArrayList<Note> privateArrayList = new ArrayList<>();
+        System.err.println("========= " + noteIDList.size());
         for (int i = 0; i < noteIDList.size(); i++) {
             this.database
                     .getNote(noteIDList.get(i))
@@ -41,9 +42,10 @@ public class NoteSelectionViewModel extends ViewModel {
         }
     }
 
-    public void putNote(Note note) {
+    public void putNote(String title) {
+        Note newNote = new Note(title);
         this.database
-                .putNote(note.getId(), note)
+                .putNote(newNote.getId(), newNote)
                 .thenCompose(str -> this.database.getNotesList())
                 .thenAccept(this::setArrayOfNote);
     }

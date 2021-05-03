@@ -188,7 +188,7 @@ public class FirebaseDatabase implements Database {
     @Override
     public CompletableFuture<Void> removeNote(@NonNull UUID noteID) {
         Objects.requireNonNull(noteID);
-        String targetPath = TODO_LIST_PATH + noteID.toString() + ".json";
+        String targetPath = NOTES_PATH + noteID.toString() + ".json";
 
         return this.storageService
                 .delete(targetPath)

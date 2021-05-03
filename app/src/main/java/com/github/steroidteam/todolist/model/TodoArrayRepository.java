@@ -26,14 +26,19 @@ public class TodoArrayRepository {
 
     private void setArrayOfTodoList(TodoListCollection todoListCollection) {
         ArrayList<TodoList> privateArrayList = new ArrayList<>();
-        for (int i = 0; i < todoListCollection.getSize(); i++) {
-            this.database
-                    .getTodoList(todoListCollection.getUUID(i))
-                    .thenAccept(
-                            todoList -> {
-                                privateArrayList.add(todoList);
-                                arrayOfTodoList.setValue(privateArrayList);
-                            });
+        if(todoListCollection.getSize()==0) {
+            arrayOfTodoList.setValue(privateArrayList);
+        }
+        else {
+            for (int i = 0; i < todoListCollection.getSize(); i++) {
+                this.database
+                        .getTodoList(todoListCollection.getUUID(i))
+                        .thenAccept(
+                                todoList -> {
+                                    privateArrayList.add(todoList);
+                                    arrayOfTodoList.setValue(privateArrayList);
+                                });
+            }
         }
     }
 

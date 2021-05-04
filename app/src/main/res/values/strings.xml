@@ -27,6 +27,14 @@
     <string name="location_not_found">Location not found !</string>
     <string name="location_btn_description">Location</string>
     <string name="note_location">No location</string>
+    <string name="is_recording">Recording...</string>
+    <string name="stop_recording">Stopped the recording</string>
+    <string name="pause_recording">Paused the recording</string>
+    <string name="play_button">Play</string>
+    <string name="pause_button">Pause</string>
+    <string name="record_button">Record</string>
+    <string name="stop_record_button">Stop recording</string>
+    <string name="audio_btn_description">Audio</string>
     <string name="new_todolist_title">New list</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>

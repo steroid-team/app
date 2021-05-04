@@ -37,6 +37,9 @@
         <action
             android:id="@+id/action_nav_note_display_to_nav_map"
             app:destination="@id/nav_map" />
+        <action
+            android:id="@+id/action_nav_note_display_to_nav_audio"
+            app:destination="@id/nav_audio" />
     </fragment>
 
     <fragment
@@ -44,6 +47,10 @@
         android:name="com.github.steroidteam.todolist.view.MapFragment"
         tools:layout="@layout/fragment_map" />
 
+    <fragment
+        android:id="@+id/nav_audio"
+        android:name="com.github.steroidteam.todolist.view.AudioRecorderFragment"
+        tools:layout="@layout/fragment_audio_recorder" />
     <fragment
         android:id="@+id/nav_drawing"
         android:name="com.github.steroidteam.todolist.view.DrawingFragment"

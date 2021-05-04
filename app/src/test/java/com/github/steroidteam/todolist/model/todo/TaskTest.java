@@ -2,8 +2,11 @@ package com.github.steroidteam.todolist.model.todo;
 
 import org.junit.Test;
 
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
 public class TaskTest {
@@ -23,17 +26,11 @@ public class TaskTest {
         Task dumbTask = new Task(body);
 
         assertEquals(body, dumbTask.getBody());
-
-        Task dumbTask2 = new Task("This is a different body !");
-
-        assertEquals(dumbTask, dumbTask);
-        assertNotEquals(null, dumbTask);
-        assertNotEquals("Different Class", dumbTask);
-        assertNotEquals(dumbTask, dumbTask2);
+        assertEquals(false, dumbTask.isDone());
     }
 
     @Test
-    public void getWorks() {
+    public void setBodyWorks() {
         String newBody = "New Body!";
         Task dumbTask = new Task("body");
         dumbTask.setBody(newBody);
@@ -42,17 +39,57 @@ public class TaskTest {
     }
 
     @Test
+    public void dueDateWorks() {
+        Task dumbTask = new Task("body");
+        // The due date is null by default.
+        assertNull(dumbTask.getDueDate());
+
+        Date date = new Date();
+        dumbTask.setDueDate(date);
+
+        assertEquals(date, dumbTask.getDueDate());
+
+        dumbTask.removeDueDate();
+
+        assertNull(dumbTask.getDueDate());
+    }
+
+    @Test
     public void serializationOfaTaskIsCorrect() {
         String body = "Body!";
         Task dumbTask = new Task(body);
 
-        assertEquals("Task{body='Body!', done=false}", dumbTask.toString());
+        assertEquals("Task{body='Body!', done=false, dueDate=null}", dumbTask.toString());
+
+        dumbTask.setDone(true);
+        Date dueDate = new Date();
+        dumbTask.setDueDate(dueDate);
+        assertEquals(
+                "Task{body='Body!', done=true, dueDate=" + dueDate.toString() + "}",
+                dumbTask.toString());
     }
 
     @Test
     public void equalsWorks() {
-        assertEquals(new Task("Do something"), new Task("Do something"));
-        assertNotEquals(new Task("Do something"), new Task("Do something else"));
+        Task task1 = new Task("Do something");
+        Task task2 = new Task("Do something");
+
+        assertEquals(task1, task2);
+
+        task1.setDone(false);
+        task2.setDone(true);
+
+        assertNotEquals(task1, task2);
+
+        task1.setDone(true);
+        task2.setDone(true);
+
+        assertEquals(task1, task2);
+
+        task1.setDueDate(new Date());
+
+        assertNotEquals(task1, task2);
+
         assertNotEquals(null, new Task(""));
     }
 }

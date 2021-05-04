@@ -60,4 +60,14 @@
     <string name="record_button">Record</string>
     <string name="stop_record_button">Stop recording</string>
     <string name="audio_btn_description">Audio</string>
+
+    <!-- Note editor -->
+    <string name="bold">Bold</string>
+    <string name="italics">Italics</string>
+    <string name="underline">Underline</string>
+    <string name="strikethrough">Strikethrough</string>
+    <string name="blockquote">Blockquote</string>
+    <string name="unordered_list">Unordered list</string>
+    <string name="insert_image">Insert image</string>
+    <string name="ordered_list">Ordered list</string>
 </resources>

@@ -220,7 +220,7 @@
                 android:padding="12dp"
                 android:scaleType="fitCenter"
                 android:tint="@color/white"
-                app:srcCompat="@drawable/plus_icon" />
+                app:srcCompat="@drawable/pencil_icon" />
 
         </LinearLayout>
     </HorizontalScrollView>

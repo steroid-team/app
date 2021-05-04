@@ -21,6 +21,7 @@
     <string name="undo">UNDO</string>
     <string name="delete">DELETE</string>
     <string name="save">SAVE</string>
+    <string name="confirm">confirm</string>
     <string name="title_todo">My todo list</string>
     <string name="default_location">Sydney</string>
     <string name="current_location_message">I\'m here</string>

@@ -9,4 +9,5 @@
     <color name="red_pastel">#d08b90</color>
     <color name="green">#29f044</color>
     <color name="green_pastel">#8bd09d</color>
+    <color name="transparent">#00000000</color>
 </resources>

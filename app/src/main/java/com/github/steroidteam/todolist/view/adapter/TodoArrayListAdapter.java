@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.todo.TodoList;
@@ -15,9 +14,6 @@ public class TodoArrayListAdapter extends RecyclerView.Adapter<TodoArrayListAdap
 
     private ArrayList<TodoList> todoListArrayList;
     private final TodoHolder.TodoCustomListener listener;
-
-    // ViewPool to share view between task and to-do list
-    private final RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
 
     public TodoArrayListAdapter(TodoHolder.TodoCustomListener listener) {
         this.listener = listener;
@@ -38,23 +34,6 @@ public class TodoArrayListAdapter extends RecyclerView.Adapter<TodoArrayListAdap
         if (currentTodo != null) {
             holder.todoTitle.setText(currentTodo.getTitle());
             holder.todoList = currentTodo;
-
-            // Nested layout Manager
-            LinearLayoutManager layoutManager =
-                    new LinearLayoutManager(
-                            holder.taskListRecyclerView.getContext(),
-                            LinearLayoutManager.VERTICAL,
-                            false);
-
-            // Define how many child we need to prefetch when building the nested recyclerView
-            layoutManager.setInitialPrefetchItemCount(currentTodo.getImportantTask().size());
-
-            // Create a TodoChild adapter as we create a To-Do Collection Adapter
-            //  in the List Selection Activity
-            TodoChildAdapter childAdapter = new TodoChildAdapter(currentTodo.getImportantTask());
-            holder.taskListRecyclerView.setLayoutManager(layoutManager);
-            holder.taskListRecyclerView.setAdapter(childAdapter);
-            holder.taskListRecyclerView.setRecycledViewPool(viewPool);
         }
     }
 
@@ -73,16 +52,11 @@ public class TodoArrayListAdapter extends RecyclerView.Adapter<TodoArrayListAdap
     }
 
     public static class TodoHolder extends RecyclerView.ViewHolder {
-
-        private final RecyclerView taskListRecyclerView;
-
         private final TextView todoTitle;
         private TodoList todoList;
 
         public TodoHolder(@NonNull View itemView, final TodoCustomListener listener) {
             super(itemView);
-
-            taskListRecyclerView = itemView.findViewById(R.id.layout_todo_list_recycler_view);
 
             todoTitle = itemView.findViewById(R.id.layout_todo_list_text);
 

@@ -1,5 +1,26 @@
 package com.github.steroidteam.todolist;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.view.MotionEvent;
+
+import androidx.fragment.app.testing.FragmentScenario;
+import androidx.lifecycle.Lifecycle;
+import androidx.test.espresso.action.ViewActions;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import com.github.steroidteam.todolist.model.user.UserFactory;
+import com.github.steroidteam.todolist.view.DrawingFragment;
+import com.github.steroidteam.todolist.view.MainActivity;
+import com.google.firebase.auth.FirebaseUser;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static androidx.test.espresso.Espresso.onView;
@@ -12,27 +33,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.view.MotionEvent;
-import androidx.fragment.app.testing.FragmentScenario;
-import androidx.lifecycle.Lifecycle;
-import androidx.test.espresso.action.ViewActions;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import com.github.steroidteam.todolist.view.DrawingFragment;
-import com.github.steroidteam.todolist.view.MainActivity;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 @RunWith(AndroidJUnit4.class)
 public class DrawingFragmentTest {
     private FragmentScenario<DrawingFragment> scenario;
 
     @Before
     public void init() {
+        // Since we are using an activity, set a mocked user.
+        FirebaseUser mockedUser = Mockito.mock(FirebaseUser.class);
+        UserFactory.set(mockedUser);
+
         scenario =
                 FragmentScenario.launchInContainer(
                         DrawingFragment.class, null, R.style.Theme_Asteroid);

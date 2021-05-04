@@ -47,7 +47,13 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" + "body='" + body + "'" + "}";
+        return "Task{"
+                + "body='"
+                + body
+                + "', "
+                + "done="
+                + done
+                + "}";
     }
 
     @Override

@@ -46,7 +46,7 @@ public class TaskTest {
         Integer id = 97873;
         Task dumbTask = new Task("Body!");
 
-        assertEquals("Task{body='Body!'}", dumbTask.toString());
+        assertEquals("Task{body='Body!', done=false}", dumbTask.toString());
     }
 
     @Test

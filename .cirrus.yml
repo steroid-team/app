@@ -42,6 +42,18 @@ check_android_task:
   code_format_script:
     ./gradlew spotlessCheck
   always:
+    export_logcat_script:
+      adb logcat -d > logcat.txt
+    logcat_artifacts:
+      path: "logcat.txt"
+      type: text/plain
+    test_artifacts:
+      path: "./app/build/reports/androidTests/connected/flavors/debugAndroidTest/**.html"
+      type: text/html
+    junit-result_artifacts:
+      path: "./app/build/test-results/**/*.xml"
+      format: junit
+      type: text/xml
     android-lint_artifacts:
       path: ./app/build/reports/lint-results-debug.xml
       type: text/xml

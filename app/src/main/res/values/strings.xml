@@ -4,6 +4,7 @@
     <string name="task_edit_hint">Your task…</string>
     <string name="list_activity_title">My lists</string>
     <string name="new_task">New task</string>
+    <string name="add_todo">Add todo</string>
     <string name="note_activity_title">My notes</string>
     <string name="search_btn_description">Search</string>
     <string name="back_btn_description">Back</string>
@@ -12,10 +13,16 @@
     <string name="new_note_btn_description">Add a new note</string>
     <string name="date_placeholder">xx/yy aa:bb</string>
     <string name="note_date_placeholder">Day, Nth Month YEAR</string>
-
-    <string name="undo">UNDO</string>
-    <string name="delete">DELETE</string>
-    <string name="save">SAVE</string>
+    <string name="cancel">Cancel</string>
+    <string name="rename">Rename</string>
+    <string name="add_todo_suggestion">Enter the title of your to-do list</string>
+    <string name="rename_todo_suggestion">Rename your to-do list</string>
+    <string name="delete_todo_suggestion">Are you sure to delete this to-do ?</string>
+    <string name="undo">Undo</string>
+    <string name="delete">Delete</string>
+    <string name="save">Save</string>
+    <string name="confirm">Confirm</string>
+    <string name="title_todo">My todo list</string>
     <string name="default_location">Sydney</string>
     <string name="current_location_message">I\'m here</string>
     <string name="location_not_found">Location not found !</string>

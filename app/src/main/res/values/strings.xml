@@ -18,10 +18,10 @@
     <string name="add_todo_suggestion">Enter the title of your to-do list</string>
     <string name="rename_todo_suggestion">Rename your to-do list</string>
     <string name="delete_todo_suggestion">Are you sure to delete this to-do ?</string>
-    <string name="undo">UNDO</string>
-    <string name="delete">DELETE</string>
-    <string name="save">SAVE</string>
-    <string name="confirm">confirm</string>
+    <string name="undo">Undo</string>
+    <string name="delete">Delete</string>
+    <string name="save">Save</string>
+    <string name="confirm">Confirm</string>
     <string name="title_todo">My todo list</string>
     <string name="default_location">Sydney</string>
     <string name="current_location_message">I\'m here</string>

@@ -27,6 +27,8 @@ import java.util.UUID;
 public class NoteDisplayFragment extends Fragment {
     public static LatLng position;
     public static String locationName;
+    private Database database;
+    private UUID noteID;
     private ActivityResultLauncher<String> headerImagePickerActivityLauncher;
 
     public View onCreateView(
@@ -34,6 +36,30 @@ public class NoteDisplayFragment extends Fragment {
         super.onCreate(savedInstanceState);
         View root = inflater.inflate(R.layout.fragment_note_display, container, false);
 
+        setOnClickListeners(root);
+
+        // Get the UUID of the currently selected note.
+        noteID = UUID.fromString(getArguments().getString(NoteSelectionFragment.NOTE_ID_KEY));
+        EditText editText = root.findViewById(R.id.activity_notedisplay_edittext);
+
+        database = DatabaseFactory.getDb();
+        database.getNote(noteID)
+                .thenAccept(
+                        note -> {
+                            TextView noteTitle = root.findViewById(R.id.note_title);
+                            noteTitle.setText(note.getTitle());
+
+                            editText.setText(note.getContent());
+                        });
+
+        headerImagePickerActivityLauncher =
+                registerForActivityResult(
+                        new ActivityResultContracts.GetContent(), this::updateHeaderImage);
+
+        return root;
+    }
+
+    private void setOnClickListeners(View root) {
         root.findViewById(R.id.camera_button)
                 .setOnClickListener(
                         v -> {
@@ -61,26 +87,6 @@ public class NoteDisplayFragment extends Fragment {
         // Add a click listener to the "back" button to return to the previous activity.
         root.findViewById(R.id.back_button)
                 .setOnClickListener((view) -> getParentFragmentManager().popBackStack());
-
-        Database database = DatabaseFactory.getDb();
-
-        UUID id = UUID.fromString(getArguments().getString(NoteSelectionFragment.NOTE_ID_KEY));
-        EditText editText = root.findViewById(R.id.activity_notedisplay_edittext);
-
-        database.getNote(id)
-                .thenAccept(
-                        note -> {
-                            TextView noteTitle = root.findViewById(R.id.note_title);
-                            noteTitle.setText(note.getTitle());
-
-                            editText.setText(note.getContent());
-                        });
-
-        headerImagePickerActivityLauncher =
-                registerForActivityResult(
-                        new ActivityResultContracts.GetContent(), this::updateHeaderImage);
-
-        return root;
     }
 
     private void updateHeaderImage(Uri uri) {

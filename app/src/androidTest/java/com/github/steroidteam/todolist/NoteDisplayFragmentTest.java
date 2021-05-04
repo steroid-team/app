@@ -24,8 +24,10 @@ import java.util.concurrent.CompletableFuture;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -71,5 +73,12 @@ public class NoteDisplayFragmentTest {
 
         // Check that we are now in the note display view.
         assertThat(navController.getCurrentDestination().getId(), equalTo(R.id.nav_map));
+    }
+
+    @Test
+    public void noteIsRenderedProperly() {
+        onView(withId(R.id.note_title)).check(matches(withText(FIXTURE_DEFAULT_NOTE_TITLE)));
+        onView(withId(R.id.activity_notedisplay_edittext))
+                .check(matches(withText(FIXTURE_DEFAULT_NOTE_CONTENT)));
     }
 }

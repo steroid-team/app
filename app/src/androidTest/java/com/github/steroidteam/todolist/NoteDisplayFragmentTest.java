@@ -30,11 +30,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class NoteDisplayFragmentTest {
     private FragmentScenario<NoteDisplayFragment> scenario;
 
-    /*
-    @Rule
-    public ActivityScenarioRule<MainActivity> activityRule =
-            new ActivityScenarioRule<>(MainActivity.class);
-     */
     @Mock Database databaseMock;
 
     @Before

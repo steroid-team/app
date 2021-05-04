@@ -27,20 +27,10 @@ public class Task {
         this.done = false;
     }
 
-    /**
-     * Modifies the body of the task.
-     *
-     * @param newBody The new body.
-     */
     public void setBody(String newBody) {
         this.body = newBody;
     }
 
-    /**
-     * Returns the body of the task.
-     *
-     * @return String The body.
-     */
     public String getBody() {
         return this.body;
     }

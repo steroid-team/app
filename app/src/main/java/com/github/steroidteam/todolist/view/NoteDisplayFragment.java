@@ -87,6 +87,8 @@ public class NoteDisplayFragment extends Fragment {
         // Add a click listener to the "back" button to return to the previous activity.
         root.findViewById(R.id.back_button)
                 .setOnClickListener((view) -> getParentFragmentManager().popBackStack());
+        // Add a click listener to the "save" button to store the changes in the database.
+        root.findViewById(R.id.activity_notedisplay_save).setOnClickListener(this::saveNote);
     }
 
     private void updateHeaderImage(Uri uri) {
@@ -110,6 +112,28 @@ public class NoteDisplayFragment extends Fragment {
         super.onPause();
         position = null;
         locationName = null;
+    }
+
+    /**
+     * Save the displayed note in the database.
+     *
+     * TODO: Use the MVVM pattern here as well, so that the ViewModel is updated right after
+     *  making the changes (instead of "saving" the note when the button is pressed). This would
+     *  also remove the need to have a "save" button (because the changes would be reflected in
+     *  real time in the ViewModel and thus in the database).
+     */
+    private void saveNote(View view) {
+        database.getNote(noteID)
+                .thenCompose(
+                        note -> {
+                            TextView noteTitle = getView().findViewById(R.id.note_title);
+                            note.setTitle(noteTitle.getText().toString());
+                            EditText editText =
+                                    getView().findViewById(R.id.activity_notedisplay_edittext);
+                            note.setContent(editText.getText().toString());
+
+                            return database.putNote(noteID, note);
+                        });
     }
 
     @Override

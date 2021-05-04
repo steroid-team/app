@@ -43,16 +43,10 @@ public class JSONSerializerTest {
         final String actualSerializedObject = JSONSerializer.serializeTodoList(todoList);
         final String expectedSerializedObject =
                 "{"
-                        + "\"id\":\""
-                        + todoList.getId().toString()
-                        + "\","
+                        + ("\"id\":\"" + todoList.getId().toString() + "\",")
                         + "\"list\":[],"
-                        + "\"title\":\""
-                        + LIST_TITLE
-                        + "\","
-                        + "\"date\":\""
-                        + expectedFormattedDate
-                        + "\""
+                        + ("\"title\":\"" + LIST_TITLE + "\",")
+                        + ("\"date\":\"" + expectedFormattedDate + "\"")
                         + "}";
         assertEquals(expectedSerializedObject, actualSerializedObject);
     }
@@ -74,21 +68,15 @@ public class JSONSerializerTest {
                         + "\"id\":\""
                         + todoList.getId().toString()
                         + "\","
-                        + "\"list\":[{\"body\":\""
-                        + TASK1_DESC
-                        + "\",\"done\":"
-                        + false
-                        + "},{\"body\":\""
-                        + TASK2_DESC
-                        + "\",\"done\":"
-                        + false
+                        + "\"list\":[{"
+                        + ("\"body\":\"" + TASK1_DESC + "\",")
+                        + ("\"done\":" + false)
+                        + "},{"
+                        + ("\"body\":\"" + TASK2_DESC + "\",")
+                        + ("\"done\":" + false)
                         + "}],"
-                        + "\"title\":\""
-                        + LIST_TITLE
-                        + "\","
-                        + "\"date\":\""
-                        + expectedFormattedDate
-                        + "\""
+                        + ("\"title\":\"" + LIST_TITLE + "\",")
+                        + ("\"date\":\"" + expectedFormattedDate + "\"")
                         + "}";
         assertEquals(expectedSerializedObject, actualSerializedObject);
     }
@@ -105,12 +93,8 @@ public class JSONSerializerTest {
                         + FIXTURE_UUID.toString()
                         + "\","
                         + "\"list\":[],"
-                        + "\"title\":\""
-                        + FIXTURE_TITLE
-                        + "\","
-                        + "\"date\":\""
-                        + FIXTURE_FORMATTED_DATE
-                        + "\""
+                        + ("\"title\":\"" + FIXTURE_TITLE + "\",")
+                        + ("\"date\":\"" + FIXTURE_FORMATTED_DATE + "\"")
                         + "}";
         final TodoList actualDeserializedObject = JSONSerializer.deserializeTodoList(FIXTURE_JSON);
 
@@ -133,9 +117,7 @@ public class JSONSerializerTest {
 
         final String FIXTURE_JSON =
                 "{"
-                        + "\"id\":\""
-                        + FIXTURE_UUID.toString()
-                        + "\","
+                        + ("\"id\":\"" + FIXTURE_UUID.toString() + "\",")
                         + "\"list\":["
                         + "{"
                         + ("\"body\":\"" + TASK1.getBody() + "\",")
@@ -144,12 +126,8 @@ public class JSONSerializerTest {
                         + ("\"body\":\"" + TASK2.getBody() + "\",")
                         + ("\"done\":" + TASK2.isDone() + "")
                         + "\"}],"
-                        + "\"title\":\""
-                        + FIXTURE_TITLE
-                        + "\","
-                        + "\"date\":\""
-                        + FIXTURE_FORMATTED_DATE
-                        + "\""
+                        + ("\"title\":\"" + FIXTURE_TITLE + "\",")
+                        + ("\"date\":\"" + FIXTURE_FORMATTED_DATE + "\"")
                         + "}";
         final TodoList actualDeserializedObject = JSONSerializer.deserializeTodoList(FIXTURE_JSON);
 

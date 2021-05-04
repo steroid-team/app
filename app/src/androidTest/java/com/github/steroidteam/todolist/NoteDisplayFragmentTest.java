@@ -71,7 +71,7 @@ public class NoteDisplayFragmentTest {
 
         onView(withId(R.id.location_button)).perform(click());
 
-        // Check that we are now in the note display view.
+        // Check that we are now in the map view.
         assertThat(navController.getCurrentDestination().getId(), equalTo(R.id.nav_map));
     }
 

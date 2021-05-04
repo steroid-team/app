@@ -1,32 +1,5 @@
 package com.github.steroidteam.todolist;
 
-import android.os.Bundle;
-
-import androidx.fragment.app.testing.FragmentScenario;
-import androidx.navigation.Navigation;
-import androidx.navigation.testing.TestNavHostController;
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.web.webdriver.Locator;
-
-import com.github.steroidteam.todolist.customviewactions.RichEditorGetHtml;
-import com.github.steroidteam.todolist.database.Database;
-import com.github.steroidteam.todolist.database.DatabaseFactory;
-import com.github.steroidteam.todolist.model.notes.Note;
-import com.github.steroidteam.todolist.view.NoteDisplayFragment;
-import com.github.steroidteam.todolist.view.NoteSelectionFragment;
-
-import org.hamcrest.MatcherAssert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -47,6 +20,29 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
+
+import android.os.Bundle;
+import androidx.fragment.app.testing.FragmentScenario;
+import androidx.navigation.Navigation;
+import androidx.navigation.testing.TestNavHostController;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.web.webdriver.Locator;
+import com.github.steroidteam.todolist.customviewactions.RichEditorGetHtml;
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.view.NoteDisplayFragment;
+import com.github.steroidteam.todolist.view.NoteSelectionFragment;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import org.hamcrest.MatcherAssert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NoteDisplayFragmentTest {

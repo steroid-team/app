@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -18,15 +17,12 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.google.android.gms.maps.model.LatLng;
-
 import java.io.InputStream;
 import java.util.UUID;
-
 import jp.wasabeef.richeditor.RichEditor;
 
 public class NoteDisplayFragment extends Fragment {
@@ -36,6 +32,8 @@ public class NoteDisplayFragment extends Fragment {
     private UUID noteID;
     private RichEditor richEditor;
     private ActivityResultLauncher<String> headerImagePickerActivityLauncher;
+    private ActivityResultLauncher<String> embeddedImagePickerActivityLauncher;
+    private final String IMAGE_MIME_TYPE = "image/*";
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,6 +47,15 @@ public class NoteDisplayFragment extends Fragment {
         richEditor.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.bg_grey));
         int padding = (int) getResources().getDimension(R.dimen.note_body_padding);
         richEditor.setPadding(padding, padding, padding, 0);
+
+        // The width for any embedded image should be the editor's width. Do the math to
+        // transform the dp to px, and subtract the lateral padding.
+        final int imageDisplayWidth =
+                (int)
+                                Math.floor(
+                                        getResources().getDisplayMetrics().widthPixels
+                                                / getResources().getDisplayMetrics().density)
+                        - 2 * padding;
 
         // Get the UUID of the currently selected note.
         noteID = UUID.fromString(getArguments().getString(NoteSelectionFragment.NOTE_ID_KEY));
@@ -65,6 +72,10 @@ public class NoteDisplayFragment extends Fragment {
         headerImagePickerActivityLauncher =
                 registerForActivityResult(
                         new ActivityResultContracts.GetContent(), this::updateHeaderImage);
+        embeddedImagePickerActivityLauncher =
+                registerForActivityResult(
+                        new ActivityResultContracts.GetContent(),
+                        uri -> richEditor.insertImage(uri.toString(), "", imageDisplayWidth));
 
         return root;
     }
@@ -74,7 +85,7 @@ public class NoteDisplayFragment extends Fragment {
                 .setOnClickListener(
                         v -> {
                             // Open the file picker limiting selections to image files.
-                            headerImagePickerActivityLauncher.launch("image/*");
+                            headerImagePickerActivityLauncher.launch(IMAGE_MIME_TYPE);
                         });
         root.findViewById(R.id.location_button)
                 .setOnClickListener(
@@ -112,6 +123,9 @@ public class NoteDisplayFragment extends Fragment {
                 .setOnClickListener(v -> richEditor.setBullets());
         root.findViewById(R.id.editor_action_ol_btn)
                 .setOnClickListener(v -> richEditor.setNumbers());
+        root.findViewById(R.id.editor_action_image_btn)
+                .setOnClickListener(
+                        v -> embeddedImagePickerActivityLauncher.launch(IMAGE_MIME_TYPE));
     }
 
     private void updateHeaderImage(Uri uri) {
@@ -137,9 +151,7 @@ public class NoteDisplayFragment extends Fragment {
         locationName = null;
     }
 
-    /**
-     * Save the displayed note in the database.
-     */
+    /** Save the displayed note in the database. */
     // TODO: Use the MVVM pattern here as well, so that the ViewModel is updated right after
     //  making the changes (instead of manually "saving" the note when the button is pressed). This
     //  would also remove the need to have a "save" button (because the changes would be reflected

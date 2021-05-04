@@ -205,6 +205,15 @@
                 app:srcCompat="@drawable/ordered_list_icon" />
 
             <ImageButton
+                android:id="@+id/editor_action_image_btn"
+                style="@style/NoteEditorToolbar.Button"
+                android:contentDescription="@string/insert_image"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                app:srcCompat="@drawable/photography_icon" />
+
+            <ImageButton
                 android:id="@+id/editor_action_drawing_btn"
                 style="@style/NoteEditorToolbar.Button"
                 android:contentDescription="Add drawing"

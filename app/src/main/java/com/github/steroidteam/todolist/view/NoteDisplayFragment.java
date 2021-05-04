@@ -106,8 +106,8 @@ public class NoteDisplayFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onPause() {
+        super.onPause();
         position = null;
         locationName = null;
     }

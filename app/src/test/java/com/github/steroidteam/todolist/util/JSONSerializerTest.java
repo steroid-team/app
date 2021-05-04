@@ -125,8 +125,10 @@ public class JSONSerializerTest {
     public void todoListDeserializerWorksWithNonEmptyTasks() {
         final UUID FIXTURE_UUID = UUID.randomUUID();
         final String FIXTURE_TITLE = "Test list";
-        final String TASK1_DESC = "Buy bananas";
-        final String TASK2_DESC = "Eat fruit";
+        final Task TASK1 = new Task("Buy bananas");
+        TASK1.setDone(true);
+        final Task TASK2 = new Task("Eat fruit");
+        TASK1.setDone(false);
         final String FIXTURE_FORMATTED_DATE = DATE_FORMAT.format(new Date());
 
         final String FIXTURE_JSON =
@@ -134,10 +136,13 @@ public class JSONSerializerTest {
                         + "\"id\":\""
                         + FIXTURE_UUID.toString()
                         + "\","
-                        + "\"list\":[{\"body\":\""
-                        + TASK1_DESC
-                        + "\"},{\"body\":\""
-                        + TASK2_DESC
+                        + "\"list\":["
+                        + "{"
+                        + ("\"body\":\"" + TASK1.getBody() + "\",")
+                        + ("\"done\":" + TASK1.isDone() + "")
+                        + "},{"
+                        + ("\"body\":\"" + TASK2.getBody() + "\",")
+                        + ("\"done\":" + TASK2.isDone() + "")
                         + "\"}],"
                         + "\"title\":\""
                         + FIXTURE_TITLE
@@ -150,8 +155,8 @@ public class JSONSerializerTest {
 
         assertEquals(actualDeserializedObject.getId(), FIXTURE_UUID);
         assertEquals(actualDeserializedObject.getSize(), 2);
-        assertEquals(actualDeserializedObject.getTask(0), new Task(TASK1_DESC));
-        assertEquals(actualDeserializedObject.getTask(1), new Task(TASK2_DESC));
+        assertEquals(actualDeserializedObject.getTask(0), TASK1);
+        assertEquals(actualDeserializedObject.getTask(1), TASK2);
         assertEquals(actualDeserializedObject.getTitle(), FIXTURE_TITLE);
         assertEquals(
                 DATE_FORMAT.format(actualDeserializedObject.getDate()), FIXTURE_FORMATTED_DATE);

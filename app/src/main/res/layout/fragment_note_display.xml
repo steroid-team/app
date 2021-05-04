@@ -216,7 +216,7 @@
             <ImageButton
                 android:id="@+id/editor_action_drawing_btn"
                 style="@style/NoteEditorToolbar.Button"
-                android:contentDescription="Add drawing"
+                android:contentDescription="@string/add_drawing"
                 android:padding="12dp"
                 android:scaleType="fitCenter"
                 android:tint="@color/white"

@@ -70,4 +70,5 @@
     <string name="unordered_list">Unordered list</string>
     <string name="insert_image">Insert image</string>
     <string name="ordered_list">Ordered list</string>
+    <string name="add_drawing">Add drawing</string>
 </resources>

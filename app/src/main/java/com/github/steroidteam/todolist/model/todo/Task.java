@@ -28,6 +28,7 @@ public class Task {
     }
 
     public void setBody(String newBody) {
+        Objects.requireNonNull(newBody);
         this.body = newBody;
     }
 

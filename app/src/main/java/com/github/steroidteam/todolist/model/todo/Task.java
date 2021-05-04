@@ -52,7 +52,7 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(body, task.body);
+        return Objects.equals(body, task.body) && Objects.equals(done, task.isDone());
     }
 
     public Boolean isDone() {

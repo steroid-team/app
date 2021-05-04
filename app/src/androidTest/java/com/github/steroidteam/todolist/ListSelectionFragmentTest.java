@@ -164,7 +164,7 @@ public class ListSelectionFragmentTest {
         onView(withId(R.id.alert_dialog_edit_text))
                 .inRoot(isDialog())
                 .perform(typeText(TODO_2_TITLE));
-        onView(withText(R.string.add_todo)).inRoot(isDialog()).perform(click());
+        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
 
         onView(withText(R.string.add_todo_suggestion)).check(doesNotExist());
 

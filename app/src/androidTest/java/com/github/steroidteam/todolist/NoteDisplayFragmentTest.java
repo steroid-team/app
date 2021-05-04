@@ -1,5 +1,27 @@
 package com.github.steroidteam.todolist;
 
+import android.os.Bundle;
+
+import androidx.fragment.app.testing.FragmentScenario;
+import androidx.navigation.Navigation;
+import androidx.navigation.testing.TestNavHostController;
+import androidx.test.core.app.ApplicationProvider;
+
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.view.NoteDisplayFragment;
+import com.github.steroidteam.todolist.view.NoteSelectionFragment;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
@@ -8,33 +30,18 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
-import android.os.Bundle;
-import androidx.fragment.app.testing.FragmentScenario;
-import androidx.navigation.Navigation;
-import androidx.navigation.testing.TestNavHostController;
-import androidx.test.core.app.ApplicationProvider;
-import com.github.steroidteam.todolist.database.Database;
-import com.github.steroidteam.todolist.database.DatabaseFactory;
-import com.github.steroidteam.todolist.model.notes.Note;
-import com.github.steroidteam.todolist.view.NoteDisplayFragment;
-import com.github.steroidteam.todolist.view.NoteSelectionFragment;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
 @RunWith(MockitoJUnitRunner.class)
 public class NoteDisplayFragmentTest {
     private FragmentScenario<NoteDisplayFragment> scenario;
+    private static String FIXTURE_DEFAULT_NOTE_TITLE = "My note";
+    private static String FIXTURE_DEFAULT_NOTE_CONTENT = "Some content";
 
     @Mock Database databaseMock;
 
     @Before
     public void init() {
-        Note note = new Note("My note");
+        Note note = new Note(FIXTURE_DEFAULT_NOTE_TITLE);
+        note.setContent(FIXTURE_DEFAULT_NOTE_CONTENT);
         CompletableFuture<Note> noteFuture = new CompletableFuture<>();
         noteFuture.complete(note);
         doReturn(noteFuture).when(databaseMock).getNote(any(UUID.class));

@@ -12,13 +12,17 @@ import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Bundle;
+import android.service.notification.StatusBarNotification;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -29,6 +33,7 @@ import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
+import com.github.steroidteam.todolist.broadcast.ReminderBroadcast;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.Task;
@@ -47,6 +52,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ItemViewFragmentTest {
 
+    private FragmentScenario<ItemViewFragment> scenario;
     @Mock Database databaseMock;
 
     @Before
@@ -70,7 +76,7 @@ public class ItemViewFragmentTest {
 
         Bundle bundle = new Bundle();
         bundle.putSerializable("list_id", UUID.randomUUID());
-        FragmentScenario<ItemViewFragment> scenario =
+        scenario =
                 FragmentScenario.launchInContainer(
                         ItemViewFragment.class, bundle, R.style.Theme_Asteroid);
     }
@@ -303,6 +309,49 @@ public class ItemViewFragmentTest {
                         RecyclerViewActions.actionOnItemAtPosition(
                                 0,
                                 MyViewAction.clickChildViewWithId(R.id.layout_task_delete_button)));
+
+        // FIXME : unable to check if toast appeared
+        /*onView(withText("Successfully removed the task !"))
+        .inRoot(new ToastMatcher())
+        .check(matches(isDisplayed()));*/
+    }
+
+    @Test
+    public void notificationReminderWorks() {
+
+        int twoSecondsInMillis = 2 * 1000;
+        scenario.onFragment(
+                fragment -> {
+                    fragment.createNotificationChannel();
+                    fragment.createNotification(twoSecondsInMillis);
+                });
+
+        /**
+         * Have to wait a little bit more than the 2 seconds because for this small value it takes
+         * in fact like 3 or 4 seconds to display the notification *
+         */
+        try {
+            Thread.sleep(3 * twoSecondsInMillis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        scenario.onFragment(
+                fragment -> {
+                    boolean isDisplayed = false;
+                    NotificationManager notificationManager =
+                            (NotificationManager)
+                                    fragment.getContext()
+                                            .getSystemService(Context.NOTIFICATION_SERVICE);
+                    StatusBarNotification[] notifications =
+                            notificationManager.getActiveNotifications();
+                    for (StatusBarNotification notification : notifications) {
+                        if (notification.getId() == ReminderBroadcast.REMINDER_ID) {
+                            isDisplayed = true;
+                        }
+                    }
+                    assertEquals(true, isDisplayed);
+                });
 
         // FIXME : unable to check if toast appeared
         /*onView(withText("Successfully removed the task !"))

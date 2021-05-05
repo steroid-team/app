@@ -150,7 +150,7 @@ public class ItemViewFragment extends Fragment {
         itemViewModel.setTaskDone(position, isChecked);
     }
 
-    private void createNotificationChannel() {
+    public void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "ReminderChannel";
             String description = "Channel for the reminder";
@@ -166,7 +166,7 @@ public class ItemViewFragment extends Fragment {
     }
 
     // Just call this method to put a notification based on time
-    private void createNotification(long timeInMillis) {
+    public void createNotification(long timeInMillis) {
         Intent intent = new Intent(getContext(), ReminderBroadcast.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, 0);
 

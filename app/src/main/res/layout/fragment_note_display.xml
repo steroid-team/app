@@ -110,33 +110,25 @@
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <EditText
-        android:id="@+id/activity_notedisplay_edittext"
+    <jp.wasabeef.richeditor.RichEditor
+        android:id="@+id/notedisplay_text_editor"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="16dp"
-        android:background="@null"
-        android:focusableInTouchMode="true"
-        android:fontFamily="@font/nunitosans_regular"
-        android:gravity="top|start"
-        android:importantForAutofill="no"
-        android:inputType="textMultiLine|textCapSentences"
-        android:singleLine="false"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/editor_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/note_header" />
+        app:layout_constraintTop_toBottomOf="@+id/note_header">
+
+    </jp.wasabeef.richeditor.RichEditor>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/activity_notedisplay_save"
+        android:id="@+id/notedisplay_save_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/editor_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="?android:attr/textCheckMark" />
 
@@ -159,13 +151,77 @@
             android:overScrollMode="always">
 
             <ImageButton
-                android:id="@+id/editor_action_drawing_btn"
+                android:id="@+id/editor_action_bold_btn"
                 style="@style/NoteEditorToolbar.Button"
-                android:contentDescription="Add drawing"
+                android:contentDescription="@string/bold"
                 android:padding="12dp"
                 android:scaleType="fitCenter"
                 android:tint="@color/white"
-                app:srcCompat="@drawable/plus_icon" />
+                app:srcCompat="@drawable/bold_icon" />
+
+            <ImageButton
+                android:id="@+id/editor_action_italic_btn"
+                style="@style/NoteEditorToolbar.Button"
+                android:contentDescription="@string/italics"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                app:srcCompat="@drawable/italic_icon" />
+
+            <ImageButton
+                android:id="@+id/editor_action_underline_btn"
+                style="@style/NoteEditorToolbar.Button"
+                android:contentDescription="@string/underline"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                app:srcCompat="@drawable/underline_icon" />
+
+            <ImageButton
+                android:id="@+id/editor_action_strikethrough_btn"
+                style="@style/NoteEditorToolbar.Button"
+                android:contentDescription="@string/strikethrough"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                app:srcCompat="@drawable/strikethrough_icon" />
+
+            <ImageButton
+                android:id="@+id/editor_action_ul_btn"
+                style="@style/NoteEditorToolbar.Button"
+                android:contentDescription="@string/unordered_list"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                app:srcCompat="@drawable/unordered_list_icon" />
+
+            <ImageButton
+                android:id="@+id/editor_action_ol_btn"
+                style="@style/NoteEditorToolbar.Button"
+                android:contentDescription="@string/ordered_list"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                app:srcCompat="@drawable/ordered_list_icon" />
+
+            <ImageButton
+                android:id="@+id/editor_action_image_btn"
+                style="@style/NoteEditorToolbar.Button"
+                android:contentDescription="@string/insert_image"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                app:srcCompat="@drawable/photography_icon" />
+
+            <ImageButton
+                android:id="@+id/editor_action_drawing_btn"
+                style="@style/NoteEditorToolbar.Button"
+                android:contentDescription="@string/add_drawing"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                app:srcCompat="@drawable/pencil_icon" />
+
         </LinearLayout>
     </HorizontalScrollView>
 

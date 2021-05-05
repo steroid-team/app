@@ -14,16 +14,6 @@
         android:id="@+id/layout_note"
         style="@style/SelectionList.Entry">
 
-        <Button
-            android:id="@+id/layout_note_delete_btn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginBottom="8dp"
-            style="@style/DeleteButtonInRecyclerView"
-            app:layout_constraintBottom_toTopOf="@+id/layout_note_picture"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <ImageView
             android:id="@+id/layout_note_picture"
             android:layout_width="372dp"

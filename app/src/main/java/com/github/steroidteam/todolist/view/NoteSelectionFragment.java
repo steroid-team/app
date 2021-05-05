@@ -1,32 +1,32 @@
 package com.github.steroidteam.todolist.view;
 
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import androidx.annotation.NonNull;
-import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.util.SwipeTouchHelper;
 import com.github.steroidteam.todolist.view.adapter.NoteArrayListAdapter;
+import com.github.steroidteam.todolist.view.dialog.DialogListener;
+import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
+import com.github.steroidteam.todolist.view.dialog.SimpleDialogFragment;
 import com.github.steroidteam.todolist.viewmodel.NoteSelectionViewModel;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.UUID;
 
 public class NoteSelectionFragment extends Fragment {
 
-    public static final String NOTE_ID_KEY = "id";
-
     private NoteSelectionViewModel viewModel;
     private NoteArrayListAdapter adapter;
+
+    public static final String NOTE_ID_KEY = "id";
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,106 +52,116 @@ public class NoteSelectionFragment extends Fragment {
                             adapter.notifyDataSetChanged();
                         });
 
+        createAndSetSwipeListener(recyclerView);
+
         return root;
     }
 
     private NoteArrayListAdapter.NoteHolder.NoteCustomListener createCustomListener() {
-        return new NoteArrayListAdapter.NoteHolder.NoteCustomListener() {
-            @Override
-            public void onClickCustom(NoteArrayListAdapter.NoteHolder holder) {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(NOTE_ID_KEY, holder.getId());
-                Navigation.findNavController(holder.itemView)
-                        .navigate(R.id.nav_note_display, bundle);
-            }
-
-            @Override
-            public void onNoteDelete(NoteArrayListAdapter.NoteHolder holder) {
-                removeNote(holder.getId());
-            }
-
-            @Override
-            public void onLongClickCustom(Note note) {
-                renameNote(note);
-            }
+        return holder -> {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(NOTE_ID_KEY, holder.getNote().getId());
+            Navigation.findNavController(holder.itemView).navigate(R.id.nav_note_display, bundle);
         };
     }
 
+    private void createAndSetSwipeListener(RecyclerView recyclerView) {
+        SwipeTouchHelper.SwipeListener swipeListener =
+                new SwipeTouchHelper.SwipeListener() {
+                    @Override
+                    public void onSwipeLeft(RecyclerView.ViewHolder viewHolder, int position) {
+                        removeNote(
+                                ((NoteArrayListAdapter.NoteHolder) viewHolder).getNote().getId(),
+                                position);
+                    }
+
+                    @Override
+                    public void onSwipeRight(RecyclerView.ViewHolder viewHolder, int position) {
+                        renameNote(
+                                ((NoteArrayListAdapter.NoteHolder) viewHolder).getNote(), position);
+                    }
+                };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeTouchHelper(swipeListener));
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+    }
+
     private void createNote(View view) {
-        Context context = new ContextThemeWrapper(getActivity(), R.style.Dialog);
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
-        builder.setTitle(getString(R.string.new_note_btn_description));
 
-        LayoutInflater inflater = this.getLayoutInflater();
-        View user_input = inflater.inflate(R.layout.alert_dialog_input, null);
+        DialogListener dialogListener =
+                new DialogListener() {
 
-        builder.setView(user_input);
+                    @Override
+                    public void onPositiveClick(String title) {
+                        if (title.length() > 0) viewModel.putNote(title);
+                    }
 
-        builder.setPositiveButton(
-                getString(R.string.add),
-                (DialogInterface dialog, int which) -> {
-                    EditText titleInput = user_input.findViewById(R.id.alert_dialog_edit_text);
-                    String title = titleInput.getText().toString();
-                    if (title.length() > 0) viewModel.putNote(title);
-                    titleInput.getText().clear();
-                    dialog.dismiss();
-                });
-        builder.setNegativeButton(
-                getString(R.string.cancel),
-                (DialogInterface dialog, int which) -> {
-                    dialog.dismiss();
-                });
-        Dialog dialog = builder.show();
-        dialog.getWindow().setGravity(0x00000035);
-        dialog.setCanceledOnTouchOutside(false);
+                    @Override
+                    public void onPositiveClick() {
+                        // NEVER CALLED
+                    }
+
+                    @Override
+                    public void onNegativeClick() {
+                        // DO NOTHING
+                    }
+                };
+
+        DialogFragment newFragment =
+                new InputDialogFragment().newInstance(dialogListener, R.string.add_note_suggestion);
+        newFragment.show(getParentFragmentManager(), "add_dialog");
     }
 
-    private void removeNote(final UUID id) {
-        Context context = new ContextThemeWrapper(getActivity(), R.style.Dialog);
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
-        builder.setTitle(getString(R.string.delete_note_suggestion));
+    private void removeNote(final UUID id, final int position) {
+        DialogListener simpleDialogListener =
+                new DialogListener() {
 
-        builder.setPositiveButton(
-                getString(R.string.delete),
-                (DialogInterface dialog, int which) -> {
-                    viewModel.removeNote(id);
-                    dialog.dismiss();
-                });
-        builder.setNegativeButton(
-                getString(R.string.cancel),
-                (DialogInterface dialog, int which) -> {
-                    dialog.dismiss();
-                });
-        Dialog dialog = builder.show();
-        dialog.getWindow().setGravity(0x00000035);
-        dialog.setCanceledOnTouchOutside(false);
+                    @Override
+                    public void onPositiveClick(String input) {
+                        // NEVER CALLED
+                    }
+
+                    @Override
+                    public void onPositiveClick() {
+                        viewModel.removeNote(id);
+                    }
+
+                    @Override
+                    public void onNegativeClick() {
+                        adapter.notifyItemChanged(position);
+                    }
+                };
+
+        DialogFragment newFragment =
+                new SimpleDialogFragment()
+                        .newInstance(simpleDialogListener, R.string.delete_note_suggestion);
+        newFragment.show(getParentFragmentManager(), "deletion_dialog");
     }
 
-    public void renameNote(final Note note) {
-        Context context = new ContextThemeWrapper(getActivity(), R.style.Dialog);
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
-        builder.setTitle(getString(R.string.rename_note_suggestion));
+    public void renameNote(Note note, final int position) {
 
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialog_input = inflater.inflate(R.layout.alert_dialog_input, null);
-        builder.setView(dialog_input);
+        DialogListener dialogListener =
+                new DialogListener() {
 
-        builder.setPositiveButton(
-                getString(R.string.save),
-                (DialogInterface dialog, int which) -> {
-                    EditText titleInput = dialog_input.findViewById(R.id.alert_dialog_edit_text);
-                    String title = titleInput.getText().toString();
-                    if (title.length() > 0) viewModel.renameNote(note, title);
-                    titleInput.getText().clear();
-                    dialog.dismiss();
-                });
-        builder.setNegativeButton(
-                getString(R.string.cancel),
-                (DialogInterface dialog, int which) -> {
-                    dialog.dismiss();
-                });
-        Dialog dialog = builder.show();
-        dialog.getWindow().setGravity(0x00000035);
-        dialog.setCanceledOnTouchOutside(false);
+                    @Override
+                    public void onPositiveClick(String title) {
+                        if (title.length() > 0) viewModel.renameNote(note, title);
+                    }
+
+                    @Override
+                    public void onPositiveClick() {
+                        // NEVER CALLED
+                    }
+
+                    @Override
+                    public void onNegativeClick() {
+                        adapter.notifyItemChanged(position);
+                    }
+                };
+
+        DialogFragment newFragment =
+                new InputDialogFragment()
+                        .newInstance(dialogListener, R.string.rename_note_suggestion);
+        newFragment.show(getParentFragmentManager(), "rename_dialog");
     }
 }

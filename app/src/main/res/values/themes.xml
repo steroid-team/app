@@ -74,24 +74,6 @@
         <item name="android:padding">0dp</item>
     </style>
 
-    <!-- Dialog Theme -->
-    <style name="Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <item name="colorSurface">@color/light_grey</item>
-        <item name="android:fontFamily">@font/nunitosans_semibold</item>
-        <item name="android:textSize">20sp</item>
-        <item name="materialAlertDialogTitleTextStyle">@style/DialogTitleText</item>
-        <item name="shapeAppearanceOverlay">@style/DialogShapeAppearance</item>
-    </style>
-    <!-- Dialog Shape (for rounded corner) -->
-    <style name="DialogShapeAppearance">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">15dp</item>
-    </style>
-    <style name="DialogTitleText" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
-        <item name="android:fontFamily">@font/nunitosans_bold</item>
-        <item name="android:textColor">@android:color/black</item>
-    </style>
-
     <style name="TaskEntryCheckbox">
         <item name="android:buttonTint">@color/light_grey</item>
     </style>

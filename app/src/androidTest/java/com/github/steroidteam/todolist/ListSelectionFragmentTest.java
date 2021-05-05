@@ -9,36 +9,26 @@ import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
-import static androidx.test.espresso.contrib.RecyclerViewActions.scrollToPosition;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.github.steroidteam.todolist.CustomMatchers.ItemCountIs;
+import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckText;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
-import android.view.View;
-import android.widget.TextView;
-import androidx.annotation.NonNull;
 import androidx.fragment.app.testing.FragmentScenario;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.test.espresso.UiController;
-import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.matcher.BoundedMatcher;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
-import com.github.steroidteam.todolist.model.todo.Task;
+import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.ListSelectionFragment;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.core.IsAnything;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,18 +38,26 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ListSelectionFragmentTest {
 
-    private FragmentScenario<ListSelectionFragment> scenario;
+    private final int TODO_TITLE_LAYOUT_ID = R.id.layout_todo_list_text;
+
     private final String TODO_1_TITLE = "Some random title";
     private final String TODO_2_TITLE = "Some random title 2";
 
+    private FragmentScenario<ListSelectionFragment> scenario;
     @Mock Database databaseMock;
 
     @Before
     public void init() {
+        List<UUID> notes = Collections.singletonList(UUID.randomUUID());
+        CompletableFuture<List<UUID>> notesFuture = new CompletableFuture<>();
+        notesFuture.complete(notes);
+
+        Note note = new Note("NOTE_TITLE_1");
+        CompletableFuture<Note> noteFuture = new CompletableFuture<>();
+        noteFuture.complete(note);
+
         TodoListCollection collection = new TodoListCollection();
         TodoList todoList = new TodoList(TODO_1_TITLE);
-        todoList.addTask(new Task("A simple task"));
-        collection.addUUID(UUID.randomUUID());
         collection.addUUID(UUID.randomUUID());
 
         CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
@@ -67,16 +65,18 @@ public class ListSelectionFragmentTest {
         todoListCollectionFuture.complete(collection);
         todoListFuture.complete(todoList);
 
-        List<UUID> notes = Arrays.asList(UUID.randomUUID(), UUID.randomUUID());
-        CompletableFuture<List<UUID>> notesFuture = new CompletableFuture<>();
-        notesFuture.complete(notes);
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        future.complete(null);
+        doReturn(future).when(databaseMock).removeTodoList(any(UUID.class));
 
-        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
+        doReturn(notesFuture).when(databaseMock).getNotesList();
         doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListFuture).when(databaseMock).putTodoList(any(TodoList.class));
         doReturn(todoListFuture)
                 .when(databaseMock)
                 .updateTodoList(any(UUID.class), any(TodoList.class));
-        doReturn(notesFuture).when(databaseMock).getNotesList();
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
 
         DatabaseFactory.setCustomDatabase(databaseMock);
 
@@ -92,13 +92,25 @@ public class ListSelectionFragmentTest {
 
         onView(withText(R.string.add_todo_suggestion)).check(matches(isDisplayed()));
 
+        TodoList todo = new TodoList(TODO_2_TITLE);
+        CompletableFuture<TodoList> todoListCompletableFuture = new CompletableFuture<>();
+        todoListCompletableFuture.complete(todo);
+
+        // Change the title of the to-do that will be returned:
+        doReturn(todoListCompletableFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListCompletableFuture).when(databaseMock).putTodoList(any(TodoList.class));
+
         // button2 = negative button
         onView(withId(android.R.id.button2)).inRoot(isDialog()).perform(click());
 
         onView(withText(R.string.add_todo_suggestion)).check(doesNotExist());
 
+        // Check that the title didn't change
         onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, TODO_1_TITLE)));
+                .check(matches(atPositionCheckText(0, TODO_1_TITLE, TODO_TITLE_LAYOUT_ID)));
+
+        // Check that it doesn't add a to-do
+        onView(withId(R.id.activity_list_selection_itemlist)).check(matches(ItemCountIs(1)));
     }
 
     @Test
@@ -109,158 +121,137 @@ public class ListSelectionFragmentTest {
 
         onView(withId(R.id.alert_dialog_edit_text)).check(matches(isDisplayed()));
 
-        onView(isRoot()).perform(waitAtLeastHelper(500));
-
         onView(withId(R.id.alert_dialog_edit_text)).perform(typeText(TODO_2_TITLE));
 
-        onView(isRoot()).perform(waitAtLeastHelper(500));
+        TodoList todo = new TodoList(TODO_2_TITLE);
+        CompletableFuture<TodoList> todoListCompletableFuture = new CompletableFuture<>();
+        todoListCompletableFuture.complete(todo);
 
-        TodoListCollection collection = new TodoListCollection();
-        TodoList todoList = new TodoList(TODO_2_TITLE);
-        collection.addUUID(UUID.randomUUID());
-        collection.addUUID(UUID.randomUUID());
+        // Change the title of the note that will be returned:
+        doReturn(todoListCompletableFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListCompletableFuture)
+                .when(databaseMock)
+                .updateTodoList(any(UUID.class), any(TodoList.class));
 
-        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
-        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
-        todoListCollectionFuture.complete(collection);
-        todoListFuture.complete(todoList);
-
-        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
-
-        // button1 = positive button
         onView(withId(android.R.id.button1)).perform(click());
 
         onView(withId(R.id.alert_dialog_edit_text)).check(doesNotExist());
 
         onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, TODO_2_TITLE)));
+                .check(matches(atPositionCheckText(0, TODO_2_TITLE, TODO_TITLE_LAYOUT_ID)));
     }
 
     @Test
     public void createTodoWorks() {
 
-        onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, TODO_1_TITLE)));
-
-        TodoListCollection collection = new TodoListCollection();
-        TodoList todoList = new TodoList(TODO_2_TITLE);
-        collection.addUUID(UUID.randomUUID());
-        collection.addUUID(UUID.randomUUID());
-
-        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
-        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
-        todoListCollectionFuture.complete(collection);
-        todoListFuture.complete(todoList);
-
-        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
-        doReturn(todoListFuture).when(databaseMock).putTodoList(any(TodoList.class));
-
         onView(withId(R.id.create_todo_button)).perform(click());
 
         onView(withText(R.string.add_todo_suggestion)).check(matches(isDisplayed()));
 
+        TodoList todo = new TodoList(TODO_2_TITLE);
+        CompletableFuture<TodoList> todoListCompletableFuture = new CompletableFuture<>();
+        todoListCompletableFuture.complete(todo);
+
+        // Change the title of the to-do that will be returned:
+        doReturn(todoListCompletableFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListCompletableFuture).when(databaseMock).putTodoList(any(TodoList.class));
+
+        // Return 2 to-do
+        TodoListCollection collection = new TodoListCollection();
+        collection.addUUID(UUID.randomUUID());
+        collection.addUUID(UUID.randomUUID());
+
+        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
+        todoListCollectionFuture.complete(collection);
+        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
+
+        // button1 = positive button
         onView(withId(R.id.alert_dialog_edit_text))
                 .inRoot(isDialog())
-                .perform(typeText(TODO_2_TITLE));
+                .perform(clearText(), typeText(TODO_2_TITLE));
+        // button1 = positive button
         onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
 
         onView(withText(R.string.add_todo_suggestion)).check(doesNotExist());
 
-        onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(0));
-
+        // Check that the title didn't change
         onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, TODO_2_TITLE)));
+                .check(matches(atPositionCheckText(0, TODO_2_TITLE, TODO_TITLE_LAYOUT_ID)));
 
-        onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(1));
-
-        onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(1, TODO_2_TITLE)));
+        // Check that it doesn't add a to-do
+        onView(withId(R.id.activity_list_selection_itemlist)).check(matches(ItemCountIs(2)));
     }
 
     @Test
     public void deleteTodoWorks() {
 
         onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, TODO_1_TITLE)));
-
-        onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(0));
-
-        onView(withId(R.id.activity_list_selection_itemlist))
                 .perform(actionOnItemAtPosition(0, swipeLeft()));
 
         onView(withText(R.string.delete_todo_suggestion)).check(matches(isDisplayed()));
 
-        TodoListCollection collection = new TodoListCollection();
-        TodoList todoList = new TodoList(TODO_2_TITLE);
-        collection.addUUID(UUID.randomUUID());
-        collection.addUUID(UUID.randomUUID());
+        // Return zero to-do
+        List<UUID> todo = Collections.emptyList();
+        CompletableFuture<List<UUID>> todoFuture = new CompletableFuture<>();
+        todoFuture.complete(todo);
+        doReturn(todoFuture).when(databaseMock).getTodoListCollection();
 
-        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
-        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
-        todoListCollectionFuture.complete(collection);
-        todoListFuture.complete(todoList);
+        // button1 = positive button
+        onView(withId(android.R.id.button1)).perform(click());
 
-        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
-        CompletableFuture<Void> future = new CompletableFuture<>();
-        future.complete(null);
-        doReturn(future).when(databaseMock).removeTodoList(any());
-
-        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
-        onView(isRoot()).perform(waitAtLeastHelper(500));
-
-        onView(withText(R.string.delete_todo_suggestion)).check(doesNotExist());
-
-        onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, TODO_2_TITLE)));
+        onView(withId(R.id.activity_list_selection_itemlist)).check(matches(ItemCountIs(0)));
     }
 
     @Test
     public void cancelDeletionWorks() {
 
-        onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(0));
-
         onView(withId(R.id.activity_list_selection_itemlist))
                 .perform(actionOnItemAtPosition(0, swipeLeft()));
 
         onView(withText(R.string.delete_todo_suggestion)).check(matches(isDisplayed()));
 
-        onView(withId(android.R.id.button2)).inRoot(isDialog()).perform(click());
+        // Return zero to-do (as if the button doesn't work and indeed delete note)
+        List<UUID> todo = Collections.emptyList();
+        CompletableFuture<List<UUID>> todoFuture = new CompletableFuture<>();
+        todoFuture.complete(todo);
+        doReturn(todoFuture).when(databaseMock).getTodoListCollection();
 
-        onView(isRoot()).perform(waitAtLeastHelper(500));
+        // button2 = negative button
+        onView(withId(android.R.id.button2)).inRoot(isDialog()).perform(click());
 
         onView(withText(R.string.delete_todo_suggestion)).check(doesNotExist());
 
+        onView(withId(R.id.activity_list_selection_itemlist)).check(matches(ItemCountIs(1)));
         onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, TODO_1_TITLE)));
+                .check(matches(atPositionCheckText(0, TODO_1_TITLE, TODO_TITLE_LAYOUT_ID)));
     }
 
     @Test
     public void cancelRenamingWorks() {
 
-        onView(withId(R.id.activity_list_selection_itemlist)).perform(scrollToPosition(0));
-
         onView(withId(R.id.activity_list_selection_itemlist))
                 .perform(actionOnItemAtPosition(0, swipeRight()));
 
-        onView(isRoot()).perform(waitAtLeastHelper(500));
-
         onView(withText(R.string.rename_todo_suggestion)).check(matches(isDisplayed()));
+
+        TodoList todo = new TodoList(TODO_2_TITLE);
+        CompletableFuture<TodoList> todoListCompletableFuture = new CompletableFuture<>();
+        todoListCompletableFuture.complete(todo);
+
+        // Change the title of the note that will be returned:
+        doReturn(todoListCompletableFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListCompletableFuture)
+                .when(databaseMock)
+                .updateTodoList(any(UUID.class), any(TodoList.class));
 
         onView(withId(R.id.alert_dialog_edit_text)).perform(clearText(), typeText(TODO_2_TITLE));
 
-        onView(isRoot()).perform(waitAtLeastHelper(500));
-
         onView(withId(android.R.id.button2)).perform(click());
-
-        onView(isRoot()).perform(waitAtLeastHelper(500));
 
         onView(withText(R.string.rename_todo_suggestion)).check(doesNotExist());
 
         onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, TODO_1_TITLE)));
+                .check(matches(atPositionCheckText(0, TODO_1_TITLE, TODO_TITLE_LAYOUT_ID)));
     }
 
     @Test
@@ -271,75 +262,19 @@ public class ListSelectionFragmentTest {
 
         onView(withId(R.id.alert_dialog_edit_text)).check(matches(isDisplayed()));
 
+        TodoList todo = new TodoList(TODO_2_TITLE);
+        CompletableFuture<TodoList> todoFuture = new CompletableFuture<>();
+        todoFuture.complete(todo);
+
+        // Change the title of the to-do that will be returned:
+        doReturn(todoFuture).when(databaseMock).getTodoList(any(UUID.class));
+
         onView(withId(R.id.alert_dialog_edit_text)).perform(typeText(""));
-
         onView(withId(android.R.id.button1)).perform(click());
-
-        onView(isRoot()).perform(waitAtLeastHelper(500));
 
         onView(withId(R.id.alert_dialog_edit_text)).check(doesNotExist());
 
         onView(withId(R.id.activity_list_selection_itemlist))
-                .check(matches(atPositionCheckText(0, TODO_1_TITLE)));
-    }
-
-    /**
-     * Helper to check if the given text is the same as the to-do list title at the given position
-     *
-     * @param position the index of the to-do in the recycler view
-     * @param expectedText the text that should be the title of the to-do
-     * @return Mactcher to test the title
-     */
-    public static Matcher<View> atPositionCheckText(
-            final int position, @NonNull final String expectedText) {
-        return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText(
-                        "View holder at position "
-                                + position
-                                + ", expected: "
-                                + expectedText
-                                + " ");
-            }
-
-            @Override
-            protected boolean matchesSafely(final RecyclerView view) {
-                View todoView = view.getChildAt(position);
-                TextView bodyView = todoView.findViewById(R.id.layout_todo_list_text);
-                return bodyView.getText().toString().equals(expectedText);
-            }
-        };
-    }
-
-    /**
-     * Helper to test dialog
-     *
-     * @param millis time to wait
-     * @return viewAction that wait the given time
-     */
-    public static ViewAction waitAtLeastHelper(final long millis) {
-        return new ViewAction() {
-            @Override
-            public Matcher<View> getConstraints() {
-                return anyView();
-            }
-
-            @NonNull
-            private Matcher<View> anyView() {
-                return new IsAnything<>();
-            }
-
-            @Override
-            public String getDescription() {
-                return "wait for at least " + millis + " millis.";
-            }
-
-            @Override
-            public void perform(final UiController uiController, final View view) {
-                uiController.loopMainThreadUntilIdle();
-                uiController.loopMainThreadForAtLeast(millis);
-            }
-        };
+                .check(matches(atPositionCheckText(0, TODO_1_TITLE, TODO_TITLE_LAYOUT_ID)));
     }
 }

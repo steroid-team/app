@@ -7,11 +7,12 @@ import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class TodoArrayRepository {
     private final Database database;
-    private final MutableLiveData<ArrayList<TodoList>> arrayOfTodoList;
+    private final MutableLiveData<List<TodoList>> arrayOfTodoList;
     // private final ArrayList<TodoList> privateArrayList;
 
     public TodoArrayRepository() {
@@ -20,7 +21,7 @@ public class TodoArrayRepository {
         this.database.getTodoListCollection().thenAccept(this::setArrayOfTodoList);
     }
 
-    public LiveData<ArrayList<TodoList>> getAllTodo() {
+    public LiveData<List<TodoList>> getAllTodo() {
         return this.arrayOfTodoList;
     }
 

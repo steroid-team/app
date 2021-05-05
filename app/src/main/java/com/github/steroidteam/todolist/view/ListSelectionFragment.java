@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.TodoArrayRepository;
 import com.github.steroidteam.todolist.model.todo.TodoList;
+import com.github.steroidteam.todolist.util.SwipeTouchHelper;
 import com.github.steroidteam.todolist.view.adapter.TodoArrayListAdapter;
 import com.github.steroidteam.todolist.view.dialog.DialogListener;
 import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
@@ -23,12 +24,10 @@ import java.util.UUID;
 
 public class ListSelectionFragment extends Fragment {
 
-    private TodoArrayListAdapter adapter;
     private ListSelectionViewModel viewModel;
+    private TodoArrayListAdapter adapter;
 
     public static final String EXTRA_LIST_KEY = "list_id";
-
-    public static final String SIMPLE_DIALOG_KEY = "simple_dialog_key";
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,23 +52,41 @@ public class ListSelectionFragment extends Fragment {
                         getActivity(),
                         (todoListArrayList) -> {
                             adapter.setTodoListCollection(todoListArrayList);
+                            adapter.notifyDataSetChanged();
                         });
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TodoTouchHelper(this));
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+        createAndSetSwipeListener(recyclerView);
 
         return root;
     }
 
-    public TodoArrayListAdapter.TodoHolder.TodoCustomListener createCustomListener() {
-        return new TodoArrayListAdapter.TodoHolder.TodoCustomListener() {
-            @Override
-            public void onClickCustom(TodoArrayListAdapter.TodoHolder holder) {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(EXTRA_LIST_KEY, holder.getTodo().getId());
-                Navigation.findNavController(holder.itemView).navigate(R.id.nav_item_view, bundle);
-            }
+    private TodoArrayListAdapter.TodoHolder.TodoCustomListener createCustomListener() {
+        return holder -> {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(EXTRA_LIST_KEY, holder.getTodo().getId());
+            Navigation.findNavController(holder.itemView).navigate(R.id.nav_item_view, bundle);
         };
+    }
+
+    private void createAndSetSwipeListener(RecyclerView recyclerView) {
+        SwipeTouchHelper.SwipeListener swipeListener =
+                new SwipeTouchHelper.SwipeListener() {
+                    @Override
+                    public void onSwipeLeft(RecyclerView.ViewHolder viewHolder, int position) {
+                        removeTodo(
+                                ((TodoArrayListAdapter.TodoHolder) viewHolder).getTodo().getId(),
+                                position);
+                    }
+
+                    @Override
+                    public void onSwipeRight(RecyclerView.ViewHolder viewHolder, int position) {
+                        renameTodo(
+                                ((TodoArrayListAdapter.TodoHolder) viewHolder).getTodo(), position);
+                    }
+                };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeTouchHelper(swipeListener));
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     public void createList(View view) {
@@ -132,8 +149,7 @@ public class ListSelectionFragment extends Fragment {
 
                     @Override
                     public void onPositiveClick(String title) {
-                        if (title.length() > 0)
-                            viewModel.renameTodo(todoList.getId(), todoList.setTitle(title));
+                        if (title.length() > 0) viewModel.renameTodo(todoList, title);
                     }
 
                     @Override

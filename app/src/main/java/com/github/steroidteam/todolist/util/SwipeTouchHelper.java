@@ -1,4 +1,4 @@
-package com.github.steroidteam.todolist.view;
+package com.github.steroidteam.todolist.util;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,15 +10,14 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
-import com.github.steroidteam.todolist.view.adapter.TodoArrayListAdapter;
 
-public class TodoTouchHelper extends ItemTouchHelper.SimpleCallback {
+public class SwipeTouchHelper extends ItemTouchHelper.SimpleCallback {
 
-    private final ListSelectionFragment fragment;
+    private final SwipeListener swipeListener;
 
-    public TodoTouchHelper(ListSelectionFragment activity) {
+    public SwipeTouchHelper(SwipeListener swipeListener) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
-        this.fragment = activity;
+        this.swipeListener = swipeListener;
     }
 
     @Override
@@ -34,12 +33,10 @@ public class TodoTouchHelper extends ItemTouchHelper.SimpleCallback {
         final int position = viewHolder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
             if (direction == ItemTouchHelper.LEFT) {
-                fragment.removeTodo(
-                        ((TodoArrayListAdapter.TodoHolder) viewHolder).getTodo().getId(), position);
+                swipeListener.onSwipeLeft(viewHolder, position);
             } else {
                 // direction == ItemTouchHelper.RIGHT
-                fragment.renameTodo(
-                        ((TodoArrayListAdapter.TodoHolder) viewHolder).getTodo(), position);
+                swipeListener.onSwipeRight(viewHolder, position);
             }
         }
     }
@@ -108,5 +105,12 @@ public class TodoTouchHelper extends ItemTouchHelper.SimpleCallback {
             deleteIcon.draw(c);
             renameIcon.draw(c);
         }
+    }
+
+    public interface SwipeListener {
+
+        void onSwipeLeft(final RecyclerView.ViewHolder viewHolder, final int position);
+
+        void onSwipeRight(final RecyclerView.ViewHolder viewHolder, final int position);
     }
 }

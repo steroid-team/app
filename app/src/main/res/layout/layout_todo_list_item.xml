@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:baselineAligned="false" xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_todo_list"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    style="@style/SelectionList.CardView">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_todo_list"
-        style="@style/SelectionList.Entry"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
         <TextView
             android:id="@+id/layout_todo_list_text"
-            style="@style/SelectionList.Entry.Title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:background="@color/white"
+            style="@style/SelectionList.Entry.Title"/>
 
-</LinearLayout>
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

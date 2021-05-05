@@ -57,14 +57,12 @@
         <item name="android:paddingTop">14dp</item>
         <item name="android:paddingRight">15dp</item>
         <item name="android:paddingBottom">18dp</item>
-        <item name="android:layout_marginBottom">16dp</item>
     </style>
 
     <style name="SelectionList.Entry.Title">
         <item name="android:fontFamily">@font/nunitosans_bold</item>
         <item name="android:textColor">@color/dark_blue</item>
         <item name="android:textSize">22sp</item>
-        <item name="android:layout_marginBottom">0dp</item>
         <item name="android:padding">0dp</item>
     </style>
 
@@ -110,6 +108,22 @@
         <item name="android:tint">#000000</item>
         <item name="android:scaleType">fitCenter</item>
     </style>
+    <style name="SelectionList.CardView">
+        <item name="cardCornerRadius">25dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="contentPaddingBottom">18dp</item>
+        <item name="contentPaddingLeft">20dp</item>
+        <item name="contentPaddingRight">15dp</item>
+        <item name="contentPaddingTop">14dp</item>
+    </style>
+    <!-- Dialog Theme -->
+    <style name="Dialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:textColorPrimary">@color/dark_blue</item>
+        <item name="colorAccent">@android:color/black</item>
+        <item name="android:text">@font/nunitosans_bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:background">@drawable/rounded_corner_bg</item>
+    </style>
 
     <style name="TaskSaveButton">
         <item name="android:fontFamily">@font/nunitosans_semibold</item>
@@ -147,6 +161,11 @@
         <item name="android:background">@android:color/transparent</item>
         <item name="android:layout_width">48dp</item>
         <item name="android:layout_height">48dp</item>
+    </style>
+
+    <style name="DrawingButton">
+        <item name="android:layout_width">64dp</item>
+        <item name="android:layout_height">64dp</item>
     </style>
 
 </resources>

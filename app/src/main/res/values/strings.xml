@@ -32,13 +32,13 @@
     <string name="new_list_btn_description">Add a new to-do</string>
     <string name="add_todo_suggestion">Enter the title of your to-do list</string>
     <string name="rename_todo_suggestion">Rename your to-do list</string>
-    <string name="delete_todo_suggestion">Are you sure to delete this to-do ?</string>
+    <string name="delete_todo_suggestion">Are you sure to delete this to-do?</string>
 
     <!-- Note Management -->
     <string name="note_activity_title">My notes</string>
     <string name="new_note_btn_description">Add a new note</string>
     <string name="add_note_suggestion">Enter the title of your note</string>
-    <string name="delete_note_suggestion">Are you sure to delete this note ?</string>
+    <string name="delete_note_suggestion">Are you sure to delete this note?</string>
     <string name="rename_note_suggestion">Enter a new title for your Note:</string>
     <string name="add_header_photo">Photo</string>
     <string name="date_placeholder">xx/yy aa:bb</string>

@@ -13,6 +13,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -61,6 +62,9 @@ public class ItemViewFragmentTest {
         doReturn(taskFuture).when(databaseMock).putTask(any(UUID.class), any(Task.class));
         doReturn(taskFuture).when(databaseMock).renameTask(any(UUID.class), anyInt(), anyString());
         doReturn(taskFuture).when(databaseMock).removeTask(any(UUID.class), anyInt());
+        doReturn(taskFuture)
+                .when(databaseMock)
+                .setTaskDone(any(UUID.class), anyInt(), anyBoolean());
 
         DatabaseFactory.setCustomDatabase(databaseMock);
 

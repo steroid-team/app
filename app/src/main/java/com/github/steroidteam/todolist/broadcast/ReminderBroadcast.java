@@ -17,8 +17,8 @@ public class ReminderBroadcast extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context,REMINDER_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle("Test of reminder")
-                .setContentText("Hey This is a test !")
+                .setContentTitle(context.getString(R.string.title_date_reminder))
+                .setContentText(context.getString(R.string.content_date_reminder))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);

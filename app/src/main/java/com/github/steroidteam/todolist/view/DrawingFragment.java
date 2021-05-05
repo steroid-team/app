@@ -138,16 +138,7 @@ public class DrawingFragment extends Fragment {
 
     private void setButtonFocus(int indexButtonFocus) {
 
-        firstButton.setBackground(
-                ContextCompat.getDrawable(getActivity(), R.drawable.first_button_drawing));
-        secondButton.setBackground(
-                ContextCompat.getDrawable(getActivity(), R.drawable.second_button_drawing));
-        thirdButton.setBackground(
-                ContextCompat.getDrawable(getActivity(), R.drawable.third_button_drawing));
-        fourthButton.setBackground(
-                ContextCompat.getDrawable(getActivity(), R.drawable.fourth_button_drawing));
-        colorChooseButton.setBackground(
-                ContextCompat.getDrawable(getActivity(), R.drawable.colorpicker_button));
+        setButtonBackground();
 
         switch (indexButtonFocus) {
             case FIRST_BUTTON:
@@ -177,5 +168,18 @@ public class DrawingFragment extends Fragment {
                 break;
             default:
         }
+    }
+
+    private void setButtonBackground() {
+        firstButton.setBackground(
+                ContextCompat.getDrawable(getActivity(), R.drawable.first_button_drawing));
+        secondButton.setBackground(
+                ContextCompat.getDrawable(getActivity(), R.drawable.second_button_drawing));
+        thirdButton.setBackground(
+                ContextCompat.getDrawable(getActivity(), R.drawable.third_button_drawing));
+        fourthButton.setBackground(
+                ContextCompat.getDrawable(getActivity(), R.drawable.fourth_button_drawing));
+        colorChooseButton.setBackground(
+                ContextCompat.getDrawable(getActivity(), R.drawable.colorpicker_button));
     }
 }

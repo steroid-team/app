@@ -9,5 +9,9 @@
     <color name="red_pastel">#d08b90</color>
     <color name="green">#29f044</color>
     <color name="green_pastel">#8bd09d</color>
+    <color name="first_drawing_button">#FFff414f</color>
+    <color name="second_drawing_button">#FF41ff47</color>
+    <color name="third_drawing_button">#FF414fff</color>
+    <color name="fourth_drawing_button">#FF000000</color>
     <color name="transparent">#00000000</color>
 </resources>

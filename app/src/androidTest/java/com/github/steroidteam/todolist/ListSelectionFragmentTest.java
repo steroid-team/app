@@ -17,6 +17,8 @@ import static com.github.steroidteam.todolist.CustomMatchers.ItemCountIs;
 import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckText;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import androidx.fragment.app.testing.FragmentScenario;
 import com.github.steroidteam.todolist.database.Database;
@@ -197,9 +199,12 @@ public class ListSelectionFragmentTest {
         doReturn(todoFuture).when(databaseMock).getTodoListCollection();
 
         // button1 = positive button
-        onView(withId(android.R.id.button1)).perform(click());
+        onView(withText(R.string.confirm)).perform(click());
 
-        onView(withId(R.id.activity_list_selection_itemlist)).check(matches(ItemCountIs(0)));
+        onView(withText(R.string.delete_todo_suggestion)).check(doesNotExist());
+
+        verify(databaseMock, times(2)).getTodoListCollection();
+        verify(databaseMock).removeTodoList(any(UUID.class));
     }
 
     @Test

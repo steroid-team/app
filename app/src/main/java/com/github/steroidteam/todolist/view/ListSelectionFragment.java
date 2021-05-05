@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
-import com.github.steroidteam.todolist.model.TodoArrayRepository;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.util.SwipeTouchHelper;
 import com.github.steroidteam.todolist.view.adapter.TodoArrayListAdapter;
@@ -44,8 +43,7 @@ public class ListSelectionFragment extends Fragment {
         adapter = new TodoArrayListAdapter(createCustomListener());
         recyclerView.setAdapter(adapter);
 
-        TodoArrayRepository repository = new TodoArrayRepository();
-        viewModel = new ListSelectionViewModel(repository);
+        viewModel = new ListSelectionViewModel();
         viewModel
                 .getListOfTodo()
                 .observe(

@@ -46,6 +46,12 @@ public class NoteDisplayFragment extends Fragment {
                             // Go to the map view.
                             Navigation.findNavController(getView()).navigate(R.id.nav_map);
                         });
+        root.findViewById(R.id.audio_button)
+                .setOnClickListener(
+                        v -> {
+                            Navigation.findNavController(getView()).navigate(R.id.nav_audio);
+                        });
+
         root.findViewById(R.id.editor_action_drawing_btn)
                 .setOnClickListener(
                         v -> {

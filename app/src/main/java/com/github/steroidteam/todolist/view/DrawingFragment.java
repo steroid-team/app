@@ -138,32 +138,42 @@ public class DrawingFragment extends Fragment {
 
     private void setButtonFocus(int indexButtonFocus) {
 
-        firstButton.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.first_button_drawing));
-        secondButton.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.second_button_drawing));
-        thirdButton.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.third_button_drawing));
-        fourthButton.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.fourth_button_drawing));
-        colorChooseButton.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.colorpicker_button));
+        firstButton.setBackground(
+                ContextCompat.getDrawable(getActivity(), R.drawable.first_button_drawing));
+        secondButton.setBackground(
+                ContextCompat.getDrawable(getActivity(), R.drawable.second_button_drawing));
+        thirdButton.setBackground(
+                ContextCompat.getDrawable(getActivity(), R.drawable.third_button_drawing));
+        fourthButton.setBackground(
+                ContextCompat.getDrawable(getActivity(), R.drawable.fourth_button_drawing));
+        colorChooseButton.setBackground(
+                ContextCompat.getDrawable(getActivity(), R.drawable.colorpicker_button));
 
-        switch(indexButtonFocus) {
+        switch (indexButtonFocus) {
             case FIRST_BUTTON:
                 firstButton.setBackground(
-                        ContextCompat.getDrawable(getActivity(), R.drawable.first_button_drawing_onfocus));
+                        ContextCompat.getDrawable(
+                                getActivity(), R.drawable.first_button_drawing_onfocus));
                 break;
             case SECOND_BUTTON:
                 secondButton.setBackground(
-                        ContextCompat.getDrawable(getActivity(), R.drawable.second_button_drawing_onfocus));
+                        ContextCompat.getDrawable(
+                                getActivity(), R.drawable.second_button_drawing_onfocus));
                 break;
             case THIRD_BUTTON:
                 thirdButton.setBackground(
-                        ContextCompat.getDrawable(getActivity(), R.drawable.third_button_drawing_onfocus));
+                        ContextCompat.getDrawable(
+                                getActivity(), R.drawable.third_button_drawing_onfocus));
                 break;
             case FOURTH_BUTTON:
                 fourthButton.setBackground(
-                        ContextCompat.getDrawable(getActivity(), R.drawable.fourth_button_drawing_onfocus));
+                        ContextCompat.getDrawable(
+                                getActivity(), R.drawable.fourth_button_drawing_onfocus));
                 break;
             case COLOR_CHOOSE_BUTTON:
                 colorChooseButton.setBackground(
-                        ContextCompat.getDrawable(getActivity(), R.drawable.colorpicker_button_onfocus));
+                        ContextCompat.getDrawable(
+                                getActivity(), R.drawable.colorpicker_button_onfocus));
                 break;
             default:
         }

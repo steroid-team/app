@@ -1,5 +1,7 @@
 package com.github.steroidteam.todolist.view;
 
+import static com.github.steroidteam.todolist.broadcast.ReminderBroadcast.REMINDER_CHANNEL_ID;
+
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -27,8 +29,6 @@ import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
 import com.github.steroidteam.todolist.viewmodel.ItemViewModel;
 import java.util.UUID;
-
-import static com.github.steroidteam.todolist.broadcast.ReminderBroadcast.REMINDER_CHANNEL_ID;
 
 public class ItemViewFragment extends Fragment {
 
@@ -105,18 +105,6 @@ public class ItemViewFragment extends Fragment {
 
         // Clean the description text box.
         newTaskET.getText().clear();
-
-        Intent intent = new Intent(getContext(), ReminderBroadcast.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, 0);
-
-        AlarmManager alarmManager =(AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-
-        long currentTime = System.currentTimeMillis();
-
-        long tenSecondsInMillis = 1000 * 10;
-
-        alarmManager.set(AlarmManager.RTC_WAKEUP, currentTime + tenSecondsInMillis, pendingIntent);
-
     }
 
     public void removeTask(final int position) {
@@ -167,12 +155,26 @@ public class ItemViewFragment extends Fragment {
             CharSequence name = "ReminderChannel";
             String description = "Channel for the reminder";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(REMINDER_CHANNEL_ID, name, importance);
+            NotificationChannel channel =
+                    new NotificationChannel(REMINDER_CHANNEL_ID, name, importance);
             channel.setDescription(description);
 
-            NotificationManager notificationManager = getActivity().getSystemService(NotificationManager.class);
+            NotificationManager notificationManager =
+                    getActivity().getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
     }
-}
 
+    // Just call this method to put a notification based on time
+    private void createNotification(long timeInMillis) {
+        Intent intent = new Intent(getContext(), ReminderBroadcast.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, 0);
+
+        AlarmManager alarmManager =
+                (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+
+        long currentTime = System.currentTimeMillis();
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, currentTime + timeInMillis, pendingIntent);
+    }
+}

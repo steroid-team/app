@@ -3,10 +3,8 @@ package com.github.steroidteam.todolist.broadcast;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
 import com.github.steroidteam.todolist.R;
 
 public class ReminderBroadcast extends BroadcastReceiver {
@@ -15,15 +13,15 @@ public class ReminderBroadcast extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,REMINDER_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(context.getString(R.string.title_date_reminder))
-                .setContentText(context.getString(R.string.content_date_reminder))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(context, REMINDER_CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setContentTitle(context.getString(R.string.title_date_reminder))
+                        .setContentText(context.getString(R.string.content_date_reminder))
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
         notificationManager.notify(REMINDER_ID, builder.build());
     }
 }
-

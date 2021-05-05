@@ -4,87 +4,102 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:foregroundTint="#FFFFFF"
     tools:context=".view.DrawingFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/backButton"
+            style="@style/ToolbarActionButton"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="24dp"
+            android:contentDescription="@string/back_btn_description"
+            android:scaleX="1.2"
+            android:scaleY="1.2"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="?attr/homeAsUpIndicator" />
+
+        <TextView
+            android:id="@+id/activity_title"
+            style="@style/ActivityTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/drawing_activity_title"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/erase_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        style="@style/TaskDeleteButton"
         android:text="Erase"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/drawSpace" />
 
     <FrameLayout
         android:id="@+id/drawSpace"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="180dp"
-        android:background="#ebebeb"
         android:outlineProvider="paddedBounds"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/erase_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/activity_drawing_color_button_bar">
 
     </FrameLayout>
 
     <LinearLayout
+        android:id="@+id/activity_drawing_color_button_bar"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="120dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="10dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/drawSpace"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
         <Button
-            android:id="@+id/colorRed"
-            style="?attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:foreground="@android:drawable/radiobutton_off_background"
-            android:foregroundTint="#F44336" />
+            android:id="@+id/drawing_first_button"
+            style="@style/DrawingButton" />
 
         <Button
-            android:id="@+id/colorGreen"
-            style="?attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:foreground="@android:drawable/radiobutton_off_background"
-            android:foregroundTint="#4CAF50" />
+            android:id="@+id/drawing_second_button"
+            style="@style/DrawingButton" />
 
         <Button
-            android:id="@+id/colorBlue"
-            style="?attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:foreground="@android:drawable/radiobutton_off_background"
-            android:foregroundTint="#2196F3" />
+            android:id="@+id/drawing_third_button"
+            style="@style/DrawingButton" />
 
         <Button
-            android:id="@+id/colorBlack"
-            style="?attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:foreground="@android:drawable/radiobutton_off_background"
-            android:foregroundTint="#000000" />
+            android:id="@+id/drawing_fourth_button"
+            style="@style/DrawingButton" />
 
         <Button
             android:id="@+id/colorChoose"
-            style="?attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:foreground="@drawable/cp"
-            android:scaleX="0.8"
-            android:scaleY="0.8" />
+            style="@style/DrawingButton" />
     </LinearLayout>
 
     <LinearLayout
@@ -100,8 +115,9 @@
 
         <com.larswerkman.holocolorpicker.ColorPicker
             android:id="@+id/colorPicker"
-            android:layout_width="333dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight=".70"
             android:layout_gravity="center_horizontal" />
 
         <com.larswerkman.holocolorpicker.SaturationBar
@@ -118,31 +134,25 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:gravity="center">
 
             <Button
                 android:id="@+id/cancelColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="@style/TaskUndoButton"
+                android:layout_margin="5dp"
                 android:text="Cancel" />
 
             <Button
                 android:id="@+id/applyColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="@style/TaskSaveButton"
+                android:layout_margin="5dp"
                 android:text="Apply" />
         </TableRow>
     </LinearLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:clickable="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_delete" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

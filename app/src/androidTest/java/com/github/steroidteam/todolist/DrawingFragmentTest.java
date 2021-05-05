@@ -72,38 +72,46 @@ public class DrawingFragmentTest {
     }
 
     @Test
-    public void redButtonWorks() {
-        onView(withId(R.id.colorRed)).perform(click());
+    public void firstButtonWorks() {
+        onView(withId(R.id.drawing_first_button)).perform(click());
         scenario.onFragment(
                 fragment -> {
-                    assertEquals(Color.RED, fragment.drawingCanvas.getPaint().getColor());
+                    assertEquals(
+                            fragment.getActivity().getColor(R.color.first_drawing_button),
+                            fragment.drawingCanvas.getPaint().getColor());
                 });
     }
 
     @Test
-    public void greenButtonWorks() {
-        onView(withId(R.id.colorGreen)).perform(click());
+    public void secondButtonWorks() {
+        onView(withId(R.id.drawing_second_button)).perform(click());
         scenario.onFragment(
                 fragment -> {
-                    assertEquals(Color.GREEN, fragment.drawingCanvas.getPaint().getColor());
+                    assertEquals(
+                            fragment.getActivity().getColor(R.color.second_drawing_button),
+                            fragment.drawingCanvas.getPaint().getColor());
                 });
     }
 
     @Test
-    public void blueButtonWorks() {
-        onView(withId(R.id.colorBlue)).perform(click());
+    public void thirdButtonWorks() {
+        onView(withId(R.id.drawing_third_button)).perform(click());
         scenario.onFragment(
                 fragment -> {
-                    assertEquals(Color.BLUE, fragment.drawingCanvas.getPaint().getColor());
+                    assertEquals(
+                            fragment.getActivity().getColor(R.color.third_drawing_button),
+                            fragment.drawingCanvas.getPaint().getColor());
                 });
     }
 
     @Test
-    public void blackButtonWorks() {
-        onView(withId(R.id.colorBlack)).perform(click());
+    public void fourthButtonWorks() {
+        onView(withId(R.id.drawing_fourth_button)).perform(click());
         scenario.onFragment(
                 fragment -> {
-                    assertEquals(Color.BLACK, fragment.drawingCanvas.getPaint().getColor());
+                    assertEquals(
+                            fragment.getActivity().getColor(R.color.fourth_drawing_button),
+                            fragment.drawingCanvas.getPaint().getColor());
                 });
     }
 

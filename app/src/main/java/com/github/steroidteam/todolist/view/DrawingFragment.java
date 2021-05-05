@@ -40,7 +40,6 @@ public class DrawingFragment extends Fragment {
     private final char THIRD_BUTTON = 3;
     private final char FOURTH_BUTTON = 4;
     private final char COLOR_CHOOSE_BUTTON = 0;
-    private final char NONE = 9;
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,7 +86,7 @@ public class DrawingFragment extends Fragment {
         secondButtonColor = getActivity().getColor(R.color.second_drawing_button);
         thirdButtonColor = getActivity().getColor(R.color.third_drawing_button);
         fourthButtonColor = getActivity().getColor(R.color.fourth_drawing_button);
-        setButtonFocus(NONE);
+        setButtonBackground();
     }
 
     private void setPaintColor(int color) {

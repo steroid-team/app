@@ -65,14 +65,18 @@ public class AudioRecorderFragment extends Fragment {
         root.findViewById(R.id.play_button).setOnClickListener(this::playingOnClick);
         showProgressBar(true);
 
-        database.getNote(noteId).thenAccept(note -> {
-            Optional<UUID> audioID = note.getAudioMemoId();
+        database.getNote(noteId)
+                .thenAccept(
+                        note -> {
+                            Optional<UUID> audioID = note.getAudioMemoId();
 
-            audioID.ifPresent(uuid -> database.getAudioMemo(uuid, audioFileName)
-                    .thenAccept(file -> showProgressBar(false)));
+                            audioID.ifPresent(
+                                    uuid ->
+                                            database.getAudioMemo(uuid, audioFileName)
+                                                    .thenAccept(file -> showProgressBar(false)));
 
-            if (!audioID.isPresent()) showProgressBar(false);
-        });
+                            if (!audioID.isPresent()) showProgressBar(false);
+                        });
 
         return root;
     }
@@ -199,6 +203,7 @@ public class AudioRecorderFragment extends Fragment {
     private void showProgressBar(boolean show) {
         root.findViewById(R.id.play_button).setClickable(!show);
         root.findViewById(R.id.play_button).setAlpha(show ? 0.5f : 1f);
-        root.findViewById(R.id.audioTransferProgress).setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+        root.findViewById(R.id.audioTransferProgress)
+                .setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
 }

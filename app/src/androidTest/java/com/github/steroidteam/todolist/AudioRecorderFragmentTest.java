@@ -1,7 +1,5 @@
 package com.github.steroidteam.todolist;
 
-import android.os.Bundle;
-
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -12,28 +10,25 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
+import android.os.Bundle;
 import androidx.fragment.app.testing.FragmentScenario;
-
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.view.AudioRecorderFragment;
 import com.github.steroidteam.todolist.view.NoteSelectionFragment;
-
+import java.io.File;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.File;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-
 @RunWith(MockitoJUnitRunner.class)
 public class AudioRecorderFragmentTest {
 
-    @Mock
-    Database databaseMock;
+    @Mock Database databaseMock;
 
     @Before
     public void init() {

@@ -28,23 +28,9 @@ public class NoteViewModel extends ViewModel {
         return this.noteMutableLiveData;
     }
 
-    public void updateNote(Note newNote) {
-        this.database
-                .updateNote(noteID, newNote)
-                .thenCompose(note -> this.database.getNote(noteID))
-                .thenAccept(noteMutableLiveData::setValue);
-    }
-
     public void updateNoteContent(String content) {
         this.database
                 .updateNote(noteID, noteMutableLiveData.getValue().setContent(content))
-                .thenCompose(note -> this.database.getNote(noteID))
-                .thenAccept(noteMutableLiveData::setValue);
-    }
-
-    public void updateNoteTitle(String content) {
-        this.database
-                .updateNote(noteID, noteMutableLiveData.getValue().setTitle(content))
                 .thenCompose(note -> this.database.getNote(noteID))
                 .thenAccept(noteMutableLiveData::setValue);
     }

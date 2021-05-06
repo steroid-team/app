@@ -359,6 +359,38 @@ public class FirebaseDatabaseTest {
     }
 
     @Test
+    public void updateNoteRejectsNullArgs() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FirebaseDatabase(storageServiceMock).updateNote(null, new Note("title"));
+                });
+
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FirebaseDatabase(storageServiceMock).updateNote(UUID.randomUUID(), null);
+                });
+    }
+
+    @Test
+    public void updateNoteWorks() {
+        Note expectedNote = new Note("Some random title");
+
+        CompletableFuture<String> uploadFuture = new CompletableFuture<>();
+        uploadFuture.complete("some random path");
+        doReturn(uploadFuture).when(storageServiceMock).upload(any(byte[].class), anyString());
+
+        try {
+            Note actualnote =
+                    database.updateNote(UUID.randomUUID(), expectedNote).join();
+            assertEquals(expectedNote, actualnote);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
     public void getNotesListWorks() {
         UUID uuid1 = UUID.randomUUID();
         UUID uuid2 = UUID.randomUUID();

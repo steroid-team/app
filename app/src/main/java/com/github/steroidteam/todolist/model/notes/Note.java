@@ -2,7 +2,6 @@ package com.github.steroidteam.todolist.model.notes;
 
 import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
-
 import java.util.Optional;
 import java.util.UUID;
 

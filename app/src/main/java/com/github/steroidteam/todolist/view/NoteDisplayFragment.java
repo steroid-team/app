@@ -1,5 +1,7 @@
 package com.github.steroidteam.todolist.view;
 
+import static com.github.steroidteam.todolist.view.NoteSelectionFragment.NOTE_ID_KEY;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -24,8 +26,6 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.InputStream;
 import java.util.UUID;
 import jp.wasabeef.richeditor.RichEditor;
-
-import static com.github.steroidteam.todolist.view.NoteSelectionFragment.NOTE_ID_KEY;
 
 public class NoteDisplayFragment extends Fragment {
     public static LatLng position;
@@ -100,7 +100,8 @@ public class NoteDisplayFragment extends Fragment {
                         v -> {
                             Bundle bundle = new Bundle();
                             bundle.putString(NOTE_ID_KEY, noteID.toString());
-                            Navigation.findNavController(getView()).navigate(R.id.nav_audio, bundle);
+                            Navigation.findNavController(getView())
+                                    .navigate(R.id.nav_audio, bundle);
                         });
 
         root.findViewById(R.id.editor_action_drawing_btn)
@@ -130,7 +131,6 @@ public class NoteDisplayFragment extends Fragment {
         root.findViewById(R.id.editor_action_image_btn)
                 .setOnClickListener(
                         v -> embeddedImagePickerActivityLauncher.launch(IMAGE_MIME_TYPE));
-
     }
 
     private void updateHeaderImage(Uri uri) {

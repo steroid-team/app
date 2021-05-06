@@ -5,7 +5,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.Objects;
@@ -41,8 +40,7 @@ public class FirebaseFileStorageService implements FileStorageService {
 
     @Override
     public CompletableFuture<File> downloadFile(
-            @NonNull String path, @NonNull String destinationPath)
-    {
+            @NonNull String path, @NonNull String destinationPath) {
         Objects.requireNonNull(path);
         CompletableFuture<File> completableFuture = new CompletableFuture<>();
         File downloadedFile = new File(destinationPath);
@@ -100,10 +98,11 @@ public class FirebaseFileStorageService implements FileStorageService {
     private CompletableFuture<String> toFuture(UploadTask uploadTask) {
         CompletableFuture<String> completableFuture = new CompletableFuture<>();
 
-        uploadTask.addOnSuccessListener(
-                taskSnapshot -> {
-                    completableFuture.complete(taskSnapshot.getMetadata().getPath());
-                })
+        uploadTask
+                .addOnSuccessListener(
+                        taskSnapshot -> {
+                            completableFuture.complete(taskSnapshot.getMetadata().getPath());
+                        })
                 .addOnFailureListener(completableFuture::completeExceptionally);
 
         return completableFuture;

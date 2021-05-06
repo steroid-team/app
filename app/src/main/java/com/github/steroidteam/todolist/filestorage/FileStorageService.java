@@ -1,7 +1,6 @@
 package com.github.steroidteam.todolist.filestorage;
 
 import androidx.annotation.NonNull;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;

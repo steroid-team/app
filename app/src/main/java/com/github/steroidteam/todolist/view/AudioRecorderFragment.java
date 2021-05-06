@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
@@ -66,18 +65,24 @@ public class AudioRecorderFragment extends Fragment {
         root.findViewById(R.id.play_button).setOnClickListener(this::playingOnClick);
         showProgressBar(true);
 
-        database.getNote(noteId).thenAccept(note -> {
-            Optional<UUID> audioID = note.getAudioMemoId();
+        database.getNote(noteId)
+                .thenAccept(
+                        note -> {
+                            Optional<UUID> audioID = note.getAudioMemoId();
 
-            audioID.ifPresent(uuid -> database.getAudioMemo(uuid, audioFileName).thenAccept(file -> {
-                /* The file can now be played */
-                showProgressBar(false);
-            }));
-            if (!audioID.isPresent()) {
-                /* The file can now be played */
-                showProgressBar(false);
-            }
-        });
+                            audioID.ifPresent(
+                                    uuid ->
+                                            database.getAudioMemo(uuid, audioFileName)
+                                                    .thenAccept(
+                                                            file -> {
+                                                                /* The file can now be played */
+                                                                showProgressBar(false);
+                                                            }));
+                            if (!audioID.isPresent()) {
+                                /* The file can now be played */
+                                showProgressBar(false);
+                            }
+                        });
 
         return root;
     }
@@ -88,9 +93,11 @@ public class AudioRecorderFragment extends Fragment {
 
         showProgressBar(true);
         try {
-            database.setAudioMemo(noteId, audioFileName).thenAccept(nothing -> {
-                showProgressBar(false);
-            });
+            database.setAudioMemo(noteId, audioFileName)
+                    .thenAccept(
+                            nothing -> {
+                                showProgressBar(false);
+                            });
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             showProgressBar(false);
@@ -204,8 +211,7 @@ public class AudioRecorderFragment extends Fragment {
             root.findViewById(R.id.play_button).setClickable(false);
             root.findViewById(R.id.play_button).setAlpha(0.5f);
             root.findViewById(R.id.audioTransferProgress).setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             root.findViewById(R.id.play_button).setClickable(true);
             root.findViewById(R.id.play_button).setAlpha(1f);
             root.findViewById(R.id.audioTransferProgress).setVisibility(View.INVISIBLE);

@@ -7,15 +7,11 @@ import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.util.JSONSerializer;
-
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -227,8 +223,7 @@ public class FirebaseDatabase implements Database {
 
     @Override
     public CompletableFuture<Void> setAudioMemo(UUID noteID, String audioMemoPath)
-            throws FileNotFoundException
-    {
+            throws FileNotFoundException {
         Objects.requireNonNull(noteID);
         Objects.requireNonNull(audioMemoPath);
 
@@ -238,38 +233,45 @@ public class FirebaseDatabase implements Database {
         InputStream is = new FileInputStream(new File(audioMemoPath));
 
         /* First, upload the audio memo */
-        CompletableFuture<String> audioUploadFuture = this.storageService.upload(is, remoteAudioMemoPath);
+        CompletableFuture<String> audioUploadFuture =
+                this.storageService.upload(is, remoteAudioMemoPath);
 
         /* In the mean time, get the Note then set the associated audio memo ID,
-        * then synchronize everything */
-        return getNote(noteID).thenCompose(note -> {
-            note.setAudioMemoId(audioMemoID);
-            return uploadNote(note);
-        }).thenCompose(note -> audioUploadFuture).thenApply(str -> null);
+         * then synchronize everything */
+        return getNote(noteID)
+                .thenCompose(
+                        note -> {
+                            note.setAudioMemoId(audioMemoID);
+                            return uploadNote(note);
+                        })
+                .thenCompose(note -> audioUploadFuture)
+                .thenApply(str -> null);
     }
 
     @Override
     public CompletableFuture<Void> removeAudioMemo(UUID noteID) {
-        return getNote(noteID).thenCompose(note -> {
-            Optional<UUID> audioMemoID = note.getAudioMemoId();
+        return getNote(noteID)
+                .thenCompose(
+                        note -> {
+                            Optional<UUID> audioMemoID = note.getAudioMemoId();
 
-            /* If there is some audio memo to remove */
-            if (audioMemoID.isPresent()) {
-                note.removeAudioMemoId();
-                CompletableFuture<Note> uploadNoteFuture = uploadNote(note);
-                return this.storageService.delete(AUDIO_MEMOS_PATH + audioMemoID.get())
-                        .thenCompose(str -> uploadNoteFuture)
-                        .thenApply(updatedNote -> null);
-            } else {
-                return CompletableFuture.completedFuture(null);
-            }
-        });
+                            /* If there is some audio memo to remove */
+                            if (audioMemoID.isPresent()) {
+                                note.removeAudioMemoId();
+                                CompletableFuture<Note> uploadNoteFuture = uploadNote(note);
+                                return this.storageService
+                                        .delete(AUDIO_MEMOS_PATH + audioMemoID.get())
+                                        .thenCompose(str -> uploadNoteFuture)
+                                        .thenApply(updatedNote -> null);
+                            } else {
+                                return CompletableFuture.completedFuture(null);
+                            }
+                        });
     }
 
     @Override
     public CompletableFuture<File> getAudioMemo(
-            @NonNull UUID audioID, @NonNull String destinationPath)
-    {
+            @NonNull UUID audioID, @NonNull String destinationPath) {
         String audioFilePath = AUDIO_MEMOS_PATH + audioID.toString();
 
         return this.storageService.downloadFile(audioFilePath, destinationPath);

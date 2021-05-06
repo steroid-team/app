@@ -3,9 +3,11 @@ package com.github.steroidteam.todolist.view.dialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import com.github.steroidteam.todolist.R;
 
 public class ListSelectionDialogFragment extends DialogFragment {
 
@@ -37,19 +39,13 @@ public class ListSelectionDialogFragment extends DialogFragment {
         int title = getArguments().getInt(TITLE_KEY);
         int items = getArguments().getInt(ITEMS_KEY);
 
-        /*Dialog dialog =
-        new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.Dialog))
-                .setTitle(title)
-                .setItems(items, (dialog1, position) -> listeners.get(position))
-                .create();*/
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // builder.setTitle(title).setItems(items, (dialog1, position) -> listeners.get(position));
-        builder.setTitle(title).setItems(items, listener);
-        Dialog dialog = builder.create();
-
-        dialog.setCanceledOnTouchOutside(false);
+        Dialog dialog =
+                new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.Dialog))
+                        .setTitle(title)
+                        .setItems(items, listener)
+                        .create();
         dialog.getWindow().setGravity(Gravity.CENTER);
-        // dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         return dialog;
     }
 }

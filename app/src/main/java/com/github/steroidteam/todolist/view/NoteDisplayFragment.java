@@ -1,10 +1,14 @@
 package com.github.steroidteam.todolist.view;
 
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +26,17 @@ import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.util.ViewUtils;
 import com.github.steroidteam.todolist.viewmodel.NoteViewModel;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.UUID;
+
+import javax.xml.transform.URIResolver;
+
 import jp.wasabeef.richeditor.RichEditor;
 
 public class NoteDisplayFragment extends Fragment {
@@ -42,10 +55,14 @@ public class NoteDisplayFragment extends Fragment {
     public static final String MAP_POSITION_KEY = "MAP_POSITION_KEY";
     public static final String MAP_LOCATION_NAME_KEY = "MAP_LOCATION_NAME_KEY";
 
+    private String imageFileName;
+
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.root = inflater.inflate(R.layout.fragment_note_display, container, false);
+
+        imageFileName = getActivity().getExternalCacheDir().getAbsolutePath() + "/image.png";
 
         setOnClickListeners(root);
 
@@ -70,6 +87,7 @@ public class NoteDisplayFragment extends Fragment {
         // Set view model and observe the note:
         this.noteViewModel = new NoteViewModel(noteID);
         this.noteViewModel.getNote().observe(getViewLifecycleOwner(), this::updateUI);
+        this.noteViewModel.getHeaderID().observe(getViewLifecycleOwner(), this::updateUIHeader);
 
         // This methods need the view model:
         setMapFragmentListener();
@@ -86,6 +104,8 @@ public class NoteDisplayFragment extends Fragment {
         return root;
     }
 
+    // UPDATE THE UI:
+    // Only the content, title, ... everything that isn't too big.
     private void updateUI(Note note) {
         TextView noteTitle = root.findViewById(R.id.note_title);
         noteTitle.setText(note.getTitle());
@@ -94,8 +114,64 @@ public class NoteDisplayFragment extends Fragment {
         locationText.setText(note.getLocationName());
     }
 
+    // ONLY UPDATE THE HEADER OF THE NOTE
+    // There are two different methods,
+    // So when you update the content you don't re-download the picture.
+    private void updateUIHeader(Optional<UUID> headerID) {
+        headerID.ifPresent(uuid -> {
+            // Download the image in the local file system
+            noteViewModel.getNoteHeader(uuid, imageFileName)
+                    .thenAccept(file -> {
+                        ConstraintLayout header = getView().findViewById(R.id.note_header);
+                        // Set the image on the header of the note
+                        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                        BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
+                        header.setBackgroundTintList(null);
+                        header.setBackground(ob);
+                    });
+        });
+    }
+
     private void storeUserChanges() {
         noteViewModel.updateNoteContent(richEditor.getHtml().trim());
+    }
+
+    private void updateHeaderImage(Uri uri) {
+        ConstraintLayout header = getView().findViewById(R.id.note_header);
+        Bitmap bitmap = null;
+        try {
+            InputStream is = getContext().getContentResolver().openInputStream(uri);
+            bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Error: could not display the image", Toast.LENGTH_LONG)
+                    .show();
+        }
+        BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
+        header.setBackgroundTintList(null);
+        header.setBackground(ob);
+
+        // Store the new image in the database:
+        try {
+            noteViewModel.updateNoteHeader(getRealPathFromURI(uri));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getRealPathFromURI(Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = getContext().getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     private void setMapFragmentListener() {
@@ -170,21 +246,5 @@ public class NoteDisplayFragment extends Fragment {
                             storeUserChanges();
                             getParentFragmentManager().popBackStack();
                         });
-    }
-
-    private void updateHeaderImage(Uri uri) {
-        ConstraintLayout header = getView().findViewById(R.id.note_header);
-        Bitmap bitmap = null;
-        try {
-            InputStream is = getContext().getContentResolver().openInputStream(uri);
-            bitmap = BitmapFactory.decodeStream(is);
-            is.close();
-        } catch (Exception e) {
-            Toast.makeText(getContext(), "Error: could not display the image", Toast.LENGTH_LONG)
-                    .show();
-        }
-        BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
-        header.setBackgroundTintList(null);
-        header.setBackground(ob);
     }
 }

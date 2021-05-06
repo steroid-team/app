@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Note {
@@ -15,7 +16,7 @@ public class Note {
     private LatLng latLng;
     private String locationName;
 
-    private Bitmap header;
+    private UUID header;
 
     private static final String NO_LOCATION = "No location";
 
@@ -73,11 +74,17 @@ public class Note {
         return this;
     }
 
-    public Bitmap getHeader() {
-        return header;
+    public Optional<UUID> getHeaderID() {
+        if (header == null) return Optional.empty();
+        else return Optional.of(header);
     }
 
-    public void setHeader(Bitmap header) {
-        this.header = header;
+    public Note setHeader(UUID headerID) {
+        this.header = headerID;
+        return this;
+    }
+
+    public void removeHeader() {
+        this.header = null;
     }
 }

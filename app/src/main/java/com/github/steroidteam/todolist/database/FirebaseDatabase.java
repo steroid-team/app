@@ -7,10 +7,16 @@ import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.util.JSONSerializer;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -18,6 +24,7 @@ import java.util.stream.Collectors;
 public class FirebaseDatabase implements Database {
     private static final String TODO_LIST_PATH = "/todo-lists/";
     private static final String NOTES_PATH = "/notes/";
+    private static final String IMAGES_PATH = "/images/";
     private final FirebaseFileStorageService storageService;
 
     public FirebaseDatabase(@NonNull FirebaseFileStorageService storageService) {
@@ -71,7 +78,7 @@ public class FirebaseDatabase implements Database {
         String targetPath = TODO_LIST_PATH + todoListID.toString() + ".json";
 
         return this.storageService
-                .download(targetPath)
+                .downloadBytes(targetPath)
                 .thenApply(
                         bytes ->
                                 JSONSerializer.deserializeTodoList(
@@ -171,7 +178,7 @@ public class FirebaseDatabase implements Database {
         String notePath = NOTES_PATH + noteID.toString() + ".json";
 
         return this.storageService
-                .download(notePath)
+                .downloadBytes(notePath)
                 .thenApply(serializedNote -> new String(serializedNote, StandardCharsets.UTF_8))
                 .thenApply(JSONSerializer::deserializeNote);
     }
@@ -230,5 +237,61 @@ public class FirebaseDatabase implements Database {
         Task updatedTask = todoList.getTask(index);
         byte[] bytes = JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
         return this.storageService.upload(bytes, path).thenApply(str -> updatedTask);
+    }
+
+    @Override
+    public CompletableFuture<Void> setHeaderNote(UUID noteID, String imagePath)
+            throws FileNotFoundException
+    {
+        Objects.requireNonNull(noteID);
+        Objects.requireNonNull(imagePath);
+
+        UUID headerID = UUID.randomUUID();
+        String fileSystemHeaderPath = IMAGES_PATH + headerID;
+
+        InputStream is = new FileInputStream(new File(imagePath));
+
+        /* First, upload the header image */
+        CompletableFuture<String> headerUploadFuture = this.storageService.upload(is, fileSystemHeaderPath);
+
+        /* In the mean time, get the Note then set the associated header ID,
+         * then synchronize everything */
+        return getNote(noteID).thenCompose(note -> {
+            note.setHeader(headerID);
+            return uploadNote(note);
+        }).thenCompose(note -> headerUploadFuture).thenApply(str -> null);
+    }
+    @Override
+    public CompletableFuture<Void> removeHeader(UUID noteID) {
+        return getNote(noteID).thenCompose(note -> {
+            Optional<UUID> headerID = note.getHeaderID();
+
+            /* If there is some audio memo to remove */
+            if (headerID.isPresent()) {
+                note.removeHeader();
+                CompletableFuture<Note> uploadNoteFuture = uploadNote(note);
+                return this.storageService.delete(IMAGES_PATH + headerID.get())
+                        .thenCompose(str -> uploadNoteFuture)
+                        .thenApply(updatedNote -> null);
+            } else {
+                return CompletableFuture.completedFuture(null);
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<File> getImage(
+            @NonNull UUID imageID, @NonNull String destinationPath)
+    {
+        String imageFilePath = IMAGES_PATH + imageID.toString();
+
+        return this.storageService.downloadFile(imageFilePath, destinationPath);
+    }
+
+    private CompletableFuture<Note> uploadNote(Note note) {
+        String notePath = NOTES_PATH + note.getId().toString() + ".json";
+
+        byte[] bytes = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
+        return this.storageService.upload(bytes, notePath).thenApply(str -> note);
     }
 }

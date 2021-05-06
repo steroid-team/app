@@ -22,14 +22,13 @@ import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.google.android.gms.maps.model.LatLng;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.UUID;
 import jp.wasabeef.richeditor.RichEditor;
 
 public class NoteDisplayFragment extends Fragment {
     public static LatLng position;
     public static String locationName;
-    public static URL lastDrawingUrl;
+    public static String lastDrawingUrl;
     private Database database;
     private UUID noteID;
     private RichEditor richEditor;
@@ -79,7 +78,6 @@ public class NoteDisplayFragment extends Fragment {
                 registerForActivityResult(
                         new ActivityResultContracts.GetContent(),
                         uri -> {
-                            System.out.println(uri.toString());
                             richEditor.insertImage(uri.toString(), "", imageDisplayWidth);
                         });
 
@@ -179,8 +177,9 @@ public class NoteDisplayFragment extends Fragment {
         // TODO: Update the note's location via a ViewModel, so that no static attributes have to
         //  be used at all for passing data between the MapFragment and the NoteDisplayFragment.
         if (position != null && locationName != null) setLocationNote(position, locationName);
-        if (lastDrawingUrl != null){
-            richEditor.insertImage(lastDrawingUrl.toString(), "", imageDisplayWidth);
+        if (lastDrawingUrl != null) {
+            richEditor.focusEditor();
+            richEditor.insertImage(lastDrawingUrl, "drawing", imageDisplayWidth);
             lastDrawingUrl = null;
         }
     }

@@ -1,8 +1,6 @@
 package com.github.steroidteam.todolist.view;
 
 import android.graphics.Bitmap;
-import android.graphics.Path;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -10,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -19,13 +16,10 @@ import com.github.steroidteam.todolist.R;
 import com.larswerkman.holocolorpicker.ColorPicker;
 import com.larswerkman.holocolorpicker.SaturationBar;
 import com.larswerkman.holocolorpicker.ValueBar;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 
 public class DrawingFragment extends Fragment {
@@ -145,15 +139,18 @@ public class DrawingFragment extends Fragment {
         drawingCanvas.setVisibility(View.VISIBLE);
     }
 
-    public void saveButton(View view){
+    public void saveButton(View view) {
         Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMMddHHmmss");
-        String fileName = "bitmap" + sdf.format(date) +".jpg";
-        File bitmapFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName);
-        try (FileOutputStream output = new FileOutputStream(bitmapFile)){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        String fileName = "bitmap" + sdf.format(date) + ".jpg";
+        File bitmapFile =
+                new File(
+                        Environment.getExternalStoragePublicDirectory(
+                                Environment.DIRECTORY_DOWNLOADS),
+                        fileName);
+        try (FileOutputStream output = new FileOutputStream(bitmapFile)) {
             drawingCanvas.getBitmap().compress(Bitmap.CompressFormat.JPEG, 100, output);
-            NoteDisplayFragment.lastDrawingUrl = bitmapFile.toURI().toURL();
-            System.out.println(NoteDisplayFragment.lastDrawingUrl);
+            NoteDisplayFragment.lastDrawingUrl = bitmapFile.getAbsolutePath();
             getParentFragmentManager().popBackStack();
         } catch (IOException e) {
             e.printStackTrace();

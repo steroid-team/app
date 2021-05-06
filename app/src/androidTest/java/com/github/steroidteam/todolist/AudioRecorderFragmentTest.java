@@ -13,6 +13,7 @@ import static org.mockito.Mockito.doReturn;
 import android.os.Bundle;
 import androidx.fragment.app.testing.FragmentScenario;
 import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.view.AudioRecorderFragment;
 import com.github.steroidteam.todolist.view.NoteSelectionFragment;
@@ -42,6 +43,7 @@ public class AudioRecorderFragmentTest {
 
         doReturn(noteFuture).when(databaseMock).getNote(any(UUID.class));
         doReturn(fileFuture).when(databaseMock).getAudioMemo(any(UUID.class), anyString());
+        DatabaseFactory.setCustomDatabase(databaseMock);
 
         Bundle bundle = new Bundle();
         bundle.putString(NoteSelectionFragment.NOTE_ID_KEY, UUID.randomUUID().toString());

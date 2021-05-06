@@ -39,7 +39,7 @@ public class AudioRecorderFragment extends Fragment {
     private boolean isFirstTime = true;
     private MediaPlayer player;
 
-    private Database database;
+    private Database database = DatabaseFactory.getDb();
     private UUID noteId;
 
     public View onCreateView(
@@ -58,7 +58,6 @@ public class AudioRecorderFragment extends Fragment {
         ActivityCompat.requestPermissions(
                 getActivity(), new String[] {Manifest.permission.RECORD_AUDIO}, AUDIO_PERMISSION);
 
-        database = DatabaseFactory.getDb();
         noteId = UUID.fromString(getArguments().getString(NoteSelectionFragment.NOTE_ID_KEY));
 
         /* The play button remains unclickable until there is an audio file to play */

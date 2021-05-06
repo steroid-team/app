@@ -1,5 +1,7 @@
 package com.github.steroidteam.todolist.model.notes;
 
+import android.graphics.Bitmap;
+
 import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.Objects;
@@ -13,6 +15,8 @@ public class Note {
     private LatLng latLng;
     private String locationName;
 
+    private Bitmap header;
+
     private static final String NO_LOCATION = "No location";
 
     public Note(@NonNull String title) {
@@ -24,6 +28,7 @@ public class Note {
         this.content = "";
         this.latLng = null;
         this.locationName = NO_LOCATION;
+        this.header = null;
     }
 
     public UUID getId() {
@@ -66,5 +71,13 @@ public class Note {
         Objects.requireNonNull(locationName);
         this.locationName = locationName;
         return this;
+    }
+
+    public Bitmap getHeader() {
+        return header;
+    }
+
+    public void setHeader(Bitmap header) {
+        this.header = header;
     }
 }

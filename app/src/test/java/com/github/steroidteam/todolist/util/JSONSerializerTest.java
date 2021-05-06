@@ -43,16 +43,10 @@ public class JSONSerializerTest {
         final String actualSerializedObject = JSONSerializer.serializeTodoList(todoList);
         final String expectedSerializedObject =
                 "{"
-                        + "\"id\":\""
-                        + todoList.getId().toString()
-                        + "\","
+                        + ("\"id\":\"" + todoList.getId().toString() + "\",")
                         + "\"list\":[],"
-                        + "\"title\":\""
-                        + LIST_TITLE
-                        + "\","
-                        + "\"date\":\""
-                        + expectedFormattedDate
-                        + "\""
+                        + ("\"title\":\"" + LIST_TITLE + "\",")
+                        + ("\"date\":\"" + expectedFormattedDate + "\"")
                         + "}";
         assertEquals(expectedSerializedObject, actualSerializedObject);
     }
@@ -74,21 +68,15 @@ public class JSONSerializerTest {
                         + "\"id\":\""
                         + todoList.getId().toString()
                         + "\","
-                        + "\"list\":[{\"body\":\""
-                        + TASK1_DESC
-                        + "\",\"done\":"
-                        + false
-                        + "},{\"body\":\""
-                        + TASK2_DESC
-                        + "\",\"done\":"
-                        + false
+                        + "\"list\":[{"
+                        + ("\"body\":\"" + TASK1_DESC + "\",")
+                        + ("\"done\":" + false)
+                        + "},{"
+                        + ("\"body\":\"" + TASK2_DESC + "\",")
+                        + ("\"done\":" + false)
                         + "}],"
-                        + "\"title\":\""
-                        + LIST_TITLE
-                        + "\","
-                        + "\"date\":\""
-                        + expectedFormattedDate
-                        + "\""
+                        + ("\"title\":\"" + LIST_TITLE + "\",")
+                        + ("\"date\":\"" + expectedFormattedDate + "\"")
                         + "}";
         assertEquals(expectedSerializedObject, actualSerializedObject);
     }
@@ -105,12 +93,8 @@ public class JSONSerializerTest {
                         + FIXTURE_UUID.toString()
                         + "\","
                         + "\"list\":[],"
-                        + "\"title\":\""
-                        + FIXTURE_TITLE
-                        + "\","
-                        + "\"date\":\""
-                        + FIXTURE_FORMATTED_DATE
-                        + "\""
+                        + ("\"title\":\"" + FIXTURE_TITLE + "\",")
+                        + ("\"date\":\"" + FIXTURE_FORMATTED_DATE + "\"")
                         + "}";
         final TodoList actualDeserializedObject = JSONSerializer.deserializeTodoList(FIXTURE_JSON);
 
@@ -125,33 +109,32 @@ public class JSONSerializerTest {
     public void todoListDeserializerWorksWithNonEmptyTasks() {
         final UUID FIXTURE_UUID = UUID.randomUUID();
         final String FIXTURE_TITLE = "Test list";
-        final String TASK1_DESC = "Buy bananas";
-        final String TASK2_DESC = "Eat fruit";
+        final Task TASK1 = new Task("Buy bananas");
+        TASK1.setDone(true);
+        final Task TASK2 = new Task("Eat fruit");
+        TASK1.setDone(false);
         final String FIXTURE_FORMATTED_DATE = DATE_FORMAT.format(new Date());
 
         final String FIXTURE_JSON =
                 "{"
-                        + "\"id\":\""
-                        + FIXTURE_UUID.toString()
-                        + "\","
-                        + "\"list\":[{\"body\":\""
-                        + TASK1_DESC
-                        + "\"},{\"body\":\""
-                        + TASK2_DESC
+                        + ("\"id\":\"" + FIXTURE_UUID.toString() + "\",")
+                        + "\"list\":["
+                        + "{"
+                        + ("\"body\":\"" + TASK1.getBody() + "\",")
+                        + ("\"done\":" + TASK1.isDone() + "")
+                        + "},{"
+                        + ("\"body\":\"" + TASK2.getBody() + "\",")
+                        + ("\"done\":" + TASK2.isDone() + "")
                         + "\"}],"
-                        + "\"title\":\""
-                        + FIXTURE_TITLE
-                        + "\","
-                        + "\"date\":\""
-                        + FIXTURE_FORMATTED_DATE
-                        + "\""
+                        + ("\"title\":\"" + FIXTURE_TITLE + "\",")
+                        + ("\"date\":\"" + FIXTURE_FORMATTED_DATE + "\"")
                         + "}";
         final TodoList actualDeserializedObject = JSONSerializer.deserializeTodoList(FIXTURE_JSON);
 
         assertEquals(actualDeserializedObject.getId(), FIXTURE_UUID);
         assertEquals(actualDeserializedObject.getSize(), 2);
-        assertEquals(actualDeserializedObject.getTask(0), new Task(TASK1_DESC));
-        assertEquals(actualDeserializedObject.getTask(1), new Task(TASK2_DESC));
+        assertEquals(actualDeserializedObject.getTask(0), TASK1);
+        assertEquals(actualDeserializedObject.getTask(1), TASK2);
         assertEquals(actualDeserializedObject.getTitle(), FIXTURE_TITLE);
         assertEquals(
                 DATE_FORMAT.format(actualDeserializedObject.getDate()), FIXTURE_FORMATTED_DATE);

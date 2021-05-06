@@ -33,7 +33,7 @@ import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
-import com.github.steroidteam.todolist.broadcast.ReminderBroadcast;
+import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.Task;
@@ -320,10 +320,12 @@ public class ItemViewFragmentTest {
     public void notificationReminderWorks() {
 
         int twoSecondsInMillis = 2 * 1000;
+        ;
         scenario.onFragment(
                 fragment -> {
-                    fragment.createNotificationChannel();
-                    fragment.createNotification(twoSecondsInMillis);
+                    ReminderDateBroadcast.createNotificationChannel(fragment.getActivity());
+                    ReminderDateBroadcast.createNotification(
+                            twoSecondsInMillis, fragment.getActivity());
                 });
 
         /**
@@ -346,7 +348,7 @@ public class ItemViewFragmentTest {
                     StatusBarNotification[] notifications =
                             notificationManager.getActiveNotifications();
                     for (StatusBarNotification notification : notifications) {
-                        if (notification.getId() == ReminderBroadcast.REMINDER_ID) {
+                        if (notification.getId() == ReminderDateBroadcast.REMINDER_DATE_ID) {
                             isDisplayed = true;
                         }
                     }

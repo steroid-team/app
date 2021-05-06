@@ -30,7 +30,7 @@
         </activity>
         <activity android:name=".view.MainActivity" />
 
-        <receiver android:name=".broadcast.ReminderBroadcast"/>
+        <receiver android:name=".broadcast.ReminderDateBroadcast"/>
     </application>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

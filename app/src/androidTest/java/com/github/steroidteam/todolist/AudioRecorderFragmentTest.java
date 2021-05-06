@@ -1,27 +1,58 @@
 package com.github.steroidteam.todolist;
 
+import android.os.Bundle;
+
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
 
 import androidx.fragment.app.testing.FragmentScenario;
+
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.view.AudioRecorderFragment;
+import com.github.steroidteam.todolist.view.NoteSelectionFragment;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.io.File;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AudioRecorderFragmentTest {
 
+    @Mock
+    Database databaseMock;
+
     @Before
     public void init() {
+        Note note = new Note("some title");
+        CompletableFuture<Note> noteFuture = new CompletableFuture<>();
+        noteFuture.complete(note);
+
+        File audioFile = new File("some audio file");
+        CompletableFuture<File> fileFuture = new CompletableFuture<>();
+        fileFuture.complete(audioFile);
+
+        doReturn(noteFuture).when(databaseMock).getNote(any(UUID.class));
+        doReturn(fileFuture).when(databaseMock).getAudioMemo(any(UUID.class), anyString());
+
+        Bundle bundle = new Bundle();
+        bundle.putString(NoteSelectionFragment.NOTE_ID_KEY, UUID.randomUUID().toString());
         FragmentScenario<AudioRecorderFragment> scenario =
                 FragmentScenario.launchInContainer(
-                        AudioRecorderFragment.class, null, R.style.Theme_Asteroid);
+                        AudioRecorderFragment.class, bundle, R.style.Theme_Asteroid);
     }
 
     @Test

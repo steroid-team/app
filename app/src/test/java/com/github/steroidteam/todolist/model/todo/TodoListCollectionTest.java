@@ -2,7 +2,6 @@ package com.github.steroidteam.todolist.model.todo;
 
 import static org.junit.Assert.assertEquals;
 
-import com.github.steroidteam.todolist.todo.TodoListCollection;
 import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;

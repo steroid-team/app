@@ -16,9 +16,9 @@ import java.util.UUID;
 public class TodoList {
 
     private final UUID id;
-    private List<Task> list;
+    private final List<Task> list;
     private String title;
-    private Date date;
+    private final Date date;
 
     /**
      * Constructs a new to-do list.
@@ -57,7 +57,10 @@ public class TodoList {
     }
 
     public void renameTask(int index, String newBody) {
-        list.set(index, new Task(newBody));
+        Task task = list.get(index);
+        if (task != null) {
+            task.setBody(newBody);
+        }
     }
 
     public int getSize() {
@@ -80,8 +83,13 @@ public class TodoList {
         return title;
     }
 
-    public void setTitle(String newTitle) {
+    public TodoList setTitle(String newTitle) {
         this.title = newTitle;
+        return this;
+    }
+
+    public List<Task> getImportantTask() {
+        return list;
     }
 
     @Override

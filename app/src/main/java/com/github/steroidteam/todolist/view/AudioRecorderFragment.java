@@ -65,24 +65,14 @@ public class AudioRecorderFragment extends Fragment {
         root.findViewById(R.id.play_button).setOnClickListener(this::playingOnClick);
         showProgressBar(true);
 
-        database.getNote(noteId)
-                .thenAccept(
-                        note -> {
-                            Optional<UUID> audioID = note.getAudioMemoId();
+        database.getNote(noteId).thenAccept(note -> {
+            Optional<UUID> audioID = note.getAudioMemoId();
 
-                            audioID.ifPresent(
-                                    uuid ->
-                                            database.getAudioMemo(uuid, audioFileName)
-                                                    .thenAccept(
-                                                            file -> {
-                                                                /* The file can now be played */
-                                                                showProgressBar(false);
-                                                            }));
-                            if (!audioID.isPresent()) {
-                                /* The file can now be played */
-                                showProgressBar(false);
-                            }
-                        });
+            audioID.ifPresent(uuid -> database.getAudioMemo(uuid, audioFileName)
+                    .thenAccept(file -> showProgressBar(false)));
+
+            if (!audioID.isPresent()) showProgressBar(false);
+        });
 
         return root;
     }
@@ -207,14 +197,8 @@ public class AudioRecorderFragment extends Fragment {
     }
 
     private void showProgressBar(boolean show) {
-        if (show) {
-            root.findViewById(R.id.play_button).setClickable(false);
-            root.findViewById(R.id.play_button).setAlpha(0.5f);
-            root.findViewById(R.id.audioTransferProgress).setVisibility(View.VISIBLE);
-        } else {
-            root.findViewById(R.id.play_button).setClickable(true);
-            root.findViewById(R.id.play_button).setAlpha(1f);
-            root.findViewById(R.id.audioTransferProgress).setVisibility(View.INVISIBLE);
-        }
+        root.findViewById(R.id.play_button).setClickable(!show);
+        root.findViewById(R.id.play_button).setAlpha(show ? 0.5f : 1f);
+        root.findViewById(R.id.audioTransferProgress).setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
 }

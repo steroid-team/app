@@ -1,6 +1,6 @@
 package com.github.steroidteam.todolist.view;
 
-import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -25,17 +25,12 @@ import androidx.navigation.Navigation;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
-import com.github.steroidteam.todolist.view.dialog.DialogListener;
-import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
-import com.github.steroidteam.todolist.view.dialog.SimpleDialogFragment;
+import com.github.steroidteam.todolist.view.dialog.ListSelectionDialogFragment;
 import com.google.android.gms.maps.model.LatLng;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.UUID;
 import jp.wasabeef.richeditor.RichEditor;
-
-import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
 public class NoteDisplayFragment extends Fragment {
     public static LatLng position;
@@ -84,22 +79,29 @@ public class NoteDisplayFragment extends Fragment {
                         });
 
         File file = new File(Environment.getExternalStorageDirectory(), "picFromCamera");
-        //cameraFileUri = FileProvider.getUriForFile(getContext(), getApplicationContext().getPackageName() + ".provider", file);
-        cameraFileUri = FileProvider.getUriForFile(getContext(), "com.asteroid.fileprovider", getPhotoFileUri("camera-img.jpg"));
+        // cameraFileUri = FileProvider.getUriForFile(getContext(),
+        // getApplicationContext().getPackageName() + ".provider", file);
+        cameraFileUri =
+                FileProvider.getUriForFile(
+                        getContext(),
+                        "com.asteroid.fileprovider",
+                        getPhotoFileUri("camera-img.jpg"));
 
         headerImagePickerActivityLauncher =
                 registerForActivityResult(
                         new ActivityResultContracts.GetContent(), this::updateHeaderImage);
         cameraActivityLauncher =
                 registerForActivityResult(
-                        new ActivityResultContracts.TakePicture(), success -> {
+                        new ActivityResultContracts.TakePicture(),
+                        success -> {
                             if (success) updateHeaderImage(cameraFileUri);
                         });
         embeddedImagePickerActivityLauncher =
                 registerForActivityResult(
                         new ActivityResultContracts.GetContent(),
                         uri -> {
-                            if (uri != null) richEditor.insertImage(uri.toString(), "", imageDisplayWidth);
+                            if (uri != null)
+                                richEditor.insertImage(uri.toString(), "", imageDisplayWidth);
                         });
 
         return root;
@@ -109,31 +111,28 @@ public class NoteDisplayFragment extends Fragment {
         root.findViewById(R.id.camera_button)
                 .setOnClickListener(
                         v -> {
-                            /*// Open the file picker limiting selections to image files.
-                            headerImagePickerActivityLauncher.launch(IMAGE_MIME_TYPE);*/
-
-                            DialogListener dialogListener =
-                                    new DialogListener() {
-
-                                        @Override
-                                        public void onPositiveClick(String title) {
-                                            //if (title.length() > 0) viewModel.addTodo(title);
-                                        }
-
-                                        @Override
-                                        public void onPositiveClick() {
-                                            cameraActivityLauncher.launch(cameraFileUri);
-                                        }
-
-                                        @Override
-                                        public void onNegativeClick() {
-                                            headerImagePickerActivityLauncher.launch(IMAGE_MIME_TYPE);
+                            /*List<ItemListener> listeners = Arrays.asList(
+                                    () -> headerImagePickerActivityLauncher.launch(IMAGE_MIME_TYPE),
+                                    () -> cameraActivityLauncher.launch(cameraFileUri)
+                            );*/
+                            DialogInterface.OnClickListener listener =
+                                    (dialog, position) -> {
+                                        switch (position) {
+                                            case 0:
+                                                headerImagePickerActivityLauncher.launch(
+                                                        IMAGE_MIME_TYPE);
+                                                break;
+                                            case 1:
+                                                cameraActivityLauncher.launch(cameraFileUri);
+                                                break;
                                         }
                                     };
-
                             DialogFragment newFragment =
-                                    new SimpleDialogFragment()
-                                            .newInstance(dialogListener, R.string.delete_todo_suggestion);
+                                    new ListSelectionDialogFragment()
+                                            .newInstance(
+                                                    listener,
+                                                    R.string.add_image_dialog,
+                                                    R.array.add_image_types);
                             newFragment.show(getParentFragmentManager(), "pick_dialog");
                         });
         root.findViewById(R.id.location_button)
@@ -199,10 +198,11 @@ public class NoteDisplayFragment extends Fragment {
         // Get safe storage directory for photos
         // Use `getExternalFilesDir` on Context to access package-specific directories.
         // This way, we don't need to request external read/write runtime permissions.
-        File mediaStorageDir = new File(getContext().getExternalFilesDir(null), "asteroid-notes/images");
+        File mediaStorageDir =
+                new File(getContext().getExternalFilesDir(null), "asteroid-notes/images");
 
         // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
             Log.d("asteroid-notes", "failed to create directory");
         }
 

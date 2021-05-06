@@ -22,18 +22,21 @@ import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.google.android.gms.maps.model.LatLng;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.UUID;
 import jp.wasabeef.richeditor.RichEditor;
 
 public class NoteDisplayFragment extends Fragment {
     public static LatLng position;
     public static String locationName;
+    public static URL lastDrawingUrl;
     private Database database;
     private UUID noteID;
     private RichEditor richEditor;
     private ActivityResultLauncher<String> headerImagePickerActivityLauncher;
     private ActivityResultLauncher<String> embeddedImagePickerActivityLauncher;
     private final String IMAGE_MIME_TYPE = "image/*";
+    int imageDisplayWidth;
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,7 +53,7 @@ public class NoteDisplayFragment extends Fragment {
 
         // The width for any embedded image should be the editor's width. Do the math to
         // transform the dp to px, and subtract the lateral padding.
-        final int imageDisplayWidth =
+        imageDisplayWidth =
                 (int)
                                 Math.floor(
                                         getResources().getDisplayMetrics().widthPixels
@@ -75,7 +78,10 @@ public class NoteDisplayFragment extends Fragment {
         embeddedImagePickerActivityLauncher =
                 registerForActivityResult(
                         new ActivityResultContracts.GetContent(),
-                        uri -> richEditor.insertImage(uri.toString(), "", imageDisplayWidth));
+                        uri -> {
+                            System.out.println(uri.toString());
+                            richEditor.insertImage(uri.toString(), "", imageDisplayWidth);
+                        });
 
         return root;
     }
@@ -173,6 +179,10 @@ public class NoteDisplayFragment extends Fragment {
         // TODO: Update the note's location via a ViewModel, so that no static attributes have to
         //  be used at all for passing data between the MapFragment and the NoteDisplayFragment.
         if (position != null && locationName != null) setLocationNote(position, locationName);
+        if (lastDrawingUrl != null){
+            richEditor.insertImage(lastDrawingUrl.toString(), "", imageDisplayWidth);
+            lastDrawingUrl = null;
+        }
     }
 
     public void setLocationNote(LatLng latLng, String location) {

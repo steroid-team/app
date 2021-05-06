@@ -4,13 +4,10 @@ import android.view.View;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.test.espresso.UiController;
-import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import java.util.Objects;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.core.IsAnything;
 
 public class CustomMatchers {
     /**
@@ -53,37 +50,6 @@ public class CustomMatchers {
             @Override
             protected boolean matchesSafely(final RecyclerView view) {
                 return Objects.requireNonNull(view.getAdapter()).getItemCount() == expectedCount;
-            }
-        };
-    }
-
-    /**
-     * Helper to test dialog
-     *
-     * @param millis time to wait
-     * @return viewAction that wait the given time
-     */
-    public static ViewAction waitAtLeastHelper(final long millis) {
-        return new ViewAction() {
-            @Override
-            public Matcher<View> getConstraints() {
-                return anyView();
-            }
-
-            @NonNull
-            private Matcher<View> anyView() {
-                return new IsAnything<>();
-            }
-
-            @Override
-            public String getDescription() {
-                return "wait for at least " + millis + " millis.";
-            }
-
-            @Override
-            public void perform(final UiController uiController, final View view) {
-                uiController.loopMainThreadUntilIdle();
-                uiController.loopMainThreadForAtLeast(millis);
             }
         };
     }

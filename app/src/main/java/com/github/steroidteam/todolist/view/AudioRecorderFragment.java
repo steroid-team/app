@@ -15,12 +15,18 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Optional;
+import java.util.UUID;
 
 public class AudioRecorderFragment extends Fragment {
 
     private View root;
-    private String fileName;
+    private String audioFileName;
     // Maybe change that later to have multiple audios
     private String testFileName = "/audioTest.3gp";
 
@@ -34,22 +40,61 @@ public class AudioRecorderFragment extends Fragment {
     private boolean isFirstTime = true;
     private MediaPlayer player;
 
+    private Database database;
+    private UUID noteId;
+
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         root = inflater.inflate(R.layout.fragment_audio_recorder, container, false);
         root.findViewById(R.id.back_button)
                 .setOnClickListener(v -> getParentFragmentManager().popBackStack());
-        root.findViewById(R.id.record_button).setOnClickListener(v -> recordOnClick(v));
-        root.findViewById(R.id.play_button).setOnClickListener(v -> playingOnClick(v));
-        fileName = getActivity().getExternalCacheDir().getAbsolutePath();
-        fileName += testFileName;
+        root.findViewById(R.id.record_button).setOnClickListener(this::recordOnClick);
+
+        audioFileName = getActivity().getExternalCacheDir().getAbsolutePath();
+        audioFileName += testFileName;
 
         player = new MediaPlayer();
         player.setOnCompletionListener(player -> onCompletePlaying());
         ActivityCompat.requestPermissions(
                 getActivity(), new String[] {Manifest.permission.RECORD_AUDIO}, AUDIO_PERMISSION);
+
+        database = DatabaseFactory.getDb();
+        noteId = UUID.fromString(getArguments().getString(NoteSelectionFragment.NOTE_ID_KEY));
+
+        /* The play button remains unclickable until there is an audio file to play */
+        root.findViewById(R.id.play_button).setOnClickListener(this::playingOnClick);
+        showProgressBar(true);
+
+        database.getNote(noteId).thenAccept(note -> {
+            Optional<UUID> audioID = note.getAudioMemoId();
+
+            audioID.ifPresent(uuid -> database.getAudioMemo(uuid, audioFileName).thenAccept(file -> {
+                /* The file can now be played */
+                showProgressBar(false);
+            }));
+            if (!audioID.isPresent()) {
+                /* The file can now be played */
+                showProgressBar(false);
+            }
+        });
+
         return root;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        showProgressBar(true);
+        try {
+            database.setAudioMemo(noteId, audioFileName).thenAccept(nothing -> {
+                showProgressBar(false);
+            });
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            showProgressBar(false);
+        }
     }
 
     @Override
@@ -91,7 +136,7 @@ public class AudioRecorderFragment extends Fragment {
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        recorder.setOutputFile(fileName);
+        recorder.setOutputFile(audioFileName);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
         try {
@@ -139,15 +184,31 @@ public class AudioRecorderFragment extends Fragment {
     private void playingAudio() {
         try {
             if (isFirstTime) {
-                player.setDataSource(fileName);
+                player.setDataSource(audioFileName);
                 player.prepare();
                 isFirstTime = false;
             }
+            player.reset();
+            player.setDataSource(audioFileName);
+            player.prepare();
             player.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
         ImageButton playButton = root.findViewById(R.id.play_button);
         playButton.setImageResource(android.R.drawable.ic_media_pause);
+    }
+
+    private void showProgressBar(boolean show) {
+        if (show) {
+            root.findViewById(R.id.play_button).setClickable(false);
+            root.findViewById(R.id.play_button).setAlpha(0.5f);
+            root.findViewById(R.id.audioTransferProgress).setVisibility(View.VISIBLE);
+        }
+        else {
+            root.findViewById(R.id.play_button).setClickable(true);
+            root.findViewById(R.id.play_button).setAlpha(1f);
+            root.findViewById(R.id.audioTransferProgress).setVisibility(View.INVISIBLE);
+        }
     }
 }

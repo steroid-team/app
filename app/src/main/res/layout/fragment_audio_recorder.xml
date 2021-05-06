@@ -64,16 +64,17 @@
         android:id="@+id/play_button"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:scaleX="1.1"
-        android:scaleY="1.1"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
+        android:alpha="0.5"
         android:background="@color/fui_transparent"
         android:scaleType="fitCenter"
-        app:layout_constraintTop_toTopOf="@id/record_button"
-        app:layout_constraintStart_toStartOf="parent"
+        android:scaleX="1.1"
+        android:scaleY="1.1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/record_button"
         app:srcCompat="@android:drawable/ic_media_play" />
 
     <TextView
@@ -89,5 +90,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/audioTransferProgress"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="100dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

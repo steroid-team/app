@@ -24,6 +24,8 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.InputStream;
 import java.util.UUID;
 
+import static com.github.steroidteam.todolist.view.NoteSelectionFragment.NOTE_ID_KEY;
+
 public class NoteDisplayFragment extends Fragment {
     public static LatLng position;
     public static String locationName;
@@ -33,6 +35,8 @@ public class NoteDisplayFragment extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View root = inflater.inflate(R.layout.fragment_note_display, container, false);
+
+        UUID noteID = UUID.fromString(getArguments().getString(NOTE_ID_KEY));
 
         root.findViewById(R.id.camera_button)
                 .setOnClickListener(
@@ -49,7 +53,9 @@ public class NoteDisplayFragment extends Fragment {
         root.findViewById(R.id.audio_button)
                 .setOnClickListener(
                         v -> {
-                            Navigation.findNavController(getView()).navigate(R.id.nav_audio);
+                            Bundle bundle = new Bundle();
+                            bundle.putString(NOTE_ID_KEY, noteID.toString());
+                            Navigation.findNavController(getView()).navigate(R.id.nav_audio, bundle);
                         });
 
         root.findViewById(R.id.editor_action_drawing_btn)
@@ -64,10 +70,9 @@ public class NoteDisplayFragment extends Fragment {
 
         Database database = DatabaseFactory.getDb();
 
-        UUID id = UUID.fromString(getArguments().getString(NoteSelectionFragment.NOTE_ID_KEY));
         EditText editText = root.findViewById(R.id.activity_notedisplay_edittext);
 
-        database.getNote(id)
+        database.getNote(noteID)
                 .thenAccept(
                         note -> {
                             TextView noteTitle = root.findViewById(R.id.note_title);

@@ -4,6 +4,9 @@ import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.todo.TodoListCollection;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -117,4 +120,37 @@ public interface Database {
      * @return the updated task
      */
     CompletableFuture<Task> setTaskDone(UUID todoListID, int index, boolean isDone);
+
+    /**
+     * Saves and associate an audio memo to a note.
+     * If an audio memo already exists, it is replaced and DELETED !
+     *
+     * @param noteID the note UUID to wich the audio memo is attached to
+     * @param audioMemoPath A file path to the audio memo to upload
+     * @return a void future which completes whenever the audio memo is persisted in the
+     * database.
+     */
+    CompletableFuture<Void> setAudioMemo(UUID noteID, String audioMemoPath)
+            throws FileNotFoundException;
+
+    /**
+     * Removes and deletes the associated voice memo of a note
+     *
+     * @param noteID the note UUID to wich the audio memo is attached to
+     * @return a void future which completes whenever the audio memo is persisted in the
+     * database.
+     */
+    CompletableFuture<Void> removeAudioMemo(UUID noteID);
+
+    /**
+     * Downloads an audio file and stores it at the specified destination path on the local
+     * filesystem.
+     *
+     * @param audioID the UUID of the audio memo to download
+     * @param destinationPath the path on the local filesystem where the file should be stored
+     *        when download completes.
+     * @return a File future which completes whenever the audio memo is present on the local
+     *         filesystem.
+     */
+    CompletableFuture<File> getAudioMemo(UUID audioID, String destinationPath);
 }

@@ -155,6 +155,12 @@ public class DrawingFragmentTest {
     }
 
     @Test
+    public void saveButtonWorks() {
+        onView(withId(R.id.save_button)).perform(click());
+        assertEquals(Lifecycle.State.DESTROYED, activityRule.getScenario().getState());
+    }
+
+    @Test
     public void smallMovesDoNotDraw() {
         scenario.onFragment(
                 fragment -> {

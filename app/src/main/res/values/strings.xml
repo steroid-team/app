@@ -71,4 +71,9 @@
     <string name="insert_image">Insert image</string>
     <string name="ordered_list">Ordered list</string>
     <string name="add_drawing">Add drawing</string>
+
+    <!-- Notification Reminder -->
+    <string name="title_date_reminder">The due date has come !</string>
+    <string name="content_date_reminder">Hey This is a test !</string>
+    <string name="channel_date_name">ReminderDateChannel</string>
 </resources>

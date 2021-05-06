@@ -63,7 +63,7 @@ public class NoteTest {
         String location = "LAUSANNE";
 
         Note note = new Note("Title");
-        assertNull(note.getLocationName());
+        assertEquals(Note.NO_LOCATION, note.getLocationName());
         assertEquals(note, note.setLocationName(location));
         assertEquals(location, note.getLocationName());
     }

@@ -13,7 +13,7 @@ public class Note {
     private LatLng latLng;
     private String locationName;
 
-    private static final String NO_LOCATION = "No location";
+    public static final String NO_LOCATION = "No location";
 
     public Note(@NonNull String title) {
         if (title == null) {

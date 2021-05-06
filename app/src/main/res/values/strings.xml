@@ -20,6 +20,8 @@
     <string name="delete">Delete</string>
     <string name="save">Save</string>
     <string name="confirm">Confirm</string>
+    <string name="apply">Apply</string>
+    <string name="erase">Erase</string>
 
     <!-- Task Management -->
     <string name="title_todo">My todo list</string>

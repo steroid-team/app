@@ -19,8 +19,7 @@ import com.larswerkman.holocolorpicker.ValueBar;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.UUID;
 
 public class DrawingFragment extends Fragment {
 
@@ -53,23 +52,24 @@ public class DrawingFragment extends Fragment {
         super.onCreate(savedInstanceState);
         View root = inflater.inflate(R.layout.fragment_drawing, container, false);
 
-        canvasLayout = root.findViewById(R.id.drawSpace);
-        colorPicker = root.findViewById(R.id.colorPicker);
-        colorPickerWindow = root.findViewById(R.id.colorPickerWindow);
-        saturationBar = root.findViewById(R.id.saturationbar);
-        valueBar = root.findViewById(R.id.valuebar);
+        canvasLayout = root.findViewById(R.id.draw_space);
+        colorPicker = root.findViewById(R.id.drawing_color_picker);
+        colorPickerWindow = root.findViewById(R.id.drawing_color_picker_layout);
+        saturationBar = root.findViewById(R.id.drawing_saturation_bar);
+        valueBar = root.findViewById(R.id.drawing_value_bar);
 
-        root.findViewById(R.id.drawing_first_button).setOnClickListener(this::firstButton);
-        root.findViewById(R.id.drawing_second_button).setOnClickListener(this::secondButton);
-        root.findViewById(R.id.drawing_third_button).setOnClickListener(this::thirdButton);
-        root.findViewById(R.id.drawing_fourth_button).setOnClickListener(this::fourthButton);
-        root.findViewById(R.id.erase_button).setOnClickListener(this::eraseButton);
-        root.findViewById(R.id.colorChoose).setOnClickListener(this::ColorPickerButton);
-        root.findViewById(R.id.cancelColor).setOnClickListener(this::cancelColorButton);
-        root.findViewById(R.id.applyColor).setOnClickListener(this::applyColorButton);
-        root.findViewById(R.id.backButton)
+        root.findViewById(R.id.drawing_first_btn).setOnClickListener(this::firstButton);
+        root.findViewById(R.id.drawing_second_btn).setOnClickListener(this::secondButton);
+        root.findViewById(R.id.drawing_third_btn).setOnClickListener(this::thirdButton);
+        root.findViewById(R.id.drawing_fourth_btn).setOnClickListener(this::fourthButton);
+        root.findViewById(R.id.drawing_erase_btn).setOnClickListener(this::eraseButton);
+        root.findViewById(R.id.drawing_fifth_btn).setOnClickListener(this::ColorPickerButton);
+        root.findViewById(R.id.drawing_cancel_color_btn)
+                .setOnClickListener(this::cancelColorButton);
+        root.findViewById(R.id.drawing_apply_color_btn).setOnClickListener(this::applyColorButton);
+        root.findViewById(R.id.drawing_back_btn)
                 .setOnClickListener((view) -> getParentFragmentManager().popBackStack());
-        root.findViewById(R.id.save_button).setOnClickListener(this::saveButton);
+        root.findViewById(R.id.drawing_save_btn).setOnClickListener(this::saveButton);
 
         drawingCanvas = new DrawingView(getContext());
         canvasLayout.addView(drawingCanvas);
@@ -83,11 +83,11 @@ public class DrawingFragment extends Fragment {
 
     private void setUpButtonAndColor(View root) {
         // SET BUTTON
-        firstButton = root.findViewById(R.id.drawing_first_button);
-        secondButton = root.findViewById(R.id.drawing_second_button);
-        thirdButton = root.findViewById(R.id.drawing_third_button);
-        fourthButton = root.findViewById(R.id.drawing_fourth_button);
-        colorChooseButton = root.findViewById(R.id.colorChoose);
+        firstButton = root.findViewById(R.id.drawing_first_btn);
+        secondButton = root.findViewById(R.id.drawing_second_btn);
+        thirdButton = root.findViewById(R.id.drawing_third_btn);
+        fourthButton = root.findViewById(R.id.drawing_fourth_btn);
+        colorChooseButton = root.findViewById(R.id.drawing_fifth_btn);
 
         // SET COLOR OF BUTTONS:
         firstButtonColor = getActivity().getColor(R.color.first_drawing_button);
@@ -140,9 +140,7 @@ public class DrawingFragment extends Fragment {
     }
 
     public void saveButton(View view) {
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-        String fileName = "bitmap" + sdf.format(date) + ".jpg";
+        String fileName = "bitmap" + UUID.randomUUID().toString() + ".jpg";
         File bitmapFile =
                 new File(
                         Environment.getExternalStoragePublicDirectory(

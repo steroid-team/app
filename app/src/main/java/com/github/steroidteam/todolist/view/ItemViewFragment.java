@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
 import com.github.steroidteam.todolist.viewmodel.ItemViewModel;
@@ -62,6 +63,8 @@ public class ItemViewFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
 
         root.findViewById(R.id.new_task_btn).setOnClickListener(this::addTask);
+
+        ReminderDateBroadcast.createNotificationChannel(getActivity());
 
         return root;
     }

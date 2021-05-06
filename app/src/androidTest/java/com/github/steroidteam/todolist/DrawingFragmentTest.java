@@ -60,7 +60,7 @@ public class DrawingFragmentTest {
                     fragment.drawingCanvas.erase();
                 });
 
-        onView(withId(R.id.drawSpace)).perform(ViewActions.swipeRight());
+        onView(withId(R.id.drawing_space)).perform(ViewActions.swipeRight());
 
         scenario.onFragment(
                 fragment -> {
@@ -79,7 +79,7 @@ public class DrawingFragmentTest {
 
     @Test
     public void firstButtonWorks() {
-        onView(withId(R.id.drawing_first_button)).perform(click());
+        onView(withId(R.id.drawing_first_btn)).perform(click());
         scenario.onFragment(
                 fragment -> {
                     assertEquals(
@@ -90,7 +90,7 @@ public class DrawingFragmentTest {
 
     @Test
     public void secondButtonWorks() {
-        onView(withId(R.id.drawing_second_button)).perform(click());
+        onView(withId(R.id.drawing_second_btn)).perform(click());
         scenario.onFragment(
                 fragment -> {
                     assertEquals(
@@ -101,7 +101,7 @@ public class DrawingFragmentTest {
 
     @Test
     public void thirdButtonWorks() {
-        onView(withId(R.id.drawing_third_button)).perform(click());
+        onView(withId(R.id.drawing_third_btn)).perform(click());
         scenario.onFragment(
                 fragment -> {
                     assertEquals(
@@ -112,7 +112,7 @@ public class DrawingFragmentTest {
 
     @Test
     public void fourthButtonWorks() {
-        onView(withId(R.id.drawing_fourth_button)).perform(click());
+        onView(withId(R.id.drawing_fourth_btn)).perform(click());
         scenario.onFragment(
                 fragment -> {
                     assertEquals(
@@ -128,7 +128,7 @@ public class DrawingFragmentTest {
                     fragment.drawingCanvas.touchStart(100, 100);
                     fragment.drawingCanvas.touchMove(200, 100);
                 });
-        onView(withId(R.id.erase_button)).perform(click());
+        onView(withId(R.id.drawing_erase_btn)).perform(click());
         scenario.onFragment(
                 fragment -> {
                     assertEquals(
@@ -139,8 +139,8 @@ public class DrawingFragmentTest {
 
     @Test
     public void colorPickerButtonWorks() {
-        onView(withId(R.id.colorChoose)).perform(click());
-        onView(withId(R.id.colorPickerWindow)).check(matches(isDisplayed()));
+        onView(withId(R.id.drawing_fifth_btn)).perform(click());
+        onView(withId(R.id.drawing_color_picker)).check(matches(isDisplayed()));
         scenario.onFragment(
                 fragment -> {
                     assertEquals(fragment.drawingCanvas.getVisibility(), GONE);
@@ -149,13 +149,13 @@ public class DrawingFragmentTest {
 
     @Test
     public void backButtonWorks() {
-        onView(withId(R.id.backButton)).perform(click());
+        onView(withId(R.id.drawing_back_btn)).perform(click());
         assertEquals(Lifecycle.State.DESTROYED, activityRule.getScenario().getState());
     }
 
     @Test
     public void saveButtonWorks() {
-        onView(withId(R.id.save_button)).perform(click());
+        onView(withId(R.id.drawing_back_btn)).perform(click());
         assertEquals(Lifecycle.State.DESTROYED, activityRule.getScenario().getState());
     }
 
@@ -187,8 +187,8 @@ public class DrawingFragmentTest {
 
     @Test
     public void ApplyColorWorks() {
-        onView(withId(R.id.colorChoose)).perform(click());
-        onView(withId(R.id.applyColor)).perform(click());
+        onView(withId(R.id.drawing_fifth_btn)).perform(click());
+        onView(withId(R.id.drawing_apply_color_btn)).perform(click());
         scenario.onFragment(
                 fragment -> {
                     assertNotEquals(Color.BLACK, fragment.drawingCanvas.getPaint().getColor());
@@ -198,8 +198,8 @@ public class DrawingFragmentTest {
 
     @Test
     public void CancelColorWorks() {
-        onView(withId(R.id.colorChoose)).perform(click());
-        onView(withId(R.id.cancelColor)).perform(click());
+        onView(withId(R.id.drawing_fifth_btn)).perform(click());
+        onView(withId(R.id.drawing_cancel_color_btn)).perform(click());
         scenario.onFragment(
                 fragment -> {
                     assertEquals(Color.BLACK, fragment.drawingCanvas.getPaint().getColor());

@@ -53,7 +53,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/draw_space" />
+        app:layout_constraintTop_toBottomOf="@+id/drawing_space" />
 
     <Button
         android:id="@+id/drawing_save_btn"
@@ -67,11 +67,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.938"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/draw_space"
+        app:layout_constraintTop_toBottomOf="@+id/drawing_space"
         app:layout_constraintVertical_bias="0.0" />
 
     <FrameLayout
-        android:id="@+id/draw_space"
+        android:id="@+id/drawing_space"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="20dp"
@@ -91,7 +91,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/draw_space"
+        app:layout_constraintBottom_toTopOf="@+id/drawing_space"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/drawing_toolbar">
@@ -124,9 +124,9 @@
         android:orientation="vertical"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/drawing_erase_btn"
-        app:layout_constraintEnd_toEndOf="@+id/draw_space"
-        app:layout_constraintStart_toStartOf="@+id/draw_space"
-        app:layout_constraintTop_toTopOf="@+id/draw_space">
+        app:layout_constraintEnd_toEndOf="@+id/drawing_space"
+        app:layout_constraintStart_toStartOf="@+id/drawing_space"
+        app:layout_constraintTop_toTopOf="@+id/drawing_space">
 
         <com.larswerkman.holocolorpicker.ColorPicker
             android:id="@+id/drawing_color_picker"

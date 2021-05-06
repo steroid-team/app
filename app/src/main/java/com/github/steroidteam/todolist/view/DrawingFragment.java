@@ -52,7 +52,7 @@ public class DrawingFragment extends Fragment {
         super.onCreate(savedInstanceState);
         View root = inflater.inflate(R.layout.fragment_drawing, container, false);
 
-        canvasLayout = root.findViewById(R.id.draw_space);
+        canvasLayout = root.findViewById(R.id.drawing_space);
         colorPicker = root.findViewById(R.id.drawing_color_picker);
         colorPickerWindow = root.findViewById(R.id.drawing_color_picker_layout);
         saturationBar = root.findViewById(R.id.drawing_saturation_bar);

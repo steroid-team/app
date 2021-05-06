@@ -38,10 +38,6 @@ public class Note {
         return content;
     }
 
-    public LatLng getLatLng() {
-        return latLng;
-    }
-
     public Note setTitle(@NonNull String title) {
         this.title = title;
         return this;
@@ -50,6 +46,10 @@ public class Note {
     public Note setContent(@NonNull String content) {
         this.content = content;
         return this;
+    }
+
+    public LatLng getLatLng() {
+        return latLng;
     }
 
     public Note setLatLng(@NonNull LatLng latLng) {

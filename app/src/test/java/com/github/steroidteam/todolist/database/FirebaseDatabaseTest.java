@@ -382,8 +382,7 @@ public class FirebaseDatabaseTest {
         doReturn(uploadFuture).when(storageServiceMock).upload(any(byte[].class), anyString());
 
         try {
-            Note actualnote =
-                    database.updateNote(UUID.randomUUID(), expectedNote).join();
+            Note actualnote = database.updateNote(UUID.randomUUID(), expectedNote).join();
             assertEquals(expectedNote, actualnote);
         } catch (Exception e) {
             fail();

@@ -2,6 +2,7 @@ package com.github.steroidteam.todolist.model.notes;
 
 import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Note {
@@ -10,6 +11,9 @@ public class Note {
     private String title;
     private String content;
     private LatLng latLng;
+    private String locationName;
+
+    private static final String NO_LOCATION = "No location";
 
     public Note(@NonNull String title) {
         if (title == null) {
@@ -19,6 +23,7 @@ public class Note {
         this.title = title;
         this.content = "";
         this.latLng = null;
+        this.locationName = NO_LOCATION;
     }
 
     public UUID getId() {
@@ -37,15 +42,29 @@ public class Note {
         return latLng;
     }
 
-    public void setTitle(@NonNull String title) {
+    public Note setTitle(@NonNull String title) {
         this.title = title;
+        return this;
     }
 
-    public void setContent(@NonNull String content) {
+    public Note setContent(@NonNull String content) {
         this.content = content;
+        return this;
     }
 
-    public void setLatLng(@NonNull LatLng latLng) {
+    public Note setLatLng(@NonNull LatLng latLng) {
+        Objects.requireNonNull(latLng);
         this.latLng = latLng;
+        return this;
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public Note setLocationName(String locationName) {
+        Objects.requireNonNull(locationName);
+        this.locationName = locationName;
+        return this;
     }
 }

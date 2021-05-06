@@ -18,27 +18,34 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import com.github.steroidteam.todolist.R;
-import com.github.steroidteam.todolist.database.Database;
-import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.util.ViewUtils;
+import com.github.steroidteam.todolist.viewmodel.NoteViewModel;
 import com.google.android.gms.maps.model.LatLng;
 import java.io.InputStream;
 import java.util.UUID;
 import jp.wasabeef.richeditor.RichEditor;
 
 public class NoteDisplayFragment extends Fragment {
-    public static LatLng position;
-    public static String locationName;
-    private Database database;
+
+    private NoteViewModel noteViewModel;
+    private View root;
+
     private UUID noteID;
+
     private RichEditor richEditor;
     private ActivityResultLauncher<String> headerImagePickerActivityLauncher;
     private ActivityResultLauncher<String> embeddedImagePickerActivityLauncher;
     private final String IMAGE_MIME_TYPE = "image/*";
 
+    public static final String MAP_FRAGMENT_REQUEST_KEY = "MAP_FRAGMENT_REQUEST_KEY";
+    public static final String MAP_POSITION_KEY = "MAP_POSITION_KEY";
+    public static final String MAP_LOCATION_NAME_KEY = "MAP_LOCATION_NAME_KEY";
+
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View root = inflater.inflate(R.layout.fragment_note_display, container, false);
+        this.root = inflater.inflate(R.layout.fragment_note_display, container, false);
 
         setOnClickListeners(root);
 
@@ -60,14 +67,13 @@ public class NoteDisplayFragment extends Fragment {
         // Get the UUID of the currently selected note.
         noteID = UUID.fromString(getArguments().getString(NoteSelectionFragment.NOTE_ID_KEY));
 
-        database = DatabaseFactory.getDb();
-        database.getNote(noteID)
-                .thenAccept(
-                        note -> {
-                            TextView noteTitle = root.findViewById(R.id.note_title);
-                            noteTitle.setText(note.getTitle());
-                            richEditor.setHtml(note.getContent());
-                        });
+        // Set view model and observe the note:
+        this.noteViewModel = new NoteViewModel(noteID);
+        this.noteViewModel.getNote().observe(getViewLifecycleOwner(), this::updateUI);
+
+        // This methods need the view model:
+        setMapFragmentListener();
+        setRichEditorListeners(root);
 
         headerImagePickerActivityLauncher =
                 registerForActivityResult(
@@ -78,6 +84,58 @@ public class NoteDisplayFragment extends Fragment {
                         uri -> richEditor.insertImage(uri.toString(), "", imageDisplayWidth));
 
         return root;
+    }
+
+    private void updateUI(Note note) {
+        TextView noteTitle = root.findViewById(R.id.note_title);
+        noteTitle.setText(note.getTitle());
+        richEditor.setHtml(note.getContent());
+        TextView locationText = root.findViewById(R.id.note_location);
+        locationText.setText(note.getLocationName());
+    }
+
+    private void storeUserChanges() {
+        noteViewModel.updateNoteContent(richEditor.getHtml().trim());
+    }
+
+    private void setMapFragmentListener() {
+        getParentFragmentManager()
+                .setFragmentResultListener(
+                        MAP_FRAGMENT_REQUEST_KEY,
+                        this,
+                        (requestKey, result) -> {
+                            LatLng position = result.getParcelable(MAP_POSITION_KEY);
+                            String locationName = result.getString(MAP_LOCATION_NAME_KEY);
+
+                            noteViewModel.setPositionAndLocation(position, locationName);
+                        });
+    }
+
+    private void setRichEditorListeners(View root) {
+        root.findViewById(R.id.editor_action_bold_btn)
+                .setOnClickListener(v -> richEditor.setBold());
+        root.findViewById(R.id.editor_action_italic_btn)
+                .setOnClickListener(v -> richEditor.setItalic());
+        root.findViewById(R.id.editor_action_underline_btn)
+                .setOnClickListener(v -> richEditor.setUnderline());
+        root.findViewById(R.id.editor_action_strikethrough_btn)
+                .setOnClickListener(v -> richEditor.setStrikeThrough());
+        root.findViewById(R.id.editor_action_ul_btn)
+                .setOnClickListener(v -> richEditor.setBullets());
+        root.findViewById(R.id.editor_action_ol_btn)
+                .setOnClickListener(v -> richEditor.setNumbers());
+        root.findViewById(R.id.editor_action_image_btn)
+                .setOnClickListener(
+                        v -> embeddedImagePickerActivityLauncher.launch(IMAGE_MIME_TYPE));
+
+        richEditor.setFocusable(true);
+        richEditor.setOnFocusChangeListener(
+                (v, hasFocus) -> {
+                    if (!hasFocus) {
+                        storeUserChanges();
+                        ViewUtils.hideKeyboard(root);
+                    }
+                });
     }
 
     private void setOnClickListeners(View root) {
@@ -107,25 +165,11 @@ public class NoteDisplayFragment extends Fragment {
                         });
         // Add a click listener to the "back" button to return to the previous activity.
         root.findViewById(R.id.back_button)
-                .setOnClickListener((view) -> getParentFragmentManager().popBackStack());
-        // Add a click listener to the "save" button to store the changes in the database.
-        root.findViewById(R.id.notedisplay_save_btn).setOnClickListener(this::saveNote);
-
-        root.findViewById(R.id.editor_action_bold_btn)
-                .setOnClickListener(v -> richEditor.setBold());
-        root.findViewById(R.id.editor_action_italic_btn)
-                .setOnClickListener(v -> richEditor.setItalic());
-        root.findViewById(R.id.editor_action_underline_btn)
-                .setOnClickListener(v -> richEditor.setUnderline());
-        root.findViewById(R.id.editor_action_strikethrough_btn)
-                .setOnClickListener(v -> richEditor.setStrikeThrough());
-        root.findViewById(R.id.editor_action_ul_btn)
-                .setOnClickListener(v -> richEditor.setBullets());
-        root.findViewById(R.id.editor_action_ol_btn)
-                .setOnClickListener(v -> richEditor.setNumbers());
-        root.findViewById(R.id.editor_action_image_btn)
                 .setOnClickListener(
-                        v -> embeddedImagePickerActivityLauncher.launch(IMAGE_MIME_TYPE));
+                        (view) -> {
+                            storeUserChanges();
+                            getParentFragmentManager().popBackStack();
+                        });
     }
 
     private void updateHeaderImage(Uri uri) {
@@ -142,44 +186,5 @@ public class NoteDisplayFragment extends Fragment {
         BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
         header.setBackgroundTintList(null);
         header.setBackground(ob);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        position = null;
-        locationName = null;
-    }
-
-    /** Save the displayed note in the database. */
-    // TODO: Use the MVVM pattern here as well, so that the ViewModel is updated right after
-    //  making the changes (instead of manually "saving" the note when the button is pressed). This
-    //  would also remove the need to have a "save" button (because the changes would be reflected
-    //  in real time in the ViewModel and thus in the database).
-    private void saveNote(View view) {
-        database.getNote(noteID)
-                .thenCompose(
-                        note -> {
-                            TextView noteTitle = getView().findViewById(R.id.note_title);
-                            note.setTitle(noteTitle.getText().toString());
-                            note.setContent(richEditor.getHtml().trim());
-                            return database.putNote(noteID, note);
-                        });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // TODO: Update the note's location via a ViewModel, so that no static attributes have to
-        //  be used at all for passing data between the MapFragment and the NoteDisplayFragment.
-        if (position != null && locationName != null) setLocationNote(position, locationName);
-    }
-
-    public void setLocationNote(LatLng latLng, String location) {
-        // TODO : Change the location of the note when the activity will be link with real note
-        if (latLng != null && location != null) {
-            TextView locationText = getView().findViewById(R.id.note_location);
-            locationText.setText(location);
-        }
     }
 }

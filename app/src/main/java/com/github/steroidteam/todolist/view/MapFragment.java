@@ -165,8 +165,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            NoteDisplayFragment.position = position;
-            NoteDisplayFragment.locationName = addressList.get(0).getLocality();
+            Bundle result = new Bundle();
+            result.putParcelable(NoteDisplayFragment.MAP_POSITION_KEY, position);
+            result.putString(
+                    NoteDisplayFragment.MAP_LOCATION_NAME_KEY, addressList.get(0).getLocality());
+            getParentFragmentManager()
+                    .setFragmentResult(NoteDisplayFragment.MAP_FRAGMENT_REQUEST_KEY, result);
+
             Log.d("mapfragment", "data stored");
         }
         // Go back to the original fragment.

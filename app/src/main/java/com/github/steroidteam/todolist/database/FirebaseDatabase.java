@@ -186,6 +186,17 @@ public class FirebaseDatabase implements Database {
     }
 
     @Override
+    public CompletableFuture<Note> updateNote(UUID noteID, Note newNote) {
+        Objects.requireNonNull(noteID);
+        Objects.requireNonNull(newNote);
+
+        String targetPath = NOTES_PATH + noteID.toString() + ".json";
+        byte[] fBytes = JSONSerializer.serializeNote(newNote).getBytes(StandardCharsets.UTF_8);
+
+        return this.storageService.upload(fBytes, targetPath).thenApply(str -> newNote);
+    }
+
+    @Override
     public CompletableFuture<List<UUID>> getNotesList() {
         CompletableFuture<String[]> listDir = this.storageService.listDir(NOTES_PATH);
 

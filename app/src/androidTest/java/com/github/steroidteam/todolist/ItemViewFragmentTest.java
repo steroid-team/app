@@ -40,6 +40,8 @@ import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.view.ItemViewFragment;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.hamcrest.Description;
@@ -49,6 +51,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ItemViewFragmentTest {
@@ -152,6 +155,40 @@ public class ItemViewFragmentTest {
 
         onView(withId(R.id.activity_itemview_itemlist))
                 .check(matches(atPositionCheckBox(0, false)));
+    }
+
+    @Test
+    public void datesAreRemovedFromTaskBodyUponCreation() {
+        HashMap<String, String> fixtureDates = new HashMap<>();
+        fixtureDates.put("Call Sammy today at noon", " today at noon");
+        fixtureDates.put("Deliver at 8 PM the package", " at 8 PM");
+        fixtureDates.put(
+                "The day after tomorrow at 13:00 buy 3 avocados",
+                "The day after " + "tomorrow at 13:00 ");
+
+        PrettyTimeParser timeParser = new PrettyTimeParser();
+
+        for (Map.Entry<String, String> entry : fixtureDates.entrySet()) {
+            String originalTaskDescription = entry.getKey();
+
+            // Start the view with an empty list.
+            TodoList todoList = new TodoList("Some random title");
+            CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+            todoListFuture.complete(todoList);
+            doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+
+            // Type the task description in the "new task" text field.
+            onView(withId(R.id.new_task_text))
+                    .perform(typeText(originalTaskDescription), closeSoftKeyboard());
+
+            // Hit the button to create a new task.
+            onView(withId(R.id.new_task_btn)).perform(click());
+
+            Task task = new Task(originalTaskDescription.replace(entry.getValue(), ""));
+            task.setDueDate(timeParser.parse(entry.getValue()).get(0));
+
+            verify(databaseMock).putTask(any(UUID.class), eq(task));
+        }
     }
 
     @Test

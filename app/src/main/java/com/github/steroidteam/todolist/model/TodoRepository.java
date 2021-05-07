@@ -64,4 +64,17 @@ public class TodoRepository {
                 .thenCompose(task -> this.database.getTodoList(todoListID))
                 .thenAccept(this.oneTodoList::setValue);
     }
+
+    public void setTaskDueDate(int index, Date dueDate) {
+        this.database
+                .getTask(todoListID, index)
+                .thenCompose(
+                        task -> {
+                            task.setDueDate(dueDate);
+                            return this.database.updateTask(todoListID, index, task);
+                        })
+                .thenCompose(task -> this.database.getTodoList(todoListID))
+                .thenAccept(this.oneTodoList::setValue);
+        this.database.getTodoList(todoListID).thenAccept(this.oneTodoList::setValue);
+    }
 }

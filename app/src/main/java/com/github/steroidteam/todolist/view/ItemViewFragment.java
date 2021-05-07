@@ -123,7 +123,7 @@ public class ItemViewFragment extends Fragment {
                 (v) -> {
                     closeUpdateLayout(v);
                     itemViewModel.renameTask(position, userInputBody.getText().toString());
-                    itemViewModel.setTaskDone(position, taskCheckedBox.isChecked());
+                    itemViewModel.setTaskDueDate(position, taskCheckedBox.isChecked());
                 });
 
         Button deleteButton = getView().findViewById(R.id.layout_update_task_delete);

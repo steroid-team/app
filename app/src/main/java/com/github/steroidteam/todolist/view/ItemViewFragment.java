@@ -1,6 +1,7 @@
 package com.github.steroidteam.todolist.view;
 
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +18,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.model.TodoRepository;
+import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
+import com.github.steroidteam.todolist.view.misc.DateHighlighterTextWatcher;
+import com.github.steroidteam.todolist.view.misc.DueDateInputSpan;
 import com.github.steroidteam.todolist.viewmodel.ItemViewModel;
+import java.util.Date;
 import java.util.UUID;
+import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
 
 public class ItemViewFragment extends Fragment {
 
     private ItemViewModel itemViewModel;
     private TodoAdapter adapter;
+    private final PrettyTimeParser timeParser = new PrettyTimeParser();
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,6 +41,10 @@ public class ItemViewFragment extends Fragment {
         // Add a click listener to the "back" button to return to the previous activity.
         root.findViewById(R.id.back_button)
                 .setOnClickListener(v -> getParentFragmentManager().popBackStack());
+
+        EditText newTaskText = root.findViewById(R.id.new_task_text);
+        newTaskText.addTextChangedListener(
+                new DateHighlighterTextWatcher(getContext(), timeParser));
 
         RecyclerView recyclerView = root.findViewById(R.id.activity_itemview_itemlist);
         // The layout manager takes care of displaying the task below each other
@@ -89,13 +100,48 @@ public class ItemViewFragment extends Fragment {
 
     public void addTask(View view) {
         EditText newTaskET = getView().findViewById(R.id.new_task_text);
-        String taskDescription = newTaskET.getText().toString();
 
-        // Make sure that we only add the task if the description has text.
-        if (taskDescription.length() > 0) itemViewModel.addTask(taskDescription);
+        Task task = getTaskFromEditable(newTaskET.getText());
+        if (task == null) return;
+
+        itemViewModel.addTask(task);
 
         // Clean the description text box.
         newTaskET.getText().clear();
+    }
+
+    private Task getTaskFromEditable(Editable editable) {
+        String taskDescription = editable.toString();
+
+        DueDateInputSpan[] dueDateInputSpans =
+                editable.getSpans(0, editable.length(), DueDateInputSpan.class);
+
+        Date dueDate = null;
+        if (dueDateInputSpans.length > 0) {
+            // There should only be one span, as we make sure that only the last date in the
+            // task's body has one.
+            DueDateInputSpan span = dueDateInputSpans[0];
+            dueDate = span.getDate();
+
+            // Remove one leading/trailing space, to there are no two contiguous spaces after
+            // removing the date.
+            int start = editable.getSpanStart(span);
+            int end = editable.getSpanEnd(span);
+            if (start > 0 && taskDescription.charAt(start - 1) == ' ') start--;
+            else if (end < taskDescription.length() - 1 && taskDescription.charAt(end) == ' ')
+                end++;
+
+            StringBuilder sb = new StringBuilder(taskDescription);
+            sb.delete(start, end);
+            taskDescription = sb.toString();
+        }
+
+        // Make sure that we only return a task if the description has actual text.
+        if (taskDescription.length() == 0) return null;
+
+        Task task = new Task(taskDescription);
+        if (dueDate != null) task.setDueDate(dueDate);
+        return task;
     }
 
     public void removeTask(final int position) {
@@ -114,6 +160,8 @@ public class ItemViewFragment extends Fragment {
 
         EditText userInputBody = getView().findViewById(R.id.layout_update_task_body);
         userInputBody.setText(holder.getTaskBody());
+        userInputBody.addTextChangedListener(
+                new DateHighlighterTextWatcher(getContext(), timeParser));
 
         CheckBox taskCheckedBox = getView().findViewById(R.id.layout_update_task_checkbox);
         taskCheckedBox.setChecked(holder.getTaskDone());
@@ -122,8 +170,12 @@ public class ItemViewFragment extends Fragment {
         saveButton.setOnClickListener(
                 (v) -> {
                     closeUpdateLayout(v);
-                    itemViewModel.renameTask(position, userInputBody.getText().toString());
-                    itemViewModel.setTaskDueDate(position, taskCheckedBox.isChecked());
+                    Task task = getTaskFromEditable(userInputBody.getText());
+
+                    if (task == null) return;
+
+                    itemViewModel.renameTask(position, task.getBody());
+                    itemViewModel.setTaskDueDate(position, task.getDueDate());
                 });
 
         Button deleteButton = getView().findViewById(R.id.layout_update_task_delete);

@@ -16,8 +16,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 import android.app.NotificationManager;
 import android.content.Context;
@@ -66,7 +67,9 @@ public class ItemViewFragmentTest {
         CompletableFuture<Task> taskFuture = new CompletableFuture<>();
         taskFuture.complete(task);
         doReturn(taskFuture).when(databaseMock).putTask(any(UUID.class), any(Task.class));
-        doReturn(taskFuture).when(databaseMock).renameTask(any(UUID.class), anyInt(), anyString());
+        doReturn(taskFuture)
+                .when(databaseMock)
+                .updateTask(any(UUID.class), anyInt(), any(Task.class));
         doReturn(taskFuture).when(databaseMock).removeTask(any(UUID.class), anyInt());
         doReturn(taskFuture)
                 .when(databaseMock)
@@ -122,10 +125,14 @@ public class ItemViewFragmentTest {
 
         TodoList todoList = new TodoList("Some random title");
         /* We should return a new todoList with this task description once we've created it */
-        todoList.addTask(new Task(TASK_DESCRIPTION));
+        Task task = new Task(TASK_DESCRIPTION);
+        todoList.addTask(task);
         CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
         doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        CompletableFuture<Task> taskFuture = new CompletableFuture<>();
+        taskFuture.complete(task);
+        doReturn(taskFuture).when(databaseMock).getTask(any(UUID.class), anyInt());
 
         // Type a task description in the "new task" text field.
         onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
@@ -155,12 +162,14 @@ public class ItemViewFragmentTest {
 
         TodoList todoList = new TodoList("Some random title");
         /* We should return a new todoList with this task description once we've created it */
-        Task task = new Task(TASK_DESCRIPTION);
-        task.setDone(true);
-        todoList.addTask(task);
+        Task originalTask = new Task(TASK_DESCRIPTION);
+        todoList.addTask(originalTask);
         CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
         doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        CompletableFuture<Task> taskFuture = new CompletableFuture<>();
+        taskFuture.complete(originalTask);
+        doReturn(taskFuture).when(databaseMock).getTask(any(UUID.class), anyInt());
 
         // Type a task description in the "new task" text field.
         onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
@@ -176,17 +185,26 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.activity_itemview_itemlist))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
+        // Make sure that the database was called to update the task, and that the updated task
+        // is now set as "done".
+        Task updatedTask = new Task(originalTask.getBody());
+        updatedTask.setDone(true);
+        verify(databaseMock).updateTask(any(UUID.class), anyInt(), eq(updatedTask));
+
         onView(withId(R.id.layout_update_task_body)).check(matches(withText(TASK_DESCRIPTION)));
         onView(withId(R.id.layout_update_task_checkbox)).check(matches(isChecked()));
 
         todoList = new TodoList("Some random title");
         /* We should return a new todoList with this task description once we've created it */
-        task = new Task(TASK_DESCRIPTION_2);
-        task.setDone(false);
-        todoList.addTask(task);
+        originalTask = new Task(TASK_DESCRIPTION_2);
+        originalTask.setDone(false);
+        todoList.addTask(originalTask);
         todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
         doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        taskFuture = new CompletableFuture<>();
+        taskFuture.complete(originalTask);
+        doReturn(taskFuture).when(databaseMock).getTask(any(UUID.class), anyInt());
 
         onView(withId(R.id.layout_update_task_checkbox)).perform(click());
         onView(withId(R.id.layout_update_task_body))
@@ -227,10 +245,14 @@ public class ItemViewFragmentTest {
 
         /* Then we should return one task */
         todoList = new TodoList("Some random title");
-        todoList.addTask(new Task(TASK_DESCRIPTION_2));
+        Task task = new Task(TASK_DESCRIPTION_2);
+        todoList.addTask(task);
         todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
         doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        CompletableFuture<Task> taskFuture = new CompletableFuture<>();
+        taskFuture.complete(task);
+        doReturn(taskFuture).when(databaseMock).getTask(any(UUID.class), anyInt());
 
         // Try to remove the first task
         onView(withId(R.id.activity_itemview_itemlist))

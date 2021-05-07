@@ -155,7 +155,7 @@ public class DrawingFragmentTest {
 
     @Test
     public void saveButtonWorks() {
-        onView(withId(R.id.drawing_back_btn)).perform(click());
+        onView(withId(R.id.drawing_save_btn)).perform(click());
         assertEquals(Lifecycle.State.DESTROYED, activityRule.getScenario().getState());
     }
 

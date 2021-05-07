@@ -7,15 +7,21 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import android.Manifest;
 import androidx.fragment.app.testing.FragmentScenario;
+import androidx.test.rule.GrantPermissionRule;
 import com.github.steroidteam.todolist.view.AudioRecorderFragment;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AudioRecorderFragmentTest {
+    @Rule
+    public GrantPermissionRule permissionRule =
+            GrantPermissionRule.grant(Manifest.permission.RECORD_AUDIO);
 
     @Before
     public void init() {

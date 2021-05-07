@@ -14,7 +14,6 @@ import static androidx.test.espresso.web.sugar.Web.onWebView;
 import static androidx.test.espresso.web.webdriver.DriverAtoms.clearElement;
 import static androidx.test.espresso.web.webdriver.DriverAtoms.findElement;
 import static androidx.test.espresso.web.webdriver.DriverAtoms.getText;
-import static androidx.test.espresso.web.webdriver.DriverAtoms.webClick;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,7 +36,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -149,29 +147,6 @@ public class NoteDisplayFragmentTest {
         RichEditorGetHtml getHtml = new RichEditorGetHtml();
         onView(withId(R.id.notedisplay_text_editor)).perform(getHtml);
         MatcherAssert.assertThat(getHtml.contents, equalTo(FIXTURE_DEFAULT_NOTE_CONTENT));
-    }
-
-    @Ignore
-    public void textFormattingWorks() {
-        // Clear the text field (so it's a bit easier to test)
-        onWebView().withElement(findElement(Locator.ID, "editor")).perform(clearElement());
-
-        // Tap the text field so it has the keyboard's focus.
-        onView(withId(R.id.notedisplay_text_editor))
-                .perform(click())
-                .perform(typeText("Some text"));
-
-        onWebView()
-                // .withElement(withText("Some"))
-                .withElement(findElement(Locator.XPATH, "//div[contains(text(), 'Some')]"))
-                // .check(webMatches())
-                .perform(webClick())
-                .perform(webClick());
-        try {
-            wait(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     @Test

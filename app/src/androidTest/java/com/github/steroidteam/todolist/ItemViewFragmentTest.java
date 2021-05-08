@@ -365,13 +365,23 @@ public class ItemViewFragmentTest {
                             (LocationManager)
                                     fragment.getActivity()
                                             .getSystemService(Context.LOCATION_SERVICE);
-                    locationManager.requestLocationUpdates(
-                            LocationManager.NETWORK_PROVIDER,
-                            0,
-                            0,
-                            location ->
-                                    ReminderLocationBroadcast.createLocationNotification(
-                                            location, fragment.getActivity()));
+                    if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                        locationManager.requestLocationUpdates(
+                                LocationManager.NETWORK_PROVIDER,
+                                0,
+                                0,
+                                location ->
+                                        ReminderLocationBroadcast.createLocationNotification(
+                                                location, fragment.getActivity()));
+                    } else {
+                        locationManager.requestLocationUpdates(
+                                LocationManager.GPS_PROVIDER,
+                                0,
+                                0,
+                                location ->
+                                        ReminderLocationBroadcast.createLocationNotification(
+                                                location, fragment.getActivity()));
+                    }
                 });
 
         /**

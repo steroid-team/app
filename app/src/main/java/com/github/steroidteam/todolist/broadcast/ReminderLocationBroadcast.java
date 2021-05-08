@@ -42,10 +42,11 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
 
     public static void createLocationNotificationChannel(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel =
                     new NotificationChannel(
-                            REMINDER_LOC_CHANNEL_ID, NAME_LOCATION_CHANNEL, importance);
+                            REMINDER_LOC_CHANNEL_ID,
+                            NAME_LOCATION_CHANNEL,
+                            NotificationManager.IMPORTANCE_DEFAULT);
             channel.setDescription(DESCRIPTION_LOCATION_CHANNEL);
 
             NotificationManager notificationManager =

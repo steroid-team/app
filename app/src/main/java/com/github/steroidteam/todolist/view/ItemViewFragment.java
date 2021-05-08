@@ -1,5 +1,6 @@
 package com.github.steroidteam.todolist.view;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,15 +17,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
+import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;
 import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
 import com.github.steroidteam.todolist.viewmodel.ItemViewModel;
 import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemViewFragment extends Fragment {
 
     private ItemViewModel itemViewModel;
     private TodoAdapter adapter;
+    public static final int PERMISSIONS_ACCESS_LOCATION = 2;
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,6 +69,7 @@ public class ItemViewFragment extends Fragment {
         root.findViewById(R.id.new_task_btn).setOnClickListener(this::addTask);
 
         ReminderDateBroadcast.createNotificationChannel(getActivity());
+        ReminderLocationBroadcast.createLocationNotificationChannel(getActivity());
 
         return root;
     }
@@ -139,5 +144,26 @@ public class ItemViewFragment extends Fragment {
 
     public void checkBoxTaskListener(final int position, final boolean isChecked) {
         itemViewModel.setTaskDone(position, isChecked);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull @NotNull String[] permissions,
+            @NonNull @NotNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean isPermissionGiven = false;
+        switch (requestCode) {
+            case PERMISSIONS_ACCESS_LOCATION:
+                isPermissionGiven = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                break;
+        }
+        if (!isPermissionGiven) {
+            Toast.makeText(
+                            getContext(),
+                            "You must give access to the location to use this feature !",
+                            Toast.LENGTH_SHORT)
+                    .show();
+        }
     }
 }

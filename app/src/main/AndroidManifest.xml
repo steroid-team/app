@@ -31,9 +31,12 @@
         <activity android:name=".view.MainActivity" />
 
         <receiver android:name=".broadcast.ReminderDateBroadcast"/>
+        <receiver android:name=".broadcast.ReminderLocationBroadcast"/>
     </application>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 
 </manifest>
+

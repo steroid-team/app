@@ -28,14 +28,14 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, REMINDER_LOC_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notification)
                         .setContentTitle(context.getString(R.string.title_location_reminder))
                         .setContentText(context.getString(R.string.content_location_reminder))
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
         notificationManager.notify(REMINDER_LOC_ID, builder.build());
     }

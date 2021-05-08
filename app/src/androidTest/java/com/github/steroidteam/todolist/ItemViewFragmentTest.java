@@ -389,7 +389,7 @@ public class ItemViewFragmentTest {
          * and in fact like 3 or 4 seconds to display the notification *
          */
         try {
-            Thread.sleep(7000);
+            Thread.sleep(180000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

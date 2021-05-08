@@ -45,13 +45,14 @@ public class ListSelectionFragment extends Fragment {
         adapter = new TodoArrayListAdapter(createCustomListener());
         recyclerView.setAdapter(adapter);
 
-        TodoArrayRepository repository = new TodoArrayRepository();
+        TodoArrayRepository repository = new TodoArrayRepository(getContext());
         viewModel = new ListSelectionViewModel(repository);
         viewModel
                 .getListOfTodo()
                 .observe(
                         getActivity(),
                         (todoListArrayList) -> {
+                            System.err.println(todoListArrayList.size() + "zqddddddddddddddddddddddddddddd");
                             adapter.setTodoListCollection(todoListArrayList);
                         });
 

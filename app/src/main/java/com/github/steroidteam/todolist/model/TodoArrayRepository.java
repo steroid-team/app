@@ -1,9 +1,12 @@
 package com.github.steroidteam.todolist.model;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.database.LocalCachedDatabase;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import java.util.ArrayList;
@@ -14,8 +17,8 @@ public class TodoArrayRepository {
     private final MutableLiveData<ArrayList<TodoList>> arrayOfTodoList;
     // private final ArrayList<TodoList> privateArrayList;
 
-    public TodoArrayRepository() {
-        this.database = DatabaseFactory.getDb();
+    public TodoArrayRepository(Context context) {
+        this.database = new LocalCachedDatabase(context);
         arrayOfTodoList = new MutableLiveData<>(new ArrayList<>());
         this.database.getTodoListCollection().thenAccept(this::setArrayOfTodoList);
     }
@@ -26,16 +29,19 @@ public class TodoArrayRepository {
 
     private void setArrayOfTodoList(TodoListCollection todoListCollection) {
         ArrayList<TodoList> privateArrayList = new ArrayList<>();
+        System.err.println("ONNNNNNNNNNNNNNNa " + todoListCollection.getSize());
         if (todoListCollection.getSize() == 0) {
-            arrayOfTodoList.setValue(privateArrayList);
+            arrayOfTodoList.postValue(privateArrayList);
         } else {
             for (int i = 0; i < todoListCollection.getSize(); i++) {
+                System.err.println("ZDOQPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP ");
                 this.database
                         .getTodoList(todoListCollection.getUUID(i))
                         .thenAccept(
                                 todoList -> {
+                                    System.err.println("THIS IS A TODOLIST ! " + todoList.toString());
                                     privateArrayList.add(todoList);
-                                    arrayOfTodoList.setValue(privateArrayList);
+                                    arrayOfTodoList.postValue(privateArrayList);
                                 });
             }
         }

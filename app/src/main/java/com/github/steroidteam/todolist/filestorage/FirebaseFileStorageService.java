@@ -15,7 +15,7 @@ public class FirebaseFileStorageService implements FileStorageService {
 
     public FirebaseFileStorageService(
             @NonNull FirebaseStorage storage, @NonNull FirebaseUser user) {
-        Objects.requireNonNull(user);
+        Objects.requireNonNull(storage);
         Objects.requireNonNull(user);
         this.user = user;
         this.storageRef = storage.getReference();

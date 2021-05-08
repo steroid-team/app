@@ -77,5 +77,6 @@
     <string name="content_date_reminder">Hey This is a test !</string>
     <string name="title_location_reminder">Location reminder !</string>
     <string name="content_location_reminder">Hey ! You\'ve some tasks from this location</string>
+    <string name="toast_reminder">The reminder has been set !</string>
 
 </resources>

@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -84,5 +85,10 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
         }
         locationManager.addProximityAlert(
                 location.getLatitude(), location.getLongitude(), RADIUS, -1, pendingIntent);
+        Toast.makeText(
+                        activity.getApplicationContext(),
+                        activity.getApplicationContext().getString(R.string.toast_reminder),
+                        Toast.LENGTH_SHORT)
+                .show();
     }
 }

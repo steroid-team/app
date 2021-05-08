@@ -384,32 +384,9 @@ public class ItemViewFragmentTest {
                     }
                 });
 
-        /**
-         * Have to wait some times because to retrieve the current location it takes some seconds
-         * and in fact like 3 or 4 seconds to display the notification *
-         */
-        try {
-            Thread.sleep(180000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        scenario.onFragment(
-                fragment -> {
-                    boolean isDisplayed = false;
-                    NotificationManager notificationManager =
-                            (NotificationManager)
-                                    fragment.getContext()
-                                            .getSystemService(Context.NOTIFICATION_SERVICE);
-                    StatusBarNotification[] notifications =
-                            notificationManager.getActiveNotifications();
-                    for (StatusBarNotification notification : notifications) {
-                        if (notification.getId() == ReminderLocationBroadcast.REMINDER_LOC_ID) {
-                            isDisplayed = true;
-                        }
-                    }
-                    assertEquals(true, isDisplayed);
-                });
+        onView(withText("The reminder has been set !"))
+                .inRoot(new ToastMatcher())
+                .check(matches(isDisplayed()));
     }
 
     public static Matcher<View> atPositionCheckText(

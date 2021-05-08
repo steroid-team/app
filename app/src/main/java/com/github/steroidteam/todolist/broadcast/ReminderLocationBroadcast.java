@@ -31,8 +31,8 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, REMINDER_LOC_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notification)
-                        .setContentTitle("Location reminder")
-                        .setContentText("Hey ! You've some tasks from this location")
+                        .setContentTitle(context.getString(R.string.title_location_reminder))
+                        .setContentText(context.getString(R.string.content_location_reminder))
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);

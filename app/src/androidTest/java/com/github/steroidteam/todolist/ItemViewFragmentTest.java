@@ -21,6 +21,7 @@ import static org.mockito.Mockito.doReturn;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.view.View;
@@ -34,6 +35,7 @@ import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
+import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.Task;
@@ -317,10 +319,8 @@ public class ItemViewFragmentTest {
     }
 
     @Test
-    public void notificationReminderWorks() {
-
+    public void notificationDateReminderWorks() {
         int twoSecondsInMillis = 2 * 1000;
-        ;
         scenario.onFragment(
                 fragment -> {
                     ReminderDateBroadcast.createNotificationChannel(fragment.getActivity());
@@ -354,11 +354,52 @@ public class ItemViewFragmentTest {
                     }
                     assertEquals(true, isDisplayed);
                 });
+    }
 
-        // FIXME : unable to check if toast appeared
-        /*onView(withText("Successfully removed the task !"))
-        .inRoot(new ToastMatcher())
-        .check(matches(isDisplayed()));*/
+    @Test
+    public void notificationLocationReminderWorks() {
+        scenario.onFragment(
+                fragment -> {
+                    ReminderDateBroadcast.createNotificationChannel(fragment.getActivity());
+                    LocationManager locationManager =
+                            (LocationManager)
+                                    fragment.getActivity()
+                                            .getSystemService(Context.LOCATION_SERVICE);
+                    locationManager.requestLocationUpdates(
+                            LocationManager.NETWORK_PROVIDER,
+                            0,
+                            0,
+                            location ->
+                                    ReminderLocationBroadcast.createLocationNotification(
+                                            location, fragment.getActivity()));
+                });
+
+        /**
+         * Have to wait some times because to retrieve the current location it takes some seconds
+         * and in fact like 3 or 4 seconds to display the notification *
+         */
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        scenario.onFragment(
+                fragment -> {
+                    boolean isDisplayed = false;
+                    NotificationManager notificationManager =
+                            (NotificationManager)
+                                    fragment.getContext()
+                                            .getSystemService(Context.NOTIFICATION_SERVICE);
+                    StatusBarNotification[] notifications =
+                            notificationManager.getActiveNotifications();
+                    for (StatusBarNotification notification : notifications) {
+                        if (notification.getId() == ReminderLocationBroadcast.REMINDER_LOC_ID) {
+                            isDisplayed = true;
+                        }
+                    }
+                    assertEquals(true, isDisplayed);
+                });
     }
 
     public static Matcher<View> atPositionCheckText(

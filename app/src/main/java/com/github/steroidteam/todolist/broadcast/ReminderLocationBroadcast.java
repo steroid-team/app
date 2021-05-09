@@ -66,6 +66,17 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
         LocationManager locationManager =
                 (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
+        if (managePermissions(activity, locationManager, location, pendingIntent)) {
+            Toast.makeText(
+                            activity.getApplicationContext(),
+                            activity.getApplicationContext().getString(R.string.toast_reminder),
+                            Toast.LENGTH_SHORT)
+                    .show();
+        }
+    }
+
+    private static boolean managePermissions(
+            Activity activity, LocationManager locMan, Location loc, PendingIntent pendingIntent) {
         if (ActivityCompat.checkSelfPermission(
                                 activity.getApplicationContext(),
                                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -81,14 +92,9 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
                         Manifest.permission.ACCESS_COARSE_LOCATION
                     },
                     ItemViewFragment.PERMISSIONS_ACCESS_LOCATION);
-            return;
+            return false;
         }
-        locationManager.addProximityAlert(
-                location.getLatitude(), location.getLongitude(), RADIUS, -1, pendingIntent);
-        Toast.makeText(
-                        activity.getApplicationContext(),
-                        activity.getApplicationContext().getString(R.string.toast_reminder),
-                        Toast.LENGTH_SHORT)
-                .show();
+        locMan.addProximityAlert(loc.getLatitude(), loc.getLongitude(), RADIUS, -1, pendingIntent);
+        return true;
     }
 }

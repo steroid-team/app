@@ -30,4 +30,10 @@ public class TodoListCollection {
     public void removeUUID(UUID uuid) {
         todoListCollection.remove(uuid);
     }
+
+    public boolean isEmpty() {return todoListCollection.isEmpty();}
+
+    public boolean contains(UUID uuid) {
+        return todoListCollection.contains(uuid);
+    }
 }

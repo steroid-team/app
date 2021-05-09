@@ -384,6 +384,12 @@ public class ItemViewFragmentTest {
                     }
                 });
 
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         onView(withText("The reminder has been set !"))
                 .inRoot(new ToastMatcher())
                 .check(matches(isDisplayed()));

@@ -21,6 +21,7 @@ import static org.mockito.Mockito.doReturn;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
@@ -374,21 +375,14 @@ public class ItemViewFragmentTest {
                                         ReminderLocationBroadcast.createLocationNotification(
                                                 location, fragment.getActivity()));
                     } else {
-                        locationManager.requestLocationUpdates(
-                                LocationManager.GPS_PROVIDER,
-                                0,
-                                0,
-                                location ->
-                                        ReminderLocationBroadcast.createLocationNotification(
-                                                location, fragment.getActivity()));
+                        // Location from sydney
+                        Location loc = new Location("");
+                        loc.setLatitude(-33.8523341);
+                        loc.setLongitude(151.2106085);
+                        ReminderLocationBroadcast.createLocationNotification(
+                                loc, fragment.getActivity());
                     }
                 });
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         onView(withText("The reminder has been set !"))
                 .inRoot(new ToastMatcher())

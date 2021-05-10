@@ -156,9 +156,15 @@ public class ItemViewFragment extends Fragment {
     public void closeUpdateLayout(View view) {
         ConstraintLayout updateLayout = getView().findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.GONE);
+
+        RecyclerView recyclerView = getView().findViewById(R.id.activity_itemview_itemlist);
+        recyclerView.setVisibility(View.VISIBLE);
     }
 
     public void openUpdateLayout(TodoAdapter.TaskHolder holder, final int position) {
+        RecyclerView recyclerView = getView().findViewById(R.id.activity_itemview_itemlist);
+        recyclerView.setVisibility(View.GONE);
+
         ConstraintLayout updateLayout = getView().findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.VISIBLE);
 
@@ -178,8 +184,12 @@ public class ItemViewFragment extends Fragment {
 
                     if (task == null) return;
 
-                    viewModel.renameTask(position, task.getBody());
-                    viewModel.setTaskDueDate(position, task.getDueDate());
+                    if (task.getBody() != null) {
+                        viewModel.renameTask(position, task.getBody());
+                    }
+                    if (task.getDueDate() != null) {
+                        viewModel.setTaskDueDate(position, task.getDueDate());
+                    }
                 });
 
         Button deleteButton = getView().findViewById(R.id.layout_update_task_delete);

@@ -1,4 +1,4 @@
-package com.github.steroidteam.todolist.view;
+package com.github.steroidteam.todolist.view.misc;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.view.ListSelectionFragment;
 import com.github.steroidteam.todolist.view.adapter.TodoArrayListAdapter;
 
 public class TodoTouchHelper extends ItemTouchHelper.SimpleCallback {

@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class LocalCachedDatabase implements Database {
+public class LocalCachedDatabase {
 
     private final FileStorageDatabase firebaseDatabase;
     private final FileStorageDatabase localDatabase;
@@ -39,28 +39,6 @@ public class LocalCachedDatabase implements Database {
         this.inMemoryTodoMap = new HashMap<>();
     }
 
-    @Override
-    public CompletableFuture<TodoListCollection> getTodoListCollection() {
-
-        CompletableFuture<TodoListCollection> localFuture = localDatabase.getTodoListCollection();
-
-
-        if(localTodoID.isEmpty()) {
-            CompletableFuture<TodoListCollection> firebaseFuture = firebaseDatabase.getTodoListCollection();
-
-            firebaseFuture.thenAccept(todoListCollection -> {
-                this.localTodoID = todoListCollection;
-                for(int i = 0; i < todoListCollection.getSize(); ++i) {
-                    this.firebaseDatabase.getTodoList(todoListCollection.getUUID(i))
-                            .thenAccept(this.localDatabase::putTodoList);
-                }
-            });
-
-            return firebaseFuture;
-        }
-    }
-
-    @Override
     public CompletableFuture<TodoList> putTodoList(TodoList list) {
         /**
         this.firebaseDatabase.putTodoList(list);
@@ -73,7 +51,6 @@ public class LocalCachedDatabase implements Database {
         return CompletableFuture.completedFuture(this.inMemoryTodoMap.put(list.getId(), list));
     }
 
-    @Override
     public CompletableFuture<Void> removeTodoList(UUID todoListID) {
         /**
         this.firebaseDatabase.removeTodoList(todoListID);
@@ -86,7 +63,6 @@ public class LocalCachedDatabase implements Database {
         return CompletableFuture.completedFuture(null);
     }
 
-    @Override
     public CompletableFuture<TodoList> getTodoList(UUID todoListID) {
         /**
         if(localTodoID.contains(todoListID)) {
@@ -113,7 +89,6 @@ public class LocalCachedDatabase implements Database {
         }
     }
 
-    @Override
     public CompletableFuture<TodoList> updateTodoList(UUID todoListID, TodoList todoList) {
         /**
         if(localTodoID.contains(todoListID)) {
@@ -144,70 +119,12 @@ public class LocalCachedDatabase implements Database {
         }
     }
 
-    @Override
     public CompletableFuture<Task> putTask(UUID todoListID, Task task) {
         return localDatabase.putTask(todoListID, task);
     }
 
-    @Override
     public CompletableFuture<TodoList> removeTask(UUID todoListID, Integer taskIndex) {
         return localDatabase.removeTask(todoListID, taskIndex);
     }
 
-    @Override
-    public CompletableFuture<Task> renameTask(UUID todoListID, Integer taskIndex, String newName) {
-        return localDatabase.renameTask(todoListID, taskIndex, newName);
-    }
-
-    @Override
-    public CompletableFuture<Task> getTask(UUID todoListID, Integer taskIndex) {
-        return localDatabase.getTask(todoListID, taskIndex);
-    }
-
-    @Override
-    public CompletableFuture<Note> getNote(UUID noteID) {
-        if(inMemoryNoteMap.containsKey(noteID)) {
-            return CompletableFuture.completedFuture(inMemoryNoteMap.get(noteID));
-        } else {
-            CompletableFuture<Note> firebaseFuture = firebaseDatabase.getNote(noteID);
-
-            firebaseFuture.thenAccept(note -> {
-                this.inMemoryNoteMap.put(noteID, note);
-            });
-            return firebaseFuture;
-        }
-    }
-
-    @Override
-    public CompletableFuture<Note> putNote(UUID noteID, Note note) {
-        this.firebaseDatabase.putNote(noteID, note);
-
-        return CompletableFuture.completedFuture(this.inMemoryNoteMap.put(noteID, note));
-    }
-
-    @Override
-    public CompletableFuture<List<UUID>> getNotesList() {
-        System.err.println(inMemoryNoteMap.toString() + " ============> " + inMemoryNoteMap.size());
-        if(this.inMemoryNoteMap.isEmpty()) {
-            CompletableFuture<List<UUID>> firebaseFuture = firebaseDatabase.getNotesList();
-
-            firebaseFuture.thenAccept(notesList -> {
-                for(UUID noteID: notesList) {
-                    this.firebaseDatabase.getNote(noteID)
-                            .thenAccept(note -> {
-                                this.inMemoryNoteMap.put(noteID, note);
-                            });
-                }
-            });
-
-            return firebaseFuture;
-        } else {
-            return CompletableFuture.completedFuture(new ArrayList<UUID>(inMemoryNoteMap.keySet()));
-        }
-    }
-
-    @Override
-    public CompletableFuture<Task> setTaskDone(UUID todoListID, int index, boolean isDone) {
-        return localDatabase.setTaskDone(todoListID, index, isDone);
-    }
 }

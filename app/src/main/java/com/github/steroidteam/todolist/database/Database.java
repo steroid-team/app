@@ -1,10 +1,13 @@
 package com.github.steroidteam.todolist.database;
 
+import androidx.annotation.NonNull;
+
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -118,4 +121,8 @@ public interface Database {
      * @return the updated task
      */
     CompletableFuture<Task> setTaskDone(UUID todoListID, int index, boolean isDone);
+
+    CompletableFuture<Long> getLastModifiedTimeTodo(@NonNull UUID todoListID);
+
+    CompletableFuture<Long> getLastModifiedTimeNote(@NonNull UUID noteID);
 }

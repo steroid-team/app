@@ -1,6 +1,7 @@
 package com.github.steroidteam.todolist.database;
 
 import android.app.Application;
+import android.content.Context;
 import android.provider.ContactsContract;
 
 import androidx.annotation.NonNull;
@@ -26,20 +27,21 @@ public class Repository {
     private final Database localDatabase;
     private final Database remoteDatabase;
 
-    private final MutableLiveData<List<TodoList>> allTodoLiveData;
+    private final MutableLiveData<ArrayList<TodoList>> allTodoLiveData;
 
     private UUID todoListIDObserved;
 
-    public Repository(Application application) {
-        this.localDatabase = new FileStorageDatabase(new LocalFileStorageService(application.getCacheDir(), UserFactory.get()));
+    public Repository(Context context) {
+        this.localDatabase = new FileStorageDatabase(new LocalFileStorageService(context.getCacheDir(), UserFactory.get()));
         this.remoteDatabase = new FileStorageDatabase(new FirebaseFileStorageService(
                 FirebaseStorage.getInstance(), UserFactory.get()));
 
         allTodoLiveData = new MutableLiveData<>();
+        System.err.println("==========================================================================> X");
         fetchData();
     }
 
-    public LiveData<List<TodoList>> getAllTodo() {
+    public LiveData<ArrayList<TodoList>> getAllTodo() {
         return this.allTodoLiveData;
     }
 
@@ -54,67 +56,84 @@ public class Repository {
 
         // Then sync local data with remote database:
         syncData();
+        // When data has been synchronized, fetch again data:
+        CompletableFuture<TodoListCollection> localTodoCollection2 = this.localDatabase.getTodoListCollection();
+        // Recover first local data:
+        localTodoCollection2
+                .thenAccept(todoListCollection -> {
+                    setTodoListMutableLiveData(todoListCollection, this.localDatabase);
+                });
     }
 
     private void syncData() {
         this.remoteDatabase.getTodoListCollection()
                 .thenCombine(this.localDatabase.getTodoListCollection(), (remoteTodoCollection, localTodoCollection) -> {
 
-                    if(localTodoCollection.isEmpty()) {
-                        for(int i=0; i<remoteTodoCollection.getSize(); ++i) {
-                            CompletableFuture<TodoList> remoteTodo = this.remoteDatabase.getTodoList(remoteTodoCollection.getUUID(i));
-                            remoteTodo.thenAccept(this.localDatabase::putTodoList);
+                    // CHECK THAT ALL REMOTE TO-DO WILL BE IN THE LOCAL DATABASE
+                    for(int i=0; i<remoteTodoCollection.getSize(); ++i) {
+                        System.err.println("----------> " + i);
+                        UUID currentRemoteID = remoteTodoCollection.getUUID(i);
+                        if(localTodoCollection.contains(currentRemoteID)) {
+                           // The to-do list is present in the local and remote file system.
+                           // We need to check which copy to keep:
+                            checkLastModified(currentRemoteID);
+                        } else {
+                            // The to-do list is not present in the local file system.
+                            // We need to add it:
+                            this.remoteDatabase.getTodoList(currentRemoteID)
+                                    .thenAccept(this.localDatabase::putTodoList);
                         }
                     }
-                    else if(remoteTodoCollection.isEmpty()) {
-                        for(int i=0; i<localTodoCollection.getSize(); ++i) {
-                            CompletableFuture<TodoList> localTodo = this.localDatabase.getTodoList(localTodoCollection.getUUID(i));
-                            localTodo.thenAccept(this.remoteDatabase::putTodoList);
+
+                    // CHECK THAT ALL LOCAL TO-DO WILL BE IN THE REMOTE DATABASE
+                    for(int i=0; i<localTodoCollection.getSize(); ++i) {
+                        UUID currentLocalID = localTodoCollection.getUUID(i);
+                        if(!remoteTodoCollection.contains(currentLocalID)) {
+                            // We only have to take care of the situation where local to-do are not present
+                            // in the remote database.
+                            // All others situations have been taken care of in the above for loop.
+                            this.localDatabase.getTodoList(currentLocalID)
+                                    .thenAccept(this.remoteDatabase::putTodoList);
                         }
                     }
-                    else if(remoteTodoCollection.getSize()>localTodoCollection.getSize()) {
-                        for (int i = 0; i < remoteTodoCollection.getSize(); ++i) {
-
-                            CompletableFuture<TodoList> remoteTodo = this.remoteDatabase.getTodoList(remoteTodoCollection.getUUID(i));
-                            CompletableFuture<TodoList> localTodo = this.localDatabase.getTodoList(localTodoCollection.getUUID(i));
-
-                        }
-                    }
-                    else if(remoteTodoCollection.getSize()<localTodoCollection.getSize()) {
-                        for (int i = 0; i < localTodoCollection.getSize(); ++i) {
-
-                            CompletableFuture<TodoList> remoteTodo = this.remoteDatabase.getTodoList(remoteTodoCollection.getUUID(i));
-                            CompletableFuture<TodoList> localTodo = this.localDatabase.getTodoList(localTodoCollection.getUUID(i));
-
-                        }
-                    }
-                    else {
-                        // remoteTodoCollection.getSize() == localTodoCollection.getSize()
-                        for (int i = 0; i < remoteTodoCollection.getSize(); ++i) {
-
-                            CompletableFuture<TodoList> remoteTodo = this.remoteDatabase.getTodoList(remoteTodoCollection.getUUID(i));
-                            CompletableFuture<TodoList> localTodo = this.localDatabase.getTodoList(localTodoCollection.getUUID(i));
-
-                        }
-
-                        return null;
-                    }
+                    return this.localDatabase.getTodoListCollection()
+                            .thenCompose(todoListCollection -> {
+                                setTodoListMutableLiveData(todoListCollection, this.localDatabase);
+                                return null;
+                            });
                 });
+    }
+
+    private void checkLastModified(UUID id) {
+        remoteDatabase.getLastModifiedTimeTodo(id)
+                .thenCombine(localDatabase.getLastModifiedTimeTodo(id),
+                        (remoteTime, localTime) -> {
+                            if(remoteTime>localTime) {
+                                // The remote copy has been updated more recently than the local one.
+                                // So we stored the remote copy in the local database:
+                                this.remoteDatabase.getTodoList(id)
+                                        .thenAccept(this.localDatabase::putTodoList);
+                            }
+                            else {
+                                // The local copy has been updated more recently than the remote one.
+                                // So we stored the local copy in the remote database:
+                                this.localDatabase.getTodoList(id)
+                                        .thenAccept(this.remoteDatabase::putTodoList);
+                            }
+                            return null;
+                        });
     }
 
     private void setTodoListMutableLiveData(TodoListCollection todoListCollection, Database database) {
         ArrayList<TodoList> privateArrayList = new ArrayList<>();
-        System.err.println("ONNNNNNNNNNNNNNNa " + todoListCollection.getSize());
         if (todoListCollection.getSize() == 0) {
             allTodoLiveData.postValue(privateArrayList);
         } else {
             for (int i = 0; i < todoListCollection.getSize(); i++) {
-                System.err.println("ZDOQPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP ");
                 database
                         .getTodoList(todoListCollection.getUUID(i))
                         .thenAccept(
                                 todoList -> {
-                                    System.err.println("THIS IS A TODOLIST ! " + todoList.toString());
                                     privateArrayList.add(todoList);
                                     allTodoLiveData.postValue(privateArrayList);
                                 });
@@ -123,23 +142,29 @@ public class Repository {
     }
 
     public void putTodo(TodoList todoList) {
-        this.database
+        this.localDatabase
                 .putTodoList(todoList)
-                .thenCompose(str -> this.database.getTodoListCollection())
-                .thenAccept(this::setArrayOfTodoList);
+                .thenCompose(str -> this.localDatabase.getTodoListCollection())
+                .thenAccept(todoListCollection -> {setTodoListMutableLiveData(todoListCollection, localDatabase);});
+
+        this.remoteDatabase.putTodoList(todoList);
     }
 
     public void removeTodo(UUID id) {
-        this.database
+        this.localDatabase
                 .removeTodoList(id)
-                .thenCompose(str -> this.database.getTodoListCollection())
-                .thenAccept(this::setArrayOfTodoList);
+                .thenCompose(str -> this.localDatabase.getTodoListCollection())
+                .thenAccept(todoListCollection -> {setTodoListMutableLiveData(todoListCollection, localDatabase);});
+
+        this.remoteDatabase.removeTodoList(id);
     }
 
     public void renameTodo(UUID id, TodoList todoListUpdated) {
-        this.database
+        this.localDatabase
                 .updateTodoList(id, todoListUpdated)
-                .thenCompose(str -> this.database.getTodoListCollection())
-                .thenAccept(this::setArrayOfTodoList);
+                .thenCompose(str -> this.localDatabase.getTodoListCollection())
+                .thenAccept(todoListCollection -> {setTodoListMutableLiveData(todoListCollection, localDatabase);});
+
+        this.remoteDatabase.updateTodoList(id, todoListUpdated);
     }
 }

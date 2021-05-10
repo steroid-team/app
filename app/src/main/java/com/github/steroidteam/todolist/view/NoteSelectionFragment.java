@@ -42,7 +42,7 @@ public class NoteSelectionFragment extends Fragment {
         adapter = new NoteAdapter(notes, customListener);
         recyclerView.setAdapter(adapter);
 
-        database = new LocalCachedDatabase(getContext());
+        database = DatabaseFactory.getDb();
         database.getNotesList()
                 .thenAccept(
                         uuids -> {

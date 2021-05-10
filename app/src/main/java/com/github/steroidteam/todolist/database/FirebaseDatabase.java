@@ -215,6 +215,16 @@ public class FirebaseDatabase implements Database {
                 .thenCompose(todoList -> uploadTask(todoList, index, listPath));
     }
 
+    @Override
+    public CompletableFuture<Long> getLastModifiedTimeTodo(@NonNull UUID todoListID) {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Long> getLastModifiedTimeNote(@NonNull UUID noteID) {
+        return null;
+    }
+
     private CompletableFuture<Task> uploadTask(TodoList todoList, int index, String path) {
         Task updatedTask = todoList.getTask(index);
         byte[] bytes = JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);

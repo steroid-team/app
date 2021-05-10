@@ -6,9 +6,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.database.FirebaseDatabase;
 import com.github.steroidteam.todolist.database.LocalCachedDatabase;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -17,8 +20,8 @@ public class TodoArrayRepository {
     private final MutableLiveData<ArrayList<TodoList>> arrayOfTodoList;
     // private final ArrayList<TodoList> privateArrayList;
 
-    public TodoArrayRepository(Context context) {
-        this.database = new LocalCachedDatabase(context);
+    public TodoArrayRepository() {
+        this.database = DatabaseFactory.getDb();
         arrayOfTodoList = new MutableLiveData<>(new ArrayList<>());
         this.database.getTodoListCollection().thenAccept(this::setArrayOfTodoList);
     }

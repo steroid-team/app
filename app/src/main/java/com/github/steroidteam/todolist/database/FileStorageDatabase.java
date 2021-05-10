@@ -29,12 +29,14 @@ public class FileStorageDatabase implements Database {
         this.storageService = storageService;
     }
 
+    @Override
     public CompletableFuture<Long> getLastModifiedTimeTodo(@NonNull UUID todoListID) {
         Objects.requireNonNull(todoListID);
         String targetPath = TODO_LIST_PATH + todoListID.toString() + ".json";
         return storageService.getLastModifiedTime(targetPath);
     }
 
+    @Override
     public CompletableFuture<Long> getLastModifiedTimeNote(@NonNull UUID noteID) {
         Objects.requireNonNull(noteID);
         String targetPath = NOTES_PATH + noteID.toString() + ".json";
@@ -153,7 +155,7 @@ public class FileStorageDatabase implements Database {
     }
 
     @Override
-    public CompletableFuture<Task> renameTask(UUID todoListID, Integer taskIndex, String newName) {
+    public CompletableFuture<Task> updateTask(UUID todoListID, Integer taskIndex, Task newTask) {
         Objects.requireNonNull(todoListID);
         Objects.requireNonNull(taskIndex);
         String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
@@ -163,7 +165,7 @@ public class FileStorageDatabase implements Database {
                 // Remove the task from the object.
                 .thenApply(
                         todoList -> {
-                            todoList.renameTask(taskIndex, newName);
+                            todoList.updateTask(taskIndex, newTask);
                             return todoList;
                         })
                 // Re-serialize and upload the new object.

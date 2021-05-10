@@ -1,14 +1,9 @@
 package com.github.steroidteam.todolist.filestorage;
 
 import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
-
-import java.io.File;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
@@ -34,8 +29,11 @@ public class FirebaseFileStorageService implements FileStorageService {
     public CompletableFuture<Long> getLastModifiedTime(@NonNull String path) {
         CompletableFuture<Long> completableFuture = new CompletableFuture<>();
 
-        this.getUserspaceRef(path).getMetadata()
-                .addOnSuccessListener(storageMetadata -> completableFuture.complete(storageMetadata.getUpdatedTimeMillis()))
+        this.getUserspaceRef(path)
+                .getMetadata()
+                .addOnSuccessListener(
+                        storageMetadata ->
+                                completableFuture.complete(storageMetadata.getUpdatedTimeMillis()))
                 .addOnFailureListener(completableFuture::completeExceptionally);
 
         return completableFuture;

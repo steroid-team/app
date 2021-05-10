@@ -3,11 +3,9 @@ package com.github.steroidteam.todolist.viewmodel;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
-
 import com.github.steroidteam.todolist.database.TodoListRepository;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
@@ -28,7 +26,7 @@ public class TodoListViewModel extends ViewModel {
     }
 
     public void selectTodoList(UUID id) {
-        this.selectedTodoList=id;
+        this.selectedTodoList = id;
         todoListRepository.selectTodolist(id);
     }
 
@@ -49,29 +47,31 @@ public class TodoListViewModel extends ViewModel {
     }
 
     public void renameTodo(UUID id, TodoList todoListUpdated) {
-        todoListRepository.renameTodo(id, todoListUpdated);
+        todoListRepository.updateTodo(id, todoListUpdated);
     }
 
     public void addTask(Task task) {
-        todoListRepository.putTask(task);
+        todoListRepository.putTask(selectedTodoList, task);
     }
 
     public void removeTask(int index) {
-        todoListRepository.removeTask(index);
+        todoListRepository.removeTask(selectedTodoList, index);
     }
 
     public void renameTask(int index, String newBody) {
         if (!newBody.equals("")) {
-            todoListRepository.renameTask(index, newBody);
+            Task currentTask = todoListSelected.getValue().getTask(index);
+            todoListRepository.updateTask(selectedTodoList, index, currentTask.setBody(newBody));
         }
     }
 
     public void setTaskDone(int index, boolean isDone) {
-        todoListRepository.setTaskDone(index, isDone);
+        Task currentTask = todoListSelected.getValue().getTask(index);
+        todoListRepository.updateTask(selectedTodoList, index, currentTask.setDone(isDone));
     }
 
     public void setTaskDueDate(int index, Date date) {
-        todoListRepository.setTaskDueDate(index, date);
+        Task currentTask = todoListSelected.getValue().getTask(index);
+        todoListRepository.updateTask(selectedTodoList, index, currentTask.setDueDate(date));
     }
-
 }

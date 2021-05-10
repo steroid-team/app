@@ -1,17 +1,11 @@
 package com.github.steroidteam.todolist.model;
 
-import android.content.Context;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
-import com.github.steroidteam.todolist.database.FirebaseDatabase;
-import com.github.steroidteam.todolist.database.LocalCachedDatabase;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
-import com.google.firebase.auth.FirebaseUser;
-
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -42,7 +36,8 @@ public class TodoArrayRepository {
                         .getTodoList(todoListCollection.getUUID(i))
                         .thenAccept(
                                 todoList -> {
-                                    System.err.println("THIS IS A TODOLIST ! " + todoList.toString());
+                                    System.err.println(
+                                            "THIS IS A TODOLIST ! " + todoList.toString());
                                     privateArrayList.add(todoList);
                                     arrayOfTodoList.postValue(privateArrayList);
                                 });

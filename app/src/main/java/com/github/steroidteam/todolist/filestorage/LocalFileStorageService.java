@@ -1,14 +1,8 @@
 package com.github.steroidteam.todolist.filestorage;
 
-import android.content.Context;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-
-import com.github.steroidteam.todolist.user.FBaseUser;
-import com.github.steroidteam.todolist.user.User;
 import com.google.firebase.auth.FirebaseUser;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

@@ -1,15 +1,12 @@
 package com.github.steroidteam.todolist.database;
 
 import androidx.annotation.NonNull;
-
 import com.github.steroidteam.todolist.filestorage.FileStorageService;
-import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.util.JSONSerializer;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;

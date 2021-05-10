@@ -41,24 +41,11 @@ public class LocalCachedDatabase implements Database {
 
     @Override
     public CompletableFuture<TodoListCollection> getTodoListCollection() {
-        System.err.println(inMemoryTodoMap.toString() + "=== TODO ===> " + inMemoryTodoMap.size());
-        if(this.inMemoryTodoMap.isEmpty()) {
-            CompletableFuture<TodoListCollection> firebaseFuture = firebaseDatabase.getTodoListCollection();
 
-            firebaseFuture.thenAccept(todoListCollection -> {
-                for(int i = 0; i < todoListCollection.getSize(); ++i) {
-                    int finalI = i;
-                    this.firebaseDatabase.getTodoList(todoListCollection.getUUID(i))
-                            .thenAccept(note -> {
-                                this.inMemoryTodoMap.put(todoListCollection.getUUID(finalI), note);
-                            });
-                }
-            });
+        CompletableFuture<TodoListCollection> localFuture = localDatabase.getTodoListCollection();
 
-            return firebaseFuture;
-        }
-        /**
-        else if(localTodoID.isEmpty()) {
+
+        if(localTodoID.isEmpty()) {
             CompletableFuture<TodoListCollection> firebaseFuture = firebaseDatabase.getTodoListCollection();
 
             firebaseFuture.thenAccept(todoListCollection -> {
@@ -70,10 +57,6 @@ public class LocalCachedDatabase implements Database {
             });
 
             return firebaseFuture;
-        }
-         **/
-        else {
-            return CompletableFuture.completedFuture(new TodoListCollection(new ArrayList<>(inMemoryTodoMap.keySet())));
         }
     }
 

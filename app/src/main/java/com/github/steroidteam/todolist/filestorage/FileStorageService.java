@@ -41,4 +41,6 @@ public interface FileStorageService {
      *     in the directory.
      */
     CompletableFuture<String[]> listDir(@NonNull String path);
+
+    CompletableFuture<Long> getLastModifiedTime(@NonNull String path);
 }

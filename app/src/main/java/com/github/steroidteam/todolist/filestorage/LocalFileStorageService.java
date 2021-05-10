@@ -40,6 +40,13 @@ public class LocalFileStorageService implements FileStorageService {
         return USER_SPACE + path;
     }
 
+    public CompletableFuture<Long> getLastModifiedTime(@NonNull String path) {
+        CompletableFuture<Long> completableFuture = new CompletableFuture<>();
+        File file = getFile(this.getRootFile(), this.getUserspaceRef(path));
+        completableFuture.complete(file.lastModified());
+        return completableFuture;
+    }
+
     @Override
     public CompletableFuture<String> upload(byte[] bytes, @NonNull String path) {
         Objects.requireNonNull(path);
@@ -72,19 +79,14 @@ public class LocalFileStorageService implements FileStorageService {
         return CompletableFuture.runAsync(
                 () -> {
                     File file = getFile(this.getRootFile(), this.getUserspaceRef(path));
-                    System.err.println("DELETE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     if (file.exists()) {
-                        System.err.println("FILE EXISTS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                        boolean tmp = file.delete();
-                        System.err.println(tmp + " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                        file.delete();
                     }
                 });
     }
 
     public CompletableFuture<String[]> listDir(@NonNull String path) {
         Objects.requireNonNull(path);
-        CompletableFuture<String[]> completableFuture = new CompletableFuture<>();
-
         File file = new File(this.getRootFile(), this.getUserspaceRef(path));
 
         return CompletableFuture.supplyAsync(
@@ -115,7 +117,6 @@ public class LocalFileStorageService implements FileStorageService {
                 Log.e("ERROR", "CAN4T READ FILE");
             }
         }
-        System.err.println("data = " + data.toString());
         return data;
     }
 

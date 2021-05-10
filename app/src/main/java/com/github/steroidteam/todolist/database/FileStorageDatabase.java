@@ -29,6 +29,18 @@ public class FileStorageDatabase implements Database {
         this.storageService = storageService;
     }
 
+    public CompletableFuture<Long> getLastModifiedTimeTodo(@NonNull UUID todoListID) {
+        Objects.requireNonNull(todoListID);
+        String targetPath = TODO_LIST_PATH + todoListID.toString() + ".json";
+        return storageService.getLastModifiedTime(targetPath);
+    }
+
+    public CompletableFuture<Long> getLastModifiedTimeNote(@NonNull UUID noteID) {
+        Objects.requireNonNull(noteID);
+        String targetPath = NOTES_PATH + noteID.toString() + ".json";
+        return storageService.getLastModifiedTime(targetPath);
+    }
+
     @Override
     public CompletableFuture<TodoListCollection> getTodoListCollection() {
         CompletableFuture<String[]> listDirFuture = storageService.listDir(TODO_LIST_PATH);

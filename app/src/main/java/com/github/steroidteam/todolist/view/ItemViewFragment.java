@@ -59,7 +59,7 @@ public class ItemViewFragment extends Fragment {
 
         adapter = new TodoAdapter(createCustomListener());
         recyclerView.setAdapter(adapter);
-        
+
         ViewModelFactory viewModelFactory = new ViewModelFactory(new TodoListRepository(getContext()));
         viewModel = new ViewModelProvider(requireActivity(), viewModelFactory).get(TodoListViewModel.class);
 

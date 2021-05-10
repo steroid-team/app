@@ -18,12 +18,6 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     @NotNull
     @Override
     public <T extends ViewModel> T create(@NonNull @NotNull Class<T> modelClass) {
-        if (modelClass.isAssignableFrom(ListSelectionViewModel.class)) {
-            return (T) new ListSelectionViewModel(todoTodoListRepository);
-        }
-        if (modelClass.isAssignableFrom(ItemViewModel.class)) {
-            return (T) new ItemViewModel(todoTodoListRepository);
-        }
         if (modelClass.isAssignableFrom(TodoListViewModel.class)) {
             return (T) new TodoListViewModel(todoTodoListRepository);
         }

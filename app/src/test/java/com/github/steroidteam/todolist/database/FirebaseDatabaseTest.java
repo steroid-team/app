@@ -299,31 +299,6 @@ public class FirebaseDatabaseTest {
     }
 
     @Test
-    public void renameTaskWorks() {
-        TodoList expectedTodoList = new TodoList("some random title");
-        Task task1 = new Task("Task 1");
-        Task task2 = new Task("renamed task 2");
-        expectedTodoList.addTask(task1);
-        expectedTodoList.addTask(task2);
-
-        byte[] serializedTodoList =
-                JSONSerializer.serializeTodoList(expectedTodoList).getBytes(StandardCharsets.UTF_8);
-        downloadFuture.complete(serializedTodoList);
-
-        uploadFuture.complete("Some file path");
-
-        doReturn(downloadFuture).when(storageServiceMock).download(anyString());
-        doReturn(uploadFuture).when(storageServiceMock).upload(any(byte[].class), anyString());
-
-        try {
-            Task task = database.renameTask(UUID.randomUUID(), 1, "renamed task 2").join();
-            assertEquals(task2, task);
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
-    @Test
     public void getNoteWorks() {
         Note expectedNote = new Note("Some random title");
 

@@ -68,15 +68,16 @@ public interface Database {
     CompletableFuture<TodoList> removeTask(UUID todoListID, Integer taskIndex);
 
     /**
-     * Renames a task in the database.
+     * Updates a task in the database.
      *
      * @param todoListID The id of the associated list of the task.
      * @param taskIndex The index of the task within the list.
+     * @param newTask The new task.
      */
-    CompletableFuture<Task> renameTask(UUID todoListID, Integer taskIndex, String newName);
+    CompletableFuture<Task> updateTask(UUID todoListID, Integer taskIndex, Task newTask);
 
     /**
-     * Gets the task from the database
+     * Gets the task from the database.
      *
      * @param todoListID The id of the associated list of the task.
      * @param taskIndex The index of the task you want from a to-do list.

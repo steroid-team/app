@@ -18,6 +18,7 @@ import com.github.steroidteam.todolist.view.adapter.TodoArrayListAdapter;
 import com.github.steroidteam.todolist.view.dialog.DialogListener;
 import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
 import com.github.steroidteam.todolist.view.dialog.SimpleDialogFragment;
+import com.github.steroidteam.todolist.view.misc.TodoTouchHelper;
 import com.github.steroidteam.todolist.viewmodel.ListSelectionViewModel;
 import java.util.UUID;
 

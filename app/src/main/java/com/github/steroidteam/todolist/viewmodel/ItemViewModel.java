@@ -3,6 +3,8 @@ package com.github.steroidteam.todolist.viewmodel;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.github.steroidteam.todolist.database.TodoListRepository;
 import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
@@ -10,10 +12,10 @@ import java.util.Date;
 
 public class ItemViewModel extends ViewModel {
 
-    private final TodoRepository repository;
+    private final TodoListRepository repository;
     private final LiveData<TodoList> todoList;
 
-    public ItemViewModel(@NonNull TodoRepository repository) {
+    public ItemViewModel(@NonNull TodoListRepository repository) {
         super();
         this.repository = repository;
         todoList = repository.getTodoList();

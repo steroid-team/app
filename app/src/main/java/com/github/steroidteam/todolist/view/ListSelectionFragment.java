@@ -1,6 +1,5 @@
 package com.github.steroidteam.todolist.view;
 
-import android.app.Application;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,13 +7,13 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
-import com.github.steroidteam.todolist.database.Repository;
-import com.github.steroidteam.todolist.model.TodoArrayRepository;
+import com.github.steroidteam.todolist.database.TodoListRepository;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.view.adapter.TodoArrayListAdapter;
 import com.github.steroidteam.todolist.view.dialog.DialogListener;
@@ -22,16 +21,15 @@ import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
 import com.github.steroidteam.todolist.view.dialog.SimpleDialogFragment;
 import com.github.steroidteam.todolist.view.misc.TodoTouchHelper;
 import com.github.steroidteam.todolist.viewmodel.ListSelectionViewModel;
+import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactory;
+
 import java.util.UUID;
 
 public class ListSelectionFragment extends Fragment {
 
     private TodoArrayListAdapter adapter;
-    private ListSelectionViewModel viewModel;
-
-    public static final String EXTRA_LIST_KEY = "list_id";
-
-    public static final String SIMPLE_DIALOG_KEY = "simple_dialog_key";
+    private TodoListViewModel viewModel;
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,14 +46,13 @@ public class ListSelectionFragment extends Fragment {
         adapter = new TodoArrayListAdapter(createCustomListener());
         recyclerView.setAdapter(adapter);
 
-        Repository repository = new Repository(getContext());
-        viewModel = new ListSelectionViewModel(repository);
+        ViewModelFactory viewModelFactory = new ViewModelFactory(new TodoListRepository(getContext()));
+        viewModel = new ViewModelProvider(requireActivity(), viewModelFactory).get(TodoListViewModel.class);
         viewModel
                 .getListOfTodo()
                 .observe(
-                        getActivity(),
+                        getViewLifecycleOwner(),
                         (todoListArrayList) -> {
-                            System.err.println(todoListArrayList.size() + "zqddddddddddddddddddddddddddddd");
                             adapter.setTodoListCollection(todoListArrayList);
                         });
 
@@ -66,13 +63,9 @@ public class ListSelectionFragment extends Fragment {
     }
 
     public TodoArrayListAdapter.TodoHolder.TodoCustomListener createCustomListener() {
-        return new TodoArrayListAdapter.TodoHolder.TodoCustomListener() {
-            @Override
-            public void onClickCustom(TodoArrayListAdapter.TodoHolder holder) {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(EXTRA_LIST_KEY, holder.getTodo().getId());
-                Navigation.findNavController(holder.itemView).navigate(R.id.nav_item_view, bundle);
-            }
+        return holder -> {
+            viewModel.selectTodoList(holder.getTodo().getId());
+            Navigation.findNavController(holder.itemView).navigate(R.id.nav_item_view, new Bundle());
         };
     }
 

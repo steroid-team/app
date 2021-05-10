@@ -4,21 +4,19 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.github.steroidteam.todolist.database.Repository;
-import com.github.steroidteam.todolist.model.TodoArrayRepository;
+import com.github.steroidteam.todolist.database.TodoListRepository;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class ListSelectionViewModel extends ViewModel {
 
-    private final Repository repository;
+    private final TodoListRepository todoListRepository;
     private final LiveData<ArrayList<TodoList>> arrayOfTodoList;
 
-    public ListSelectionViewModel(@NonNull Repository repository) {
-        super();
-        this.repository = repository;
-        this.arrayOfTodoList = repository.getAllTodo();
+    public ListSelectionViewModel(@NonNull TodoListRepository todoListRepository) {
+        this.todoListRepository = todoListRepository;
+        this.arrayOfTodoList = todoListRepository.getAllTodo();
     }
 
     public LiveData<ArrayList<TodoList>> getListOfTodo() {
@@ -26,14 +24,14 @@ public class ListSelectionViewModel extends ViewModel {
     }
 
     public void addTodo(String title) {
-        repository.putTodo(new TodoList(title));
+        todoListRepository.putTodo(new TodoList(title));
     }
 
     public void removeTodo(UUID id) {
-        repository.removeTodo(id);
+        todoListRepository.removeTodo(id);
     }
 
     public void renameTodo(UUID id, TodoList todoListUpdated) {
-        repository.renameTodo(id, todoListUpdated);
+        todoListRepository.renameTodo(id, todoListUpdated);
     }
 }

@@ -13,21 +13,15 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
-
 import com.github.steroidteam.todolist.database.TodoListRepository;
-
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.view.adapter.TodoArrayListAdapter;
 import com.github.steroidteam.todolist.view.dialog.DialogListener;
 import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
 import com.github.steroidteam.todolist.view.dialog.SimpleDialogFragment;
-
+import com.github.steroidteam.todolist.view.misc.SwipeTouchHelper;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactory;
-
-import com.github.steroidteam.todolist.view.misc.SwipeTouchHelper;
-import com.github.steroidteam.todolist.viewmodel.ListSelectionViewModel;
-
 import java.util.UUID;
 
 public class ListSelectionFragment extends Fragment {
@@ -158,7 +152,8 @@ public class ListSelectionFragment extends Fragment {
 
                     @Override
                     public void onPositiveClick(String title) {
-                        if (title.length() > 0) viewModel.renameTodo(todoList.getId(), todoList.setTitle(title));
+                        if (title.length() > 0)
+                            viewModel.renameTodo(todoList.getId(), todoList.setTitle(title));
                     }
 
                     @Override

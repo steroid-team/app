@@ -51,6 +51,7 @@ public class TodoListViewModel extends ViewModel {
     }
 
     public void addTask(Task task) {
+        System.err.println(" __________________ " + selectedTodoList + " et " + task.toString());
         todoListRepository.putTask(selectedTodoList, task);
     }
 

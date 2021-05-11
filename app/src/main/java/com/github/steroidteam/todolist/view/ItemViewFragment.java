@@ -18,13 +18,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
-import com.github.steroidteam.todolist.database.TodoListRepository;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
 import com.github.steroidteam.todolist.view.misc.DateHighlighterTextWatcher;
 import com.github.steroidteam.todolist.view.misc.DueDateInputSpan;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactory;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import java.util.Date;
 import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
 
@@ -56,7 +56,7 @@ public class ItemViewFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         ViewModelFactory viewModelFactory =
-                new ViewModelFactory(new TodoListRepository(getContext()));
+                ViewModelFactoryInjection.getViewModelFactory(getContext());
         viewModel =
                 new ViewModelProvider(requireActivity(), viewModelFactory)
                         .get(TodoListViewModel.class);

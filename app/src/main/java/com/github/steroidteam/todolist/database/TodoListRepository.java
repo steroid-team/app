@@ -3,13 +3,9 @@ package com.github.steroidteam.todolist.database;
 import android.content.Context;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
-import com.github.steroidteam.todolist.filestorage.LocalFileStorageService;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
-import com.github.steroidteam.todolist.model.user.UserFactory;
-import com.google.firebase.storage.FirebaseStorage;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -23,13 +19,8 @@ public class TodoListRepository {
     private final MutableLiveData<TodoList> observedTodoList;
 
     public TodoListRepository(Context context) {
-        this.localDatabase =
-                new FileStorageDatabase(
-                        new LocalFileStorageService(context.getCacheDir(), UserFactory.get()));
-        this.remoteDatabase =
-                new FileStorageDatabase(
-                        new FirebaseFileStorageService(
-                                FirebaseStorage.getInstance(), UserFactory.get()));
+        this.localDatabase = DatabaseFactory.getLocalDb(context.getCacheDir());
+        this.remoteDatabase = DatabaseFactory.getRemoteDb();
 
         allTodoLiveData = new MutableLiveData<>();
         observedTodoList = new MutableLiveData<>();

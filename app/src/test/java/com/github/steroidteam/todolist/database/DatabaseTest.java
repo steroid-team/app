@@ -204,7 +204,8 @@ public class DatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FileStorageDatabase(storageServiceMock).putTask(null, new Task("Some task"));
+                    new FileStorageDatabase(storageServiceMock)
+                            .putTask(null, new Task("Some task"));
                 });
 
         assertThrows(

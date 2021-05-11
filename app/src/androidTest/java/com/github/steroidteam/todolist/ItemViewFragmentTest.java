@@ -384,7 +384,7 @@ public class ItemViewFragmentTest {
                     Location loc = new Location(LocationManager.GPS_PROVIDER);
                     loc.setLatitude(-33.8523341);
                     loc.setLongitude(151.2106085);
-                    loc.setAccuracy(3);
+                    loc.setAccuracy(1.0f);
                     loc.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
                     loc.setTime(System.currentTimeMillis());
                     locationManager.requestLocationUpdates(

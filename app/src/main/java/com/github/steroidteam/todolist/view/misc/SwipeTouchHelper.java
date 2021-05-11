@@ -10,16 +10,14 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
-import com.github.steroidteam.todolist.view.ListSelectionFragment;
-import com.github.steroidteam.todolist.view.adapter.TodoArrayListAdapter;
 
-public class TodoTouchHelper extends ItemTouchHelper.SimpleCallback {
+public class SwipeTouchHelper extends ItemTouchHelper.SimpleCallback {
 
-    private final ListSelectionFragment fragment;
+    private final SwipeListener swipeListener;
 
-    public TodoTouchHelper(ListSelectionFragment activity) {
+    public SwipeTouchHelper(SwipeListener swipeListener) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
-        this.fragment = activity;
+        this.swipeListener = swipeListener;
     }
 
     @Override
@@ -35,12 +33,10 @@ public class TodoTouchHelper extends ItemTouchHelper.SimpleCallback {
         final int position = viewHolder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
             if (direction == ItemTouchHelper.LEFT) {
-                fragment.removeTodo(
-                        ((TodoArrayListAdapter.TodoHolder) viewHolder).getTodo().getId(), position);
+                swipeListener.onSwipeLeft(viewHolder, position);
             } else {
                 // direction == ItemTouchHelper.RIGHT
-                fragment.renameTodo(
-                        ((TodoArrayListAdapter.TodoHolder) viewHolder).getTodo(), position);
+                swipeListener.onSwipeRight(viewHolder, position);
             }
         }
     }
@@ -66,8 +62,10 @@ public class TodoTouchHelper extends ItemTouchHelper.SimpleCallback {
                     ContextCompat.getDrawable(
                             itemView.getContext(), R.drawable.ic_baseline_create_24_icon);
 
-            int deleteIconMargin = (itemView.getHeight() - deleteIcon.getIntrinsicHeight()) / 2;
-            int renameIconMargin = (itemView.getHeight() - deleteIcon.getIntrinsicHeight()) / 2;
+            // Margin that keeps the icon vertically centered.
+            int verticalIconMargin = (itemView.getHeight() - deleteIcon.getIntrinsicHeight()) / 2;
+            // Margin that keeps the icon easily visible after some swiping.
+            int horizontalIconMargin = 60; // px
 
             if (dX > 0) {
                 colorToDisplay =
@@ -82,10 +80,10 @@ public class TodoTouchHelper extends ItemTouchHelper.SimpleCallback {
                         itemView.getBottom());
 
                 renameIcon.setBounds(
-                        itemView.getLeft() + renameIconMargin,
-                        itemView.getTop() + deleteIconMargin,
-                        itemView.getLeft() + deleteIconMargin + renameIcon.getIntrinsicWidth(),
-                        itemView.getBottom() - deleteIconMargin);
+                        itemView.getLeft() + horizontalIconMargin,
+                        itemView.getTop() + verticalIconMargin,
+                        itemView.getLeft() + horizontalIconMargin + renameIcon.getIntrinsicWidth(),
+                        itemView.getBottom() - verticalIconMargin);
             } else if (dX < 0) {
                 colorToDisplay =
                         new ColorDrawable(
@@ -97,10 +95,10 @@ public class TodoTouchHelper extends ItemTouchHelper.SimpleCallback {
                         itemView.getBottom());
 
                 deleteIcon.setBounds(
-                        itemView.getRight() - deleteIconMargin - deleteIcon.getIntrinsicWidth(),
-                        itemView.getTop() + deleteIconMargin,
-                        itemView.getRight() - deleteIconMargin,
-                        itemView.getBottom() - deleteIconMargin);
+                        itemView.getRight() - horizontalIconMargin - deleteIcon.getIntrinsicWidth(),
+                        itemView.getTop() + verticalIconMargin,
+                        itemView.getRight() - horizontalIconMargin,
+                        itemView.getBottom() - verticalIconMargin);
             } else {
                 colorToDisplay = new ColorDrawable(Color.WHITE);
             }
@@ -109,5 +107,12 @@ public class TodoTouchHelper extends ItemTouchHelper.SimpleCallback {
             deleteIcon.draw(c);
             renameIcon.draw(c);
         }
+    }
+
+    public interface SwipeListener {
+
+        void onSwipeLeft(final RecyclerView.ViewHolder viewHolder, final int position);
+
+        void onSwipeRight(final RecyclerView.ViewHolder viewHolder, final int position);
     }
 }

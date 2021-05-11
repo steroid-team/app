@@ -29,8 +29,9 @@ check_android_task:
     adb shell settings put global animator_duration_scale 0.0
   enable_location_script: |
     adb shell settings put secure location_mode 3
-    adb shell telnet localhost 5554
-    adb shell geo fix -33.8523341 151.2106085
+    adb shell appops set com.github.steroidteam.todolist android:mock_location allow
+    adb shell pm grant com.github.steroidteam.todolist android.permission.ACCESS_FINE_LOCATION
+    adb shell pm grant com.github.steroidteam.todolist android.permission.ACCESS_COARSE_LOCATION
   prepare_codeclimate_script: |
     curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
     chmod +x ./cc-test-reporter

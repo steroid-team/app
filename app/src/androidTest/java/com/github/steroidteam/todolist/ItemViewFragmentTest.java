@@ -401,7 +401,7 @@ public class ItemViewFragmentTest {
                     loc.setTime(System.currentTimeMillis());
                     mockGps(loc, locationManager);
                     locationManager.requestLocationUpdates(
-                            LocationManager.NETWORK_PROVIDER,
+                            LocationManager.GPS_PROVIDER,
                             0,
                             0,
                             new LocationListener() {

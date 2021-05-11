@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import androidx.annotation.VisibleForTesting;
+import com.github.steroidteam.todolist.database.NoteRepository;
 import com.github.steroidteam.todolist.database.TodoListRepository;
 import java.util.UUID;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 public final class ViewModelFactoryInjection {
 
     private static TodoListRepository todoListRepository = null;
+    private static NoteRepository noteRepository = null;
 
     private static TodoListRepository getTodoListRepository(Context context) {
         if (todoListRepository == null) {
@@ -24,8 +26,20 @@ public final class ViewModelFactoryInjection {
         }
     }
 
-    public static ViewModelFactory getViewModelFactory(Context context) {
-        return new ViewModelFactory(getTodoListRepository(context));
+    private static NoteRepository getNoteRepository(Context context) {
+        if (noteRepository == null) {
+            return new NoteRepository(context);
+        } else {
+            return noteRepository;
+        }
+    }
+
+    public static TodoViewModelFactory getTodoViewModelFactory(Context context) {
+        return new TodoViewModelFactory(getTodoListRepository(context));
+    }
+
+    public static NoteViewModelFactory getNoteViewModelFactory(Context context) {
+        return new NoteViewModelFactory(getNoteRepository(context));
     }
 
     @VisibleForTesting(otherwise = MODE_PRIVATE)

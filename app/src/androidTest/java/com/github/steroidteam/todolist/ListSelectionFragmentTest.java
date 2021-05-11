@@ -203,8 +203,8 @@ public class ListSelectionFragmentTest {
 
         onView(withText(R.string.delete_todo_suggestion)).check(doesNotExist());
 
-        verify(databaseMock, times(2)).getTodoListCollection();
-        verify(databaseMock).removeTodoList(any(UUID.class));
+        // removeTodo in the local and remote database
+        verify(databaseMock, times(2)).removeTodoList(any(UUID.class));
     }
 
     @Test

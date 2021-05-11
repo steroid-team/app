@@ -20,6 +20,8 @@ import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
 import com.github.steroidteam.todolist.view.dialog.SimpleDialogFragment;
 import com.github.steroidteam.todolist.view.misc.SwipeTouchHelper;
 import com.github.steroidteam.todolist.viewmodel.NoteViewModel;
+import com.github.steroidteam.todolist.viewmodel.NoteViewModelFactory;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import java.util.UUID;
 
 public class NoteSelectionFragment extends Fragment {
@@ -43,7 +45,11 @@ public class NoteSelectionFragment extends Fragment {
         adapter = new NoteArrayListAdapter(createCustomListener());
         recyclerView.setAdapter(adapter);
 
-        viewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
+        NoteViewModelFactory noteViewModelFactory =
+                ViewModelFactoryInjection.getNoteViewModelFactory(getContext());
+        viewModel =
+                new ViewModelProvider(requireActivity(), noteViewModelFactory)
+                        .get(NoteViewModel.class);
         viewModel
                 .getNoteList()
                 .observe(

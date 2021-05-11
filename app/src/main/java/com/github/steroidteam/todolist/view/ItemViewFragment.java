@@ -23,7 +23,7 @@ import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
 import com.github.steroidteam.todolist.view.misc.DateHighlighterTextWatcher;
 import com.github.steroidteam.todolist.view.misc.DueDateInputSpan;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
-import com.github.steroidteam.todolist.viewmodel.ViewModelFactory;
+import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import java.util.Date;
 import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
@@ -55,10 +55,10 @@ public class ItemViewFragment extends Fragment {
         adapter = new TodoAdapter(createCustomListener());
         recyclerView.setAdapter(adapter);
 
-        ViewModelFactory viewModelFactory =
-                ViewModelFactoryInjection.getViewModelFactory(getContext());
+        TodoViewModelFactory todoViewModelFactory =
+                ViewModelFactoryInjection.getTodoViewModelFactory(getContext());
         viewModel =
-                new ViewModelProvider(requireActivity(), viewModelFactory)
+                new ViewModelProvider(requireActivity(), todoViewModelFactory)
                         .get(TodoListViewModel.class);
 
         viewModel

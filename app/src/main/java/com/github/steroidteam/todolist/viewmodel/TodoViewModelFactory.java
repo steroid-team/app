@@ -6,11 +6,11 @@ import androidx.lifecycle.ViewModelProvider;
 import com.github.steroidteam.todolist.database.TodoListRepository;
 import org.jetbrains.annotations.NotNull;
 
-public class ViewModelFactory implements ViewModelProvider.Factory {
+public class TodoViewModelFactory implements ViewModelProvider.Factory {
 
     private final TodoListRepository todoTodoListRepository;
 
-    public ViewModelFactory(TodoListRepository todoTodoListRepository) {
+    public TodoViewModelFactory(TodoListRepository todoTodoListRepository) {
         this.todoTodoListRepository = todoTodoListRepository;
     }
 

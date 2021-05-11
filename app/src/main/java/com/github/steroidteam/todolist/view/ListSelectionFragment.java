@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
-import com.github.steroidteam.todolist.database.TodoListRepository;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.view.adapter.TodoArrayListAdapter;
 import com.github.steroidteam.todolist.view.dialog.DialogListener;
@@ -21,7 +20,8 @@ import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
 import com.github.steroidteam.todolist.view.dialog.SimpleDialogFragment;
 import com.github.steroidteam.todolist.view.misc.SwipeTouchHelper;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
-import com.github.steroidteam.todolist.viewmodel.ViewModelFactory;
+import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import java.util.UUID;
 
 public class ListSelectionFragment extends Fragment {
@@ -44,10 +44,10 @@ public class ListSelectionFragment extends Fragment {
         adapter = new TodoArrayListAdapter(createCustomListener());
         recyclerView.setAdapter(adapter);
 
-        ViewModelFactory viewModelFactory =
-                new ViewModelFactory(new TodoListRepository(getContext()));
+        TodoViewModelFactory todoViewModelFactory =
+                ViewModelFactoryInjection.getTodoViewModelFactory(getContext());
         viewModel =
-                new ViewModelProvider(requireActivity(), viewModelFactory)
+                new ViewModelProvider(requireActivity(), todoViewModelFactory)
                         .get(TodoListViewModel.class);
         viewModel
                 .getListOfTodo()

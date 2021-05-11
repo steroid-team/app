@@ -37,8 +37,9 @@ public class Note {
         return latLng;
     }
 
-    public void setTitle(@NonNull String title) {
+    public Note setTitle(@NonNull String title) {
         this.title = title;
+        return this;
     }
 
     public void setContent(@NonNull String content) {

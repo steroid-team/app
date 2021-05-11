@@ -75,7 +75,7 @@ public class NoteDisplayFragmentTest {
         DatabaseFactory.setCustomDatabase(databaseMock);
 
         Bundle bundle = new Bundle();
-        bundle.putString(NoteSelectionFragment.NOTE_ID_KEY, UUID.randomUUID().toString());
+        bundle.putSerializable(NoteSelectionFragment.NOTE_ID_KEY, UUID.randomUUID());
         scenario =
                 FragmentScenario.launchInContainer(
                         NoteDisplayFragment.class, bundle, R.style.Theme_Asteroid);

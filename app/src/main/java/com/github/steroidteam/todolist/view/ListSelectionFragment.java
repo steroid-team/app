@@ -13,15 +13,21 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
+
 import com.github.steroidteam.todolist.database.TodoListRepository;
+
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.view.adapter.TodoArrayListAdapter;
 import com.github.steroidteam.todolist.view.dialog.DialogListener;
 import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
 import com.github.steroidteam.todolist.view.dialog.SimpleDialogFragment;
-import com.github.steroidteam.todolist.view.misc.TodoTouchHelper;
+
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactory;
+
+import com.github.steroidteam.todolist.view.misc.SwipeTouchHelper;
+import com.github.steroidteam.todolist.viewmodel.ListSelectionViewModel;
+
 import java.util.UUID;
 
 public class ListSelectionFragment extends Fragment {
@@ -55,10 +61,10 @@ public class ListSelectionFragment extends Fragment {
                         getViewLifecycleOwner(),
                         (todoListArrayList) -> {
                             adapter.setTodoListCollection(todoListArrayList);
+                            adapter.notifyDataSetChanged();
                         });
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TodoTouchHelper(this));
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+        createAndSetSwipeListener(recyclerView);
 
         return root;
     }
@@ -69,6 +75,27 @@ public class ListSelectionFragment extends Fragment {
             Navigation.findNavController(holder.itemView)
                     .navigate(R.id.nav_item_view, new Bundle());
         };
+    }
+
+    private void createAndSetSwipeListener(RecyclerView recyclerView) {
+        SwipeTouchHelper.SwipeListener swipeListener =
+                new SwipeTouchHelper.SwipeListener() {
+                    @Override
+                    public void onSwipeLeft(RecyclerView.ViewHolder viewHolder, int position) {
+                        removeTodo(
+                                ((TodoArrayListAdapter.TodoHolder) viewHolder).getTodo().getId(),
+                                position);
+                    }
+
+                    @Override
+                    public void onSwipeRight(RecyclerView.ViewHolder viewHolder, int position) {
+                        renameTodo(
+                                ((TodoArrayListAdapter.TodoHolder) viewHolder).getTodo(), position);
+                    }
+                };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeTouchHelper(swipeListener));
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     public void createList(View view) {
@@ -131,8 +158,7 @@ public class ListSelectionFragment extends Fragment {
 
                     @Override
                     public void onPositiveClick(String title) {
-                        if (title.length() > 0)
-                            viewModel.renameTodo(todoList.getId(), todoList.setTitle(title));
+                        if (title.length() > 0) viewModel.renameTodo(todoList.getId(), todoList.setTitle(title));
                     }
 
                     @Override

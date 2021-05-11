@@ -103,11 +103,26 @@ public interface Database {
     CompletableFuture<Note> putNote(UUID noteID, Note note);
 
     /**
+     * Removes a note from the database
+     *
+     * @param noteID The id of the note
+     */
+    CompletableFuture<Void> removeNote(UUID noteID);
+
+    /**
      * Gets the list of note IDs
      *
      * @return The list of note ids.
      */
     CompletableFuture<List<UUID>> getNotesList();
+
+    /**
+     * Updates the note list given the ID.
+     *
+     * @param noteID The ID of the note.
+     * @return The note or null if the ID isn't in the database.
+     */
+    CompletableFuture<Note> updateNote(UUID noteID, Note newNote);
 
     /**
      * Sets "done" flag in a task

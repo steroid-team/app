@@ -27,7 +27,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FirebaseDatabaseTest {
+public class DatabaseTest {
     private static final String TODO_LIST_PATH = "/todo-lists/";
     private static final String NOTES_PATH = "/notes/";
 
@@ -37,7 +37,7 @@ public class FirebaseDatabaseTest {
     CompletableFuture<String> uploadFuture;
     CompletableFuture<String[]> listDirFuture;
 
-    FirebaseDatabase database;
+    Database database;
 
     @Before
     public void before() {
@@ -45,7 +45,7 @@ public class FirebaseDatabaseTest {
         uploadFuture = new CompletableFuture<>();
         listDirFuture = new CompletableFuture<>();
 
-        database = new FirebaseDatabase(storageServiceMock);
+        database = new FileStorageDatabase(storageServiceMock);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class FirebaseDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(null);
+                    new FileStorageDatabase(null);
                 });
     }
 
@@ -62,7 +62,7 @@ public class FirebaseDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).putTodoList(null);
+                    new FileStorageDatabase(storageServiceMock).putTodoList(null);
                 });
     }
 
@@ -161,7 +161,7 @@ public class FirebaseDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).getTodoList(null);
+                    new FileStorageDatabase(storageServiceMock).getTodoList(null);
                 });
     }
 
@@ -183,7 +183,7 @@ public class FirebaseDatabaseTest {
         doReturn(completedFuture).when(storageServiceMock).download(expectedPath);
 
         // Try to get a valid list.
-        final FirebaseDatabase database = new FirebaseDatabase(storageServiceMock);
+        final FileStorageDatabase database = new FileStorageDatabase(storageServiceMock);
         try {
             final TodoList fetchedList = database.getTodoList(todoList.getId()).get();
 
@@ -204,13 +204,13 @@ public class FirebaseDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).putTask(null, new Task("Some task"));
+                    new FileStorageDatabase(storageServiceMock).putTask(null, new Task("Some task"));
                 });
 
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).putTask(UUID.randomUUID(), null);
+                    new FileStorageDatabase(storageServiceMock).putTask(UUID.randomUUID(), null);
                 });
     }
 
@@ -237,7 +237,7 @@ public class FirebaseDatabaseTest {
         doReturn(completedUploadFuture).when(storageServiceMock).upload(any(), eq(expectedPath));
 
         // Try to put a task in a valid list.
-        final FirebaseDatabase database = new FirebaseDatabase(storageServiceMock);
+        final FileStorageDatabase database = new FileStorageDatabase(storageServiceMock);
         database.putTask(todoList.getId(), FIXTURE_TASK_2);
 
         // Add the new task to the list, to make it look like what we would expect to be stored
@@ -255,13 +255,13 @@ public class FirebaseDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).removeTask(null, 0);
+                    new FileStorageDatabase(storageServiceMock).removeTask(null, 0);
                 });
 
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).putTask(UUID.randomUUID(), null);
+                    new FileStorageDatabase(storageServiceMock).putTask(UUID.randomUUID(), null);
                 });
     }
 
@@ -402,7 +402,7 @@ public class FirebaseDatabaseTest {
         listDirFuture.complete(new String[] {uuid1.toString(), uuid2.toString(), uuid3.toString()});
         doReturn(listDirFuture).when(storageServiceMock).listDir(anyString());
 
-        final FirebaseDatabase database = new FirebaseDatabase(storageServiceMock);
+        final FileStorageDatabase database = new FileStorageDatabase(storageServiceMock);
         try {
             List<UUID> actualList = database.getNotesList().join();
             assertEquals(uuid1, actualList.get(0));
@@ -443,13 +443,13 @@ public class FirebaseDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).getTask(null, 0);
+                    new FileStorageDatabase(storageServiceMock).getTask(null, 0);
                 });
 
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).getTask(UUID.randomUUID(), null);
+                    new FileStorageDatabase(storageServiceMock).getTask(UUID.randomUUID(), null);
                 });
     }
 

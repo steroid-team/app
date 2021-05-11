@@ -200,6 +200,21 @@ public class FileStorageDatabase implements Database {
     }
 
     @Override
+    public CompletableFuture<Void> removeNote(UUID noteID) {
+        Objects.requireNonNull(noteID);
+        String targetPath = NOTES_PATH + noteID.toString() + ".json";
+
+        return this.storageService
+                .delete(targetPath)
+                .thenCompose(
+                        str -> {
+                            CompletableFuture<Void> future = new CompletableFuture<>();
+                            future.complete(null);
+                            return future;
+                        });
+    }
+
+    @Override
     public CompletableFuture<List<UUID>> getNotesList() {
         CompletableFuture<String[]> listDir = this.storageService.listDir(NOTES_PATH);
 
@@ -209,6 +224,17 @@ public class FileStorageDatabase implements Database {
                                 .map(fileName -> fileName.split(".json")[0])
                                 .map(UUID::fromString)
                                 .collect(Collectors.toList()));
+    }
+
+    @Override
+    public CompletableFuture<Note> updateNote(UUID noteID, Note newNote) {
+        Objects.requireNonNull(noteID);
+        Objects.requireNonNull(newNote);
+
+        String targetPath = NOTES_PATH + noteID.toString() + ".json";
+        byte[] fBytes = JSONSerializer.serializeNote(newNote).getBytes(StandardCharsets.UTF_8);
+
+        return this.storageService.upload(fBytes, targetPath).thenApply(str -> newNote);
     }
 
     @Override

@@ -47,7 +47,7 @@ public class ListSelectionFragment extends Fragment {
         viewModel
                 .getListOfTodo()
                 .observe(
-                        getActivity(),
+                        getViewLifecycleOwner(),
                         (todoListArrayList) -> {
                             adapter.setTodoListCollection(todoListArrayList);
                             adapter.notifyDataSetChanged();

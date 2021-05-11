@@ -46,7 +46,7 @@ public class NoteSelectionFragment extends Fragment {
         viewModel
                 .getNoteList()
                 .observe(
-                        getActivity(),
+                        getViewLifecycleOwner(),
                         (noteList) -> {
                             adapter.setNoteList(noteList);
                             adapter.notifyDataSetChanged();

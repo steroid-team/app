@@ -391,7 +391,7 @@ public class ItemViewFragmentTest {
                      */
 
                     // Location of Sydney
-                    Location loc = new Location(LocationManager.NETWORK_PROVIDER);
+                    Location loc = new Location(LocationManager.GPS_PROVIDER);
                     loc.setLatitude(-33.8523341);
                     loc.setLongitude(151.2106085);
                     loc.setAccuracy(3);
@@ -399,7 +399,7 @@ public class ItemViewFragmentTest {
                     loc.setTime(System.currentTimeMillis());
                     // mockGps(loc, locationManager);
                     locationManager.requestLocationUpdates(
-                            LocationManager.NETWORK_PROVIDER,
+                            LocationManager.GPS_PROVIDER,
                             0,
                             0,
                             new LocationListener() {
@@ -449,11 +449,11 @@ public class ItemViewFragmentTest {
 
     public void mockGps(Location location, LocationManager mLocationManager)
             throws SecurityException {
-        location.setProvider(LocationManager.NETWORK_PROVIDER);
+        location.setProvider(LocationManager.GPS_PROVIDER);
         try {
             // @throws IllegalArgumentException if a provider with the given name already exists
             mLocationManager.addTestProvider(
-                    LocationManager.NETWORK_PROVIDER,
+                    LocationManager.GPS_PROVIDER,
                     false,
                     false,
                     false,
@@ -468,10 +468,10 @@ public class ItemViewFragmentTest {
 
         try {
             // @throws IllegalArgumentException if no provider with the given name exists
-            mLocationManager.setTestProviderEnabled(LocationManager.NETWORK_PROVIDER, true);
+            mLocationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
         } catch (IllegalArgumentException ignored) {
             mLocationManager.addTestProvider(
-                    LocationManager.NETWORK_PROVIDER,
+                    LocationManager.GPS_PROVIDER,
                     false,
                     false,
                     false,
@@ -485,11 +485,11 @@ public class ItemViewFragmentTest {
 
         try {
             // @throws IllegalArgumentException if no provider with the given name exists
-            mLocationManager.setTestProviderLocation(LocationManager.NETWORK_PROVIDER, location);
+            mLocationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, location);
         } catch (IllegalArgumentException ignored) {
-            mLocationManager.removeTestProvider(LocationManager.NETWORK_PROVIDER);
+            mLocationManager.removeTestProvider(LocationManager.GPS_PROVIDER);
             mLocationManager.addTestProvider(
-                    LocationManager.NETWORK_PROVIDER,
+                    LocationManager.GPS_PROVIDER,
                     false,
                     false,
                     false,
@@ -499,8 +499,8 @@ public class ItemViewFragmentTest {
                     true,
                     0,
                     5);
-            mLocationManager.setTestProviderEnabled(LocationManager.NETWORK_PROVIDER, true);
-            mLocationManager.setTestProviderLocation(LocationManager.NETWORK_PROVIDER, location);
+            mLocationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
+            mLocationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, location);
         }
     }
 

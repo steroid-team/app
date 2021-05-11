@@ -57,7 +57,7 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
     }
 
     // Just call this method to put a notification based on time
-    public static void createLocationNotification(Location location, Activity activity) {
+    public static boolean createLocationNotification(Location location, Activity activity) {
         Intent intent =
                 new Intent(activity.getApplicationContext(), ReminderLocationBroadcast.class);
         PendingIntent pendingIntent =
@@ -72,7 +72,9 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
                             activity.getApplicationContext().getString(R.string.toast_reminder),
                             Toast.LENGTH_SHORT)
                     .show();
+            return true;
         }
+        return false;
     }
 
     private static boolean managePermissions(

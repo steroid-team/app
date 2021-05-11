@@ -28,7 +28,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.service.notification.StatusBarNotification;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -381,15 +380,6 @@ public class ItemViewFragmentTest {
                                     fragment.getActivity()
                                             .getSystemService(Context.LOCATION_SERVICE);
 
-                    /**
-                     * if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                     * locationManager.requestLocationUpdates( LocationManager.NETWORK_PROVIDER, 0,
-                     * 0, location -> ReminderLocationBroadcast.createLocationNotification(
-                     * location, fragment.getActivity()));
-                     *
-                     * <p>} else {*
-                     */
-
                     // Location of Sydney
                     Location loc = new Location(LocationManager.GPS_PROVIDER);
                     loc.setLatitude(-33.8523341);
@@ -397,7 +387,6 @@ public class ItemViewFragmentTest {
                     loc.setAccuracy(3);
                     loc.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
                     loc.setTime(System.currentTimeMillis());
-                    // mockGps(loc, locationManager);
                     locationManager.requestLocationUpdates(
                             LocationManager.GPS_PROVIDER,
                             0,
@@ -409,35 +398,16 @@ public class ItemViewFragmentTest {
                                             ReminderLocationBroadcast.createLocationNotification(
                                                     location, fragment.getActivity()),
                                             true);
-                                    Log.d("TEST", "ca passe par la");
                                 }
 
                                 @Override
-                                public void onProviderDisabled(@NonNull String provider) {
-                                    Log.d("TEST", "ca passe par la2");
-                                }
+                                public void onProviderDisabled(@NonNull String provider) {}
 
                                 @Override
-                                public void onProviderEnabled(@NonNull String provider) {
-                                    Log.d("TEST", "ca passe par la3");
-                                }
+                                public void onProviderEnabled(@NonNull String provider) {}
                             });
                     mockGps(loc, locationManager);
-                    /**
-                     * ReminderLocationBroadcast.createLocationNotification( loc,
-                     * fragment.getActivity()); }*
-                     */
                 });
-
-        /**
-         * Have to wait a little bit more than the 2 seconds because for this small value it takes
-         * in fact like 3 or 4 seconds to display the notification *
-         */
-        try {
-            Thread.sleep(3 * 1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         // FIXME : unable to check if toast appeared
         /*

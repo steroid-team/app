@@ -56,7 +56,7 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
         }
     }
 
-    // Just call this method to put a notification based on time
+    // Just call this method to put a notification based on the location
     public static boolean createLocationNotification(Location location, Activity activity) {
         Intent intent =
                 new Intent(activity.getApplicationContext(), ReminderLocationBroadcast.class);

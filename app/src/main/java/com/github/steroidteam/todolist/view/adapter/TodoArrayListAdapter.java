@@ -8,11 +8,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-import java.util.ArrayList;
+import java.util.List;
 
 public class TodoArrayListAdapter extends RecyclerView.Adapter<TodoArrayListAdapter.TodoHolder> {
 
-    private ArrayList<TodoList> todoListArrayList;
+    private List<TodoList> todoListArrayList;
     private final TodoHolder.TodoCustomListener listener;
 
     public TodoArrayListAdapter(TodoHolder.TodoCustomListener listener) {
@@ -39,16 +39,11 @@ public class TodoArrayListAdapter extends RecyclerView.Adapter<TodoArrayListAdap
 
     @Override
     public int getItemCount() {
-        if (todoListArrayList == null) {
-            return 0;
-        } else {
-            return todoListArrayList.size();
-        }
+        return (todoListArrayList == null) ? 0 : todoListArrayList.size();
     }
 
-    public void setTodoListCollection(ArrayList<TodoList> todoListCollection) {
+    public void setTodoListCollection(List<TodoList> todoListCollection) {
         this.todoListArrayList = todoListCollection;
-        notifyDataSetChanged();
     }
 
     public static class TodoHolder extends RecyclerView.ViewHolder {

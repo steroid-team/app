@@ -415,7 +415,10 @@ public class ItemViewFragmentTest {
                                 public void onProviderDisabled(@NonNull String provider) {}
 
                                 @Override
-                                public void onProviderEnabled(@NonNull String provider) {}
+                                public void onProviderEnabled(@NonNull String provider) {
+                                    ReminderLocationBroadcast.createLocationNotification(
+                                            loc, fragment.getActivity());
+                                }
                             });
                     /**
                      * ReminderLocationBroadcast.createLocationNotification( loc,

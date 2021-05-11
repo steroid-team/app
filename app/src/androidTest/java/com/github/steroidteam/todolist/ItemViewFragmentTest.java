@@ -395,6 +395,33 @@ public class ItemViewFragmentTest {
                     }
                 });
 
+        /**
+         * Have to wait a little bit more than the 2 seconds because for this small value it takes
+         * in fact like 3 or 4 seconds to display the notification *
+         */
+        try {
+            Thread.sleep(3 * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        scenario.onFragment(
+                fragment -> {
+                    boolean isDisplayed = false;
+                    NotificationManager notificationManager =
+                            (NotificationManager)
+                                    fragment.getContext()
+                                            .getSystemService(Context.NOTIFICATION_SERVICE);
+                    StatusBarNotification[] notifications =
+                            notificationManager.getActiveNotifications();
+                    for (StatusBarNotification notification : notifications) {
+                        if (notification.getId() == ReminderLocationBroadcast.REMINDER_LOC_ID) {
+                            isDisplayed = true;
+                        }
+                    }
+                    assertEquals(true, isDisplayed);
+                });
+
         // FIXME : unable to check if toast appeared
         /*
         onView(withText("The reminder has been set !"))

@@ -79,8 +79,6 @@ public class NoteDisplayFragment extends Fragment {
                         });
 
         File file = new File(Environment.getExternalStorageDirectory(), "picFromCamera");
-        // cameraFileUri = FileProvider.getUriForFile(getContext(),
-        // getApplicationContext().getPackageName() + ".provider", file);
         cameraFileUri =
                 FileProvider.getUriForFile(
                         getContext(),
@@ -111,10 +109,6 @@ public class NoteDisplayFragment extends Fragment {
         root.findViewById(R.id.camera_button)
                 .setOnClickListener(
                         v -> {
-                            /*List<ItemListener> listeners = Arrays.asList(
-                                    () -> headerImagePickerActivityLauncher.launch(IMAGE_MIME_TYPE),
-                                    () -> cameraActivityLauncher.launch(cameraFileUri)
-                            );*/
                             DialogInterface.OnClickListener listener =
                                     (dialog, position) -> {
                                         switch (position) {

@@ -7,6 +7,7 @@ import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.web.assertion.WebViewAssertions.webMatches;
@@ -177,5 +178,12 @@ public class NoteDisplayFragmentTest {
         Note updatedNote = captor.getValue();
         assertThat(updatedNote.getTitle(), equalTo(FIXTURE_DEFAULT_NOTE_TITLE));
         assertThat(updatedNote.getContent(), equalTo(FIXTURE_MODIFIED_NOTE_CONTENT));
+    }
+
+    @Test
+    public void addImageDialogWorks() {
+        onView(withId(R.id.camera_button)).perform(click());
+        onView(withText("How do you want to add an image ?")).check(matches(isDisplayed()));
+        onView(withText("Take a photo")).perform(click());
     }
 }

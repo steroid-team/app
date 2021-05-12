@@ -13,7 +13,6 @@ public class ListSelectionDialogFragment extends DialogFragment {
 
     private static final String TITLE_KEY = "title";
     private static final String ITEMS_KEY = "items";
-    // private List<ItemListener> listeners;
     private DialogInterface.OnClickListener listener;
 
     public ListSelectionDialogFragment() {
@@ -26,9 +25,6 @@ public class ListSelectionDialogFragment extends DialogFragment {
         args.putInt(TITLE_KEY, title);
         args.putInt(ITEMS_KEY, items);
         this.setArguments(args);
-
-        // this.listeners = listeners;
-        // this.listener = (dialog, position) -> listeners.get(position);
         this.listener = listener;
 
         return this;

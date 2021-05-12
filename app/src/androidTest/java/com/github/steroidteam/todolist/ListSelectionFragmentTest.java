@@ -170,7 +170,7 @@ public class ListSelectionFragmentTest {
         // button1 = positive button
         onView(withId(R.id.alert_dialog_edit_text))
                 .inRoot(isDialog())
-                .perform(clearText(), typeText(TODO_2_TITLE));
+                .perform(clearText(), typeText(TODO_2_TITLE), closeSoftKeyboard());
         // button1 = positive button
         onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
 
@@ -249,7 +249,8 @@ public class ListSelectionFragmentTest {
                 .when(databaseMock)
                 .updateTodoList(any(UUID.class), any(TodoList.class));
 
-        onView(withId(R.id.alert_dialog_edit_text)).perform(clearText(), typeText(TODO_2_TITLE));
+        onView(withId(R.id.alert_dialog_edit_text))
+                .perform(clearText(), typeText(TODO_2_TITLE), closeSoftKeyboard());
 
         onView(withId(android.R.id.button2)).perform(click());
 
@@ -274,7 +275,7 @@ public class ListSelectionFragmentTest {
         // Change the title of the to-do that will be returned:
         doReturn(todoFuture).when(databaseMock).getTodoList(any(UUID.class));
 
-        onView(withId(R.id.alert_dialog_edit_text)).perform(typeText(""));
+        onView(withId(R.id.alert_dialog_edit_text)).perform(typeText(""), closeSoftKeyboard());
         onView(withId(android.R.id.button1)).perform(click());
 
         onView(withId(R.id.alert_dialog_edit_text)).check(doesNotExist());

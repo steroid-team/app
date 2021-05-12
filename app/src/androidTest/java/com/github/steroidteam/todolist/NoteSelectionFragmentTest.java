@@ -3,6 +3,7 @@ package com.github.steroidteam.todolist;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
@@ -89,7 +90,9 @@ public class NoteSelectionFragmentTest {
         doReturn(noteFuture).when(databaseMock).getNote(any(UUID.class));
 
         // because there shouldn't be a call to the database as we change nothing
-        onView(withId(R.id.alert_dialog_edit_text)).inRoot(isDialog()).perform(clearText());
+        onView(withId(R.id.alert_dialog_edit_text))
+                .inRoot(isDialog())
+                .perform(clearText(), closeSoftKeyboard());
         onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
 
         onView(withText(R.string.rename_note_suggestion)).check(doesNotExist());
@@ -120,7 +123,7 @@ public class NoteSelectionFragmentTest {
         // button2 = negative button
         onView(withId(R.id.alert_dialog_edit_text))
                 .inRoot(isDialog())
-                .perform(clearText(), typeText(NOTE_TITLE_2));
+                .perform(clearText(), typeText(NOTE_TITLE_2), closeSoftKeyboard());
         onView(withId(android.R.id.button2)).inRoot(isDialog()).perform(click());
 
         onView(withText(R.string.rename_note_suggestion)).check(doesNotExist());
@@ -149,7 +152,7 @@ public class NoteSelectionFragmentTest {
         // button1 = positive button
         onView(withId(R.id.alert_dialog_edit_text))
                 .inRoot(isDialog())
-                .perform(clearText(), typeText(NOTE_TITLE_2));
+                .perform(clearText(), typeText(NOTE_TITLE_2), closeSoftKeyboard());
 
         onView(withId(android.R.id.button1)).perform(click());
 
@@ -211,7 +214,7 @@ public class NoteSelectionFragmentTest {
         // button1 = positive button
         onView(withId(R.id.alert_dialog_edit_text))
                 .inRoot(isDialog())
-                .perform(clearText(), typeText(NOTE_TITLE_2));
+                .perform(clearText(), typeText(NOTE_TITLE_2), closeSoftKeyboard());
         onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
 
         onView(withText(R.string.add_note_suggestion)).check(doesNotExist());

@@ -60,7 +60,7 @@ public class InputDialogFragment extends DialogFragment {
         Dialog dialog = builder.show();
 
         dialog.setCanceledOnTouchOutside(false);
-        dialog.getWindow().setGravity(Gravity.TOP);
+        dialog.getWindow().setGravity(Gravity.CENTER);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         return dialog;
     }

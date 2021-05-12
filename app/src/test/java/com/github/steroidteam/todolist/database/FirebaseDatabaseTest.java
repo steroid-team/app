@@ -34,6 +34,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class FirebaseDatabaseTest {
     private static final String TODO_LIST_PATH = "/todo-lists/";
+    private static final String NOTES_PATH = "/notes/";
 
     @Rule public TemporaryFolder folder = new TemporaryFolder();
 
@@ -188,7 +189,7 @@ public class FirebaseDatabaseTest {
         // successfully downloading the file.
         final CompletableFuture<byte[]> completedFuture =
                 CompletableFuture.completedFuture(serializedList);
-        doReturn(completedFuture).when(storageServiceMock).downloadBytes(expectedPath);
+        doReturn(completedFuture).when(storageServiceMock).download(expectedPath);
 
         // Try to get a valid list.
         final FirebaseDatabase database = new FirebaseDatabase(storageServiceMock);
@@ -366,6 +367,65 @@ public class FirebaseDatabaseTest {
         try {
             Note note = database.putNote(UUID.randomUUID(), expectedNote).join();
             assertEquals(expectedNote, note);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void removeNoteRejectsNullTodoListID() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    database.removeNote(null);
+                });
+    }
+
+    @Test
+    public void removeNoteWorks() {
+        final UUID noteID = UUID.randomUUID();
+        final String expectedPath = NOTES_PATH + noteID.toString() + ".json";
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully removing the file.
+        final CompletableFuture<Void> completedFuture = CompletableFuture.completedFuture(null);
+        doReturn(completedFuture).when(storageServiceMock).delete(expectedPath);
+
+        // Try to remove a list.
+        try {
+            database.removeNote(noteID).join();
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(storageServiceMock).delete(expectedPath);
+    }
+
+    @Test
+    public void updateNoteRejectsNullTodoListID() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    database.updateNote(null, new Note("TITLE"));
+                });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    database.updateNote(UUID.randomUUID(), null);
+                });
+    }
+
+    @Test
+    public void updateNoteWorks() {
+        Note expectedNote = new Note("some random note title");
+
+        CompletableFuture<String> uploadFuture = new CompletableFuture<>();
+        uploadFuture.complete("some random path");
+        doReturn(uploadFuture).when(storageServiceMock).upload(any(byte[].class), anyString());
+
+        try {
+            Note actualNote = database.updateNote(UUID.randomUUID(), expectedNote).join();
+            assertEquals(expectedNote, actualNote);
         } catch (Exception e) {
             fail();
         }

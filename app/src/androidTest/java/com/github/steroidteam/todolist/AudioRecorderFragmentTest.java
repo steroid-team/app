@@ -11,16 +11,19 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
 import android.os.Bundle;
+import android.Manifest;
 import androidx.fragment.app.testing.FragmentScenario;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
+import androidx.test.rule.GrantPermissionRule;
 import com.github.steroidteam.todolist.view.AudioRecorderFragment;
 import com.github.steroidteam.todolist.view.NoteSelectionFragment;
 import java.io.File;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -28,6 +31,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AudioRecorderFragmentTest {
+    @Rule
+    public GrantPermissionRule permissionRule =
+            GrantPermissionRule.grant(Manifest.permission.RECORD_AUDIO);
 
     @Mock Database databaseMock;
 

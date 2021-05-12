@@ -45,8 +45,9 @@ public class Note {
         else return Optional.of(audioMemoId);
     }
 
-    public void setTitle(@NonNull String title) {
+    public Note setTitle(@NonNull String title) {
         this.title = title;
+        return this;
     }
 
     public void setContent(@NonNull String content) {

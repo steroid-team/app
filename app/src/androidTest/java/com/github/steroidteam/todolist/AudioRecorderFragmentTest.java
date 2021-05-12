@@ -20,6 +20,7 @@ import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.view.AudioRecorderFragment;
 import com.github.steroidteam.todolist.view.NoteSelectionFragment;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.junit.Before;
@@ -38,7 +39,7 @@ public class AudioRecorderFragmentTest {
     @Mock Database databaseMock;
 
     @Before
-    public void init() {
+    public void init() throws FileNotFoundException {
         Note note = new Note("some title");
         CompletableFuture<Note> noteFuture = new CompletableFuture<>();
         noteFuture.complete(note);

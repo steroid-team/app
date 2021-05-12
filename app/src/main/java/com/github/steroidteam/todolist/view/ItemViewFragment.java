@@ -176,11 +176,20 @@ public class ItemViewFragment extends Fragment {
         CheckBox taskCheckedBox = getView().findViewById(R.id.layout_update_task_checkbox);
         taskCheckedBox.setChecked(holder.getTaskDone());
 
+        SaveButtonSetup(userInputBody, position);
+
+        DeleteButtonSetup(position);
+
+        Button closeButton = getView().findViewById(R.id.layout_update_task_close);
+        closeButton.setOnClickListener(this::closeUpdateLayout);
+    }
+
+    private void SaveButtonSetup(EditText userInput, final int position) {
         Button saveButton = getView().findViewById(R.id.layout_update_task_save);
         saveButton.setOnClickListener(
                 (v) -> {
                     closeUpdateLayout(v);
-                    Task task = getTaskFromEditable(userInputBody.getText());
+                    Task task = getTaskFromEditable(userInput.getText());
 
                     if (task == null) return;
 
@@ -191,16 +200,15 @@ public class ItemViewFragment extends Fragment {
                         viewModel.setTaskDueDate(position, task.getDueDate());
                     }
                 });
+    }
 
+    private void DeleteButtonSetup(final int position) {
         Button deleteButton = getView().findViewById(R.id.layout_update_task_delete);
         deleteButton.setOnClickListener(
                 (v) -> {
                     closeUpdateLayout(v);
                     removeTask(position);
                 });
-
-        Button closeButton = getView().findViewById(R.id.layout_update_task_close);
-        closeButton.setOnClickListener(this::closeUpdateLayout);
     }
 
     public void checkBoxTaskListener(final int position, final boolean isChecked) {

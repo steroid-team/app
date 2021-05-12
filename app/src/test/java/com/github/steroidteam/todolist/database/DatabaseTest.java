@@ -58,6 +58,24 @@ public class DatabaseTest {
     }
 
     @Test
+    public void getLastModifiedTimeTodoRejectsNullArgs() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    database.getLastModifiedTimeTodo(null);
+                });
+    }
+
+    @Test
+    public void getLastModifiedTimeNoteRejectsNullArgs() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    database.getLastModifiedTimeNote(null);
+                });
+    }
+
+    @Test
     public void putTodoListRejectsNullList() {
         assertThrows(
                 NullPointerException.class,

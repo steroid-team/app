@@ -1,6 +1,5 @@
 package com.github.steroidteam.todolist.database;
 
-import androidx.annotation.NonNull;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
@@ -135,7 +134,19 @@ public interface Database {
      */
     CompletableFuture<Task> setTaskDone(UUID todoListID, int index, boolean isDone);
 
-    CompletableFuture<Long> getLastModifiedTimeTodo(@NonNull UUID todoListID);
+    /**
+     * Return the time when the last modification in the to-do list has been made.
+     *
+     * @param todoListID id of the todolist
+     * @return the last modified time
+     */
+    CompletableFuture<Long> getLastModifiedTimeTodo(UUID todoListID);
 
-    CompletableFuture<Long> getLastModifiedTimeNote(@NonNull UUID noteID);
+    /**
+     * Return the time when the last modification in the note has been made.
+     *
+     * @param noteID id of the note
+     * @return the last modified time
+     */
+    CompletableFuture<Long> getLastModifiedTimeNote(UUID noteID);
 }

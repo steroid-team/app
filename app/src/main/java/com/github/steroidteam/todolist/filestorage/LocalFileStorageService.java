@@ -17,9 +17,8 @@ public class LocalFileStorageService implements FileStorageService {
     private final FirebaseUser user;
     private final String USER_SPACE;
 
-    public LocalFileStorageService(@NonNull File localPath, @NonNull FirebaseUser user) {
+    public LocalFileStorageService(@NonNull File localPath, FirebaseUser user) {
         Objects.requireNonNull(localPath);
-        Objects.requireNonNull(user);
         this.localPath = localPath;
         this.user = user;
         this.USER_SPACE = "user-data/" + user.getUid() + "/";

@@ -65,7 +65,7 @@ public class NoteDisplayFragment extends Fragment {
                         - 2 * padding;
 
         // Get the UUID of the currently selected note.
-        noteID = UUID.fromString(getArguments().getString(NoteSelectionFragment.NOTE_ID_KEY));
+        noteID = (UUID) getArguments().getSerializable(NoteSelectionFragment.NOTE_ID_KEY);
 
         // Set view model and observe the note:
         this.noteViewModel = new NoteViewModel(noteID);

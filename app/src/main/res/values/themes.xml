@@ -127,7 +127,7 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="TaskDeleteButtonInRecyclerView">
+    <style name="DeleteButtonInRecyclerView">
         <item name="android:fontFamily">@font/nunitosans_semibold</item>
         <item name="android:background">@drawable/rounded_corner_bg</item>
         <item name="android:backgroundTint">@color/light_grey</item>

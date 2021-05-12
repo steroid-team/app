@@ -9,53 +9,50 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.notes.Note;
 import java.util.List;
-import java.util.UUID;
 
-public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
+public class NoteArrayListAdapter extends RecyclerView.Adapter<NoteArrayListAdapter.NoteHolder> {
 
     private List<Note> noteList;
-    private final NoteCustomListener listener;
+    private final NoteHolder.NoteCustomListener listener;
 
-    public NoteAdapter(List<Note> list, NoteCustomListener listener) {
-        this.noteList = list;
+    public NoteArrayListAdapter(NoteHolder.NoteCustomListener listener) {
         this.listener = listener;
     }
 
     @NonNull
     @Override
-    public NoteAdapter.NoteHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public NoteArrayListAdapter.NoteHolder onCreateViewHolder(
+            @NonNull ViewGroup parent, int viewType) {
         View noteView =
                 LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.layout_note_item, parent, false);
-        return new NoteHolder(noteView);
+        return new NoteHolder(noteView, listener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NoteAdapter.NoteHolder holder, int position) {
+    public void onBindViewHolder(@NonNull NoteArrayListAdapter.NoteHolder holder, int position) {
         Note currentNote = noteList.get(position);
         if (currentNote != null) {
             holder.noteTitle.setText(currentNote.getTitle());
+            holder.note = currentNote;
         }
     }
 
     @Override
     public int getItemCount() {
-        return noteList.size();
+        return (noteList == null) ? 0 : noteList.size();
     }
 
-    public UUID getIdOfNote(int index) {
-        return noteList.get(index).getId();
+    public void setNoteList(List<Note> noteList) {
+        this.noteList = noteList;
     }
 
-    public interface NoteCustomListener {
-        void onClickCustom(NoteHolder holder);
-    }
-
-    public class NoteHolder extends RecyclerView.ViewHolder {
+    public static class NoteHolder extends RecyclerView.ViewHolder {
 
         private TextView noteTitle;
+        private Note note;
 
-        public NoteHolder(@NonNull View itemView) {
+        public NoteHolder(@NonNull View itemView, final NoteCustomListener listener) {
             super(itemView);
 
             noteTitle = itemView.findViewById(R.id.layout_note_title);
@@ -64,6 +61,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
                     (View view) -> {
                         listener.onClickCustom(NoteHolder.this);
                     });
+        }
+
+        public Note getNote() {
+            return note;
+        }
+
+        public interface NoteCustomListener {
+            void onClickCustom(final NoteHolder holder);
         }
     }
 }

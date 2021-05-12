@@ -55,6 +55,10 @@ public class Note {
     public Note setLatLng(@NonNull LatLng latLng) {
         Objects.requireNonNull(latLng);
         this.latLng = latLng;
+    }
+
+    public Note setTitle(@NonNull String title) {
+        this.title = title;
         return this;
     }
 

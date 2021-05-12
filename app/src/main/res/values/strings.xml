@@ -29,17 +29,31 @@
 
     <!-- To-do Management -->
     <string name="list_activity_title">My lists</string>
-    <string name="new_list_btn_description">Add a new list</string>
+    <string name="new_list_btn_description">Add a new to-do</string>
     <string name="add_todo_suggestion">Enter the title of your to-do list</string>
     <string name="rename_todo_suggestion">Rename your to-do list</string>
-    <string name="delete_todo_suggestion">Are you sure to delete this to-do ?</string>
+    <string name="delete_todo_suggestion">Are you sure to delete this to-do?</string>
 
     <!-- Note Management -->
     <string name="note_activity_title">My notes</string>
     <string name="new_note_btn_description">Add a new note</string>
+    <string name="add_note_suggestion">Enter the title of your note</string>
+    <string name="delete_note_suggestion">Are you sure to delete this note?</string>
+    <string name="rename_note_suggestion">Enter a new title for your Note:</string>
     <string name="add_header_photo">Photo</string>
     <string name="date_placeholder">xx/yy aa:bb</string>
     <string name="note_date_placeholder">Day, Nth Month YEAR</string>
+
+    <!-- Note editor -->
+    <string name="bold">Bold</string>
+    <string name="italics">Italics</string>
+    <string name="underline">Underline</string>
+    <string name="strikethrough">Strikethrough</string>
+    <string name="blockquote">Blockquote</string>
+    <string name="unordered_list">Unordered list</string>
+    <string name="insert_image">Insert image</string>
+    <string name="ordered_list">Ordered list</string>
+    <string name="add_drawing">Add drawing</string>
 
     <!-- Drawing -->
     <string name="drawing_activity_title">Handwritten Note</string>
@@ -60,17 +74,6 @@
     <string name="record_button">Record</string>
     <string name="stop_record_button">Stop recording</string>
     <string name="audio_btn_description">Audio</string>
-
-    <!-- Note editor -->
-    <string name="bold">Bold</string>
-    <string name="italics">Italics</string>
-    <string name="underline">Underline</string>
-    <string name="strikethrough">Strikethrough</string>
-    <string name="blockquote">Blockquote</string>
-    <string name="unordered_list">Unordered list</string>
-    <string name="insert_image">Insert image</string>
-    <string name="ordered_list">Ordered list</string>
-    <string name="add_drawing">Add drawing</string>
 
     <!-- Notification Reminder -->
     <string name="title_date_reminder">The due date has come !</string>

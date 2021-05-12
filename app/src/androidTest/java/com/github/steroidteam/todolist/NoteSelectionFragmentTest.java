@@ -11,25 +11,18 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.contrib.RecyclerViewActions.scrollToPosition;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
-import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.steroidteam.todolist.CustomMatchers.ItemCountIs;
 import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckText;
-import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import androidx.fragment.app.testing.FragmentScenario;
-import androidx.navigation.Navigation;
-import androidx.navigation.testing.TestNavHostController;
-import androidx.test.core.app.ApplicationProvider;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
-import com.github.steroidteam.todolist.model.todo.TodoList;
-import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.NoteSelectionFragment;
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,16 +56,6 @@ public class NoteSelectionFragmentTest {
         CompletableFuture<Note> noteFuture = new CompletableFuture<>();
         noteFuture.complete(note);
 
-        TodoListCollection collection = new TodoListCollection();
-        TodoList todoList = new TodoList("Some random title");
-        collection.addUUID(UUID.randomUUID());
-        collection.addUUID(UUID.randomUUID());
-
-        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
-        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
-        todoListCollectionFuture.complete(collection);
-        todoListFuture.complete(todoList);
-
         CompletableFuture<Void> future = new CompletableFuture<>();
         future.complete(null);
         doReturn(future).when(databaseMock).removeNote(any(UUID.class));
@@ -81,33 +64,12 @@ public class NoteSelectionFragmentTest {
         doReturn(noteFuture).when(databaseMock).getNote(any(UUID.class));
         doReturn(noteFuture).when(databaseMock).putNote(any(UUID.class), any(Note.class));
         doReturn(noteFuture).when(databaseMock).updateNote(any(UUID.class), any(Note.class));
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
-        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
 
         DatabaseFactory.setCustomDatabase(databaseMock);
 
         scenario =
                 FragmentScenario.launchInContainer(
                         NoteSelectionFragment.class, null, R.style.Theme_Asteroid);
-    }
-
-    @Test
-    public void openListWorks() {
-        // Set a test NavController in the fragment to check the navigation flow.
-        TestNavHostController navController =
-                new TestNavHostController(ApplicationProvider.getApplicationContext());
-
-        scenario.onFragment(
-                fragment -> {
-                    navController.setGraph(R.navigation.mobile_navigation);
-                    Navigation.setViewNavController(fragment.requireView(), navController);
-                });
-
-        onView(withId(R.id.activity_noteselection_recycler))
-                .perform(actionOnItemAtPosition(0, click()));
-
-        // Check that we are now in the note display view.
-        assertThat(navController.getCurrentDestination().getId(), equalTo(R.id.nav_note_display));
     }
 
     @Test

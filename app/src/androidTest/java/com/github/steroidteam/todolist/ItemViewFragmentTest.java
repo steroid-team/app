@@ -10,6 +10,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckBox;
+import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckText;
+import static com.github.steroidteam.todolist.CustomMatchers.clickChildViewWithId;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -20,18 +23,9 @@ import static org.mockito.Mockito.verify;
 
 import android.app.NotificationManager;
 import android.content.Context;
-import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.TextView;
-import androidx.annotation.NonNull;
 import androidx.fragment.app.testing.FragmentScenario;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.test.espresso.UiController;
-import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
-import androidx.test.espresso.matcher.BoundedMatcher;
 import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
@@ -45,8 +39,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,6 +48,9 @@ import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ItemViewFragmentTest {
+
+    private final int TASK_BODY_LAYOUT_ID = R.id.layout_task_body;
+    private final int TASK_BOX_LAYOUT_ID = R.id.layout_task_checkbox;
 
     private FragmentScenario<ItemViewFragment> scenario;
     @Mock Database databaseMock;
@@ -90,7 +85,7 @@ public class ItemViewFragmentTest {
         ViewModelFactoryInjection.setCustomTodoListRepo(context, UUID.randomUUID());
         scenario =
                 FragmentScenario.launchInContainer(
-                        ItemViewFragment.class, new Bundle(), R.style.Theme_Asteroid);
+                        ItemViewFragment.class, null, R.style.Theme_Asteroid);
     }
 
     @Test
@@ -114,7 +109,7 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.new_task_text)).check(matches(withText("")));
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION)));
+                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION, TASK_BODY_LAYOUT_ID)));
     }
 
     @Test
@@ -157,10 +152,10 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.layout_update_task_save)).perform(click());
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION)));
+                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION, TASK_BODY_LAYOUT_ID)));
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckBox(0, false)));
+                .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
     }
 
     @Test
@@ -223,7 +218,7 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.activity_itemview_itemlist))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
-                                0, MyViewAction.clickChildViewWithId(R.id.layout_task_checkbox)));
+                                0, clickChildViewWithId(R.id.layout_task_checkbox)));
 
         onView(withId(R.id.activity_itemview_itemlist))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
@@ -256,10 +251,10 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.layout_update_task_save)).perform(click());
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
+                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckBox(0, false)));
+                .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
     }
 
     @Test
@@ -301,16 +296,15 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.activity_itemview_itemlist))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
-                                0, MyViewAction.clickChildViewWithId(R.id.layout_task_checkbox)));
+                                0, clickChildViewWithId(R.id.layout_task_checkbox)));
         onView(withId(R.id.activity_itemview_itemlist))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
-                                0,
-                                MyViewAction.clickChildViewWithId(R.id.layout_task_delete_button)));
+                                0, clickChildViewWithId(R.id.layout_task_delete_button)));
 
         // after deleting the first item we check that we have the second one at position 0.
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
+                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
     }
 
     @Test
@@ -344,10 +338,10 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.layout_update_task_delete)).perform(click());
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
+                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckBox(0, false)));
+                .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
     }
 
     @Test
@@ -393,73 +387,5 @@ public class ItemViewFragmentTest {
         /*onView(withText("Successfully removed the task !"))
         .inRoot(new ToastMatcher())
         .check(matches(isDisplayed()));*/
-    }
-
-    public static Matcher<View> atPositionCheckText(
-            final int position, @NonNull final String expectedText) {
-        return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText(
-                        "View holder at position "
-                                + String.valueOf(position)
-                                + ", expected: "
-                                + expectedText
-                                + " ");
-            }
-
-            @Override
-            protected boolean matchesSafely(final RecyclerView view) {
-                View taskView = view.getChildAt(position);
-                TextView bodyView = taskView.findViewById(R.id.layout_task_body);
-                return bodyView.getText().toString().equals(expectedText);
-            }
-        };
-    }
-
-    public static Matcher<View> atPositionCheckBox(
-            final int position, @NonNull final boolean expectedBox) {
-        return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText(
-                        "View holder at position "
-                                + String.valueOf(position)
-                                + ", expected: "
-                                + expectedBox
-                                + " ");
-            }
-
-            @Override
-            protected boolean matchesSafely(final RecyclerView view) {
-                View taskView = view.getChildAt(position);
-                CheckBox boxView = taskView.findViewById(R.id.layout_task_checkbox);
-                return boxView.isChecked() == expectedBox;
-            }
-        };
-    }
-
-    // Simple ViewAction to click on the button within a item of the recyclerView
-    public static class MyViewAction {
-
-        public static ViewAction clickChildViewWithId(final int id) {
-            return new ViewAction() {
-                @Override
-                public Matcher<View> getConstraints() {
-                    return null;
-                }
-
-                @Override
-                public String getDescription() {
-                    return "Click on a child view with specified id.";
-                }
-
-                @Override
-                public void perform(UiController uiController, View view) {
-                    View v = view.findViewById(id);
-                    v.performClick();
-                }
-            };
-        }
     }
 }

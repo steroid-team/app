@@ -1,10 +1,14 @@
 package com.github.steroidteam.todolist.view;
 
+import android.app.Activity;
+import android.app.Instrumentation;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.ActivityResultRegistry;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -21,13 +26,24 @@ import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class NoteDisplayFragment extends Fragment {
+    private final ActivityResultRegistry mRegistry;
     public static LatLng position;
     public static String locationName;
     private ActivityResultLauncher<String> filePickerActivityLauncher;
+
+    public NoteDisplayFragment(@NonNull ActivityResultRegistry registry) {
+        super();
+        mRegistry = registry;
+    }
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,9 +86,11 @@ public class NoteDisplayFragment extends Fragment {
                             editText.setText(note.getContent());
                         });
 
-        filePickerActivityLauncher =
+        /*filePickerActivityLauncher =
                 registerForActivityResult(
-                        new ActivityResultContracts.GetContent(), this::updateHeaderImage);
+                        new ActivityResultContracts.GetContent(), this::updateHeaderImage);*/
+
+        filePickerActivityLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), mRegistry, this::updateHeaderImage);
 
         return root;
     }

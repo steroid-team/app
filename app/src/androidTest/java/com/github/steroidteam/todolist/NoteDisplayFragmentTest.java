@@ -1,5 +1,6 @@
 package com.github.steroidteam.todolist;
 
+import static androidx.core.os.BundleKt.bundleOf;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.intent.Intents.intending;
@@ -18,11 +19,19 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+
+import androidx.activity.result.ActivityResultRegistry;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.navigation.Navigation;
 import androidx.navigation.testing.TestNavHostController;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.intent.rule.IntentsTestRule;
+
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
@@ -39,6 +48,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import kotlin.Pair;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NoteDisplayFragmentTest {
@@ -82,15 +93,25 @@ public class NoteDisplayFragmentTest {
 
     @Test
     public void filePickingWorks() {
+        scenario.recreate();
         scenario.onFragment(
                 fragment -> {
                     savePickedImage(fragment);
-                    Instrumentation.ActivityResult result =
-                            createImageGallerySetResultStub(fragment);
-                    intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(result);
+                    Uri result = setStubResult(fragment);
+                    ActivityResultRegistry testRegistry = new ActivityResultRegistry() {
+                        @Override
+                        public <I, O> void onLaunch(int requestCode, @NonNull ActivityResultContract<I, O> contract, I input, @Nullable ActivityOptionsCompat options) {
+                            dispatchResult(requestCode, result);
+                        }
+                    };
+                    Bundle bundle = new Bundle();
+                    bundle = bundleOf(new Pair<>("registry", testRegistry));
+                    bundle.putString(NoteSelectionFragment.NOTE_ID_KEY, UUID.randomUUID().toString());
+                    FragmentScenario<NoteDisplayFragment> resultScenario = FragmentScenario.launchInContainer(NoteDisplayFragment.class, bundle, R.style.Theme_Asteroid);
+                    resultScenario.onFragment(newFrag -> {
+                        onView(withId(R.id.camera_button)).perform(click());
+                    });
                 });
-
-        onView(withId(R.id.camera_button)).perform(click());
     }
 
     private void savePickedImage(Fragment fragment) {
@@ -110,17 +131,9 @@ public class NoteDisplayFragmentTest {
         }
     }
 
-    private Instrumentation.ActivityResult createImageGallerySetResultStub(Fragment fragment) {
-        Bundle bundle = new Bundle();
-        ArrayList<Parcelable> parcels = new ArrayList<>();
-        Intent resultData = new Intent();
+    private Uri setStubResult(Fragment fragment) {
         File dir = fragment.getActivity().getExternalCacheDir();
         File file = new File(dir.getPath(), "pickImageResult.jpeg");
-        Uri uri = Uri.fromFile(file);
-        Parcelable parcelable1 = (Parcelable) uri;
-        parcels.add(parcelable1);
-        bundle.putParcelableArrayList(Intent.EXTRA_STREAM, parcels);
-        resultData.putExtras(bundle);
-        return new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData);
+        return Uri.fromFile(file);
     }
 }

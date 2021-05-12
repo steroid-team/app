@@ -140,7 +140,11 @@ public class ItemViewFragment extends Fragment {
         if (taskDescription.length() == 0) return null;
 
         Task task = new Task(taskDescription);
-        if (dueDate != null) task.setDueDate(dueDate);
+        if (dueDate != null) {
+            task.setDueDate(dueDate);
+            ReminderDateBroadcast.createNotification(dueDate, taskDescription, getActivity());
+        }
+
         return task;
     }
 

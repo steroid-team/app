@@ -40,6 +40,7 @@ import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.view.ItemViewFragment;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -377,14 +378,14 @@ public class ItemViewFragmentTest {
 
     @Test
     public void notificationReminderWorks() {
-
+        String testDescription = "This is a test";
         int twoSecondsInMillis = 2 * 1000;
-        ;
+        Date date = new Date(System.currentTimeMillis() + twoSecondsInMillis);
         scenario.onFragment(
                 fragment -> {
                     ReminderDateBroadcast.createNotificationChannel(fragment.getActivity());
                     ReminderDateBroadcast.createNotification(
-                            twoSecondsInMillis, fragment.getActivity());
+                            date, testDescription, fragment.getActivity());
                 });
 
         /**

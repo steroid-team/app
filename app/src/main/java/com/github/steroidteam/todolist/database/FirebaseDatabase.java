@@ -138,7 +138,7 @@ public class FirebaseDatabase implements Database {
     }
 
     @Override
-    public CompletableFuture<Task> renameTask(UUID todoListID, Integer taskIndex, String newName) {
+    public CompletableFuture<Task> updateTask(UUID todoListID, Integer taskIndex, Task newTask) {
         Objects.requireNonNull(todoListID);
         Objects.requireNonNull(taskIndex);
         String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
@@ -148,7 +148,7 @@ public class FirebaseDatabase implements Database {
                 // Remove the task from the object.
                 .thenApply(
                         todoList -> {
-                            todoList.renameTask(taskIndex, newName);
+                            todoList.updateTask(taskIndex, newTask);
                             return todoList;
                         })
                 // Re-serialize and upload the new object.
@@ -183,6 +183,32 @@ public class FirebaseDatabase implements Database {
         byte[] serializedNote = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
 
         return this.storageService.upload(serializedNote, notePath).thenApply(str -> note);
+    }
+
+    @Override
+    public CompletableFuture<Void> removeNote(@NonNull UUID noteID) {
+        Objects.requireNonNull(noteID);
+        String targetPath = NOTES_PATH + noteID.toString() + ".json";
+
+        return this.storageService
+                .delete(targetPath)
+                .thenCompose(
+                        str -> {
+                            CompletableFuture<Void> future = new CompletableFuture<>();
+                            future.complete(null);
+                            return future;
+                        });
+    }
+
+    @Override
+    public CompletableFuture<Note> updateNote(UUID noteID, Note newNote) {
+        Objects.requireNonNull(noteID);
+        Objects.requireNonNull(newNote);
+
+        String targetPath = NOTES_PATH + noteID.toString() + ".json";
+        byte[] fBytes = JSONSerializer.serializeNote(newNote).getBytes(StandardCharsets.UTF_8);
+
+        return this.storageService.upload(fBytes, targetPath).thenApply(str -> newNote);
     }
 
     @Override

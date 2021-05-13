@@ -1,15 +1,12 @@
 package com.github.steroidteam.todolist;
 
-import com.github.steroidteam.todolist.database.FileStorageDatabase;
-import com.github.steroidteam.todolist.model.todo.Task;
+import static org.junit.Assert.assertThrows;
+
 import com.github.steroidteam.todolist.viewmodel.NoteViewModel;
 import com.github.steroidteam.todolist.viewmodel.NoteViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
-
 import org.junit.Test;
-
-import static org.junit.Assert.assertThrows;
 
 public class ViewModelFactoryTest {
 

@@ -161,7 +161,6 @@ public class NoteDisplayFragmentTest {
         // and this lead to unwanted behavior with the typeText l.172
         // clearText isn't working with the rich editor
         Note note = new Note(FIXTURE_DEFAULT_NOTE_TITLE);
-        note.setContent(FIXTURE_DEFAULT_NOTE_CONTENT);
         CompletableFuture<Note> noteFuture = new CompletableFuture<>();
         noteFuture.complete(note);
         doReturn(noteFuture).when(databaseMock).getNote(any(UUID.class));

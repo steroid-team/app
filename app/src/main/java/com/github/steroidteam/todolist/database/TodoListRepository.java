@@ -60,7 +60,6 @@ public class TodoListRepository {
                 .thenCombine(
                         this.localDatabase.getTodoListCollection(),
                         (remoteTodoCollection, localTodoCollection) -> {
-
                             // CHECK THAT ALL REMOTE TO-DO WILL BE IN THE LOCAL DATABASE
                             for (int i = 0; i < remoteTodoCollection.getSize(); ++i) {
                                 UUID currentRemoteID = remoteTodoCollection.getUUID(i);

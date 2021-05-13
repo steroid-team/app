@@ -81,7 +81,7 @@ public class NoteRepository {
                             // REMOVE ALL TO-DO THAT ARE NOT IN THE REMOTE DATABASE
                             for (UUID noteID : localNoteList) {
                                 if (!remoteNoteList.contains(noteID)) {
-                                    this.localDatabase.removeTodoList(noteID);
+                                    this.localDatabase.removeNote(noteID);
                                 }
                             }
                             return null;

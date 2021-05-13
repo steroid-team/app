@@ -529,12 +529,14 @@ public class DatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FileStorageDatabase(storageServiceMock).updateTask(UUID.randomUUID(), null, new Task(""));
+                    new FileStorageDatabase(storageServiceMock)
+                            .updateTask(UUID.randomUUID(), null, new Task(""));
                 });
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FileStorageDatabase(storageServiceMock).updateTask(UUID.randomUUID(), 0, null);
+                    new FileStorageDatabase(storageServiceMock)
+                            .updateTask(UUID.randomUUID(), 0, null);
                 });
     }
 

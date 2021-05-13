@@ -43,6 +43,11 @@
     <string name="add_header_photo">Photo</string>
     <string name="date_placeholder">xx/yy aa:bb</string>
     <string name="note_date_placeholder">Day, Nth Month YEAR</string>
+    <string name="add_image_dialog">How do you want to add an image ?</string>
+    <string-array name="add_image_types">
+        <item>Pick a file</item>
+        <item>Take a photo</item>
+    </string-array>
 
     <!-- Note editor -->
     <string name="bold">Bold</string>

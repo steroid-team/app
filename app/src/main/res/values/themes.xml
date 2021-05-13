@@ -102,6 +102,7 @@
     <style name="Dialog" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:textColorPrimary">@color/dark_blue</item>
         <item name="colorAccent">@android:color/black</item>
+        <item name="textColorAlertDialogListItem">@android:color/black</item>
         <item name="android:text">@font/nunitosans_bold</item>
         <item name="android:textSize">17sp</item>
         <item name="android:background">@drawable/rounded_corner_bg</item>

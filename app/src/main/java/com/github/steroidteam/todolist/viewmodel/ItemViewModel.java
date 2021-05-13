@@ -7,8 +7,8 @@ import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-import java.util.Set;
 import java.util.Date;
+import java.util.Set;
 
 public class ItemViewModel extends ViewModel {
 

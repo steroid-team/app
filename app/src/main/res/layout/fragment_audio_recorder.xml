@@ -44,14 +44,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_btn_speak_now" />
+        app:srcCompat="@android:drawable/ic_btn_speak_now"
+        android:contentDescription="@string/button_that_starts_an_audio_recording" />
 
     <TextView
         android:id="@+id/record_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Record"
+        android:text="@string/record"
         android:textColor="@color/dark_grey"
         android:textSize="20sp"
         android:layout_marginBottom="50dp"
@@ -75,14 +76,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/record_button"
-        app:srcCompat="@android:drawable/ic_media_play" />
+        app:srcCompat="@android:drawable/ic_media_play"
+        android:contentDescription="@string/button_that_starts_playing_an_audio_recording" />
 
     <TextView
         android:id="@+id/play_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Play"
+        android:text="@string/play"
         android:textColor="@color/dark_grey"
         android:textSize="20sp"
         android:layout_marginBottom="50dp"

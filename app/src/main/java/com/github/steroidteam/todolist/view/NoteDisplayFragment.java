@@ -1,5 +1,7 @@
 package com.github.steroidteam.todolist.view;
 
+import static com.github.steroidteam.todolist.view.NoteSelectionFragment.NOTE_ID_KEY;
+
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -138,7 +140,10 @@ public class NoteDisplayFragment extends Fragment {
         root.findViewById(R.id.audio_button)
                 .setOnClickListener(
                         v -> {
-                            Navigation.findNavController(getView()).navigate(R.id.nav_audio);
+                            Bundle bundle = new Bundle();
+                            bundle.putString(NOTE_ID_KEY, noteID.toString());
+                            Navigation.findNavController(getView())
+                                    .navigate(R.id.nav_audio, bundle);
                         });
 
         root.findViewById(R.id.editor_action_drawing_btn)

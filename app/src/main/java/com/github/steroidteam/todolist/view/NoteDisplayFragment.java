@@ -3,6 +3,7 @@ package com.github.steroidteam.todolist.view;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,6 +22,8 @@ import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.io.File;
 import java.io.InputStream;
 import java.util.UUID;
 import jp.wasabeef.richeditor.RichEditor;
@@ -28,7 +31,7 @@ import jp.wasabeef.richeditor.RichEditor;
 public class NoteDisplayFragment extends Fragment {
     public static LatLng position;
     public static String locationName;
-    public static String lastDrawingUrl;
+    public static String lastDrawingUri;
     private Database database;
     private UUID noteID;
     private RichEditor richEditor;
@@ -80,6 +83,8 @@ public class NoteDisplayFragment extends Fragment {
                         uri -> {
                             richEditor.insertImage(uri.toString(), "", imageDisplayWidth);
                         });
+        richEditor.getSettings().setAllowFileAccess(true);
+        richEditor.getSettings().setAllowFileAccessFromFileURLs(true);
 
         return root;
     }
@@ -177,10 +182,10 @@ public class NoteDisplayFragment extends Fragment {
         // TODO: Update the note's location via a ViewModel, so that no static attributes have to
         //  be used at all for passing data between the MapFragment and the NoteDisplayFragment.
         if (position != null && locationName != null) setLocationNote(position, locationName);
-        if (lastDrawingUrl != null) {
+        if (lastDrawingUri != null) {
             richEditor.focusEditor();
-            richEditor.insertImage(lastDrawingUrl, "drawing", imageDisplayWidth);
-            lastDrawingUrl = null;
+            richEditor.insertImage(lastDrawingUri, "", imageDisplayWidth);
+            lastDrawingUri = null;
         }
     }
 

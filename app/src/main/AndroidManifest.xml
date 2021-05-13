@@ -37,6 +37,7 @@
         <activity android:name=".view.MainActivity" />
 
         <receiver android:name=".broadcast.ReminderDateBroadcast"/>
+        <receiver android:name=".broadcast.ReminderLocationBroadcast"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.asteroid.fileprovider"
@@ -49,3 +50,4 @@
     </application>
 
 </manifest>
+

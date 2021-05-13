@@ -6,16 +6,13 @@ import java.util.UUID;
 
 public class TodoListCollection {
     private final List<UUID> todoListCollection;
-    private final List<UUID> tagCollection;
 
     public TodoListCollection() {
         this.todoListCollection = new ArrayList<>();
-        tagCollection = new ArrayList<>();
     }
 
     public TodoListCollection(List<UUID> todoListCollection) {
         this.todoListCollection = todoListCollection;
-        tagCollection = new ArrayList<>();
     }
 
     public int getSize() {

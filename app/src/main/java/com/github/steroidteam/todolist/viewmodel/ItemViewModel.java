@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import com.github.steroidteam.todolist.model.TodoRepository;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
+import java.util.Set;
 
 public class ItemViewModel extends ViewModel {
 
@@ -38,5 +40,16 @@ public class ItemViewModel extends ViewModel {
 
     public void setTaskDone(int index, boolean isDone) {
         repository.setTaskDone(index, isDone);
+    }
+
+    public Set<Tag> getTags() {
+        // TODO : Change when adding persistence, add method in TodoRepository
+        return Tag.getTagsFromListId(todoList.getValue().getId());
+    }
+
+    public Tag createTag(String body, int color) {
+        // TODO : Change when adding persistence, add method in TodoRepository
+        Tag tag = new Tag(body, color, todoList.getValue().getId());
+        return tag;
     }
 }

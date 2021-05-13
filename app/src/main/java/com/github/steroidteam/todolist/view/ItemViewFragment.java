@@ -1,23 +1,31 @@
 package com.github.steroidteam.todolist.view;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.TodoRepository;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
+import com.github.steroidteam.todolist.view.dialog.DialogListener;
+import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
 import com.github.steroidteam.todolist.viewmodel.ItemViewModel;
+import java.util.Set;
 import java.util.UUID;
 
 public class ItemViewFragment extends Fragment {
@@ -62,6 +70,9 @@ public class ItemViewFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
 
         root.findViewById(R.id.new_task_btn).setOnClickListener(this::addTask);
+
+        root.findViewById(R.id.itemview_tag_button).setOnClickListener(this::tagButton);
+        root.findViewById(R.id.itemview_tag_save_button).setOnClickListener(this::tagSaveButton);
 
         return root;
     }
@@ -136,5 +147,61 @@ public class ItemViewFragment extends Fragment {
 
     public void checkBoxTaskListener(final int position, final boolean isChecked) {
         itemViewModel.setTaskDone(position, isChecked);
+    }
+
+    public void tagButton(View view) {
+        ConstraintLayout tagLayout = getView().findViewById(R.id.layout_update_tags);
+        tagLayout.setVisibility(View.VISIBLE);
+        LinearLayout row = getView().findViewById(R.id.tag_row_first);
+        Set<Tag> tags = itemViewModel.getTags();
+        row.removeAllViews();
+        Button plusButton =
+                new Button(new ContextThemeWrapper(getContext(), R.style.TagInList), null, 0);
+        plusButton.setText("+");
+        plusButton.setOnClickListener(this::addTag);
+        row.addView(plusButton);
+        tags.forEach(tag -> createTagButton(tag, row));
+    }
+
+    public void tagSaveButton(View view) {
+        ConstraintLayout tagLayout = getView().findViewById(R.id.layout_update_tags);
+        tagLayout.setVisibility(View.GONE);
+    }
+
+    private void createTagButton(Tag tag, LinearLayout row) {
+        Button tagButton =
+                new Button(new ContextThemeWrapper(getContext(), R.style.TagInList), null, 0);
+        tagButton.setText(tag.getBody());
+        // tagView.setBackgroundColor(tag.getColor());
+        row.addView(tagButton);
+    }
+
+    public void addTag(View view) {
+
+        DialogListener dialogListener =
+                new DialogListener() {
+
+                    @Override
+                    public void onPositiveClick(String title) {
+                        if (title.length() > 0) {
+                            Tag tag = itemViewModel.createTag(title, Color.LTGRAY);
+                            createTagButton(tag, getView().findViewById(R.id.tag_row_first));
+                        }
+                    }
+
+                    @Override
+                    public void onPositiveClick() {
+                        // NEVER CALLED
+                    }
+
+                    @Override
+                    public void onNegativeClick() {
+                        // DO NOTHING
+                    }
+                };
+
+        DialogFragment newFragment =
+                new InputDialogFragment().newInstance(dialogListener, R.string.add_tag_suggestion);
+        newFragment.show(getParentFragmentManager(), "add_tag_dialog");
     }
 }

@@ -16,12 +16,17 @@ import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.util.JSONSerializer;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -30,6 +35,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class FirebaseDatabaseTest {
     private static final String TODO_LIST_PATH = "/todo-lists/";
     private static final String NOTES_PATH = "/notes/";
+
+    @Rule public TemporaryFolder folder = new TemporaryFolder();
 
     @Mock FirebaseFileStorageService storageServiceMock;
 
@@ -115,7 +122,9 @@ public class FirebaseDatabaseTest {
         // successfully uploading the file.
         final CompletableFuture<String> completedFuture =
                 CompletableFuture.completedFuture(expectedPath);
-        doReturn(completedFuture).when(storageServiceMock).upload(any(), eq(expectedPath));
+        doReturn(completedFuture)
+                .when(storageServiceMock)
+                .upload(any(byte[].class), eq(expectedPath));
 
         // Try to add a valid list.
         try {
@@ -180,14 +189,14 @@ public class FirebaseDatabaseTest {
         // successfully downloading the file.
         final CompletableFuture<byte[]> completedFuture =
                 CompletableFuture.completedFuture(serializedList);
-        doReturn(completedFuture).when(storageServiceMock).download(expectedPath);
+        doReturn(completedFuture).when(storageServiceMock).downloadBytes(expectedPath);
 
         // Try to get a valid list.
         final FirebaseDatabase database = new FirebaseDatabase(storageServiceMock);
         try {
             final TodoList fetchedList = database.getTodoList(todoList.getId()).get();
 
-            verify(storageServiceMock).download(expectedPath);
+            verify(storageServiceMock).downloadBytes(expectedPath);
             assertEquals(todoList, fetchedList);
             assertEquals(todoList.getSize(), fetchedList.getSize());
             assertEquals(todoList.getDate().getTime(), fetchedList.getDate().getTime());
@@ -228,13 +237,15 @@ public class FirebaseDatabaseTest {
                 JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
         final CompletableFuture<byte[]> completedDownloadFuture =
                 CompletableFuture.completedFuture(serializedOriginalList);
-        doReturn(completedDownloadFuture).when(storageServiceMock).download(expectedPath);
+        doReturn(completedDownloadFuture).when(storageServiceMock).downloadBytes(expectedPath);
 
         // Return a future like the one that the FirebaseFileStorageService would produce after
         // successfully uploading the file.
         final CompletableFuture<String> completedUploadFuture =
                 CompletableFuture.completedFuture(expectedPath);
-        doReturn(completedUploadFuture).when(storageServiceMock).upload(any(), eq(expectedPath));
+        doReturn(completedUploadFuture)
+                .when(storageServiceMock)
+                .upload(any(byte[].class), eq(expectedPath));
 
         // Try to put a task in a valid list.
         final FirebaseDatabase database = new FirebaseDatabase(storageServiceMock);
@@ -246,7 +257,7 @@ public class FirebaseDatabaseTest {
         final byte[] serializedNewList =
                 JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
 
-        verify(storageServiceMock).download(expectedPath);
+        verify(storageServiceMock).downloadBytes(expectedPath);
         verify(storageServiceMock).upload(serializedNewList, expectedPath);
     }
 
@@ -278,13 +289,15 @@ public class FirebaseDatabaseTest {
                 JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
         final CompletableFuture<byte[]> completedDownloadFuture =
                 CompletableFuture.completedFuture(serializedOriginalList);
-        doReturn(completedDownloadFuture).when(storageServiceMock).download(expectedPath);
+        doReturn(completedDownloadFuture).when(storageServiceMock).downloadBytes(expectedPath);
 
         // Return a future like the one that the FirebaseFileStorageService would produce after
         // successfully uploading the file.
         final CompletableFuture<String> completedUploadFuture =
                 CompletableFuture.completedFuture(expectedPath);
-        doReturn(completedUploadFuture).when(storageServiceMock).upload(any(), eq(expectedPath));
+        doReturn(completedUploadFuture)
+                .when(storageServiceMock)
+                .upload(any(byte[].class), eq(expectedPath));
 
         // Try to remove a task from valid list.
         database.removeTask(todoList.getId(), 0);
@@ -295,7 +308,7 @@ public class FirebaseDatabaseTest {
         final byte[] serializedNewList =
                 JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
 
-        verify(storageServiceMock).download(expectedPath);
+        verify(storageServiceMock).downloadBytes(expectedPath);
         verify(storageServiceMock).upload(serializedNewList, expectedPath);
     }
 
@@ -307,7 +320,7 @@ public class FirebaseDatabaseTest {
                 JSONSerializer.serializeNote(expectedNote).getBytes(StandardCharsets.UTF_8);
         downloadFuture.complete(serializedNote);
 
-        doReturn(downloadFuture).when(storageServiceMock).download(anyString());
+        doReturn(downloadFuture).when(storageServiceMock).downloadBytes(anyString());
 
         try {
             Note note = database.getNote(UUID.randomUUID()).join();
@@ -427,7 +440,7 @@ public class FirebaseDatabaseTest {
 
         uploadFuture.complete("Some file path");
 
-        doReturn(downloadFuture).when(storageServiceMock).download(anyString());
+        doReturn(downloadFuture).when(storageServiceMock).downloadBytes(anyString());
         doReturn(uploadFuture).when(storageServiceMock).upload(any(byte[].class), anyString());
 
         try {
@@ -468,13 +481,100 @@ public class FirebaseDatabaseTest {
         // successfully downloading the file.
         final CompletableFuture<byte[]> completedFuture =
                 CompletableFuture.completedFuture(serializedList);
-        doReturn(completedFuture).when(storageServiceMock).download(expectedPath);
+        doReturn(completedFuture).when(storageServiceMock).downloadBytes(expectedPath);
 
         // Try to get a valid task.
         try {
             final Task fetchedTask = database.getTask(todoList.getId(), 1).get();
-            verify(storageServiceMock).download(expectedPath);
+            verify(storageServiceMock).downloadBytes(expectedPath);
             assertEquals(FIXTURE_TASK_2, fetchedTask);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void setAudioMemoWorks() {
+        Note note = new Note("Some title");
+        byte[] serializedNote = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully downloading the file.
+        final CompletableFuture<byte[]> completedFuture =
+                CompletableFuture.completedFuture(serializedNote);
+        final CompletableFuture<String> completedUpload = CompletableFuture.completedFuture("");
+        doReturn(completedFuture).when(storageServiceMock).downloadBytes(anyString());
+        doReturn(completedUpload)
+                .when(storageServiceMock)
+                .upload(any(InputStream.class), anyString());
+        doReturn(completedUpload).when(storageServiceMock).upload(any(byte[].class), anyString());
+
+        try {
+            File audioMemo = folder.newFile("some_audio_file");
+            database.setAudioMemo(note.getId(), audioMemo.getAbsolutePath()).get();
+            verify(storageServiceMock).downloadBytes(anyString());
+            verify(storageServiceMock).upload(any(InputStream.class), anyString());
+            verify(storageServiceMock).upload(any(byte[].class), anyString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void setAudioMemoThrowsExceptionWhenFileNotFound() {
+        Note note = new Note("Some title");
+
+        assertThrows(
+                FileNotFoundException.class,
+                () -> {
+                    File audioMemo = new File("dummy file");
+                    database.setAudioMemo(note.getId(), audioMemo.getAbsolutePath()).get();
+                });
+    }
+
+    @Test
+    public void getAudioMemoWorks() {
+        Note note = new Note("Some title");
+        byte[] serializedNote = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully downloading the file.
+        final CompletableFuture<byte[]> completedFuture =
+                CompletableFuture.completedFuture(serializedNote);
+        final CompletableFuture<String> completedUpload = CompletableFuture.completedFuture("");
+        doReturn(completedFuture).when(storageServiceMock).downloadFile(anyString(), anyString());
+
+        try {
+            File audioMemo = folder.newFile("some_audio_file");
+            database.getAudioMemo(note.getId(), audioMemo.getAbsolutePath()).get();
+            verify(storageServiceMock).downloadFile(anyString(), eq(audioMemo.getAbsolutePath()));
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void removeAudioMemoWorks() {
+        Note note = new Note("Some title");
+        note.setAudioMemoId(UUID.randomUUID());
+        byte[] serializedNote = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully downloading the file.
+        final CompletableFuture<byte[]> completedFuture =
+                CompletableFuture.completedFuture(serializedNote);
+        final CompletableFuture<String> completedUpload = CompletableFuture.completedFuture("");
+        final CompletableFuture<Void> completedDelete = CompletableFuture.completedFuture(null);
+
+        doReturn(completedFuture).when(storageServiceMock).downloadBytes(anyString());
+        doReturn(completedDelete).when(storageServiceMock).delete(anyString());
+        doReturn(completedUpload).when(storageServiceMock).upload(any(byte[].class), anyString());
+
+        try {
+            database.removeAudioMemo(note.getId()).get();
+            verify(storageServiceMock).downloadBytes(anyString());
+            verify(storageServiceMock).delete(anyString());
+            verify(storageServiceMock).upload(any(byte[].class), anyString());
         } catch (Exception e) {
             fail();
         }

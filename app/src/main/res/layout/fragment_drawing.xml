@@ -27,7 +27,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="?attr/homeAsUpIndicator" />
+            app:srcCompat="?attr/homeAsUpIndicator"
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/drawing_fragment_title"

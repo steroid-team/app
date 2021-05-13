@@ -3,7 +3,6 @@ package com.github.steroidteam.todolist.view;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,8 +21,6 @@ import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.google.android.gms.maps.model.LatLng;
-
-import java.io.File;
 import java.io.InputStream;
 import java.util.UUID;
 import jp.wasabeef.richeditor.RichEditor;

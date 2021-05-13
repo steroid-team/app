@@ -2,7 +2,6 @@ package com.github.steroidteam.todolist.view;
 
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -151,12 +150,15 @@ public class DrawingFragment extends Fragment {
         try (FileOutputStream output = new FileOutputStream(bitmapFile)) {
             drawingCanvas.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, output);
             output.close();
-            MediaScannerConnection.scanFile(this.getContext(),
-                    new String[] { bitmapFile.toString() }, null,
-                    (MediaScannerConnection.OnScanCompletedListener) (path, uri) -> {
-                        NoteDisplayFragment.lastDrawingUri = ("file://" + path);
-                        getParentFragmentManager().popBackStack();
-                    });
+            MediaScannerConnection.scanFile(
+                    this.getContext(),
+                    new String[] {bitmapFile.toString()},
+                    null,
+                    (MediaScannerConnection.OnScanCompletedListener)
+                            (path, uri) -> {
+                                NoteDisplayFragment.lastDrawingUri = ("file://" + path);
+                                getParentFragmentManager().popBackStack();
+                            });
         } catch (IOException e) {
             e.printStackTrace();
         }

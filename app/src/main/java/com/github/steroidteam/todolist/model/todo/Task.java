@@ -1,5 +1,6 @@
 package com.github.steroidteam.todolist.model.todo;
 
+import android.location.Location;
 import java.util.Date;
 import java.util.Objects;
 
@@ -14,6 +15,7 @@ public class Task {
     private String body;
     private Boolean done;
     private Date dueDate;
+    private Location locationReminder;
 
     /**
      * Constructs a new Task with a body.
@@ -28,6 +30,7 @@ public class Task {
         this.body = body;
         this.done = false;
         this.dueDate = null;
+        this.locationReminder = null;
     }
 
     public void setBody(String newBody) {
@@ -37,6 +40,15 @@ public class Task {
 
     public String getBody() {
         return this.body;
+    }
+
+    public void setLocationReminder(Location location) {
+        Objects.requireNonNull(location);
+        locationReminder = location;
+    }
+
+    public Location getLocationReminder() {
+        return this.locationReminder;
     }
 
     @Override

@@ -11,6 +11,7 @@ import static com.github.steroidteam.todolist.view.DrawingView.BACKGROUND_COLOR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -19,20 +20,27 @@ import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.model.user.UserFactory;
 import com.github.steroidteam.todolist.view.DrawingFragment;
 import com.github.steroidteam.todolist.view.MainActivity;
 import com.google.firebase.auth.FirebaseUser;
+import java.util.concurrent.CompletableFuture;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DrawingFragmentTest {
     private FragmentScenario<DrawingFragment> scenario;
+
+    @Mock Database databaseMock;
 
     @Before
     public void init() {
@@ -42,6 +50,11 @@ public class DrawingFragmentTest {
         scenario =
                 FragmentScenario.launchInContainer(
                         DrawingFragment.class, null, R.style.Theme_Asteroid);
+        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
+        todoListCollectionFuture.complete(new TodoListCollection());
+        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
+
+        DatabaseFactory.setCustomDatabase(databaseMock);
     }
 
     @Rule

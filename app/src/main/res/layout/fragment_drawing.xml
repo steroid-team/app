@@ -27,7 +27,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="?attr/homeAsUpIndicator" />
+            app:srcCompat="?attr/homeAsUpIndicator"
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/activity_title"
@@ -49,7 +50,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         style="@style/TaskDeleteButton"
-        android:text="Erase"
+        android:text="@string/erase"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -116,7 +117,7 @@
         <com.larswerkman.holocolorpicker.ColorPicker
             android:id="@+id/colorPicker"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_weight=".70"
             android:layout_gravity="center_horizontal" />
 
@@ -143,7 +144,7 @@
                 android:layout_height="wrap_content"
                 style="@style/TaskUndoButton"
                 android:layout_margin="5dp"
-                android:text="Cancel" />
+                android:text="@string/cancel" />
 
             <Button
                 android:id="@+id/applyColor"
@@ -151,7 +152,7 @@
                 android:layout_height="wrap_content"
                 style="@style/TaskSaveButton"
                 android:layout_margin="5dp"
-                android:text="Apply" />
+                android:text="@string/apply" />
         </TableRow>
     </LinearLayout>
 

@@ -33,6 +33,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         app:srcCompat="?android:attr/textCheckMark"
-        android:focusable="true" />
+        android:focusable="true"
+        android:contentDescription="@string/save_location" />
 
 </RelativeLayout>

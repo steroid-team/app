@@ -156,10 +156,19 @@ public class NoteDisplayFragmentTest {
         // Clear the text field.
         onWebView().withElement(findElement(Locator.ID, "editor")).perform(clearElement());
 
+        // Clear the note returning by the database:
+        // Otherwise there is FIXTURE_DEFAULT_NOTE_CONTENT in the content
+        // and this lead to unwanted behavior with the typeText l.172
+        // clearText isn't working with the rich editor
+        Note note = new Note(FIXTURE_DEFAULT_NOTE_TITLE);
+        note.setContent(FIXTURE_DEFAULT_NOTE_CONTENT);
+        CompletableFuture<Note> noteFuture = new CompletableFuture<>();
+        noteFuture.complete(note);
+        doReturn(noteFuture).when(databaseMock).getNote(any(UUID.class));
+
         // Tap the text field so it has the keyboard's focus, type the new contents of the note
         // and close the keyboard.
         onView(withId(R.id.notedisplay_text_editor))
-                .perform(click())
                 .perform(typeText(FIXTURE_MODIFIED_NOTE_CONTENT))
                 .perform(closeSoftKeyboard());
 

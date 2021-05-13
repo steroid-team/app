@@ -40,4 +40,10 @@ public final class DatabaseFactory {
         DatabaseFactory.customLocalDb = db;
         DatabaseFactory.customRemoteDb = db;
     }
+
+    @VisibleForTesting(otherwise = MODE_PRIVATE)
+    public static void setCustomDatabaseDiff(Database customLocalDb, Database customRemoteDb) {
+        DatabaseFactory.customLocalDb = customLocalDb;
+        DatabaseFactory.customRemoteDb = customRemoteDb;
+    }
 }

@@ -67,12 +67,32 @@ public class DatabaseTest {
     }
 
     @Test
+    public void getLastModifiedTimeTodoWorks() {
+        Long expectedTime = System.currentTimeMillis();
+        CompletableFuture<Long> longCompletableFuture = new CompletableFuture<>();
+        longCompletableFuture.complete(expectedTime);
+        doReturn(longCompletableFuture).when(storageServiceMock).getLastModifiedTime(any());
+
+        assertEquals(expectedTime, storageServiceMock.getLastModifiedTime(NOTES_PATH).join());
+    }
+
+    @Test
     public void getLastModifiedTimeNoteRejectsNullArgs() {
         assertThrows(
                 NullPointerException.class,
                 () -> {
                     database.getLastModifiedTimeNote(null);
                 });
+    }
+
+    @Test
+    public void getLastModifiedTimeNoteWorks() {
+        Long expectedTime = System.currentTimeMillis();
+        CompletableFuture<Long> longCompletableFuture = new CompletableFuture<>();
+        longCompletableFuture.complete(expectedTime);
+        doReturn(longCompletableFuture).when(storageServiceMock).getLastModifiedTime(any());
+
+        assertEquals(expectedTime, storageServiceMock.getLastModifiedTime(TODO_LIST_PATH).join());
     }
 
     @Test
@@ -494,6 +514,50 @@ public class DatabaseTest {
             final Task fetchedTask = database.getTask(todoList.getId(), 1).get();
             verify(storageServiceMock).download(expectedPath);
             assertEquals(FIXTURE_TASK_2, fetchedTask);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void updateTaskRejectsNullArgs() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FileStorageDatabase(storageServiceMock).updateTask(null, 0, new Task(""));
+                });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FileStorageDatabase(storageServiceMock).updateTask(UUID.randomUUID(), null, new Task(""));
+                });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FileStorageDatabase(storageServiceMock).updateTask(UUID.randomUUID(), 0, null);
+                });
+    }
+
+    @Test
+    public void updateTaskWorks() {
+        TodoList expectedTodoList = new TodoList("some random title");
+        Task task1 = new Task("Task 1");
+        Task task2 = new Task("Task 2");
+        expectedTodoList.addTask(task1);
+        expectedTodoList.addTask(task2);
+
+        byte[] serializedTodoList =
+                JSONSerializer.serializeTodoList(expectedTodoList).getBytes(StandardCharsets.UTF_8);
+        downloadFuture.complete(serializedTodoList);
+
+        uploadFuture.complete("Some file path");
+
+        doReturn(downloadFuture).when(storageServiceMock).download(anyString());
+        doReturn(uploadFuture).when(storageServiceMock).upload(any(byte[].class), anyString());
+
+        try {
+            Task actualTask = database.updateTask(UUID.randomUUID(), 0, task1).join();
+            assertEquals(task1, actualTask);
         } catch (Exception e) {
             fail();
         }

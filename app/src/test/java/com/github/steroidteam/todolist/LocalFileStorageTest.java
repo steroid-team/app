@@ -3,6 +3,7 @@ package com.github.steroidteam.todolist;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 import com.github.steroidteam.todolist.filestorage.LocalFileStorageService;
@@ -122,5 +123,21 @@ public class LocalFileStorageTest {
         String[] strings = localFileStorageService.listDir(PATH).join();
         assertEquals("data1", strings[0]);
         assertEquals("data2", strings[1]);
+    }
+
+    @Test
+    public void getLastTimeWorks() {
+        final byte[] TEST_DATA_1 = "Some data to write!".getBytes(StandardCharsets.UTF_8);
+        final String PATH_1 = PATH + "data1";
+        Long justBeforeTime = System.currentTimeMillis();
+        localFileStorageService.upload(TEST_DATA_1, PATH_1).join();
+        Long justAfterTime = System.currentTimeMillis();
+        byte[] res = localFileStorageService.download(PATH_1).join();
+        assertTrue(
+                justBeforeTime<=
+                localFileStorageService.getLastModifiedTime(PATH_1).join());
+        assertTrue(
+                justAfterTime>=
+                        localFileStorageService.getLastModifiedTime(PATH_1).join());
     }
 }

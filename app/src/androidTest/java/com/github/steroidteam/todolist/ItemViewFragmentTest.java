@@ -20,9 +20,14 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
+import android.Manifest;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.service.notification.StatusBarNotification;
 import android.view.View;
 import android.widget.CheckBox;
@@ -34,7 +39,9 @@ import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
+import androidx.test.rule.GrantPermissionRule;
 import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
+import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.Task;
@@ -47,6 +54,7 @@ import java.util.concurrent.CompletableFuture;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -58,6 +66,14 @@ public class ItemViewFragmentTest {
 
     private FragmentScenario<ItemViewFragment> scenario;
     @Mock Database databaseMock;
+
+    @Rule
+    public GrantPermissionRule coarseLocationPermissionRule =
+            GrantPermissionRule.grant(Manifest.permission.ACCESS_COARSE_LOCATION);
+
+    @Rule
+    public GrantPermissionRule fineLocationPermissionRule =
+            GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION);
 
     @Before
     public void setUp() {
@@ -376,10 +392,8 @@ public class ItemViewFragmentTest {
     }
 
     @Test
-    public void notificationReminderWorks() {
-
+    public void notificationDateReminderWorks() {
         int twoSecondsInMillis = 2 * 1000;
-        ;
         scenario.onFragment(
                 fragment -> {
                     ReminderDateBroadcast.createNotificationChannel(fragment.getActivity());
@@ -413,11 +427,110 @@ public class ItemViewFragmentTest {
                     }
                     assertEquals(true, isDisplayed);
                 });
+    }
+
+    @Test
+    public void notificationLocationReminderWorks() {
+        scenario.onFragment(
+                fragment -> {
+                    ReminderDateBroadcast.createNotificationChannel(fragment.getActivity());
+                    LocationManager locationManager =
+                            (LocationManager)
+                                    fragment.getActivity()
+                                            .getSystemService(Context.LOCATION_SERVICE);
+
+                    // Location of Sydney
+                    Location loc = new Location(LocationManager.GPS_PROVIDER);
+                    loc.setLatitude(-33.8523341);
+                    loc.setLongitude(151.2106085);
+                    loc.setAccuracy(1.0f);
+                    loc.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+                    loc.setTime(System.currentTimeMillis());
+                    locationManager.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER,
+                            0,
+                            0,
+                            new LocationListener() {
+                                @Override
+                                public void onLocationChanged(@NonNull Location location) {
+                                    assertEquals(
+                                            ReminderLocationBroadcast.createLocationNotification(
+                                                    location, fragment.getActivity()),
+                                            true);
+                                }
+
+                                @Override
+                                public void onProviderDisabled(@NonNull String provider) {}
+
+                                @Override
+                                public void onProviderEnabled(@NonNull String provider) {}
+                            });
+                    mockGps(loc, locationManager);
+                });
 
         // FIXME : unable to check if toast appeared
-        /*onView(withText("Successfully removed the task !"))
-        .inRoot(new ToastMatcher())
-        .check(matches(isDisplayed()));*/
+        /*
+        onView(withText("The reminder has been set !"))
+                .inRoot(new ToastMatcher())
+                .check(matches(isDisplayed()));
+        */
+    }
+
+    public void mockGps(Location location, LocationManager mLocationManager)
+            throws SecurityException {
+        location.setProvider(LocationManager.GPS_PROVIDER);
+        try {
+            // @throws IllegalArgumentException if a provider with the given name already exists
+            mLocationManager.addTestProvider(
+                    LocationManager.GPS_PROVIDER,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    true,
+                    true,
+                    0,
+                    5);
+        } catch (IllegalArgumentException ignored) {
+        }
+
+        try {
+            // @throws IllegalArgumentException if no provider with the given name exists
+            mLocationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
+        } catch (IllegalArgumentException ignored) {
+            mLocationManager.addTestProvider(
+                    LocationManager.GPS_PROVIDER,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    true,
+                    true,
+                    0,
+                    5);
+        }
+
+        try {
+            // @throws IllegalArgumentException if no provider with the given name exists
+            mLocationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, location);
+        } catch (IllegalArgumentException ignored) {
+            mLocationManager.removeTestProvider(LocationManager.GPS_PROVIDER);
+            mLocationManager.addTestProvider(
+                    LocationManager.GPS_PROVIDER,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    true,
+                    true,
+                    0,
+                    5);
+            mLocationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
+            mLocationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, location);
+        }
     }
 
     public static Matcher<View> atPositionCheckText(

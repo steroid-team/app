@@ -37,7 +37,7 @@
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/nunitosans_semibold"
                 android:onClick="logOut"
-                android:text="Log out"
+                android:text="@string/log_out"
                 android:textAllCaps="false"
                 android:textColor="@color/dark_grey"
                 app:layout_constraintBottom_toBottomOf="parent"

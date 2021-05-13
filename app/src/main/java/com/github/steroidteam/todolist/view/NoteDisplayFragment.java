@@ -28,7 +28,6 @@ import jp.wasabeef.richeditor.RichEditor;
 public class NoteDisplayFragment extends Fragment {
     public static LatLng position;
     public static String locationName;
-    public static String lastDrawingUri;
     private Database database;
     private UUID noteID;
     private RichEditor richEditor;
@@ -179,11 +178,6 @@ public class NoteDisplayFragment extends Fragment {
         // TODO: Update the note's location via a ViewModel, so that no static attributes have to
         //  be used at all for passing data between the MapFragment and the NoteDisplayFragment.
         if (position != null && locationName != null) setLocationNote(position, locationName);
-        if (lastDrawingUri != null) {
-            richEditor.focusEditor();
-            richEditor.insertImage(lastDrawingUri, "", imageDisplayWidth);
-            lastDrawingUri = null;
-        }
     }
 
     public void setLocationNote(LatLng latLng, String location) {

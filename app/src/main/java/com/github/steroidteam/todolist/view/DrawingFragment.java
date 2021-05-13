@@ -78,6 +78,10 @@ public class DrawingFragment extends Fragment {
         colorPicker.addValueBar(valueBar);
 
         setUpButtonAndColor(root);
+        // if (ContextCompat.checkSelfPermission(getContext(), android.permission.) !=
+        // PackageManager.PERMISSION_GRANTED){
+
+        // }
 
         return root;
     }
@@ -154,11 +158,9 @@ public class DrawingFragment extends Fragment {
                     this.getContext(),
                     new String[] {bitmapFile.toString()},
                     null,
-                    (MediaScannerConnection.OnScanCompletedListener)
-                            (path, uri) -> {
-                                NoteDisplayFragment.lastDrawingUri = ("file://" + path);
-                                getParentFragmentManager().popBackStack();
-                            });
+                    (path, uri) -> {
+                        getParentFragmentManager().popBackStack();
+                    });
         } catch (IOException e) {
             e.printStackTrace();
         }

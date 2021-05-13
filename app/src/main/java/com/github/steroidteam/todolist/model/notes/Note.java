@@ -2,6 +2,7 @@ package com.github.steroidteam.todolist.model.notes;
 
 import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Note {
@@ -10,6 +11,7 @@ public class Note {
     private String title;
     private String content;
     private LatLng latLng;
+    private UUID audioMemoId;
 
     public Note(@NonNull String title) {
         if (title == null) {
@@ -19,6 +21,7 @@ public class Note {
         this.title = title;
         this.content = "";
         this.latLng = null;
+        this.audioMemoId = null;
     }
 
     public UUID getId() {
@@ -37,6 +40,11 @@ public class Note {
         return latLng;
     }
 
+    public Optional<UUID> getAudioMemoId() {
+        if (audioMemoId == null) return Optional.empty();
+        else return Optional.of(audioMemoId);
+    }
+
     public Note setTitle(@NonNull String title) {
         this.title = title;
         return this;
@@ -48,5 +56,13 @@ public class Note {
 
     public void setLatLng(@NonNull LatLng latLng) {
         this.latLng = latLng;
+    }
+
+    public void setAudioMemoId(@NonNull UUID audioMemoId) {
+        this.audioMemoId = audioMemoId;
+    }
+
+    public void removeAudioMemoId() {
+        audioMemoId = null;
     }
 }

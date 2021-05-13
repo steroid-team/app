@@ -40,6 +40,13 @@ public class TodoRepository {
                 .thenAccept(this.oneTodoList::setValue);
     }
 
+    public void removeDoneTasks() {
+        this.database
+                .removeDoneTasks(todoListID)
+                .thenCompose(str -> this.database.getTodoList(todoListID))
+                .thenAccept(this.oneTodoList::setValue);
+    }
+
     public void renameTask(int index, String newText) {
         this.database
                 .renameTask(todoListID, index, newText)

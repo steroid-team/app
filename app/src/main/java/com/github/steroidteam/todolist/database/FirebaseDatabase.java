@@ -138,6 +138,29 @@ public class FirebaseDatabase implements Database {
     }
 
     @Override
+    public CompletableFuture<TodoList> removeDoneTasks(@NonNull UUID todoListID) {
+        Objects.requireNonNull(todoListID);
+        String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
+
+        // Fetch the remote list that we are about to update
+        return getTodoList(todoListID)
+                // Remove all done tasks from the object
+                .thenApply(todoList -> {
+                    todoList.removeDoneTasks();
+                    return todoList;
+                })
+                .thenCompose(
+                        todoList -> {
+                            byte[] bytes =
+                                    JSONSerializer.serializeTodoList(todoList)
+                                            .getBytes(StandardCharsets.UTF_8);
+                            return this.storageService
+                                    .upload(bytes, listPath)
+                                    .thenApply(str -> todoList);
+                        });
+    }
+
+    @Override
     public CompletableFuture<Task> renameTask(UUID todoListID, Integer taskIndex, String newName) {
         Objects.requireNonNull(todoListID);
         Objects.requireNonNull(taskIndex);

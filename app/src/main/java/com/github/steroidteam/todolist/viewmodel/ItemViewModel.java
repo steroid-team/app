@@ -30,6 +30,8 @@ public class ItemViewModel extends ViewModel {
         repository.removeTask(index);
     }
 
+    public void removeDoneTasks() { repository.removeDoneTasks(); }
+
     public void renameTask(int index, String newBody) {
         if (!newBody.equals("")) {
             repository.renameTask(index, newBody);

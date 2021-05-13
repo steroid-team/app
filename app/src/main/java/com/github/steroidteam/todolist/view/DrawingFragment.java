@@ -78,10 +78,6 @@ public class DrawingFragment extends Fragment {
         colorPicker.addValueBar(valueBar);
 
         setUpButtonAndColor(root);
-        // if (ContextCompat.checkSelfPermission(getContext(), android.permission.) !=
-        // PackageManager.PERMISSION_GRANTED){
-
-        // }
 
         return root;
     }

@@ -187,13 +187,15 @@ public class ItemViewFragment extends Fragment {
         ConstraintLayout updateLayout = getView().findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.VISIBLE);
 
+        Task thisTask = itemViewModel.getTask(position);
+
         EditText userInputBody = getView().findViewById(R.id.layout_update_task_body);
-        userInputBody.setText(holder.getTaskBody());
+        userInputBody.setText(thisTask.getBody());
         userInputBody.addTextChangedListener(
                 new DateHighlighterTextWatcher(getContext(), timeParser));
 
         CheckBox taskCheckedBox = getView().findViewById(R.id.layout_update_task_checkbox);
-        taskCheckedBox.setChecked(holder.getTaskDone());
+        taskCheckedBox.setChecked(thisTask.isDone());
 
         SaveButtonSetup(userInputBody, position);
 

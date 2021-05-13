@@ -6,6 +6,7 @@ import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
+import java.util.Date;
 import java.util.UUID;
 
 public class TodoRepository {
@@ -42,15 +43,38 @@ public class TodoRepository {
 
     public void renameTask(int index, String newText) {
         this.database
-                .renameTask(todoListID, index, newText)
+                .getTask(todoListID, index)
+                .thenCompose(
+                        task -> {
+                            task.setBody(newText);
+                            return this.database.updateTask(todoListID, index, task);
+                        })
                 .thenCompose(task -> this.database.getTodoList(todoListID))
                 .thenAccept(this.oneTodoList::setValue);
     }
 
     public void setTaskDone(int index, boolean isDone) {
         this.database
-                .setTaskDone(todoListID, index, isDone)
+                .getTask(todoListID, index)
+                .thenCompose(
+                        task -> {
+                            task.setDone(isDone);
+                            return this.database.updateTask(todoListID, index, task);
+                        })
                 .thenCompose(task -> this.database.getTodoList(todoListID))
                 .thenAccept(this.oneTodoList::setValue);
+    }
+
+    public void setTaskDueDate(int index, Date dueDate) {
+        this.database
+                .getTask(todoListID, index)
+                .thenCompose(
+                        task -> {
+                            task.setDueDate(dueDate);
+                            return this.database.updateTask(todoListID, index, task);
+                        })
+                .thenCompose(task -> this.database.getTodoList(todoListID))
+                .thenAccept(this.oneTodoList::setValue);
+        this.database.getTodoList(todoListID).thenAccept(this.oneTodoList::setValue);
     }
 }

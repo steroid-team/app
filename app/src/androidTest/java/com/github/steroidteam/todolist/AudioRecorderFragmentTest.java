@@ -6,22 +6,61 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
 
+import android.Manifest;
+import android.os.Bundle;
 import androidx.fragment.app.testing.FragmentScenario;
+import androidx.test.rule.GrantPermissionRule;
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.view.AudioRecorderFragment;
+import com.github.steroidteam.todolist.view.NoteSelectionFragment;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AudioRecorderFragmentTest {
+    @Rule
+    public GrantPermissionRule permissionRule =
+            GrantPermissionRule.grant(Manifest.permission.RECORD_AUDIO);
+
+    @Mock Database databaseMock;
 
     @Before
-    public void init() {
+    public void init() throws FileNotFoundException {
+        Note note = new Note("some title");
+        CompletableFuture<Note> noteFuture = new CompletableFuture<>();
+        noteFuture.complete(note);
+
+        File audioFile = new File("some audio file");
+        CompletableFuture<File> fileFuture = new CompletableFuture<>();
+        fileFuture.complete(audioFile);
+
+        CompletableFuture<Void> voidFuture = new CompletableFuture<>();
+        voidFuture.complete(null);
+
+        doReturn(noteFuture).when(databaseMock).getNote(any(UUID.class));
+        doReturn(fileFuture).when(databaseMock).getAudioMemo(any(UUID.class), anyString());
+        doReturn(voidFuture).when(databaseMock).setAudioMemo(any(UUID.class), anyString());
+        DatabaseFactory.setCustomDatabase(databaseMock);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(NoteSelectionFragment.NOTE_ID_KEY, UUID.randomUUID().toString());
         FragmentScenario<AudioRecorderFragment> scenario =
                 FragmentScenario.launchInContainer(
-                        AudioRecorderFragment.class, null, R.style.Theme_Asteroid);
+                        AudioRecorderFragment.class, bundle, R.style.Theme_Asteroid);
     }
 
     @Test

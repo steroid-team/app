@@ -7,6 +7,7 @@ import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.web.assertion.WebViewAssertions.webMatches;
@@ -14,7 +15,6 @@ import static androidx.test.espresso.web.sugar.Web.onWebView;
 import static androidx.test.espresso.web.webdriver.DriverAtoms.clearElement;
 import static androidx.test.espresso.web.webdriver.DriverAtoms.findElement;
 import static androidx.test.espresso.web.webdriver.DriverAtoms.getText;
-import static androidx.test.espresso.web.webdriver.DriverAtoms.webClick;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,7 +37,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -77,7 +76,7 @@ public class NoteDisplayFragmentTest {
         DatabaseFactory.setCustomDatabase(databaseMock);
 
         Bundle bundle = new Bundle();
-        bundle.putString(NoteSelectionFragment.NOTE_ID_KEY, UUID.randomUUID().toString());
+        bundle.putSerializable(NoteSelectionFragment.NOTE_ID_KEY, UUID.randomUUID());
         scenario =
                 FragmentScenario.launchInContainer(
                         NoteDisplayFragment.class, bundle, R.style.Theme_Asteroid);
@@ -151,29 +150,6 @@ public class NoteDisplayFragmentTest {
         MatcherAssert.assertThat(getHtml.contents, equalTo(FIXTURE_DEFAULT_NOTE_CONTENT));
     }
 
-    @Ignore
-    public void textFormattingWorks() {
-        // Clear the text field (so it's a bit easier to test)
-        onWebView().withElement(findElement(Locator.ID, "editor")).perform(clearElement());
-
-        // Tap the text field so it has the keyboard's focus.
-        onView(withId(R.id.notedisplay_text_editor))
-                .perform(click())
-                .perform(typeText("Some text"));
-
-        onWebView()
-                // .withElement(withText("Some"))
-                .withElement(findElement(Locator.XPATH, "//div[contains(text(), 'Some')]"))
-                // .check(webMatches())
-                .perform(webClick())
-                .perform(webClick());
-        try {
-            wait(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Test
     public void saveNoteWorks() {
         final String FIXTURE_MODIFIED_NOTE_CONTENT = "Some text";
@@ -202,5 +178,12 @@ public class NoteDisplayFragmentTest {
         Note updatedNote = captor.getValue();
         assertThat(updatedNote.getTitle(), equalTo(FIXTURE_DEFAULT_NOTE_TITLE));
         assertThat(updatedNote.getContent(), equalTo(FIXTURE_MODIFIED_NOTE_CONTENT));
+    }
+
+    @Test
+    public void addImageDialogWorks() {
+        onView(withId(R.id.camera_button)).perform(click());
+        onView(withText("How do you want to add an image ?")).check(matches(isDisplayed()));
+        onView(withText("Take a photo")).perform(click());
     }
 }

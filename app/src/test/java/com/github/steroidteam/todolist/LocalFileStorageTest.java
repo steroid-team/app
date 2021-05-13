@@ -131,7 +131,6 @@ public class LocalFileStorageTest {
         final String PATH_1 = PATH + "data1";
         Long justBeforeTime = System.currentTimeMillis();
         localFileStorageService.upload(TEST_DATA_1, PATH_1).join();
-        byte[] res = localFileStorageService.download(PATH_1).join();
         Long justAfterTime = System.currentTimeMillis();
         assertTrue(justBeforeTime <= localFileStorageService.getLastModifiedTime(PATH_1).join());
         assertTrue(justAfterTime >= localFileStorageService.getLastModifiedTime(PATH_1).join());

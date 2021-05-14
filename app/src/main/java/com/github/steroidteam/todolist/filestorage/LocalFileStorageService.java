@@ -7,9 +7,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import org.jetbrains.annotations.NotNull;
 
 public class LocalFileStorageService implements FileStorageService {
 
@@ -53,7 +55,20 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     @Override
-    public CompletableFuture<byte[]> download(@NonNull String path) {
+    public CompletableFuture<String> upload(
+            InputStream inputStream, @NonNull @NotNull String path) {
+        Objects.requireNonNull(path);
+
+        return CompletableFuture.supplyAsync(
+                () -> {
+                    File file = getFile(this.getRootFile(), this.getUserspaceRef(path));
+                    writeOnFile(inputStream, file);
+                    return path;
+                });
+    }
+
+    @Override
+    public CompletableFuture<byte[]> downloadBytes(@NonNull @NotNull String path) {
         Objects.requireNonNull(path);
 
         return CompletableFuture.supplyAsync(
@@ -61,6 +76,13 @@ public class LocalFileStorageService implements FileStorageService {
                     File file = getFile(this.getRootFile(), this.getUserspaceRef(path));
                     return readOnFile(file);
                 });
+    }
+
+    @Override
+    public CompletableFuture<File> downloadFile(
+            @NonNull @NotNull String path, @NonNull @NotNull String destinationPath) {
+        System.err.println("downloadFile method is NEVER USED LOCALLY!");
+        return null;
     }
 
     @Override
@@ -123,6 +145,28 @@ public class LocalFileStorageService implements FileStorageService {
             fos.flush();
             fos.close();
         } catch (Exception ignored) {
+        }
+    }
+
+    private void writeOnFile(InputStream data, File file) {
+        try {
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
+            }
+            FileOutputStream fos = new FileOutputStream(file);
+            byte[] buffer = new byte[1024];
+            int bytesLen;
+            while ((bytesLen = data.read()) != -1) {
+                fos.write(buffer, 0, bytesLen);
+            }
+            fos.close();
+        } catch (Exception ignored) {
+        } finally {
+            try {
+                data.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

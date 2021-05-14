@@ -24,18 +24,14 @@ import static org.mockito.Mockito.verify;
 import android.Manifest;
 import android.app.NotificationManager;
 import android.content.Context;
-
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.os.SystemClock;
 import android.service.notification.StatusBarNotification;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.espresso.contrib.RecyclerViewActions;
-import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.rule.GrantPermissionRule;
 import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;

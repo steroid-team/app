@@ -77,6 +77,9 @@ public class ItemViewFragmentTest {
 
     @Before
     public void setUp() {
+        // Mock context for Broadcast Reminder
+        doReturn(context).when(context).getApplicationContext();
+
         TodoList todoList = new TodoList("Some random title");
         CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);

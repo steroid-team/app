@@ -54,6 +54,10 @@ public class ListSelectionFragmentTest {
 
     @Before
     public void init() {
+
+        // Mock context for Broadcast Reminder
+        doReturn(context).when(context).getApplicationContext();
+
         TodoListCollection collection = new TodoListCollection();
         TodoList todoList = new TodoList(TODO_1_TITLE);
         collection.addUUID(UUID.randomUUID());

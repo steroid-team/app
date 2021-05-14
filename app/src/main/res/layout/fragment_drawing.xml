@@ -7,7 +7,7 @@
     tools:context=".view.DrawingFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/toolbar"
+        android:id="@+id/drawing_toolbar"
         android:layout_width="0dp"
         android:layout_height="70dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/backButton"
+            android:id="@+id/drawing_back_btn"
             style="@style/ToolbarActionButton"
             android:layout_width="28dp"
             android:layout_height="28dp"
@@ -31,7 +31,7 @@
             android:focusable="true" />
 
         <TextView
-            android:id="@+id/activity_title"
+            android:id="@+id/drawing_fragment_title"
             style="@style/ActivityTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
-        android:id="@+id/erase_button"
+        android:id="@+id/drawing_erase_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -54,103 +54,119 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/drawSpace" />
+        app:layout_constraintTop_toBottomOf="@+id/drawing_space" />
+
+    <Button
+        android:id="@+id/drawing_save_btn"
+        style="@style/TaskSaveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.938"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/drawing_space"
+        app:layout_constraintVertical_bias="0.0" />
 
     <FrameLayout
-        android:id="@+id/drawSpace"
+        android:id="@+id/drawing_space"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="20dp"
         android:outlineProvider="paddedBounds"
-        app:layout_constraintBottom_toTopOf="@+id/erase_button"
+        app:layout_constraintBottom_toTopOf="@+id/drawing_erase_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_drawing_color_button_bar">
+        app:layout_constraintTop_toBottomOf="@+id/drawing_color_btn_bar">
 
     </FrameLayout>
 
     <LinearLayout
-        android:id="@+id/activity_drawing_color_button_bar"
+        android:id="@+id/drawing_color_btn_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/drawSpace"
+        app:layout_constraintBottom_toTopOf="@+id/drawing_space"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+        app:layout_constraintTop_toBottomOf="@+id/drawing_toolbar">
 
         <Button
-            android:id="@+id/drawing_first_button"
+            android:id="@+id/drawing_first_btn"
             style="@style/DrawingButton" />
 
         <Button
-            android:id="@+id/drawing_second_button"
+            android:id="@+id/drawing_second_btn"
             style="@style/DrawingButton" />
 
         <Button
-            android:id="@+id/drawing_third_button"
+            android:id="@+id/drawing_third_btn"
             style="@style/DrawingButton" />
 
         <Button
-            android:id="@+id/drawing_fourth_button"
+            android:id="@+id/drawing_fourth_btn"
             style="@style/DrawingButton" />
 
         <Button
-            android:id="@+id/colorChoose"
+            android:id="@+id/drawing_fifth_btn"
             style="@style/DrawingButton" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/colorPickerWindow"
+        android:id="@+id/drawing_color_picker_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/erase_button"
-        app:layout_constraintEnd_toEndOf="@+id/drawSpace"
-        app:layout_constraintStart_toStartOf="@+id/drawSpace"
-        app:layout_constraintTop_toTopOf="@+id/drawSpace">
+        app:layout_constraintBottom_toTopOf="@+id/drawing_erase_btn"
+        app:layout_constraintEnd_toEndOf="@+id/drawing_space"
+        app:layout_constraintStart_toStartOf="@+id/drawing_space"
+        app:layout_constraintTop_toTopOf="@+id/drawing_space">
 
         <com.larswerkman.holocolorpicker.ColorPicker
-            android:id="@+id/colorPicker"
+            android:id="@+id/drawing_color_picker"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".70"
             android:layout_gravity="center_horizontal" />
 
         <com.larswerkman.holocolorpicker.SaturationBar
-            android:id="@+id/saturationbar"
+            android:id="@+id/drawing_saturation_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
 
         <com.larswerkman.holocolorpicker.ValueBar
-            android:id="@+id/valuebar"
+            android:id="@+id/drawing_value_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
 
         <TableRow
+            android:id="@+id/drawing_cp_btn_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center">
 
             <Button
-                android:id="@+id/cancelColor"
+                android:id="@+id/drawing_cancel_color_btn"
+                style="@style/TaskUndoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/TaskUndoButton"
                 android:layout_margin="5dp"
                 android:text="@string/cancel" />
 
             <Button
-                android:id="@+id/applyColor"
+                android:id="@+id/drawing_apply_color_btn"
+                style="@style/TaskSaveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/TaskSaveButton"
                 android:layout_margin="5dp"
                 android:text="@string/apply" />
         </TableRow>

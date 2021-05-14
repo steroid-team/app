@@ -86,7 +86,7 @@ public class LocalFileStorageTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    localFileStorageService.download(null);
+                    localFileStorageService.downloadBytes(null);
                 });
     }
 
@@ -95,7 +95,7 @@ public class LocalFileStorageTest {
         final byte[] TEST_DATA_1 = "Some data to write!".getBytes(StandardCharsets.UTF_8);
         final String PATH_1 = PATH + "data1";
         localFileStorageService.upload(TEST_DATA_1, PATH_1).join();
-        byte[] res = localFileStorageService.download(PATH_1).join();
+        byte[] res = localFileStorageService.downloadBytes(PATH_1).join();
         assertEquals(
                 new String(TEST_DATA_1, StandardCharsets.UTF_8),
                 new String(res, StandardCharsets.UTF_8));
@@ -107,7 +107,7 @@ public class LocalFileStorageTest {
         final String PATH_1 = PATH + "data1";
         localFileStorageService.upload(TEST_DATA_1, PATH_1).join();
         localFileStorageService.delete(PATH_1).join();
-        byte[] b = localFileStorageService.download(PATH_1).join();
+        byte[] b = localFileStorageService.downloadBytes(PATH_1).join();
         assertNull(b);
     }
 

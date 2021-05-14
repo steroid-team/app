@@ -10,6 +10,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
 
 import android.Manifest;
 import android.view.KeyEvent;
@@ -22,16 +23,48 @@ import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
+
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.model.todo.TodoListCollection;
+import com.github.steroidteam.todolist.model.user.UserFactory;
+import com.github.steroidteam.todolist.view.DrawingFragment;
 import com.github.steroidteam.todolist.view.MainActivity;
 import com.github.steroidteam.todolist.view.MapFragment;
+import com.google.firebase.auth.FirebaseUser;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(AndroidJUnit4.class)
+import java.util.concurrent.CompletableFuture;
+
+@RunWith(MockitoJUnitRunner.class)
 public class MapFragmentTest {
+
+    private FragmentScenario<MapFragment> scenario;
+
+    @Mock
+    Database databaseMock;
+
+    @Before
+    public void init() {
+
+        // Since we are using an activity, set a mocked user.
+        FirebaseUser mockedUser = Mockito.mock(FirebaseUser.class);
+        UserFactory.set(mockedUser);
+        scenario =
+                FragmentScenario.launchInContainer(MapFragment.class, null, R.style.Theme_Asteroid);
+        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
+        todoListCollectionFuture.complete(new TodoListCollection());
+        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
+    }
+
     @Rule
     public GrantPermissionRule coarseLocationPermissionRule =
             GrantPermissionRule.grant(Manifest.permission.ACCESS_COARSE_LOCATION);
@@ -43,12 +76,6 @@ public class MapFragmentTest {
     @Rule
     public ActivityScenarioRule<MainActivity> activityRule =
             new ActivityScenarioRule<>(MainActivity.class);
-
-    @Before
-    public void init() {
-        FragmentScenario<MapFragment> scenario =
-                FragmentScenario.launchInContainer(MapFragment.class, null, R.style.Theme_Asteroid);
-    }
 
     @Test
     public void markerIsCorrectlyPlacedAtDefaultLocationOrUserLocation() {

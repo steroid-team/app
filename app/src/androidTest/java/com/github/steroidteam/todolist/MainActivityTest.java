@@ -153,6 +153,7 @@ public class MainActivityTest {
                 new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
 
         try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(mainActivity)) {
+
             // Open the drawer.
             onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
 

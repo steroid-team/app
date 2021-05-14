@@ -17,22 +17,18 @@ import android.view.KeyEvent;
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.GrantPermissionRule;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
-
 import com.github.steroidteam.todolist.database.Database;
-import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.model.user.UserFactory;
-import com.github.steroidteam.todolist.view.DrawingFragment;
 import com.github.steroidteam.todolist.view.MainActivity;
 import com.github.steroidteam.todolist.view.MapFragment;
 import com.google.firebase.auth.FirebaseUser;
-
+import java.util.concurrent.CompletableFuture;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,15 +38,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.concurrent.CompletableFuture;
-
 @RunWith(MockitoJUnitRunner.class)
 public class MapFragmentTest {
 
     private FragmentScenario<MapFragment> scenario;
 
-    @Mock
-    Database databaseMock;
+    @Mock Database databaseMock;
 
     @Before
     public void init() {

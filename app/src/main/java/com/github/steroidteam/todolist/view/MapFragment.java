@@ -249,7 +249,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
          * onRequestPermissionsResult.
          */
         if (ContextCompat.checkSelfPermission(
-                getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                        getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true;
         } else {
@@ -267,13 +267,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         locationPermissionGranted = false;
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:
-            {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    locationPermissionGranted = true;
+                {
+                    // If request is cancelled, the result arrays are empty.
+                    if (grantResults.length > 0
+                            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        locationPermissionGranted = true;
+                    }
                 }
-            }
         }
         updateLocationUI();
     }

@@ -12,6 +12,7 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import com.github.steroidteam.todolist.R;
+import java.util.Date;
 
 public class ReminderDateBroadcast extends BroadcastReceiver {
     public static int REMINDER_DATE_ID = 200;
@@ -25,7 +26,9 @@ public class ReminderDateBroadcast extends BroadcastReceiver {
                 new NotificationCompat.Builder(context, REMINDER_DATE_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notification)
                         .setContentTitle(context.getString(R.string.title_date_reminder))
-                        .setContentText(context.getString(R.string.content_date_reminder))
+                        .setContentText(
+                                intent.getStringExtra(
+                                        context.getString(R.string.content_date_reminder)))
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
@@ -48,15 +51,16 @@ public class ReminderDateBroadcast extends BroadcastReceiver {
     }
 
     // Just call this method to put a notification based on time
-    public static void createNotification(long timeInMillis, Activity activity) {
+    public static void createNotification(Date date, String taskDescription, Activity activity) {
         Intent intent = new Intent(activity.getApplicationContext(), ReminderDateBroadcast.class);
+        intent.putExtra(
+                activity.getApplicationContext().getString(R.string.content_date_reminder),
+                taskDescription);
         PendingIntent pendingIntent =
                 PendingIntent.getBroadcast(activity.getApplicationContext(), 0, intent, 0);
 
         AlarmManager alarmManager = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
 
-        long currentTime = System.currentTimeMillis();
-
-        alarmManager.set(AlarmManager.RTC_WAKEUP, currentTime + timeInMillis, pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, date.getTime(), pendingIntent);
     }
 }

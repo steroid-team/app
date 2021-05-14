@@ -45,6 +45,7 @@ public class NoteDisplayFragment extends Fragment {
     private ActivityResultLauncher<String> embeddedImagePickerActivityLauncher;
     private ActivityResultLauncher<Uri> cameraActivityLauncher;
     private final String IMAGE_MIME_TYPE = "image/*";
+    int imageDisplayWidth;
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,7 +62,7 @@ public class NoteDisplayFragment extends Fragment {
 
         // The width for any embedded image should be the editor's width. Do the math to
         // transform the dp to px, and subtract the lateral padding.
-        final int imageDisplayWidth =
+        imageDisplayWidth =
                 (int)
                                 Math.floor(
                                         getResources().getDisplayMetrics().widthPixels

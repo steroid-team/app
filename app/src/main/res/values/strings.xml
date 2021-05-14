@@ -17,6 +17,8 @@
     <string name="delete">Delete</string>
     <string name="save">Save</string>
     <string name="confirm">Confirm</string>
+    <string name="apply">Apply</string>
+    <string name="erase">Erase</string>
 
     <!-- Task Management -->
     <string name="title_todo">My todo list</string>
@@ -77,9 +79,12 @@
 
     <!-- Notification Reminder -->
     <string name="title_date_reminder">The due date has come !</string>
-    <string name="content_date_reminder">Hey This is a test !</string>
+    <string name="content_date_reminder">taskDescriptionDateReminder</string>
+    <string name="channel_date_name">ReminderDateChannel</string>
+    <string name="title_location_reminder">Location reminder !</string>
+    <string name="content_location_reminder">Hey ! You\'ve some tasks from this location</string>
+    <string name="toast_reminder">The reminder has been set !</string>
     <string name="cancel">Cancel</string>
-    <string name="apply">Apply</string>
     <string name="log_out">Log out</string>
     <string name="record">Record</string>
     <string name="button_that_starts_an_audio_recording">Button that starts an audio recording</string>
@@ -88,5 +93,5 @@
     <string name="save_location">Save location</string>
     <string name="save_note">Save note</string>
     <string name="note_header_image">Note header image</string>
-    <string name="erase">Erase</string>
+
 </resources>

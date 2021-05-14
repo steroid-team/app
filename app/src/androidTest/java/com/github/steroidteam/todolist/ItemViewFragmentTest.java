@@ -24,6 +24,7 @@ import static org.mockito.Mockito.verify;
 import android.Manifest;
 import android.app.NotificationManager;
 import android.content.Context;
+
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;

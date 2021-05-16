@@ -33,7 +33,7 @@ import com.github.steroidteam.todolist.view.misc.DateHighlighterTextWatcher;
 import com.github.steroidteam.todolist.view.misc.DueDateInputSpan;
 import com.github.steroidteam.todolist.viewmodel.ItemViewModel;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
@@ -217,7 +217,7 @@ public class ItemViewFragment extends Fragment {
         ConstraintLayout tagLayout = getView().findViewById(R.id.layout_update_tags);
         tagLayout.setVisibility(View.VISIBLE);
         LinearLayout row = getView().findViewById(R.id.tag_row_first);
-        Set<Tag> tags = itemViewModel.getTags();
+        List<Tag> tags = itemViewModel.getTags();
         row.removeAllViews();
         Button plusButton =
                 new Button(new ContextThemeWrapper(getContext(), R.style.TagInList), null, 0);

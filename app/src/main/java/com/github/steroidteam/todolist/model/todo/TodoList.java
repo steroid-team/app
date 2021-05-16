@@ -19,6 +19,7 @@ public class TodoList {
     private final List<Task> list;
     private String title;
     private final Date date;
+    private final List<Tag> tags;
 
     /**
      * Constructs a new to-do list.
@@ -34,6 +35,7 @@ public class TodoList {
         this.list = new ArrayList<>();
         this.title = title;
         this.date = new Date(System.currentTimeMillis());
+        this.tags = new ArrayList<>();
     }
 
     public void addTask(Task task) {
@@ -83,6 +85,18 @@ public class TodoList {
     public TodoList setTitle(String newTitle) {
         this.title = newTitle;
         return this;
+    }
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
+    }
+
+    public boolean removeTag(Tag tag) {
+        return tags.remove(tag);
+    }
+
+    public List<Tag> getTags() {
+        return tags;
     }
 
     @Override

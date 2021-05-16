@@ -14,8 +14,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -31,8 +29,6 @@ import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.view.ItemViewFragment;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.junit.Before;
@@ -108,59 +104,21 @@ public class TagTest {
 
     @Test
     public void getAndSetBodyWork() {
-        TodoList todoList = new TodoList("todolist");
-        Tag tag = new Tag("TagTitle", todoList.getId());
+        Tag tag = new Tag("TagTitle", Color.RED);
         tag.setBody("newTagTitle");
         assertEquals("newTagTitle", tag.getBody());
     }
 
     @Test
     public void getAndSetColorWork() {
-        TodoList todoList = new TodoList("todolist");
-        Tag tag = new Tag("TagTitle", Color.RED, todoList.getId());
+        Tag tag = new Tag("TagTitle", Color.RED);
         tag.setColor(Color.BLUE);
         assertEquals(Color.BLUE, tag.getColor());
     }
 
     @Test
-    public void getListsIdsWorks() {
-        TodoList todoList = new TodoList("todolist");
-        Tag tag = new Tag("TagTitle", todoList.getId());
-        Set<UUID> uuidSet = new HashSet<>();
-        uuidSet.add(todoList.getId());
-        assertEquals(uuidSet, tag.getListsIds());
-    }
-
-    @Test
     public void toStringWorks() {
-        TodoList todoList = new TodoList("todolist");
-        Tag tag = new Tag("TagTitle", todoList.getId());
+        Tag tag = new Tag("TagTitle", Color.RED);
         assertEquals("Tag{TagTitle}", tag.toString());
-    }
-
-    @Test
-    public void addListWorks() {
-        TodoList todoList = new TodoList("todolist");
-        TodoList todoList2 = new TodoList("todolist2");
-        Tag tag = new Tag("TagTitle", todoList.getId());
-        tag.addList(todoList2.getId());
-        assertTrue(tag.getListsIds().contains(todoList2.getId()));
-    }
-
-    @Test
-    public void removeListWorks() {
-        TodoList todoList = new TodoList("todolist");
-        Tag tag = new Tag("TagTitle", todoList.getId());
-        tag.removeList(todoList.getId());
-        assertFalse(tag.containsId(todoList.getId()));
-    }
-
-    @Test
-    public void containsWorks() {
-        TodoList todoList = new TodoList("todolist");
-        TodoList todoList2 = new TodoList("todolist2");
-        Tag tag = new Tag("TagTitle", todoList.getId());
-        assertTrue(tag.containsId(todoList.getId()));
-        assertFalse(tag.containsId(todoList2.getId()));
     }
 }

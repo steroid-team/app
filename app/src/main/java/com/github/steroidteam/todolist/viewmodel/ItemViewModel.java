@@ -8,7 +8,7 @@ import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 public class ItemViewModel extends ViewModel {
 
@@ -43,14 +43,15 @@ public class ItemViewModel extends ViewModel {
         repository.setTaskDone(index, isDone);
     }
 
-    public Set<Tag> getTags() {
+    public List<Tag> getTags() {
         // TODO : Change when adding persistence, add method in TodoRepository
-        return Tag.getTagsFromListId(todoList.getValue().getId());
+        return todoList.getValue().getTags();
     }
 
     public Tag createTag(String body, int color) {
         // TODO : Change when adding persistence, add method in TodoRepository
-        Tag tag = new Tag(body, color, todoList.getValue().getId());
+        Tag tag = new Tag(body, color);
+        todoList.getValue().addTag(tag);
         return tag;
     }
 

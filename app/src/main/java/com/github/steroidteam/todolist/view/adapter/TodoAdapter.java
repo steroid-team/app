@@ -2,7 +2,6 @@ package com.github.steroidteam.todolist.view.adapter;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.provider.CalendarContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Calendar;
 import java.util.Date;
+import org.jetbrains.annotations.NotNull;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
@@ -82,7 +79,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         }
         // Later
         return 2;
-        //return super.getItemViewType(position);
+        // return super.getItemViewType(position);
     }
 
     @Override
@@ -92,7 +89,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
     public void setTodoList(TodoList todoList) {
         // Updates the adapter with the new todoList (the observable one)
-        //this.todoList = todoList;
+        // this.todoList = todoList;
         this.todoList = todoList.sortByDate();
         // Check notifyDataSetChanged() might not be the best function
         // considering performance
@@ -164,17 +161,16 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
     }
 
     /**
-
-    public class TaskHolderWeek extends TaskHolder {
-
-    }
-
-    public class TaskHolderLater extends TaskHolder {
-
-    }
-
-    public class TaskHolderNoDate extends TaskHolder {
-
-    }
-     **/
+     * public class TaskHolderWeek extends TaskHolder {
+     *
+     * <p>}
+     *
+     * <p>public class TaskHolderLater extends TaskHolder {
+     *
+     * <p>}
+     *
+     * <p>public class TaskHolderNoDate extends TaskHolder {
+     *
+     * <p>}
+     */
 }

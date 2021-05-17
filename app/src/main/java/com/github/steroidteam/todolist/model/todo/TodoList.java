@@ -87,26 +87,28 @@ public class TodoList {
         return this;
     }
 
-    public TodoList sortByDate(){
-        Collections.sort(list, new Comparator<Task>() {
-            @Override
-            public int compare(Task task, Task t1) {
-                Date date1 = task.getDueDate();
-                Date date2 = t1.getDueDate();
-                // We use the convention that null > than others
-                if (date1 == null && date2 == null){
-                    return 0;
-                }
-                if (date1 == null && date2 != null){
-                    return 1;
-                }
-                if (date1 != null && date2 == null){
-                    return -1;
-                }
+    public TodoList sortByDate() {
+        Collections.sort(
+                list,
+                new Comparator<Task>() {
+                    @Override
+                    public int compare(Task task, Task t1) {
+                        Date date1 = task.getDueDate();
+                        Date date2 = t1.getDueDate();
+                        // We use the convention that null > than others
+                        if (date1 == null && date2 == null) {
+                            return 0;
+                        }
+                        if (date1 == null && date2 != null) {
+                            return 1;
+                        }
+                        if (date1 != null && date2 == null) {
+                            return -1;
+                        }
 
-                return date1.compareTo(date2);
-            }
-        });
+                        return date1.compareTo(date2);
+                    }
+                });
         return this;
     }
 

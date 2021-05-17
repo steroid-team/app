@@ -2,6 +2,7 @@ package com.github.steroidteam.todolist.view.adapter;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.provider.CalendarContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +15,16 @@ import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Calendar;
+import java.util.Date;
+
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
     private TodoList todoList;
     private TaskCustomListener listener;
+    private final int TASK_NO_DUE_DATE = -1;
 
     public TodoAdapter(TaskCustomListener listener) {
         this.listener = listener;
@@ -49,6 +56,33 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
             holder.taskBody.setPaintFlags(0);
             holder.hideDeleteButton();
         }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        Task currentTask = todoList.getTask(position);
+        Date dueDate = currentTask.getDueDate();
+        if (dueDate == null) {
+            // No date
+            return TASK_NO_DUE_DATE;
+        }
+        Date currDate = new Date();
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.setTime(currDate);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dueDate);
+        int diffDay = calendar.get(Calendar.DAY_OF_YEAR) - calendar2.get(Calendar.DAY_OF_YEAR);
+        // Today
+        if (diffDay < 1) {
+            return 0;
+        }
+        // This week
+        if (diffDay < 7) {
+            return 1;
+        }
+        // Later
+        return 2;
+        //return super.getItemViewType(position);
     }
 
     @Override
@@ -120,4 +154,26 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
             return taskBox.isChecked();
         }
     }
+
+    public class TaskHolderToday extends TaskHolder {
+
+        public TaskHolderToday(@NonNull @NotNull View itemView) {
+            super(itemView);
+        }
+    }
+
+    /**
+
+    public class TaskHolderWeek extends TaskHolder {
+
+    }
+
+    public class TaskHolderLater extends TaskHolder {
+
+    }
+
+    public class TaskHolderNoDate extends TaskHolder {
+
+    }
+     **/
 }

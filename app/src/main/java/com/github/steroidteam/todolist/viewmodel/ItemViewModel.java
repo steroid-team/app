@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel;
 import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
+
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 public class ItemViewModel extends ViewModel {
@@ -20,6 +23,8 @@ public class ItemViewModel extends ViewModel {
     }
 
     public LiveData<TodoList> getTodoList() {
+        // Sort by date
+        this.todoList.getValue().sortByDate();
         return this.todoList;
     }
 
@@ -44,4 +49,5 @@ public class ItemViewModel extends ViewModel {
     public void setTaskDueDate(int index, Date date) {
         repository.setTaskDueDate(index, date);
     }
+
 }

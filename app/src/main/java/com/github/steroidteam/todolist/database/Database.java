@@ -68,7 +68,10 @@ public interface Database {
     CompletableFuture<TodoList> removeTask(UUID todoListID, Integer taskIndex);
 
     /**
-     * TODO: complete
+     * Removes all done tasks of a to-do list from the database.
+     *
+     * @param todoListID The id of the associated list of the task.
+     * @return the updated todoList
      */
     CompletableFuture<TodoList> removeDoneTasks(UUID todoListID);
 

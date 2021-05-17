@@ -145,10 +145,11 @@ public class FirebaseDatabase implements Database {
         // Fetch the remote list that we are about to update
         return getTodoList(todoListID)
                 // Remove all done tasks from the object
-                .thenApply(todoList -> {
-                    todoList.removeDoneTasks();
-                    return todoList;
-                })
+                .thenApply(
+                        todoList -> {
+                            todoList.removeDoneTasks();
+                            return todoList;
+                        })
                 .thenCompose(
                         todoList -> {
                             byte[] bytes =

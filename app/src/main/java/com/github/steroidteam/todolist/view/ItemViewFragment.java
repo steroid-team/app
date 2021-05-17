@@ -106,7 +106,11 @@ public class ItemViewFragment extends Fragment {
 
     public void removeDoneTasks(View view) {
         itemViewModel.removeDoneTasks();
-        Toast.makeText(getContext(), "Successfully removed all tasks you have done !", Toast.LENGTH_LONG).show();
+        Toast.makeText(
+                        getContext(),
+                        "Successfully removed all tasks you have done !",
+                        Toast.LENGTH_LONG)
+                .show();
     }
 
     public void closeUpdateLayout(View view) {

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * A class that represents a to-do list.
@@ -49,7 +48,9 @@ public class TodoList {
         }
     }
 
-    public void removeDoneTasks() { list.removeIf(Task::isDone); }
+    public void removeDoneTasks() {
+        list.removeIf(Task::isDone);
+    }
 
     public Task getTask(Integer index) {
         if (index >= 0 && index < list.size()) {

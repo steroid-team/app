@@ -20,7 +20,8 @@
         android:padding="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:focusable="true">
 
         <ImageButton
             android:id="@+id/camera_button"
@@ -122,6 +123,19 @@
         app:layout_constraintTop_toBottomOf="@+id/note_header">
 
     </jp.wasabeef.richeditor.RichEditor>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/notedisplay_save_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toTopOf="@+id/editor_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="?android:attr/textCheckMark"
+        android:focusable="true"
+        android:contentDescription="@string/save_note" />
 
     <HorizontalScrollView
         android:id="@+id/editor_toolbar"

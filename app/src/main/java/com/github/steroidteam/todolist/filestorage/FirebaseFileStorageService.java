@@ -41,8 +41,7 @@ public class FirebaseFileStorageService implements FileStorageService {
 
     @Override
     public CompletableFuture<File> downloadFile(
-            @NonNull String path, @NonNull String destinationPath)
-    {
+            @NonNull String path, @NonNull String destinationPath) {
         Objects.requireNonNull(path);
         CompletableFuture<File> completableFuture = new CompletableFuture<>();
         File downloadedFile = new File(destinationPath);
@@ -55,6 +54,7 @@ public class FirebaseFileStorageService implements FileStorageService {
         return completableFuture;
     }
 
+   @Override
     public CompletableFuture<byte[]> downloadBytes(@NonNull String path) {
         Objects.requireNonNull(path);
         CompletableFuture<byte[]> completableFuture = new CompletableFuture<>();
@@ -67,6 +67,7 @@ public class FirebaseFileStorageService implements FileStorageService {
         return completableFuture;
     }
 
+  @Override
     public CompletableFuture<Void> delete(@NonNull String path) {
         Objects.requireNonNull(path);
         CompletableFuture<Void> completableFuture = new CompletableFuture<>();
@@ -79,6 +80,7 @@ public class FirebaseFileStorageService implements FileStorageService {
         return completableFuture;
     }
 
+  @Override
     public CompletableFuture<String[]> listDir(@NonNull String path) {
         Objects.requireNonNull(path);
         CompletableFuture<String[]> completableFuture = new CompletableFuture<>();
@@ -100,10 +102,11 @@ public class FirebaseFileStorageService implements FileStorageService {
     private CompletableFuture<String> toFuture(UploadTask uploadTask) {
         CompletableFuture<String> completableFuture = new CompletableFuture<>();
 
-        uploadTask.addOnSuccessListener(
-                taskSnapshot -> {
-                    completableFuture.complete(taskSnapshot.getMetadata().getPath());
-                })
+        uploadTask
+                .addOnSuccessListener(
+                        taskSnapshot -> {
+                            completableFuture.complete(taskSnapshot.getMetadata().getPath());
+                        })
                 .addOnFailureListener(completableFuture::completeExceptionally);
 
         return completableFuture;

@@ -25,6 +25,8 @@ public class FirebaseDatabase implements Database {
     private static final String TODO_LIST_PATH = "/todo-lists/";
     private static final String NOTES_PATH = "/notes/";
     private static final String IMAGES_PATH = "/images/";
+    private static final String AUDIO_MEMOS_PATH = "/audio-memos/";
+  
     private final FirebaseFileStorageService storageService;
 
     public FirebaseDatabase(@NonNull FirebaseFileStorageService storageService) {
@@ -145,7 +147,7 @@ public class FirebaseDatabase implements Database {
     }
 
     @Override
-    public CompletableFuture<Task> renameTask(UUID todoListID, Integer taskIndex, String newName) {
+    public CompletableFuture<Task> updateTask(UUID todoListID, Integer taskIndex, Task newTask) {
         Objects.requireNonNull(todoListID);
         Objects.requireNonNull(taskIndex);
         String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
@@ -155,7 +157,7 @@ public class FirebaseDatabase implements Database {
                 // Remove the task from the object.
                 .thenApply(
                         todoList -> {
-                            todoList.renameTask(taskIndex, newName);
+                            todoList.updateTask(taskIndex, newTask);
                             return todoList;
                         })
                 // Re-serialize and upload the new object.
@@ -190,6 +192,21 @@ public class FirebaseDatabase implements Database {
         byte[] serializedNote = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
 
         return this.storageService.upload(serializedNote, notePath).thenApply(str -> note);
+    }
+
+    @Override
+    public CompletableFuture<Void> removeNote(@NonNull UUID noteID) {
+        Objects.requireNonNull(noteID);
+        String targetPath = NOTES_PATH + noteID.toString() + ".json";
+
+        return this.storageService
+                .delete(targetPath)
+                .thenCompose(
+                        str -> {
+                            CompletableFuture<Void> future = new CompletableFuture<>();
+                            future.complete(null);
+                            return future;
+                        });
     }
 
     @Override
@@ -233,6 +250,62 @@ public class FirebaseDatabase implements Database {
                 .thenCompose(todoList -> uploadTask(todoList, index, listPath));
     }
 
+    @Override
+    public CompletableFuture<Void> setAudioMemo(UUID noteID, String audioMemoPath)
+            throws FileNotFoundException {
+        Objects.requireNonNull(noteID);
+        Objects.requireNonNull(audioMemoPath);
+
+        UUID audioMemoID = UUID.randomUUID();
+        String remoteAudioMemoPath = AUDIO_MEMOS_PATH + audioMemoID;
+
+        InputStream is = new FileInputStream(new File(audioMemoPath));
+
+        /* First, upload the audio memo */
+        CompletableFuture<String> audioUploadFuture =
+                this.storageService.upload(is, remoteAudioMemoPath);
+
+        /* In the mean time, get the Note then set the associated audio memo ID,
+         * then synchronize everything */
+        return getNote(noteID)
+                .thenCompose(
+                        note -> {
+                            note.setAudioMemoId(audioMemoID);
+                            return uploadNote(note);
+                        })
+                .thenCompose(note -> audioUploadFuture)
+                .thenApply(str -> null);
+    }
+
+    @Override
+    public CompletableFuture<Void> removeAudioMemo(UUID noteID) {
+        return getNote(noteID)
+                .thenCompose(
+                        note -> {
+                            Optional<UUID> audioMemoID = note.getAudioMemoId();
+
+                            /* If there is some audio memo to remove */
+                            if (audioMemoID.isPresent()) {
+                                note.removeAudioMemoId();
+                                CompletableFuture<Note> uploadNoteFuture = uploadNote(note);
+                                return this.storageService
+                                        .delete(AUDIO_MEMOS_PATH + audioMemoID.get())
+                                        .thenCompose(str -> uploadNoteFuture)
+                                        .thenApply(updatedNote -> null);
+                            } else {
+                                return CompletableFuture.completedFuture(null);
+                            }
+                        });
+    }
+
+    @Override
+    public CompletableFuture<File> getAudioMemo(
+            @NonNull UUID audioID, @NonNull String destinationPath) {
+        String audioFilePath = AUDIO_MEMOS_PATH + audioID.toString();
+
+        return this.storageService.downloadFile(audioFilePath, destinationPath);
+    }
+
     private CompletableFuture<Task> uploadTask(TodoList todoList, int index, String path) {
         Task updatedTask = todoList.getTask(index);
         byte[] bytes = JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
@@ -261,6 +334,7 @@ public class FirebaseDatabase implements Database {
             return uploadNote(note);
         }).thenCompose(note -> headerUploadFuture).thenApply(str -> null);
     }
+  
     @Override
     public CompletableFuture<Void> removeHeader(UUID noteID) {
         return getNote(noteID).thenCompose(note -> {

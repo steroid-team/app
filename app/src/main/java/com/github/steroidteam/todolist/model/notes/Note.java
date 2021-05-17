@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.Objects;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ public class Note {
     private UUID header;
 
     private static final String NO_LOCATION = "No location";
+    private UUID audioMemoId;
 
     public Note(@NonNull String title) {
         if (title == null) {
@@ -30,6 +32,7 @@ public class Note {
         this.latLng = null;
         this.locationName = NO_LOCATION;
         this.header = null;
+        this.audioMemoId = null;
     }
 
     public UUID getId() {
@@ -46,6 +49,11 @@ public class Note {
 
     public LatLng getLatLng() {
         return latLng;
+    }
+
+    public Optional<UUID> getAudioMemoId() {
+        if (audioMemoId == null) return Optional.empty();
+        else return Optional.of(audioMemoId);
     }
 
     public Note setTitle(@NonNull String title) {
@@ -86,5 +94,13 @@ public class Note {
 
     public void removeHeader() {
         this.header = null;
+    }
+
+    public void setAudioMemoId(@NonNull UUID audioMemoId) {
+        this.audioMemoId = audioMemoId;
+    }
+
+    public void removeAudioMemoId() {
+        audioMemoId = null;
     }
 }

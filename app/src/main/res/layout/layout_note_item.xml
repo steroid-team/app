@@ -15,15 +15,14 @@
         style="@style/SelectionList.Entry">
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/layout_note_picture"
             android:layout_width="372dp"
             android:layout_height="251dp"
-            android:layout_marginTop="8dp"
+            android:src="@drawable/asteroid_banner"
             app:layout_constraintBottom_toTopOf="@+id/layout_note_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/asteroid_banner"/>
+            android:contentDescription="@string/note_header_image" />
 
         <TextView
             android:id="@+id/layout_note_title"
@@ -32,9 +31,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="TextView"
+            android:text=""
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+            app:layout_constraintTop_toBottomOf="@+id/layout_note_picture" />
 
         <TextView
             android:id="@+id/layout_note_subtitle"

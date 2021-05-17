@@ -1,13 +1,18 @@
 package com.github.steroidteam.todolist.view;
 
 import android.database.Cursor;
+import static com.github.steroidteam.todolist.view.NoteSelectionFragment.NOTE_ID_KEY;
+
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+
 import android.provider.MediaStore;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +24,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import com.github.steroidteam.todolist.R;
@@ -31,6 +38,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.view.dialog.ListSelectionDialogFragment;
+import com.google.android.gms.maps.model.LatLng;
+import java.io.File;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.UUID;
@@ -47,9 +59,12 @@ public class NoteDisplayFragment extends Fragment {
     private UUID noteID;
 
     private RichEditor richEditor;
+    private Uri cameraFileUri;
     private ActivityResultLauncher<String> headerImagePickerActivityLauncher;
     private ActivityResultLauncher<String> embeddedImagePickerActivityLauncher;
+    private ActivityResultLauncher<Uri> cameraActivityLauncher;
     private final String IMAGE_MIME_TYPE = "image/*";
+    int imageDisplayWidth;
 
     public static final String MAP_FRAGMENT_REQUEST_KEY = "MAP_FRAGMENT_REQUEST_KEY";
     public static final String MAP_POSITION_KEY = "MAP_POSITION_KEY";
@@ -74,7 +89,7 @@ public class NoteDisplayFragment extends Fragment {
 
         // The width for any embedded image should be the editor's width. Do the math to
         // transform the dp to px, and subtract the lateral padding.
-        final int imageDisplayWidth =
+        imageDisplayWidth =
                 (int)
                                 Math.floor(
                                         getResources().getDisplayMetrics().widthPixels
@@ -82,7 +97,7 @@ public class NoteDisplayFragment extends Fragment {
                         - 2 * padding;
 
         // Get the UUID of the currently selected note.
-        noteID = UUID.fromString(getArguments().getString(NoteSelectionFragment.NOTE_ID_KEY));
+        noteID = (UUID) getArguments().getSerializable(NoteSelectionFragment.NOTE_ID_KEY);
 
         // Set view model and observe the note:
         this.noteViewModel = new NoteViewModel(noteID);
@@ -93,13 +108,29 @@ public class NoteDisplayFragment extends Fragment {
         setMapFragmentListener();
         setRichEditorListeners(root);
 
+        File file = new File(Environment.getExternalStorageDirectory(), "picFromCamera");
+        cameraFileUri =
+                FileProvider.getUriForFile(
+                        getContext(),
+                        "com.asteroid.fileprovider",
+                        getPhotoFileUri("camera-img.jpg"));
+
         headerImagePickerActivityLauncher =
                 registerForActivityResult(
                         new ActivityResultContracts.GetContent(), this::updateHeaderImage);
+        cameraActivityLauncher =
+                registerForActivityResult(
+                        new ActivityResultContracts.TakePicture(),
+                        success -> {
+                            if (success) updateHeaderImage(cameraFileUri);
+                        });
         embeddedImagePickerActivityLauncher =
                 registerForActivityResult(
                         new ActivityResultContracts.GetContent(),
-                        uri -> richEditor.insertImage(uri.toString(), "", imageDisplayWidth));
+                        uri -> {
+                            if (uri != null)
+                                richEditor.insertImage(uri.toString(), "", imageDisplayWidth);
+                        });
 
         return root;
     }
@@ -218,8 +249,25 @@ public class NoteDisplayFragment extends Fragment {
         root.findViewById(R.id.camera_button)
                 .setOnClickListener(
                         v -> {
-                            // Open the file picker limiting selections to image files.
-                            headerImagePickerActivityLauncher.launch(IMAGE_MIME_TYPE);
+                            DialogInterface.OnClickListener listener =
+                                    (dialog, position) -> {
+                                        switch (position) {
+                                            case 0:
+                                                headerImagePickerActivityLauncher.launch(
+                                                        IMAGE_MIME_TYPE);
+                                                break;
+                                            case 1:
+                                                cameraActivityLauncher.launch(cameraFileUri);
+                                                break;
+                                        }
+                                    };
+                            DialogFragment newFragment =
+                                    new ListSelectionDialogFragment()
+                                            .newInstance(
+                                                    listener,
+                                                    R.string.add_image_dialog,
+                                                    R.array.add_image_types);
+                            newFragment.show(getParentFragmentManager(), "pick_dialog");
                         });
         root.findViewById(R.id.location_button)
                 .setOnClickListener(
@@ -230,7 +278,10 @@ public class NoteDisplayFragment extends Fragment {
         root.findViewById(R.id.audio_button)
                 .setOnClickListener(
                         v -> {
-                            Navigation.findNavController(getView()).navigate(R.id.nav_audio);
+                            Bundle bundle = new Bundle();
+                            bundle.putString(NOTE_ID_KEY, noteID.toString());
+                            Navigation.findNavController(getView())
+                                    .navigate(R.id.nav_audio, bundle);
                         });
 
         root.findViewById(R.id.editor_action_drawing_btn)
@@ -245,6 +296,65 @@ public class NoteDisplayFragment extends Fragment {
                         (view) -> {
                             storeUserChanges();
                             getParentFragmentManager().popBackStack();
+                        v -> embeddedImagePickerActivityLauncher.launch(IMAGE_MIME_TYPE));
+    }
+
+    private void updateHeaderImage(Uri uri) {
+        if (uri == null) return;
+        ConstraintLayout header = getView().findViewById(R.id.note_header);
+        Bitmap bitmap = null;
+        try {
+            InputStream is = getContext().getContentResolver().openInputStream(uri);
+            bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Error: could not display the image", Toast.LENGTH_LONG)
+                    .show();
+        }
+        BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
+        header.setBackgroundTintList(null);
+        header.setBackground(ob);
+    }
+
+    // Returns the File for a photo stored on disk given the fileName
+    private File getPhotoFileUri(String fileName) {
+        // Get safe storage directory for photos
+        // Use `getExternalFilesDir` on Context to access package-specific directories.
+        // This way, we don't need to request external read/write runtime permissions.
+        File mediaStorageDir =
+                new File(getContext().getExternalFilesDir(null), "asteroid-notes/images");
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
+            Log.d("asteroid-notes", "failed to create directory");
+        }
+
+        // Return the file target for the photo based on filename
+        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
+
+        return file;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        position = null;
+        locationName = null;
+    }
+
+    /** Save the displayed note in the database. */
+    // TODO: Use the MVVM pattern here as well, so that the ViewModel is updated right after
+    //  making the changes (instead of manually "saving" the note when the button is pressed). This
+    //  would also remove the need to have a "save" button (because the changes would be reflected
+    //  in real time in the ViewModel and thus in the database).
+    private void saveNote(View view) {
+        database.getNote(noteID)
+                .thenCompose(
+                        note -> {
+                            TextView noteTitle = getView().findViewById(R.id.note_title);
+                            note.setTitle(noteTitle.getText().toString());
+                            note.setContent(richEditor.getHtml().trim());
+                            return database.putNote(noteID, note);
                         });
     }
 }

@@ -23,8 +23,6 @@ public class ItemViewModel extends ViewModel {
     }
 
     public LiveData<TodoList> getTodoList() {
-        // Sort by date
-        this.todoList.getValue().sortByDate();
         return this.todoList;
     }
 

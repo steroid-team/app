@@ -92,7 +92,8 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
     public void setTodoList(TodoList todoList) {
         // Updates the adapter with the new todoList (the observable one)
-        this.todoList = todoList;
+        //this.todoList = todoList;
+        this.todoList = todoList.sortByDate();
         // Check notifyDataSetChanged() might not be the best function
         // considering performance
         notifyDataSetChanged();

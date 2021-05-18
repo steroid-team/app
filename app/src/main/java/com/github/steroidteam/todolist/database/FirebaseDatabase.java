@@ -24,6 +24,7 @@ public class FirebaseDatabase implements Database {
     private static final String TODO_LIST_PATH = "/todo-lists/";
     private static final String NOTES_PATH = "/notes/";
     private static final String AUDIO_MEMOS_PATH = "/audio-memos/";
+    private static final String IMAGES_PATH = "/images/";
     private final FirebaseFileStorageService storageService;
 
     public FirebaseDatabase(@NonNull FirebaseFileStorageService storageService) {
@@ -314,5 +315,55 @@ public class FirebaseDatabase implements Database {
 
         byte[] bytes = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
         return this.storageService.upload(bytes, notePath).thenApply(str -> note);
+    }
+
+    @Override
+    public CompletableFuture<Void> setHeaderNote(UUID noteID, String imagePath)
+            throws FileNotFoundException
+    {
+        Objects.requireNonNull(noteID);
+        Objects.requireNonNull(imagePath);
+
+        UUID headerID = UUID.randomUUID();
+        String fileSystemHeaderPath = IMAGES_PATH + headerID;
+
+        InputStream is = new FileInputStream(new File(imagePath));
+
+        /* First, upload the header image */
+        CompletableFuture<String> headerUploadFuture = this.storageService.upload(is, fileSystemHeaderPath);
+
+        /* In the mean time, get the Note then set the associated header ID,
+         * then synchronize everything */
+        return getNote(noteID).thenCompose(note -> {
+            note.setHeader(headerID);
+            return uploadNote(note);
+        }).thenCompose(note -> headerUploadFuture).thenApply(str -> null);
+    }
+
+    @Override
+    public CompletableFuture<Void> removeHeader(UUID noteID) {
+        return getNote(noteID).thenCompose(note -> {
+            Optional<UUID> headerID = note.getHeaderID();
+
+            /* If there is some audio memo to remove */
+            if (headerID.isPresent()) {
+                note.removeHeader();
+                CompletableFuture<Note> uploadNoteFuture = uploadNote(note);
+                return this.storageService.delete(IMAGES_PATH + headerID.get())
+                        .thenCompose(str -> uploadNoteFuture)
+                        .thenApply(updatedNote -> null);
+            } else {
+                return CompletableFuture.completedFuture(null);
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<File> getImage(
+            @NonNull UUID imageID, @NonNull String destinationPath)
+    {
+        String imageFilePath = IMAGES_PATH + imageID.toString();
+
+        return this.storageService.downloadFile(imageFilePath, destinationPath);
     }
 }

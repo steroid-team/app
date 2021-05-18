@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,8 +29,11 @@ import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.view.dialog.ListSelectionDialogFragment;
+import com.github.steroidteam.todolist.viewmodel.NoteViewModel;
 import com.google.android.gms.maps.model.LatLng;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 import jp.wasabeef.richeditor.RichEditor;
@@ -45,7 +49,12 @@ public class NoteDisplayFragment extends Fragment {
     private ActivityResultLauncher<String> embeddedImagePickerActivityLauncher;
     private ActivityResultLauncher<Uri> cameraActivityLauncher;
     private final String IMAGE_MIME_TYPE = "image/*";
+
     int imageDisplayWidth;
+
+    private NoteViewModel noteViewModel;
+
+    private String testFileName = "/image.png";
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,6 +80,29 @@ public class NoteDisplayFragment extends Fragment {
 
         // Get the UUID of the currently selected note.
         noteID = (UUID) getArguments().getSerializable(NoteSelectionFragment.NOTE_ID_KEY);
+
+        final String audioFileName = getActivity().getExternalCacheDir().getAbsolutePath() + testFileName;
+
+        noteViewModel = new NoteViewModel(noteID);
+        noteViewModel.getHeaderID()
+                .observe(getViewLifecycleOwner(),
+                        (optionalUUID -> {
+                            System.err.println("============================================> " + optionalUUID.toString());
+                            if(optionalUUID.isPresent()) {
+                                System.err.println("============================================> START !");
+                                ConstraintLayout header = getView().findViewById(R.id.note_header);
+                                System.err.println("_____________ " + header.isDrawingCacheEnabled());
+                                noteViewModel.getNoteHeader(optionalUUID.get(), audioFileName).thenAccept((f) -> {
+                                Bitmap bitmap = BitmapFactory.decodeFile(audioFileName);
+                                BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
+                                header.setBackgroundTintList(null);
+                                header.setBackground(ob);
+                                TextView noteTitle = root.findViewById(R.id.note_title);
+                                noteTitle.setText(UUID.randomUUID().toString());
+                                System.err.println("============================================> DONE !");
+                                });
+                            }
+                        }));
 
         database = DatabaseFactory.getDb();
         database.getNote(noteID)
@@ -178,19 +210,27 @@ public class NoteDisplayFragment extends Fragment {
 
     private void updateHeaderImage(Uri uri) {
         if (uri == null) return;
-        ConstraintLayout header = getView().findViewById(R.id.note_header);
-        Bitmap bitmap = null;
-        try {
+
+        Bitmap bitmap;
+
+        String tmpFileName = "bitmap_tmp.png";
+        File tmpFile =
+                new File(
+                        Environment.getExternalStoragePublicDirectory(
+                                Environment.DIRECTORY_PICTURES),
+                        tmpFileName);
+        try (FileOutputStream output = new FileOutputStream(tmpFile)) {
             InputStream is = getContext().getContentResolver().openInputStream(uri);
             bitmap = BitmapFactory.decodeStream(is);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);
             is.close();
+            output.close();
+
+            noteViewModel.updateNoteHeader(tmpFile.getAbsolutePath());
         } catch (Exception e) {
             Toast.makeText(getContext(), "Error: could not display the image", Toast.LENGTH_LONG)
                     .show();
         }
-        BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
-        header.setBackgroundTintList(null);
-        header.setBackground(ob);
     }
 
     // Returns the File for a photo stored on disk given the fileName

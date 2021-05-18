@@ -12,6 +12,7 @@ public class Note {
     private String content;
     private LatLng latLng;
     private UUID audioMemoId;
+    private UUID header;
 
     public Note(@NonNull String title) {
         if (title == null) {
@@ -22,6 +23,7 @@ public class Note {
         this.content = "";
         this.latLng = null;
         this.audioMemoId = null;
+        this.header = null;
     }
 
     public UUID getId() {
@@ -64,5 +66,19 @@ public class Note {
 
     public void removeAudioMemoId() {
         audioMemoId = null;
+    }
+
+    public Optional<UUID> getHeaderID() {
+        if (header == null) return Optional.empty();
+        else return Optional.of(header);
+    }
+
+    public Note setHeader(UUID headerID) {
+        this.header = headerID;
+        return this;
+    }
+
+    public void removeHeader() {
+        this.header = null;
     }
 }

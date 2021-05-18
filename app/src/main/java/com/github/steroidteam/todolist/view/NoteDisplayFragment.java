@@ -1,16 +1,29 @@
 package com.github.steroidteam.todolist.view;
 
+import static com.github.steroidteam.todolist.util.Utils.dip2px;
 import static com.github.steroidteam.todolist.view.NoteSelectionFragment.NOTE_ID_KEY;
 
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -21,6 +34,8 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -80,7 +95,7 @@ public class NoteDisplayFragment extends Fragment {
                         getViewLifecycleOwner(),
                         (optionalUUID -> {
                             if (optionalUUID.isPresent()) {
-                                updateHeader(optionalUUID);
+                                updateHeader(optionalUUID, root);
                             }
                         }));
 
@@ -102,14 +117,35 @@ public class NoteDisplayFragment extends Fragment {
         return root;
     }
 
-    private void updateHeader(Optional<UUID> optionalUUID) {
+    private void updateHeader(Optional<UUID> optionalUUID, View root) {
         ConstraintLayout header = getView().findViewById(R.id.note_header);
         noteViewModel
                 .getNoteHeader(optionalUUID.get(), headerFileName)
                 .thenAccept(
                         (f) -> {
                             Bitmap bitmap = BitmapFactory.decodeFile(headerFileName);
-                            BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
+
+                            Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+                            Canvas canvas = new Canvas(output);
+                            final Paint paint = new Paint();
+                            final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+                            final RectF rectF = new RectF(rect);
+                            final float roundPx = dip2px(getContext(),25);
+                            paint.setAntiAlias(true);
+                            Path path = new Path();
+                            float[] corners = new float[]{
+                                    0, 0,        // Top left radius in px
+                                    0, 0,        // Top right radius in px
+                                    roundPx, roundPx*2,          // Bottom right radius in px
+                                    roundPx, roundPx*2           // Bottom left radius in px
+                            };
+                            path.addRoundRect(rectF, corners, Path.Direction.CW);
+                            canvas.drawPath(path, paint);
+                            //canvas.drawRoundRect(rectF,roundPx,roundPx, paint);
+                            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+                            canvas.drawBitmap(bitmap, rect, rect, paint);
+
+                            BitmapDrawable ob = new BitmapDrawable(getResources(), output);
                             header.setBackgroundTintList(null);
                             header.setBackground(ob);
                         });

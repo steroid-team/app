@@ -72,6 +72,7 @@ public class NoteDisplayFragmentTest {
         CompletableFuture<Note> noteFuture = new CompletableFuture<>();
         noteFuture.complete(note);
         doReturn(noteFuture).when(databaseMock).getNote(any(UUID.class));
+        doReturn(noteFuture).when(databaseMock).updateNote(any(UUID.class), any(Note.class));
 
         DatabaseFactory.setCustomDatabase(databaseMock);
 
@@ -150,6 +151,7 @@ public class NoteDisplayFragmentTest {
         MatcherAssert.assertThat(getHtml.contents, equalTo(FIXTURE_DEFAULT_NOTE_CONTENT));
     }
 
+    @Test
     public void saveNoteWorks() {
         final String FIXTURE_MODIFIED_NOTE_CONTENT = "Some text";
 
@@ -168,9 +170,12 @@ public class NoteDisplayFragmentTest {
                 .withElement(findElement(Locator.ID, "editor"))
                 .check(webMatches(getText(), containsString(FIXTURE_MODIFIED_NOTE_CONTENT)));
 
+        // Makes the rich editor lost focus
+        onView(withId(R.id.note_header)).perform(click());
+
         // Make sure that the note is updated in the database.
         ArgumentCaptor<Note> captor = ArgumentCaptor.forClass(Note.class);
-        verify(databaseMock).putNote(any(), captor.capture());
+        verify(databaseMock).updateNote(any(), captor.capture());
         Note updatedNote = captor.getValue();
         assertThat(updatedNote.getTitle(), equalTo(FIXTURE_DEFAULT_NOTE_TITLE));
         assertThat(updatedNote.getContent(), equalTo(FIXTURE_MODIFIED_NOTE_CONTENT));

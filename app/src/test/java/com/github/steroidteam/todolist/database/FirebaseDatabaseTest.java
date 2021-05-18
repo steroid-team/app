@@ -579,4 +579,90 @@ public class FirebaseDatabaseTest {
             fail();
         }
     }
+
+    @Test
+    public void setHeaderNoteThrowsExceptionWhenFileNotFound() {
+        Note note = new Note("Some title");
+
+        assertThrows(
+                FileNotFoundException.class,
+                () -> {
+                    File imageFile = new File("dummy file");
+                    database.setHeaderNote(note.getId(), imageFile.getAbsolutePath()).get();
+                });
+    }
+
+    @Test
+    public void getImageWorks() {
+        Note note = new Note("Some title");
+        byte[] serializedNote = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully downloading the file.
+        final CompletableFuture<byte[]> completedFuture =
+                CompletableFuture.completedFuture(serializedNote);
+        doReturn(completedFuture).when(storageServiceMock).downloadFile(anyString(), anyString());
+
+        try {
+            File imageHeader = folder.newFile("some_image_file");
+            database.getImage(note.getId(), imageHeader.getAbsolutePath()).get();
+            verify(storageServiceMock).downloadFile(anyString(), eq(imageHeader.getAbsolutePath()));
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void removeHeaderWorks() {
+        Note note = new Note("Some title");
+        note.setHeader(UUID.randomUUID());
+        byte[] serializedNote = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully downloading the file.
+        final CompletableFuture<byte[]> completedFuture =
+                CompletableFuture.completedFuture(serializedNote);
+        final CompletableFuture<String> completedUpload = CompletableFuture.completedFuture("");
+        final CompletableFuture<Void> completedDelete = CompletableFuture.completedFuture(null);
+
+        doReturn(completedFuture).when(storageServiceMock).downloadBytes(anyString());
+        doReturn(completedDelete).when(storageServiceMock).delete(anyString());
+        doReturn(completedUpload).when(storageServiceMock).upload(any(byte[].class), anyString());
+
+        try {
+            database.removeHeader(note.getId()).get();
+            verify(storageServiceMock).downloadBytes(anyString());
+            verify(storageServiceMock).delete(anyString());
+            verify(storageServiceMock).upload(any(byte[].class), anyString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void setHeaderWorks() {
+        Note note = new Note("Some title");
+        byte[] serializedNote = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully downloading the file.
+        final CompletableFuture<byte[]> completedFuture =
+                CompletableFuture.completedFuture(serializedNote);
+        final CompletableFuture<String> completedUpload = CompletableFuture.completedFuture("");
+        doReturn(completedFuture).when(storageServiceMock).downloadBytes(anyString());
+        doReturn(completedUpload)
+                .when(storageServiceMock)
+                .upload(any(InputStream.class), anyString());
+        doReturn(completedUpload).when(storageServiceMock).upload(any(byte[].class), anyString());
+
+        try {
+            File imageFile = folder.newFile("image_file");
+            database.setAudioMemo(note.getId(), imageFile.getAbsolutePath()).get();
+            verify(storageServiceMock).downloadBytes(anyString());
+            verify(storageServiceMock).upload(any(InputStream.class), anyString());
+            verify(storageServiceMock).upload(any(byte[].class), anyString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
 }

@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,7 +26,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.database.Database;
-import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.util.Utils;
 import com.github.steroidteam.todolist.view.dialog.ListSelectionDialogFragment;
@@ -35,7 +33,6 @@ import com.github.steroidteam.todolist.viewmodel.NoteViewModel;
 import com.google.android.gms.maps.model.LatLng;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.UUID;
@@ -77,22 +74,28 @@ public class NoteDisplayFragment extends Fragment {
 
         this.noteViewModel = new NoteViewModel(noteID);
 
-        this.noteViewModel.getHeaderID()
-                .observe(getViewLifecycleOwner(),
+        this.noteViewModel
+                .getHeaderID()
+                .observe(
+                        getViewLifecycleOwner(),
                         (optionalUUID -> {
-                            if(optionalUUID.isPresent()) {
+                            if (optionalUUID.isPresent()) {
                                 updateHeader(optionalUUID);
                             }
                         }));
 
-        this.noteViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
-            if (position != null && locationName != null) {
-                this.noteViewModel.setPositionAndLocation(position, locationName);
-                position=null;
-                locationName=null;
-            }
-            updateUI(root, note);
-        });
+        this.noteViewModel
+                .getNote()
+                .observe(
+                        getViewLifecycleOwner(),
+                        note -> {
+                            if (position != null && locationName != null) {
+                                this.noteViewModel.setPositionAndLocation(position, locationName);
+                                position = null;
+                                locationName = null;
+                            }
+                            updateUI(root, note);
+                        });
 
         setActivityLauncher();
 
@@ -101,12 +104,15 @@ public class NoteDisplayFragment extends Fragment {
 
     private void updateHeader(Optional<UUID> optionalUUID) {
         ConstraintLayout header = getView().findViewById(R.id.note_header);
-        noteViewModel.getNoteHeader(optionalUUID.get(), headerFileName).thenAccept((f) -> {
-            Bitmap bitmap = BitmapFactory.decodeFile(headerFileName);
-            BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
-            header.setBackgroundTintList(null);
-            header.setBackground(ob);
-        });
+        noteViewModel
+                .getNoteHeader(optionalUUID.get(), headerFileName)
+                .thenAccept(
+                        (f) -> {
+                            Bitmap bitmap = BitmapFactory.decodeFile(headerFileName);
+                            BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
+                            header.setBackgroundTintList(null);
+                            header.setBackground(ob);
+                        });
     }
 
     private void updateUI(View root, Note note) {
@@ -160,9 +166,9 @@ public class NoteDisplayFragment extends Fragment {
         // transform the dp to px, and subtract the lateral padding.
         imageDisplayWidth =
                 (int)
-                        Math.floor(
-                                getResources().getDisplayMetrics().widthPixels
-                                        / getResources().getDisplayMetrics().density)
+                                Math.floor(
+                                        getResources().getDisplayMetrics().widthPixels
+                                                / getResources().getDisplayMetrics().density)
                         - 2 * padding;
     }
 
@@ -217,12 +223,13 @@ public class NoteDisplayFragment extends Fragment {
 
         // Add a click listener to the "back" button to return to the previous activity.
         root.findViewById(R.id.back_button)
-                .setOnClickListener((view) -> {
-                    // Save changes:
-                    noteViewModel.updateNoteContent(richEditor.getHtml().trim());
-                    // Return to note selection fragment:
-                    getParentFragmentManager().popBackStack();
-                });
+                .setOnClickListener(
+                        (view) -> {
+                            // Save changes:
+                            noteViewModel.updateNoteContent(richEditor.getHtml().trim());
+                            // Return to note selection fragment:
+                            getParentFragmentManager().popBackStack();
+                        });
     }
 
     private void setActivityLauncher() {

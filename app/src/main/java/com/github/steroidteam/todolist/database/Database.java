@@ -4,6 +4,8 @@ import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -76,15 +78,16 @@ public interface Database {
     CompletableFuture<TodoList> removeDoneTasks(UUID todoListID);
 
     /**
-     * Renames a task in the database.
+     * Updates a task in the database.
      *
      * @param todoListID The id of the associated list of the task.
      * @param taskIndex The index of the task within the list.
+     * @param newTask The new task.
      */
-    CompletableFuture<Task> renameTask(UUID todoListID, Integer taskIndex, String newName);
+    CompletableFuture<Task> updateTask(UUID todoListID, Integer taskIndex, Task newTask);
 
     /**
-     * Gets the task from the database
+     * Gets the task from the database.
      *
      * @param todoListID The id of the associated list of the task.
      * @param taskIndex The index of the task you want from a to-do list.
@@ -110,11 +113,26 @@ public interface Database {
     CompletableFuture<Note> putNote(UUID noteID, Note note);
 
     /**
+     * Removes a note from the database
+     *
+     * @param noteID The id of the note
+     */
+    CompletableFuture<Void> removeNote(UUID noteID);
+
+    /**
      * Gets the list of note IDs
      *
      * @return The list of note ids.
      */
     CompletableFuture<List<UUID>> getNotesList();
+
+    /**
+     * Updates the note list given the ID.
+     *
+     * @param noteID The ID of the note.
+     * @return The note or null if the ID isn't in the database.
+     */
+    CompletableFuture<Note> updateNote(UUID noteID, Note newNote);
 
     /**
      * Sets "done" flag in a task
@@ -125,4 +143,35 @@ public interface Database {
      * @return the updated task
      */
     CompletableFuture<Task> setTaskDone(UUID todoListID, int index, boolean isDone);
+
+    /**
+     * Saves and associate an audio memo to a note. If an audio memo already exists, it is replaced
+     * and DELETED !
+     *
+     * @param noteID the note UUID to wich the audio memo is attached to
+     * @param audioMemoPath A file path to the audio memo to upload
+     * @return a void future which completes whenever the audio memo is persisted in the database.
+     */
+    CompletableFuture<Void> setAudioMemo(UUID noteID, String audioMemoPath)
+            throws FileNotFoundException;
+
+    /**
+     * Removes and deletes the associated voice memo of a note
+     *
+     * @param noteID the note UUID to wich the audio memo is attached to
+     * @return a void future which completes whenever the audio memo is persisted in the database.
+     */
+    CompletableFuture<Void> removeAudioMemo(UUID noteID);
+
+    /**
+     * Downloads an audio file and stores it at the specified destination path on the local
+     * filesystem.
+     *
+     * @param audioID the UUID of the audio memo to download
+     * @param destinationPath the path on the local filesystem where the file should be stored when
+     *     download completes.
+     * @return a File future which completes whenever the audio memo is present on the local
+     *     filesystem.
+     */
+    CompletableFuture<File> getAudioMemo(UUID audioID, String destinationPath);
 }

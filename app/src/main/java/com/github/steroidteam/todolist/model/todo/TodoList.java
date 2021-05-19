@@ -60,11 +60,8 @@ public class TodoList {
         }
     }
 
-    public void renameTask(int index, String newBody) {
-        Task task = list.get(index);
-        if (task != null) {
-            task.setBody(newBody);
-        }
+    public void updateTask(int index, Task task) {
+        list.set(index, task);
     }
 
     public int getSize() {
@@ -90,10 +87,6 @@ public class TodoList {
     public TodoList setTitle(String newTitle) {
         this.title = newTitle;
         return this;
-    }
-
-    public List<Task> getImportantTask() {
-        return list;
     }
 
     @Override

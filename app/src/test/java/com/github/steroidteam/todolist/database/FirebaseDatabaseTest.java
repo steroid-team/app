@@ -361,7 +361,6 @@ public class FirebaseDatabaseTest {
 
         CompletableFuture<String> uploadFuture = new CompletableFuture<>();
         uploadFuture.complete("some random path");
-        doReturn(uploadFuture).when(storageServiceMock).upload(any(byte[].class), anyString());
 
         verify(storageServiceMock).downloadBytes(expectedPath);
         verify(storageServiceMock).upload(serializedNewList, expectedPath);

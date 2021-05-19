@@ -33,7 +33,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import com.github.steroidteam.todolist.R;
-import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.util.Utils;
 import com.github.steroidteam.todolist.view.dialog.ListSelectionDialogFragment;
@@ -49,7 +48,7 @@ import jp.wasabeef.richeditor.RichEditor;
 public class NoteDisplayFragment extends Fragment {
     public static LatLng position;
     public static String locationName;
-    private Database database;
+
     private UUID noteID;
     private RichEditor richEditor;
     private Uri cameraFileUri;
@@ -57,8 +56,6 @@ public class NoteDisplayFragment extends Fragment {
     private ActivityResultLauncher<String> embeddedImagePickerActivityLauncher;
     private ActivityResultLauncher<Uri> cameraActivityLauncher;
     private final String IMAGE_MIME_TYPE = "image/*";
-
-    private Boolean zoom;
 
     int imageDisplayWidth;
 
@@ -72,8 +69,6 @@ public class NoteDisplayFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_note_display, container, false);
 
         headerFileName = getActivity().getExternalCacheDir().getAbsolutePath() + "/image.png";
-
-        zoom = true;
 
         initRichEditor(root);
 

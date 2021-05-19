@@ -313,6 +313,61 @@ public class FirebaseDatabaseTest {
     }
 
     @Test
+    public void updateTaskRejectsNullArgs() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    database.updateTask(null, 0, new Task("body"));
+                });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    database.updateTask(UUID.randomUUID(), 0, null);
+                });
+    }
+
+    @Test
+    public void updateTaskWorks() {
+        final TodoList todoList = new TodoList("My list");
+        final Task FIXTURE_TASK_1 = new Task("Buy bananas");
+        final Task FIXTURE_TASK_2 = new Task("Eat bananas");
+        todoList.addTask(FIXTURE_TASK_1);
+        final String expectedPath = TODO_LIST_PATH + todoList.getId().toString() + ".json";
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully downloading the file.
+        final byte[] serializedOriginalList =
+                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+        final CompletableFuture<byte[]> completedDownloadFuture =
+                CompletableFuture.completedFuture(serializedOriginalList);
+        doReturn(completedDownloadFuture).when(storageServiceMock).downloadBytes(expectedPath);
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully uploading the file.
+        final CompletableFuture<String> completedUploadFuture =
+                CompletableFuture.completedFuture(expectedPath);
+        doReturn(completedUploadFuture)
+                .when(storageServiceMock)
+                .upload(any(byte[].class), eq(expectedPath));
+
+        // Try to update a task in a valid list.
+        final FirebaseDatabase database = new FirebaseDatabase(storageServiceMock);
+        database.updateTask(todoList.getId(), 0, FIXTURE_TASK_2);
+
+        todoList.updateTask(0, FIXTURE_TASK_2);
+        final byte[] serializedNewList =
+                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+        TodoList expectedTodoList = new TodoList("some random title");
+
+        CompletableFuture<String> uploadFuture = new CompletableFuture<>();
+        uploadFuture.complete("some random path");
+        doReturn(uploadFuture).when(storageServiceMock).upload(any(byte[].class), anyString());
+
+        verify(storageServiceMock).downloadBytes(expectedPath);
+        verify(storageServiceMock).upload(serializedNewList, expectedPath);
+    }
+
+    @Test
     public void getNoteWorks() {
         Note expectedNote = new Note("Some random title");
 
@@ -657,7 +712,7 @@ public class FirebaseDatabaseTest {
 
         try {
             File imageFile = folder.newFile("image_file");
-            database.setAudioMemo(note.getId(), imageFile.getAbsolutePath()).get();
+            database.setHeaderNote(note.getId(), imageFile.getAbsolutePath()).get();
             verify(storageServiceMock).downloadBytes(anyString());
             verify(storageServiceMock).upload(any(InputStream.class), anyString());
             verify(storageServiceMock).upload(any(byte[].class), anyString());

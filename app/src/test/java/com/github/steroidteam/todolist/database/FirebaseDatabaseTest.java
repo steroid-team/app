@@ -337,7 +337,9 @@ public class FirebaseDatabaseTest {
         // successfully uploading the file.
         final CompletableFuture<String> completedUploadFuture =
                 CompletableFuture.completedFuture(expectedPath);
-        doReturn(completedUploadFuture).when(storageServiceMock).upload(any(byte[].class), eq(expectedPath));
+        doReturn(completedUploadFuture)
+                .when(storageServiceMock)
+                .upload(any(byte[].class), eq(expectedPath));
 
         // Try to remove all done tasks from valid list.
         database.removeDoneTasks(todoList.getId());

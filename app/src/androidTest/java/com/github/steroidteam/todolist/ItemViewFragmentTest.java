@@ -348,9 +348,13 @@ public class ItemViewFragmentTest {
 
         onView(withId(R.id.new_task_btn)).perform(click());
 
-        /* Then we should return one task */
+        /* We should now have some done tasks */
         todoList = new TodoList("Some random title");
         todoList.addTask(new Task(TASK_DESCRIPTION_2));
+        Task t1 = new Task("done task");
+        t1.setDone(true);
+        todoList.addTask(t1);
+        todoList.addTask(t1);
         todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
         doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
@@ -367,6 +371,13 @@ public class ItemViewFragmentTest {
                                 2, MyViewAction.clickChildViewWithId(R.id.layout_task_checkbox)));
 
         onView(withId(R.id.remove_done_tasks_btn)).perform(click());
+
+        /* Then we should return one task */
+        todoList = new TodoList("Some random title");
+        todoList.addTask(new Task(TASK_DESCRIPTION_2));
+        todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
 
         // after deleting the first and the third item we check that we have the second one at
         // position 0.

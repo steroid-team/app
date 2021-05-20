@@ -92,7 +92,7 @@ public class ItemViewFragmentTest {
         doReturn(taskFuture).when(databaseMock).updateTask(any(), anyInt(), any(Task.class));
         doReturn(taskFuture).when(databaseMock).removeTask(any(), anyInt());
         doReturn(taskFuture).when(databaseMock).setTaskDone(any(), anyInt(), anyBoolean());
-        doReturn(taskFuture).when(databaseMock).removeDoneTasks(any(UUID.class));
+        doReturn(taskFuture).when(databaseMock).removeDoneTasks(any());
 
         TodoListCollection collection = new TodoListCollection();
         collection.addUUID(UUID.randomUUID());
@@ -379,7 +379,7 @@ public class ItemViewFragmentTest {
         todoList.addTask(new Task(TASK_DESCRIPTION_3));
         CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
 
         // Type a task description in the "new task" text field.
         onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
@@ -406,7 +406,7 @@ public class ItemViewFragmentTest {
         todoList.addTask(t1);
         todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
 
         // Set some tasks as done and then remove them using the dedicated button
         onView(withId(R.id.activity_itemview_itemlist))
@@ -426,7 +426,7 @@ public class ItemViewFragmentTest {
         todoList.addTask(new Task(TASK_DESCRIPTION_2));
         todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
 
         // after deleting the first and the third item we check that we have the second one at
         // position 0.

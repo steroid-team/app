@@ -1,6 +1,7 @@
 package com.github.steroidteam.todolist.view;
 
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -227,6 +228,7 @@ public class ItemViewFragment extends Fragment {
         Button plusButton =
                 new Button(new ContextThemeWrapper(getContext(), R.style.TagInList), null, 0);
         plusButton.setText("+");
+        plusButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
         plusButton.setOnClickListener(this::createTag);
         row.addView(plusButton);
         tags.forEach(tag -> createTagButton(tag, row));
@@ -241,7 +243,9 @@ public class ItemViewFragment extends Fragment {
         Button tagButton =
                 new Button(new ContextThemeWrapper(getContext(), R.style.TagInList), null, 0);
         tagButton.setText(tag.getBody());
-        tagButton.setBackgroundColor(tag.getColor());
+        System.out.println("Color : " + tag.getColor());
+        tagButton.setBackgroundTintList(ColorStateList.valueOf(tag.getColor()));
+        // tagButton.setBackgroundColor(;
         tagButton.setOnLongClickListener(
                 view -> {
                     destroyTag(tag);
@@ -259,7 +263,7 @@ public class ItemViewFragment extends Fragment {
                     @Override
                     public void onPositiveClick(String title) {
                         if (title.length() > 0) {
-                            Tag tag = new Tag(title, Color.LTGRAY);
+                            Tag tag = new Tag(title);
                             itemViewModel.addTag(tag);
                             createTagButton(tag, getView().findViewById(R.id.tag_row_first));
                         }

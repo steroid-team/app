@@ -1,6 +1,8 @@
 package com.github.steroidteam.todolist.model.todo;
 
+import com.github.steroidteam.todolist.R;
 import java.util.Comparator;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -18,11 +20,17 @@ public class Tag {
                     return t1.body.compareTo(t2.body);
                 }
             };
+    private int[] colors = {
+        R.color.tag_1, R.color.tag_2, R.color.tag_3, R.color.tag_4, R.color.tag_5, R.color.tag_6
+    };
 
-    public Tag(String body, int color) {
-        this.uuid = UUID.randomUUID();
+    public Tag(String body) {
+        uuid = UUID.randomUUID();
         this.body = body;
-        this.color = color;
+        Random rand = new Random();
+        color = colors[rand.nextInt(6)];
+        // color = colors.get(0);
+        System.out.println("new color : " + color);
     }
 
     public int getColor() {

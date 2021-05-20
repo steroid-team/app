@@ -104,21 +104,21 @@ public class TagTest {
 
     @Test
     public void getAndSetBodyWork() {
-        Tag tag = new Tag("TagTitle", Color.RED);
+        Tag tag = new Tag("TagTitle");
         tag.setBody("newTagTitle");
         assertEquals("newTagTitle", tag.getBody());
     }
 
     @Test
     public void getAndSetColorWork() {
-        Tag tag = new Tag("TagTitle", Color.RED);
+        Tag tag = new Tag("TagTitle");
         tag.setColor(Color.BLUE);
         assertEquals(Color.BLUE, tag.getColor());
     }
 
     @Test
     public void toStringWorks() {
-        Tag tag = new Tag("TagTitle", Color.RED);
+        Tag tag = new Tag("TagTitle");
         assertEquals("Tag{TagTitle}", tag.toString());
     }
 }

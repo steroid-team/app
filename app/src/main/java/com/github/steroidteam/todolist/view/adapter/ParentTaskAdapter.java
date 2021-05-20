@@ -67,7 +67,8 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
 
             // Create a TodoChild adapter as we create a To-Do Collection Adapter
             //  in the List Selection Activity
-            TodoAdapter childAdapter = new TodoAdapter(listener, todoListInCategory);
+            TodoAdapter childAdapter = new TodoAdapter(listener);
+            childAdapter.setTodoList(todoListInCategory);
             holder.taskListRecyclerView.setLayoutManager(layoutManager);
             holder.taskListRecyclerView.setAdapter(childAdapter);
             holder.taskListRecyclerView.setRecycledViewPool(viewPool);

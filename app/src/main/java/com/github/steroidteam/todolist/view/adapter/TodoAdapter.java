@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-import org.jetbrains.annotations.NotNull;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
@@ -21,9 +20,9 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
     private TaskCustomListener listener;
     private final int TASK_NO_DUE_DATE = -1;
 
-    public TodoAdapter(TaskCustomListener listener, TodoList todoList) {
+    public TodoAdapter(TaskCustomListener listener) {
         this.listener = listener;
-        this.todoList = todoList.sortByDate();
+        // this.todoList = todoList.sortByDate();
     }
 
     @NonNull
@@ -122,13 +121,6 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
         public boolean getTaskDone() {
             return taskBox.isChecked();
-        }
-    }
-
-    public class TaskHolderToday extends TaskHolder {
-
-        public TaskHolderToday(@NonNull @NotNull View itemView) {
-            super(itemView);
         }
     }
 }

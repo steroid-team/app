@@ -39,7 +39,7 @@ public class AudioRecorderFragment extends Fragment {
     private boolean isFirstTime = true;
     private MediaPlayer player;
 
-    private Database database = DatabaseFactory.getDb();
+    private Database database = DatabaseFactory.getRemoteDb();
     private UUID noteId;
 
     public View onCreateView(

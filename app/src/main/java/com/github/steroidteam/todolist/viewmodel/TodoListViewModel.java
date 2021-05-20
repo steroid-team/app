@@ -1,7 +1,6 @@
 package com.github.steroidteam.todolist.viewmodel;
 
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;

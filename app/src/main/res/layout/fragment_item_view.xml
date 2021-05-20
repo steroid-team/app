@@ -217,7 +217,7 @@
         android:paddingTop="10dp"
         android:paddingEnd="10dp"
         android:paddingBottom="15dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

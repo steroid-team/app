@@ -44,11 +44,14 @@ import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.view.ItemViewFragment;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -94,6 +97,10 @@ public class ItemViewFragmentTest {
         doReturn(taskFuture)
                 .when(databaseMock)
                 .setTaskDone(any(UUID.class), anyInt(), anyBoolean());
+
+        CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
+        tagsFuture.complete(new ArrayList<>());
+        doReturn(tagsFuture).when(databaseMock).getTagsFromIds(any());
 
         DatabaseFactory.setCustomDatabase(databaseMock);
 

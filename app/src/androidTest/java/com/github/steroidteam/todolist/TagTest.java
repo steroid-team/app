@@ -29,6 +29,8 @@ import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.view.ItemViewFragment;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.junit.Before;
@@ -65,6 +67,10 @@ public class TagTest {
                 .setTaskDone(any(UUID.class), anyInt(), anyBoolean());
 
         DatabaseFactory.setCustomDatabase(databaseMock);
+
+        CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
+        tagsFuture.complete(new ArrayList<>());
+        doReturn(tagsFuture).when(databaseMock).getTagsFromIds(any());
 
         Bundle bundle = new Bundle();
         bundle.putSerializable("list_id", UUID.randomUUID());

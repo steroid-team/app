@@ -340,10 +340,7 @@ public class FirebaseDatabase implements Database {
         return this.storageService.upload(fileBytes, targetPath).thenApply(str -> tag);
     }
 
-    public CompletableFuture<Void> removeTag(UUID tagId) {
-        Objects.requireNonNull(tagId);
-        String targetPath = TAGS_PATH + tagId.toString() + ".json";
-
+    private void removeTagFromTDLs(UUID tagId) {
         getTag(tagId)
                 .thenAccept(
                         tag -> {
@@ -361,6 +358,13 @@ public class FirebaseDatabase implements Database {
                                                 }
                                             });
                         });
+    }
+
+    public CompletableFuture<Void> removeTag(UUID tagId) {
+        Objects.requireNonNull(tagId);
+        String targetPath = TAGS_PATH + tagId.toString() + ".json";
+
+        removeTagFromTDLs(tagId);
 
         return this.storageService
                 .delete(targetPath)

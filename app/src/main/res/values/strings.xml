@@ -95,4 +95,5 @@
     <string name="save_note">Save note</string>
     <string name="note_header_image">Note header image</string>
 
+    <string name="export_to_calendar">Export to calendar</string>
 </resources>

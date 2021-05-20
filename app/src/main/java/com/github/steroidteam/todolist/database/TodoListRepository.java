@@ -85,6 +85,11 @@ public class TodoListRepository {
                                 }
                             }
                             return null;
+                        })
+                .thenCompose(str -> this.localDatabase.getTodoListCollection())
+                .thenAccept(
+                        todoListCollection -> {
+                            setTodoListMutableLiveData(todoListCollection, localDatabase);
                         });
     }
 

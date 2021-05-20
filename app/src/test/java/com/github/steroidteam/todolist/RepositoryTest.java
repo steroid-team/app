@@ -69,7 +69,7 @@ public class RepositoryTest {
 
         // 2 times in fetchData() -> setTodoListMutableLiveData.
         // 2 times in checkLastModified()
-        verify(localDatabase, times(4)).getTodoList(any());
+        verify(localDatabase, times(6)).getTodoList(any());
     }
 
     @Test
@@ -172,7 +172,7 @@ public class RepositoryTest {
 
         // 2 times in fetchData() -> setTodoListMutableLiveData.
         // 2 times in checkLastModified()
-        verify(localDatabase, times(4)).getNote(any());
+        verify(localDatabase, times(6)).getNote(any());
     }
 
     @Test

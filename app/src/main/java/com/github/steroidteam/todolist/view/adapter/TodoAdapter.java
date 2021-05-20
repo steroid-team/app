@@ -15,6 +15,8 @@ import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
@@ -23,8 +25,9 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
     private TaskCustomListener listener;
     private final int TASK_NO_DUE_DATE = -1;
 
-    public TodoAdapter(TaskCustomListener listener) {
+    public TodoAdapter(TaskCustomListener listener, TodoList todoList) {
         this.listener = listener;
+        this.todoList = todoList.sortByDate();
     }
 
     @NonNull
@@ -53,33 +56,6 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
             holder.taskBody.setPaintFlags(0);
             holder.hideDeleteButton();
         }
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        Task currentTask = todoList.getTask(position);
-        Date dueDate = currentTask.getDueDate();
-        if (dueDate == null) {
-            // No date
-            return TASK_NO_DUE_DATE;
-        }
-        Date currDate = new Date();
-        Calendar calendar2 = Calendar.getInstance();
-        calendar2.setTime(currDate);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(dueDate);
-        int diffDay = calendar.get(Calendar.DAY_OF_YEAR) - calendar2.get(Calendar.DAY_OF_YEAR);
-        // Today
-        if (diffDay < 1) {
-            return 0;
-        }
-        // This week
-        if (diffDay < 7) {
-            return 1;
-        }
-        // Later
-        return 2;
-        // return super.getItemViewType(position);
     }
 
     @Override
@@ -159,18 +135,4 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
             super(itemView);
         }
     }
-
-    /**
-     * public class TaskHolderWeek extends TaskHolder {
-     *
-     * <p>}
-     *
-     * <p>public class TaskHolderLater extends TaskHolder {
-     *
-     * <p>}
-     *
-     * <p>public class TaskHolderNoDate extends TaskHolder {
-     *
-     * <p>}
-     */
 }

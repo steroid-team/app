@@ -21,10 +21,12 @@ import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;
 import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.model.todo.Task;
+import com.github.steroidteam.todolist.view.adapter.ParentTaskAdapter;
 import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
 import com.github.steroidteam.todolist.view.misc.DateHighlighterTextWatcher;
 import com.github.steroidteam.todolist.view.misc.DueDateInputSpan;
 import com.github.steroidteam.todolist.viewmodel.ItemViewModel;
+
 import java.util.Date;
 import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +35,7 @@ import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
 public class ItemViewFragment extends Fragment {
 
     private ItemViewModel itemViewModel;
-    private TodoAdapter adapter;
+    private ParentTaskAdapter adapter;
     public static final int PERMISSIONS_ACCESS_LOCATION = 2;
     private final PrettyTimeParser timeParser = new PrettyTimeParser();
 
@@ -50,6 +52,37 @@ public class ItemViewFragment extends Fragment {
         newTaskText.addTextChangedListener(
                 new DateHighlighterTextWatcher(getContext(), timeParser));
 
+        RecyclerView recyclerView = root.findViewById(R.id.activity_itemview_itemlist);
+        // The layout manager takes care of displaying the task below each other
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
+
+        adapter = new ParentTaskAdapter(createCustomListener());
+        recyclerView.setAdapter(adapter);
+
+        UUID id = (UUID) getArguments().getSerializable(ListSelectionFragment.EXTRA_LIST_KEY);
+        TodoRepository repository = new TodoRepository(id);
+
+        itemViewModel = new ItemViewModel(repository);
+        itemViewModel
+                .getTodoList()
+                .observe(
+                        getActivity(),
+                        (todoList) -> {
+                            TextView activityTitle = root.findViewById(R.id.activity_title);
+                            activityTitle.setText(todoList.getTitle());
+
+                            adapter.setParentTodoList(todoList);
+                        });
+
+
+        recyclerView = root.findViewById(R.id.activity_itemview_itemlist);
+
+        // The layout manager takes care of displaying the task below each other
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setHasFixedSize(true);
+
+        /**
         RecyclerView recyclerView = root.findViewById(R.id.activity_itemview_itemlist);
         // The layout manager takes care of displaying the task below each other
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -73,9 +106,11 @@ public class ItemViewFragment extends Fragment {
                         });
 
         recyclerView = root.findViewById(R.id.activity_itemview_itemlist);
+
         // The layout manager takes care of displaying the task below each other
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
+         **/
 
         root.findViewById(R.id.new_task_btn).setOnClickListener(this::addTask);
 

@@ -70,7 +70,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
     }
 
     public interface TaskCustomListener {
-        void onItemClick(TaskHolder holder, final int position);
+        void onItemClick(final int position);
 
         void onItemDelete(final int position);
 
@@ -102,7 +102,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
             itemView.setOnClickListener(
                     (v) -> {
                         if (position != RecyclerView.NO_POSITION) {
-                            listener.onItemClick(this, position);
+                            listener.onItemClick(position);
                         }
                     });
         }

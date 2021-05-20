@@ -38,7 +38,16 @@ public class TodoListRepository {
     }
 
     public void selectTodolist(UUID id) {
-        this.localDatabase.getTodoList(id).thenAccept(this.observedTodoList::postValue);
+        localDatabase.getTodoList(id).thenAccept(this.observedTodoList::postValue);
+        localDatabase
+                .getTodoList(id)
+                .thenAccept(
+                        list -> {
+                            List<UUID> tagsIds = list.getTagsIds();
+                            localDatabase
+                                    .getTagsFromIds(tagsIds)
+                                    .thenAccept(tags -> listTags.postValue(tags));
+                        });
     }
 
     public LiveData<ArrayList<TodoList>> getAllTodo() {

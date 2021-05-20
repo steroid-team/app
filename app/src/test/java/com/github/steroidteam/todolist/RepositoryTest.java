@@ -39,6 +39,10 @@ public class RepositoryTest {
     @Before
     public void setDatabaseMock() {
         doReturn(fakeFile).when(contextMock).getCacheDir();
+        CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
+        tagsFuture.complete(new ArrayList<>());
+        doReturn(tagsFuture).when(localDatabase).getTagsFromIds(any());
+        doReturn(tagsFuture).when(remoteDatabase).getTagsFromIds(any());
     }
 
     @Test
@@ -68,12 +72,6 @@ public class RepositoryTest {
         doReturn(longCompletableFuture).when(remoteDatabase).getLastModifiedTimeTodo(any());
 
         TodoListRepository todoListRepository = new TodoListRepository(contextMock);
-
-        CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
-        tagsFuture.complete(new ArrayList<>());
-        doReturn(tagsFuture).when(localDatabase).getTagsFromIds(any());
-        doReturn(tagsFuture).when(remoteDatabase).getTagsFromIds(any());
-
 
         // 2 times in fetchData() -> setTodoListMutableLiveData.
         // 2 times in checkLastModified()

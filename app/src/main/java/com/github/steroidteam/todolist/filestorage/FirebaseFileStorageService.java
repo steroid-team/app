@@ -18,7 +18,7 @@ public class FirebaseFileStorageService implements FileStorageService {
 
     public FirebaseFileStorageService(
             @NonNull FirebaseStorage storage, @NonNull FirebaseUser user) {
-        Objects.requireNonNull(user);
+        Objects.requireNonNull(storage);
         Objects.requireNonNull(user);
         this.user = user;
         this.storageRef = storage.getReference();
@@ -27,6 +27,19 @@ public class FirebaseFileStorageService implements FileStorageService {
     private StorageReference getUserspaceRef(@NonNull String path) {
         Objects.requireNonNull(path);
         return storageRef.child("user-data/" + this.user.getUid() + "/" + path);
+    }
+
+    public CompletableFuture<Long> getLastModifiedTime(@NonNull String path) {
+        CompletableFuture<Long> completableFuture = new CompletableFuture<>();
+
+        this.getUserspaceRef(path)
+                .getMetadata()
+                .addOnSuccessListener(
+                        storageMetadata ->
+                                completableFuture.complete(storageMetadata.getUpdatedTimeMillis()))
+                .addOnFailureListener(completableFuture::completeExceptionally);
+
+        return completableFuture;
     }
 
     public CompletableFuture<String> upload(byte[] bytes, @NonNull String path) {

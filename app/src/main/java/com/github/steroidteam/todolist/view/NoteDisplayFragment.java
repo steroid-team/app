@@ -72,7 +72,7 @@ public class NoteDisplayFragment extends Fragment {
         // Get the UUID of the currently selected note.
         noteID = (UUID) getArguments().getSerializable(NoteSelectionFragment.NOTE_ID_KEY);
 
-        database = DatabaseFactory.getDb();
+        database = DatabaseFactory.getRemoteDb();
         database.getNote(noteID)
                 .thenAccept(
                         note -> {

@@ -3,6 +3,7 @@ package com.github.steroidteam.todolist;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
@@ -20,13 +21,15 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import android.content.Context;
 import androidx.fragment.app.testing.FragmentScenario;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
-import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.ListSelectionFragment;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -47,16 +50,13 @@ public class ListSelectionFragmentTest {
 
     private FragmentScenario<ListSelectionFragment> scenario;
     @Mock Database databaseMock;
+    @Mock Context context;
 
     @Before
     public void init() {
-        List<UUID> notes = Collections.singletonList(UUID.randomUUID());
-        CompletableFuture<List<UUID>> notesFuture = new CompletableFuture<>();
-        notesFuture.complete(notes);
 
-        Note note = new Note("NOTE_TITLE_1");
-        CompletableFuture<Note> noteFuture = new CompletableFuture<>();
-        noteFuture.complete(note);
+        // Mock context for Broadcast Reminder
+        doReturn(context).when(context).getApplicationContext();
 
         TodoListCollection collection = new TodoListCollection();
         TodoList todoList = new TodoList(TODO_1_TITLE);
@@ -71,7 +71,6 @@ public class ListSelectionFragmentTest {
         future.complete(null);
         doReturn(future).when(databaseMock).removeTodoList(any(UUID.class));
 
-        doReturn(notesFuture).when(databaseMock).getNotesList();
         doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
         doReturn(todoListFuture).when(databaseMock).putTodoList(any(TodoList.class));
         doReturn(todoListFuture)
@@ -81,6 +80,10 @@ public class ListSelectionFragmentTest {
         doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
 
         DatabaseFactory.setCustomDatabase(databaseMock);
+
+        File fakeFile = new File("Fake pathname");
+        doReturn(fakeFile).when(context).getCacheDir();
+        ViewModelFactoryInjection.setCustomTodoListRepo(context, UUID.randomUUID());
 
         scenario =
                 FragmentScenario.launchInContainer(
@@ -123,7 +126,8 @@ public class ListSelectionFragmentTest {
 
         onView(withId(R.id.alert_dialog_edit_text)).check(matches(isDisplayed()));
 
-        onView(withId(R.id.alert_dialog_edit_text)).perform(typeText(TODO_2_TITLE));
+        onView(withId(R.id.alert_dialog_edit_text))
+                .perform(typeText(TODO_2_TITLE), closeSoftKeyboard());
 
         TodoList todo = new TodoList(TODO_2_TITLE);
         CompletableFuture<TodoList> todoListCompletableFuture = new CompletableFuture<>();
@@ -170,7 +174,7 @@ public class ListSelectionFragmentTest {
         // button1 = positive button
         onView(withId(R.id.alert_dialog_edit_text))
                 .inRoot(isDialog())
-                .perform(clearText(), typeText(TODO_2_TITLE));
+                .perform(clearText(), typeText(TODO_2_TITLE), closeSoftKeyboard());
         // button1 = positive button
         onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
 
@@ -203,8 +207,8 @@ public class ListSelectionFragmentTest {
 
         onView(withText(R.string.delete_todo_suggestion)).check(doesNotExist());
 
-        verify(databaseMock, times(2)).getTodoListCollection();
-        verify(databaseMock).removeTodoList(any(UUID.class));
+        // removeTodo in the local and remote database
+        verify(databaseMock, times(2)).removeTodoList(any(UUID.class));
     }
 
     @Test
@@ -249,7 +253,8 @@ public class ListSelectionFragmentTest {
                 .when(databaseMock)
                 .updateTodoList(any(UUID.class), any(TodoList.class));
 
-        onView(withId(R.id.alert_dialog_edit_text)).perform(clearText(), typeText(TODO_2_TITLE));
+        onView(withId(R.id.alert_dialog_edit_text))
+                .perform(clearText(), typeText(TODO_2_TITLE), closeSoftKeyboard());
 
         onView(withId(android.R.id.button2)).perform(click());
 
@@ -274,7 +279,7 @@ public class ListSelectionFragmentTest {
         // Change the title of the to-do that will be returned:
         doReturn(todoFuture).when(databaseMock).getTodoList(any(UUID.class));
 
-        onView(withId(R.id.alert_dialog_edit_text)).perform(typeText(""));
+        onView(withId(R.id.alert_dialog_edit_text)).perform(typeText(""), closeSoftKeyboard());
         onView(withId(android.R.id.button1)).perform(click());
 
         onView(withId(R.id.alert_dialog_edit_text)).check(doesNotExist());

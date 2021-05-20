@@ -335,13 +335,6 @@ public class FileStorageDatabase implements Database {
         return getTodoList(todoListID).thenApply(todoList -> todoList.getTagsIds());
     }
 
-    public CompletableFuture<List<Tag>> getTagsFromList(@NonNull UUID todoListID) {
-        Objects.requireNonNull(todoListID);
-
-        // TODO : think
-        return null;
-    }
-
     public CompletableFuture<Tag> putTag(@NonNull Tag tag) {
         Objects.requireNonNull(tag);
         String targetPath = TAGS_PATH + tag.getId().toString() + ".json";
@@ -479,5 +472,11 @@ public class FileStorageDatabase implements Database {
                         tagFutures.stream()
                                 .map(future -> future.join())
                                 .collect(Collectors.<Tag>toList()));
+    }
+
+    public CompletableFuture<List<Tag>> getTagsFromList(UUID listId) {
+        return getTodoList(listId)
+                .thenApply(list -> list.getTagsIds())
+                .thenCompose(tagsIds -> getTagsFromIds(tagsIds));
     }
 }

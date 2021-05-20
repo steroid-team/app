@@ -198,4 +198,6 @@ public interface Database {
     CompletableFuture<List<UUID>> getTagsList();
 
     CompletableFuture<List<Tag>> getTagsFromIds(List<UUID> ids);
+
+    CompletableFuture<List<Tag>> getTagsFromList(UUID listId);
 }

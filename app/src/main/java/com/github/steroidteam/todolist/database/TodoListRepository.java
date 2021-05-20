@@ -220,10 +220,21 @@ public class TodoListRepository {
                 .putTag(tag)
                 .thenCompose(t -> localDatabase.putTagInList(observedTodoListID, t.getId()))
                 .thenCompose(str -> localDatabase.getTodoList(observedTodoListID))
-                .thenAccept(observedTodoList::setValue);
+                .thenAccept(observedTodoList::postValue)
+                .thenAccept(
+                        str ->
+                                localDatabase
+                                        .getTagsFromList(observedTodoListID)
+                                        .thenAccept(tags -> listTags.postValue(tags)));
     }
 
     public void destroyTag(Tag tag) {
-        localDatabase.removeTag(tag.getId()).thenAccept(str -> setTagsList());
+        localDatabase
+                .removeTag(tag.getId())
+                .thenAccept(
+                        str ->
+                                localDatabase
+                                        .getTagsFromList(observedTodoListID)
+                                        .thenAccept(tags -> listTags.postValue(tags)));
     }
 }

@@ -11,10 +11,12 @@ import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.database.NoteRepository;
 import com.github.steroidteam.todolist.database.TodoListRepository;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.junit.Before;
@@ -66,6 +68,12 @@ public class RepositoryTest {
         doReturn(longCompletableFuture).when(remoteDatabase).getLastModifiedTimeTodo(any());
 
         TodoListRepository todoListRepository = new TodoListRepository(contextMock);
+
+        CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
+        tagsFuture.complete(new ArrayList<>());
+        doReturn(tagsFuture).when(localDatabase).getTagsFromIds(any());
+        doReturn(tagsFuture).when(remoteDatabase).getTagsFromIds(any());
+
 
         // 2 times in fetchData() -> setTodoListMutableLiveData.
         // 2 times in checkLastModified()

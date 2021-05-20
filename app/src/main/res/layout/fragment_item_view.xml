@@ -62,6 +62,19 @@
 
     </androidx.recyclerview.widget.RecyclerView>
 
+    <ImageButton
+        android:id="@+id/remove_done_tasks_btn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="23dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/bin_btn_description"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_baseline_delete_24_icon"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"

@@ -92,6 +92,7 @@ public class ItemViewFragmentTest {
         doReturn(taskFuture).when(databaseMock).updateTask(any(), anyInt(), any(Task.class));
         doReturn(taskFuture).when(databaseMock).removeTask(any(), anyInt());
         doReturn(taskFuture).when(databaseMock).setTaskDone(any(), anyInt(), anyBoolean());
+        doReturn(taskFuture).when(databaseMock).removeDoneTasks(any());
 
         TodoListCollection collection = new TodoListCollection();
         collection.addUUID(UUID.randomUUID());
@@ -363,6 +364,74 @@ public class ItemViewFragmentTest {
 
         onView(withId(R.id.activity_itemview_itemlist))
                 .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
+    }
+
+    @Test
+    public void removeDoneTasksWorks() {
+        final String TASK_DESCRIPTION = "Buy bananas";
+        final String TASK_DESCRIPTION_2 = "Buy cheese";
+        final String TASK_DESCRIPTION_3 = "Buy juice";
+
+        /* First we should return three tasks */
+        TodoList todoList = new TodoList("Some random title");
+        todoList.addTask(new Task(TASK_DESCRIPTION));
+        todoList.addTask(new Task(TASK_DESCRIPTION_2));
+        todoList.addTask(new Task(TASK_DESCRIPTION_3));
+        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
+
+        // Type a task description in the "new task" text field.
+        onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
+
+        // Hit the button to create a new task.
+        onView(withId(R.id.new_task_btn)).perform(click());
+
+        onView(withId(R.id.new_task_text))
+                .perform(typeText(TASK_DESCRIPTION_2), closeSoftKeyboard());
+
+        onView(withId(R.id.new_task_btn)).perform(click());
+
+        onView(withId(R.id.new_task_text))
+                .perform(typeText(TASK_DESCRIPTION_3), closeSoftKeyboard());
+
+        onView(withId(R.id.new_task_btn)).perform(click());
+
+        /* We should now have some done tasks */
+        todoList = new TodoList("Some random title");
+        todoList.addTask(new Task(TASK_DESCRIPTION_2));
+        Task t1 = new Task("done task");
+        t1.setDone(true);
+        todoList.addTask(t1);
+        todoList.addTask(t1);
+        todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
+
+        // Set some tasks as done and then remove them using the dedicated button
+        onView(withId(R.id.activity_itemview_itemlist))
+                .perform(
+                        RecyclerViewActions.actionOnItemAtPosition(
+                                0, clickChildViewWithId(R.id.layout_task_checkbox)));
+
+        onView(withId(R.id.activity_itemview_itemlist))
+                .perform(
+                        RecyclerViewActions.actionOnItemAtPosition(
+                                2, clickChildViewWithId(R.id.layout_task_checkbox)));
+
+        onView(withId(R.id.remove_done_tasks_btn)).perform(click());
+
+        /* Then we should return one task */
+        todoList = new TodoList("Some random title");
+        todoList.addTask(new Task(TASK_DESCRIPTION_2));
+        todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
+
+        // after deleting the first and the third item we check that we have the second one at
+        // position 0.
+        onView(withId(R.id.activity_itemview_itemlist))
+                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
     }
 
     @Test

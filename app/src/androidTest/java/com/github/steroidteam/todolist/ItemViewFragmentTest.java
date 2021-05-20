@@ -227,7 +227,7 @@ public class ItemViewFragmentTest {
         fixtureDates.put("Deliver at 8 PM the package", " at 8 PM");
         fixtureDates.put(
                 "The day after tomorrow at 13:00 buy 3 avocados",
-                "The day after " + "tomorrow at 13:00 ");
+                "The day after tomorrow at 13:00 ");
 
         PrettyTimeParser timeParser = new PrettyTimeParser();
 

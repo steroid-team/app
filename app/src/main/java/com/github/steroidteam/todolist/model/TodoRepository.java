@@ -86,9 +86,7 @@ public class TodoRepository {
 
     private void setTagsList() {
         List<UUID> tagsIds = oneTodoList.getValue().getTagsIds();
-        System.out.println("Tags IDs : " + tagsIds);
         database.getTagsFromIds(tagsIds).thenAccept(tagsList -> listTags.setValue(tagsList));
-        System.out.println("rep tags list : " + listTags.getValue());
     }
 
     public List<Tag> getTags() {

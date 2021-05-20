@@ -42,12 +42,9 @@ import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.ItemViewFragment;
-<<<<<<< HEAD
-import java.util.ArrayList;
-=======
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import java.io.File;
->>>>>>> 18aef26a24564dfec2dc2f83c976b151d3a4116d
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;

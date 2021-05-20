@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
@@ -23,7 +22,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;
@@ -37,12 +35,10 @@ import com.github.steroidteam.todolist.view.misc.DueDateInputSpan;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
-
-import org.jetbrains.annotations.NotNull;
-import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
-
 import java.util.Date;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
 
 public class ItemViewFragment extends Fragment {
 

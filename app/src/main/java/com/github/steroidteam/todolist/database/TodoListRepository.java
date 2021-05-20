@@ -3,7 +3,6 @@ package com.github.steroidteam.todolist.database;
 import android.content.Context;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
@@ -199,9 +198,7 @@ public class TodoListRepository {
 
     private void setTagsList() {
         List<UUID> tagsIds = observedTodoList.getValue().getTagsIds();
-        System.out.println("Tags IDs : " + tagsIds);
         localDatabase.getTagsFromIds(tagsIds).thenAccept(tagsList -> listTags.setValue(tagsList));
-        System.out.println("rep tags list : " + listTags.getValue());
     }
 
     public List<Tag> getTags() {
@@ -210,7 +207,8 @@ public class TodoListRepository {
     }
 
     public void putTag(Tag tag) {
-        localDatabase.putTag(tag)
+        localDatabase
+                .putTag(tag)
                 .thenCompose(t -> localDatabase.putTagInList(observedTodoListID, t.getId()))
                 .thenCompose(str -> localDatabase.getTodoList(observedTodoListID))
                 .thenAccept(observedTodoList::setValue);

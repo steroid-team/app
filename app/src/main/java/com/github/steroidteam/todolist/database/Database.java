@@ -145,6 +145,22 @@ public interface Database {
     CompletableFuture<Task> setTaskDone(UUID todoListID, int index, boolean isDone);
 
     /**
+     * Return the time when the last modification in the to-do list has been made.
+     *
+     * @param todoListID id of the todolist
+     * @return the last modified time
+     */
+    CompletableFuture<Long> getLastModifiedTimeTodo(UUID todoListID);
+
+    /**
+     * Return the time when the last modification in the note has been made.
+     *
+     * @param noteID id of the note
+     * @return the last modified time
+     */
+    CompletableFuture<Long> getLastModifiedTimeNote(UUID noteID);
+
+    /**
      * Saves and associate an audio memo to a note. If an audio memo already exists, it is replaced
      * and DELETED !
      *

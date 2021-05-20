@@ -34,9 +34,10 @@ public class Task {
         this.remindAtLocation = null;
     }
 
-    public void setBody(String newBody) {
+    public Task setBody(String newBody) {
         Objects.requireNonNull(newBody);
         this.body = newBody;
+        return this;
     }
 
     public String getBody() {
@@ -92,13 +93,15 @@ public class Task {
         return done;
     }
 
-    public void setDone(Boolean done) {
+    public Task setDone(Boolean done) {
         this.done = done;
+        return this;
     }
 
-    public void setDueDate(Date dueDate) {
+    public Task setDueDate(Date dueDate) {
         Objects.requireNonNull(dueDate);
         this.dueDate = dueDate;
+        return this;
     }
 
     public void removeDueDate() {

@@ -4,14 +4,15 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckBox;
+import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckText;
+import static com.github.steroidteam.todolist.CustomMatchers.clickChildViewWithId;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -26,19 +27,11 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.os.SystemClock;
 import android.service.notification.StatusBarNotification;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.testing.FragmentScenario;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.test.espresso.UiController;
-import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
-import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.rule.GrantPermissionRule;
 import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;
@@ -46,14 +39,15 @@ import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
+import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.ItemViewFragment;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
+import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -65,8 +59,13 @@ import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
 @RunWith(MockitoJUnitRunner.class)
 public class ItemViewFragmentTest {
 
+    private final int TASK_BODY_LAYOUT_ID = R.id.layout_task_body;
+    private final int TASK_BOX_LAYOUT_ID = R.id.layout_task_checkbox;
+
     private FragmentScenario<ItemViewFragment> scenario;
     @Mock Database databaseMock;
+
+    @Mock Context context;
 
     @Rule
     public GrantPermissionRule coarseLocationPermissionRule =
@@ -78,30 +77,36 @@ public class ItemViewFragmentTest {
 
     @Before
     public void setUp() {
+        // Mock context for Broadcast Reminder
+        doReturn(context).when(context).getApplicationContext();
+
         TodoList todoList = new TodoList("Some random title");
         CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
 
         Task task = new Task("Random task title");
         CompletableFuture<Task> taskFuture = new CompletableFuture<>();
         taskFuture.complete(task);
-        doReturn(taskFuture).when(databaseMock).putTask(any(UUID.class), any(Task.class));
-        doReturn(taskFuture)
-                .when(databaseMock)
-                .updateTask(any(UUID.class), anyInt(), any(Task.class));
-        doReturn(taskFuture).when(databaseMock).removeTask(any(UUID.class), anyInt());
-        doReturn(taskFuture)
-                .when(databaseMock)
-                .setTaskDone(any(UUID.class), anyInt(), anyBoolean());
+        doReturn(taskFuture).when(databaseMock).putTask(any(), any(Task.class));
+        doReturn(taskFuture).when(databaseMock).updateTask(any(), anyInt(), any(Task.class));
+        doReturn(taskFuture).when(databaseMock).removeTask(any(), anyInt());
+        doReturn(taskFuture).when(databaseMock).setTaskDone(any(), anyInt(), anyBoolean());
+
+        TodoListCollection collection = new TodoListCollection();
+        collection.addUUID(UUID.randomUUID());
+        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
+        todoListCollectionFuture.complete(collection);
+        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
 
         DatabaseFactory.setCustomDatabase(databaseMock);
 
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("list_id", UUID.randomUUID());
+        File fakeFile = new File("Fake pathname");
+        doReturn(fakeFile).when(context).getCacheDir();
+        ViewModelFactoryInjection.setCustomTodoListRepo(context, UUID.randomUUID());
         scenario =
                 FragmentScenario.launchInContainer(
-                        ItemViewFragment.class, bundle, R.style.Theme_Asteroid);
+                        ItemViewFragment.class, null, R.style.Theme_Asteroid);
     }
 
     @Test
@@ -113,7 +118,7 @@ public class ItemViewFragmentTest {
         todoList.addTask(new Task(TASK_DESCRIPTION));
         CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
 
         // Type a task description in the "new task" text field.
         onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
@@ -125,7 +130,7 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.new_task_text)).check(matches(withText("")));
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION)));
+                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION, TASK_BODY_LAYOUT_ID)));
     }
 
     @Test
@@ -149,10 +154,10 @@ public class ItemViewFragmentTest {
         todoList.addTask(task);
         CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
         CompletableFuture<Task> taskFuture = new CompletableFuture<>();
         taskFuture.complete(task);
-        doReturn(taskFuture).when(databaseMock).getTask(any(UUID.class), anyInt());
+        doReturn(taskFuture).when(databaseMock).getTask(any(), anyInt());
 
         // Type a task description in the "new task" text field.
         onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
@@ -168,10 +173,10 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.layout_update_task_save)).perform(click());
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION)));
+                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION, TASK_BODY_LAYOUT_ID)));
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckBox(0, false)));
+                .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
     }
 
     @Test
@@ -192,7 +197,7 @@ public class ItemViewFragmentTest {
             TodoList todoList = new TodoList("Some random title");
             CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
             todoListFuture.complete(todoList);
-            doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+            doReturn(todoListFuture).when(databaseMock).getTodoList(any());
 
             // Type the task description in the "new task" text field.
             onView(withId(R.id.new_task_text))
@@ -204,7 +209,7 @@ public class ItemViewFragmentTest {
             Task task = new Task(originalTaskDescription.replace(entry.getValue(), ""));
             task.setDueDate(timeParser.parse(entry.getValue()).get(0));
 
-            verify(databaseMock).putTask(any(UUID.class), eq(task));
+            verify(databaseMock).putTask(any(), eq(task));
         }
     }
 
@@ -220,10 +225,10 @@ public class ItemViewFragmentTest {
         todoList.addTask(originalTask);
         CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
         CompletableFuture<Task> taskFuture = new CompletableFuture<>();
         taskFuture.complete(originalTask);
-        doReturn(taskFuture).when(databaseMock).getTask(any(UUID.class), anyInt());
+        doReturn(taskFuture).when(databaseMock).getTask(any(), anyInt());
 
         // Type a task description in the "new task" text field.
         onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
@@ -234,7 +239,7 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.activity_itemview_itemlist))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
-                                0, MyViewAction.clickChildViewWithId(R.id.layout_task_checkbox)));
+                                0, clickChildViewWithId(R.id.layout_task_checkbox)));
 
         onView(withId(R.id.activity_itemview_itemlist))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
@@ -243,7 +248,7 @@ public class ItemViewFragmentTest {
         // is now set as "done".
         Task updatedTask = new Task(originalTask.getBody());
         updatedTask.setDone(true);
-        verify(databaseMock).updateTask(any(UUID.class), anyInt(), eq(updatedTask));
+        verify(databaseMock).updateTask(any(), anyInt(), eq(updatedTask));
 
         onView(withId(R.id.layout_update_task_body)).check(matches(withText(TASK_DESCRIPTION)));
         onView(withId(R.id.layout_update_task_checkbox)).check(matches(isChecked()));
@@ -255,10 +260,10 @@ public class ItemViewFragmentTest {
         todoList.addTask(originalTask);
         todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
         taskFuture = new CompletableFuture<>();
         taskFuture.complete(originalTask);
-        doReturn(taskFuture).when(databaseMock).getTask(any(UUID.class), anyInt());
+        doReturn(taskFuture).when(databaseMock).getTask(any(), anyInt());
 
         onView(withId(R.id.layout_update_task_checkbox)).perform(click());
         onView(withId(R.id.layout_update_task_body))
@@ -267,10 +272,10 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.layout_update_task_save)).perform(click());
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
+                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckBox(0, false)));
+                .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
     }
 
     @Test
@@ -284,7 +289,7 @@ public class ItemViewFragmentTest {
         todoList.addTask(new Task(TASK_DESCRIPTION_2));
         CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
 
         // Type a task description in the "new task" text field.
         onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
@@ -303,25 +308,24 @@ public class ItemViewFragmentTest {
         todoList.addTask(task);
         todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
         CompletableFuture<Task> taskFuture = new CompletableFuture<>();
         taskFuture.complete(task);
-        doReturn(taskFuture).when(databaseMock).getTask(any(UUID.class), anyInt());
+        doReturn(taskFuture).when(databaseMock).getTask(any(), anyInt());
 
         // Try to remove the first task
         onView(withId(R.id.activity_itemview_itemlist))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
-                                0, MyViewAction.clickChildViewWithId(R.id.layout_task_checkbox)));
+                                0, clickChildViewWithId(R.id.layout_task_checkbox)));
         onView(withId(R.id.activity_itemview_itemlist))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
-                                0,
-                                MyViewAction.clickChildViewWithId(R.id.layout_task_delete_button)));
+                                0, clickChildViewWithId(R.id.layout_task_delete_button)));
 
         // after deleting the first item we check that we have the second one at position 0.
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
+                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
     }
 
     @Test
@@ -333,7 +337,7 @@ public class ItemViewFragmentTest {
         todoList.addTask(new Task(TASK_DESCRIPTION_2));
         CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
 
         // Type a task description in the "new task" text field.
         onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
@@ -355,41 +359,10 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.layout_update_task_delete)).perform(click());
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2)));
+                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckBox(0, false)));
-    }
-
-    @Test
-    public void notificationDeleteWorks() {
-        final String TASK_DESCRIPTION = "Buy bananas";
-
-        TodoList todoList = new TodoList("Some random title");
-        todoList.addTask(new Task(TASK_DESCRIPTION));
-        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
-        todoListFuture.complete(todoList);
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
-
-        // Type a task description in the "new task" text field.
-        onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
-
-        // Hit the button to create a new task.
-        onView(withId(R.id.new_task_btn)).perform(click());
-
-        onView(withId(R.id.activity_itemview_itemlist))
-                .perform(actionOnItemAtPosition(0, longClick()));
-
-        onView(withId(R.id.activity_itemview_itemlist))
-                .perform(
-                        RecyclerViewActions.actionOnItemAtPosition(
-                                0,
-                                MyViewAction.clickChildViewWithId(R.id.layout_task_delete_button)));
-
-        // FIXME : unable to check if toast appeared
-        /*onView(withText("Successfully removed the task !"))
-        .inRoot(new ToastMatcher())
-        .check(matches(isDisplayed()));*/
+                .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
     }
 
     @Test
@@ -534,74 +507,6 @@ public class ItemViewFragmentTest {
                     5);
             mLocationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
             mLocationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, location);
-        }
-    }
-
-    public static Matcher<View> atPositionCheckText(
-            final int position, @NonNull final String expectedText) {
-        return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText(
-                        "View holder at position "
-                                + String.valueOf(position)
-                                + ", expected: "
-                                + expectedText
-                                + " ");
-            }
-
-            @Override
-            protected boolean matchesSafely(final RecyclerView view) {
-                View taskView = view.getChildAt(position);
-                TextView bodyView = taskView.findViewById(R.id.layout_task_body);
-                return bodyView.getText().toString().equals(expectedText);
-            }
-        };
-    }
-
-    public static Matcher<View> atPositionCheckBox(
-            final int position, @NonNull final boolean expectedBox) {
-        return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText(
-                        "View holder at position "
-                                + String.valueOf(position)
-                                + ", expected: "
-                                + expectedBox
-                                + " ");
-            }
-
-            @Override
-            protected boolean matchesSafely(final RecyclerView view) {
-                View taskView = view.getChildAt(position);
-                CheckBox boxView = taskView.findViewById(R.id.layout_task_checkbox);
-                return boxView.isChecked() == expectedBox;
-            }
-        };
-    }
-
-    // Simple ViewAction to click on the button within a item of the recyclerView
-    public static class MyViewAction {
-
-        public static ViewAction clickChildViewWithId(final int id) {
-            return new ViewAction() {
-                @Override
-                public Matcher<View> getConstraints() {
-                    return null;
-                }
-
-                @Override
-                public String getDescription() {
-                    return "Click on a child view with specified id.";
-                }
-
-                @Override
-                public void perform(UiController uiController, View view) {
-                    View v = view.findViewById(id);
-                    v.performClick();
-                }
-            };
         }
     }
 }

@@ -74,34 +74,6 @@ public class ItemViewFragment extends Fragment {
                             adapter.setParentTodoList(todoList);
                         });
 
-        recyclerView = root.findViewById(R.id.activity_itemview_itemlist);
-
-        // The layout manager takes care of displaying the task below each other
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setHasFixedSize(true);
-
-        /**
-         * RecyclerView recyclerView = root.findViewById(R.id.activity_itemview_itemlist); // The
-         * layout manager takes care of displaying the task below each other
-         * recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-         * recyclerView.setHasFixedSize(true);
-         *
-         * <p>adapter = new TodoAdapter(createCustomListener()); recyclerView.setAdapter(adapter);
-         *
-         * <p>UUID id = (UUID) getArguments().getSerializable(ListSelectionFragment.EXTRA_LIST_KEY);
-         * TodoRepository repository = new TodoRepository(id); itemViewModel = new
-         * ItemViewModel(repository); itemViewModel .getTodoList() .observe( getActivity(),
-         * (todoList) -> { TextView activityTitle = root.findViewById(R.id.activity_title);
-         * activityTitle.setText(todoList.getTitle());
-         *
-         * <p>adapter.setTodoList(todoList); });
-         *
-         * <p>recyclerView = root.findViewById(R.id.activity_itemview_itemlist);
-         *
-         * <p>// The layout manager takes care of displaying the task below each other
-         * recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-         * recyclerView.setHasFixedSize(true);
-         */
         root.findViewById(R.id.new_task_btn).setOnClickListener(this::addTask);
 
         ReminderDateBroadcast.createNotificationChannel(getActivity());

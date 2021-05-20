@@ -44,6 +44,7 @@ public class ItemViewFragment extends Fragment {
     private TodoAdapter adapter;
     public static final int PERMISSIONS_ACCESS_LOCATION = 2;
     private final PrettyTimeParser timeParser = new PrettyTimeParser();
+    List<Tag> tags;
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,6 +93,9 @@ public class ItemViewFragment extends Fragment {
 
         ReminderDateBroadcast.createNotificationChannel(getActivity());
         ReminderLocationBroadcast.createLocationNotificationChannel(getActivity());
+
+        tags = itemViewModel.getTags();
+        tags.sort(Tag.sortByBody);
 
         return root;
     }
@@ -214,15 +218,16 @@ public class ItemViewFragment extends Fragment {
     }
 
     public void tagButton(View view) {
+        tags = itemViewModel.getTags();
+        tags.sort(Tag.sortByBody);
         ConstraintLayout tagLayout = getView().findViewById(R.id.layout_update_tags);
         tagLayout.setVisibility(View.VISIBLE);
         LinearLayout row = getView().findViewById(R.id.tag_row_first);
-        List<Tag> tags = itemViewModel.getTags();
         row.removeAllViews();
         Button plusButton =
                 new Button(new ContextThemeWrapper(getContext(), R.style.TagInList), null, 0);
         plusButton.setText("+");
-        plusButton.setOnClickListener(this::addTag);
+        plusButton.setOnClickListener(this::createTag);
         row.addView(plusButton);
         tags.forEach(tag -> createTagButton(tag, row));
     }
@@ -236,11 +241,17 @@ public class ItemViewFragment extends Fragment {
         Button tagButton =
                 new Button(new ContextThemeWrapper(getContext(), R.style.TagInList), null, 0);
         tagButton.setText(tag.getBody());
-        // tagView.setBackgroundColor(tag.getColor());
+        tagButton.setBackgroundColor(tag.getColor());
+        tagButton.setOnLongClickListener(
+                view -> {
+                    destroyTag(tag);
+                    row.removeView(tagButton);
+                    return true;
+                });
         row.addView(tagButton);
     }
 
-    public void addTag(View view) {
+    public void createTag(View view) {
 
         DialogListener dialogListener =
                 new DialogListener() {
@@ -248,7 +259,8 @@ public class ItemViewFragment extends Fragment {
                     @Override
                     public void onPositiveClick(String title) {
                         if (title.length() > 0) {
-                            Tag tag = itemViewModel.createTag(title, Color.LTGRAY);
+                            Tag tag = new Tag(title, Color.LTGRAY);
+                            itemViewModel.addTag(tag);
                             createTagButton(tag, getView().findViewById(R.id.tag_row_first));
                         }
                     }
@@ -267,6 +279,11 @@ public class ItemViewFragment extends Fragment {
         DialogFragment newFragment =
                 new InputDialogFragment().newInstance(dialogListener, R.string.add_tag_suggestion);
         newFragment.show(getParentFragmentManager(), "add_tag_dialog");
+    }
+
+    public void destroyTag(Tag tag) {
+        // TODO : Uncomment after fixing method in repository/database
+        // itemViewModel.destroyTag(tag);
     }
 
     @Override

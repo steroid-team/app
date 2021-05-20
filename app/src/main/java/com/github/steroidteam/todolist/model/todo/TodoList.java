@@ -19,7 +19,7 @@ public class TodoList {
     private final List<Task> list;
     private String title;
     private final Date date;
-    private final List<Tag> tags;
+    private final List<UUID> tags;
 
     /**
      * Constructs a new to-do list.
@@ -87,16 +87,20 @@ public class TodoList {
         return this;
     }
 
-    public void addTag(Tag tag) {
-        tags.add(tag);
+    public void addTagId(UUID tagId) {
+        tags.add(tagId);
     }
 
-    public boolean removeTag(Tag tag) {
-        return tags.remove(tag);
+    public boolean removeTagId(UUID tagId) {
+        return tags.remove(tagId);
     }
 
-    public List<Tag> getTags() {
+    public List<UUID> getTagsIds() {
         return tags;
+    }
+
+    public boolean containsTag(UUID tagId) {
+        return tags.contains(tagId);
     }
 
     @Override

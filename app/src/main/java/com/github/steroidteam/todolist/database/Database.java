@@ -1,6 +1,8 @@
 package com.github.steroidteam.todolist.database;
 
+import androidx.annotation.NonNull;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
@@ -166,4 +168,18 @@ public interface Database {
      *     filesystem.
      */
     CompletableFuture<File> getAudioMemo(UUID audioID, String destinationPath);
+
+    CompletableFuture<UUID> putTagInList(UUID todoListID, UUID tagId);
+
+    CompletableFuture<TodoList> removeTagFromList(UUID todoListID, UUID tagId);
+
+    CompletableFuture<Tag> putTag(@NonNull Tag tag);
+
+    CompletableFuture<Void> removeTag(UUID tagID);
+
+    CompletableFuture<Tag> getTag(UUID tagID);
+
+    CompletableFuture<List<UUID>> getTagsList();
+
+    CompletableFuture<List<Tag>> getTagsFromIds(List<UUID> ids);
 }

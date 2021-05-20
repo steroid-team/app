@@ -44,15 +44,15 @@ public class ItemViewModel extends ViewModel {
     }
 
     public List<Tag> getTags() {
-        // TODO : Change when adding persistence, add method in TodoRepository
-        return todoList.getValue().getTags();
+        return repository.getTags();
     }
 
-    public Tag createTag(String body, int color) {
-        // TODO : Change when adding persistence, add method in TodoRepository
-        Tag tag = new Tag(body, color);
-        todoList.getValue().addTag(tag);
-        return tag;
+    public void addTag(Tag tag) {
+        repository.putTag(tag);
+    }
+
+    public void destroyTag(Tag tag) {
+        repository.destroyTag(tag);
     }
 
     public void setTaskDueDate(int index, Date date) {

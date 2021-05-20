@@ -3,6 +3,7 @@ package com.github.steroidteam.todolist.database;
 import androidx.annotation.NonNull;
 import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
@@ -24,6 +25,7 @@ public class FirebaseDatabase implements Database {
     private static final String TODO_LIST_PATH = "/todo-lists/";
     private static final String NOTES_PATH = "/notes/";
     private static final String AUDIO_MEMOS_PATH = "/audio-memos/";
+    private static final String TAGS_PATH = "/tags/";
     private final FirebaseFileStorageService storageService;
 
     public FirebaseDatabase(@NonNull FirebaseFileStorageService storageService) {
@@ -314,5 +316,152 @@ public class FirebaseDatabase implements Database {
 
         byte[] bytes = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
         return this.storageService.upload(bytes, notePath).thenApply(str -> note);
+    }
+
+    public CompletableFuture<List<UUID>> getTagsIdsFromList(@NonNull UUID todoListID) {
+        Objects.requireNonNull(todoListID);
+        return getTodoList(todoListID).thenApply(todoList -> todoList.getTagsIds());
+    }
+
+    public CompletableFuture<List<Tag>> getTagsFromList(@NonNull UUID todoListID) {
+        Objects.requireNonNull(todoListID);
+
+        // TODO : think
+        return null;
+    }
+
+    public CompletableFuture<Tag> putTag(@NonNull Tag tag) {
+        Objects.requireNonNull(tag);
+        String targetPath = TAGS_PATH + tag.getId().toString() + ".json";
+
+        // Serialize the task as an UTF-8 encoded JSON object.
+        byte[] fileBytes = JSONSerializer.serializeTag(tag).getBytes(StandardCharsets.UTF_8);
+
+        return this.storageService.upload(fileBytes, targetPath).thenApply(str -> tag);
+    }
+
+    public CompletableFuture<Void> removeTag(UUID tagId) {
+        Objects.requireNonNull(tagId);
+        String targetPath = TAGS_PATH + tagId.toString() + ".json";
+
+        getTag(tagId)
+                .thenAccept(
+                        tag -> {
+                            getTodoListCollection()
+                                    .thenAccept(
+                                            col -> {
+                                                for (int i = 0; i < col.getSize(); ++i) {
+                                                    UUID todoListId = col.getUUID(i);
+                                                    getTodoList(todoListId)
+                                                            .thenAccept(
+                                                                    todoList -> {
+                                                                        removeTagFromList(
+                                                                                todoListId, tagId);
+                                                                    });
+                                                }
+                                            });
+                        });
+
+        return this.storageService
+                .delete(targetPath)
+                .thenCompose(
+                        str -> {
+                            CompletableFuture<Void> future = new CompletableFuture<>();
+                            future.complete(null);
+                            return future;
+                        });
+    }
+
+    public CompletableFuture<Tag> getTag(UUID tagID) {
+        Objects.requireNonNull(tagID);
+        String targetPath = TAGS_PATH + tagID.toString() + ".json";
+
+        return this.storageService
+                .downloadBytes(targetPath)
+                .thenApply(
+                        bytes ->
+                                JSONSerializer.deserializeTag(
+                                        new String(bytes, StandardCharsets.UTF_8)));
+    }
+
+    public CompletableFuture<Tag> updateTag(UUID tagID, Tag tag) {
+        Objects.requireNonNull(tagID);
+        Objects.requireNonNull(tag);
+
+        String targetPath = TAGS_PATH + tagID.toString() + ".json";
+        byte[] fBytes = JSONSerializer.serializeTag(tag).getBytes(StandardCharsets.UTF_8);
+
+        return this.storageService.upload(fBytes, targetPath).thenApply(str -> tag);
+    }
+
+    public CompletableFuture<UUID> putTagInList(UUID todoListID, UUID tagId) {
+        Objects.requireNonNull(todoListID);
+        Objects.requireNonNull(tagId);
+        String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
+
+        // Fetch the remote list that we are about to update.
+        return getTodoList(todoListID)
+                // Add the new task to the object.
+                .thenApply(
+                        todoList -> {
+                            todoList.addTagId(tagId);
+                            return todoList;
+                        })
+                // Re-serialize and upload the new object.
+                .thenApply(JSONSerializer::serializeTodoList)
+                .thenApply(
+                        serializedTodoList -> serializedTodoList.getBytes(StandardCharsets.UTF_8))
+                .thenCompose(bytes -> this.storageService.upload(bytes, listPath))
+                .thenApply(str -> tagId);
+    }
+
+    public CompletableFuture<TodoList> removeTagFromList(UUID todoListID, UUID tagId) {
+        Objects.requireNonNull(todoListID);
+        Objects.requireNonNull(tagId);
+        String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
+
+        // Fetch the remote list that we are about to update.
+        return getTodoList(todoListID)
+                // Remove the tag from the object.
+                .thenApply(
+                        todoList -> {
+                            todoList.removeTagId(tagId);
+                            return todoList;
+                        })
+                .thenCompose(
+                        todoList -> {
+                            byte[] bytes =
+                                    JSONSerializer.serializeTodoList(todoList)
+                                            .getBytes(StandardCharsets.UTF_8);
+                            return this.storageService
+                                    .upload(bytes, listPath)
+                                    .thenApply(str -> todoList);
+                        });
+    }
+
+    public CompletableFuture<List<UUID>> getTagsList() {
+        CompletableFuture<String[]> listDir = this.storageService.listDir(TAGS_PATH);
+
+        return listDir.thenApply(
+                fileNames ->
+                        Arrays.stream(fileNames)
+                                .map(fileName -> fileName.split(".json")[0])
+                                .map(UUID::fromString)
+                                .collect(Collectors.toList()));
+    }
+
+    public CompletableFuture<List<Tag>> getTagsFromIds(List<UUID> ids) {
+        List<CompletableFuture<Tag>> tagFutures =
+                ids.stream().map(id -> getTag(id)).collect(Collectors.toList());
+
+        CompletableFuture<Void> futureOfList =
+                CompletableFuture.allOf(
+                        tagFutures.toArray(new CompletableFuture[tagFutures.size()]));
+
+        return futureOfList.thenApply(
+                v ->
+                        tagFutures.stream()
+                                .map(future -> future.join())
+                                .collect(Collectors.<Tag>toList()));
     }
 }

@@ -1,7 +1,6 @@
 package com.github.steroidteam.todolist.model.todo;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Comparator;
 import java.util.UUID;
 
 /**
@@ -9,17 +8,21 @@ import java.util.UUID;
  * lists in different categories.
  */
 public class Tag {
-    UUID uuid;
+    private UUID uuid;
     private String body;
     private int color;
-    // TODO : Move to database when adding persistence
-    public static Set<Tag> tags = new HashSet<>();
+    public static Comparator<Tag> sortByBody =
+            new Comparator<Tag>() {
+                @Override
+                public int compare(Tag t1, Tag t2) {
+                    return t1.body.compareTo(t2.body);
+                }
+            };
 
     public Tag(String body, int color) {
         this.uuid = UUID.randomUUID();
         this.body = body;
         this.color = color;
-        tags.add(this);
     }
 
     public int getColor() {
@@ -36,6 +39,10 @@ public class Tag {
 
     public void setBody(String newBody) {
         body = newBody;
+    }
+
+    public UUID getId() {
+        return uuid;
     }
 
     @Override

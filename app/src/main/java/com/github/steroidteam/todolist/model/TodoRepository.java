@@ -6,6 +6,7 @@ import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
+import com.google.android.gms.maps.model.LatLng;
 import java.util.Date;
 import java.util.UUID;
 
@@ -71,6 +72,19 @@ public class TodoRepository {
                 .thenCompose(
                         task -> {
                             task.setDueDate(dueDate);
+                            return this.database.updateTask(todoListID, index, task);
+                        })
+                .thenCompose(task -> this.database.getTodoList(todoListID))
+                .thenAccept(this.oneTodoList::setValue);
+        this.database.getTodoList(todoListID).thenAccept(this.oneTodoList::setValue);
+    }
+
+    public void setTaskLocationReminder(int index, LatLng location, String locationName) {
+        this.database
+                .getTask(todoListID, index)
+                .thenCompose(
+                        task -> {
+                            task.setRemindAtLocation(location, locationName);
                             return this.database.updateTask(todoListID, index, task);
                         })
                 .thenCompose(task -> this.database.getTodoList(todoListID))

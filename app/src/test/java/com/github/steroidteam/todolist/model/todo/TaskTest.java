@@ -6,8 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
-import android.location.Location;
-import android.location.LocationManager;
+import com.google.android.gms.maps.model.LatLng;
 import java.util.Date;
 import org.junit.Test;
 
@@ -98,8 +97,8 @@ public class TaskTest {
     @Test
     public void setLocationReminderWorks() {
         Task task = new Task("Some random title");
-        assertNull(task.getLocationReminder());
-        task.setLocationReminder(new Location(LocationManager.GPS_PROVIDER));
-        assertNotNull(task.getLocationReminder());
+        assertNull(task.getRemindAtLocation());
+        task.setRemindAtLocation(new LatLng(0.0, 0.0), "Nowhere");
+        assertNotNull(task.getRemindAtLocation());
     }
 }

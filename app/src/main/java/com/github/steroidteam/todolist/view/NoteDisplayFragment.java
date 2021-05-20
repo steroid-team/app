@@ -33,8 +33,8 @@ import java.util.UUID;
 import jp.wasabeef.richeditor.RichEditor;
 
 public class NoteDisplayFragment extends Fragment {
-    public static LatLng position;
-    public static String locationName;
+    private LatLng position; // TODO : change this !!! LISTEN TO RESULT LISTENER OF MAP
+    private String locationName; // TODO : change this !!!
     private Database database;
     private UUID noteID;
     private RichEditor richEditor;
@@ -132,6 +132,22 @@ public class NoteDisplayFragment extends Fragment {
         root.findViewById(R.id.location_button)
                 .setOnClickListener(
                         v -> {
+                            getParentFragmentManager()
+                                    .setFragmentResultListener(
+                                            MapFragment.LOCATION_REQ,
+                                            this,
+                                            (requestKey, bundle) -> {
+                                                position =
+                                                        bundle.getParcelable(
+                                                                MapFragment.LOCATION_KEY);
+                                                locationName =
+                                                        bundle.getString(
+                                                                MapFragment.LOCATION_NAME_KEY);
+
+                                                getParentFragmentManager()
+                                                        .clearFragmentResultListener(
+                                                                MapFragment.LOCATION_REQ);
+                                            });
                             // Go to the map view.
                             Navigation.findNavController(getView()).navigate(R.id.nav_map);
                         });

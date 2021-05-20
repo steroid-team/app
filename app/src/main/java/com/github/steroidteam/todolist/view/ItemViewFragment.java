@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
@@ -74,6 +75,9 @@ public class ItemViewFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
 
         root.findViewById(R.id.new_task_btn).setOnClickListener(this::addTask);
+
+        ConstraintLayout updateLayout = root.findViewById(R.id.layout_update_task);
+        updateLayout.setVisibility(View.GONE);
 
         ReminderDateBroadcast.createNotificationChannel(getActivity());
 
@@ -184,6 +188,34 @@ public class ItemViewFragment extends Fragment {
                     closeUpdateLayout(v);
                     removeTask(position);
                 });
+
+        Button addLocationButton = getView().findViewById(R.id.AddLocationReminderButton);
+        String locationName =
+                itemViewModel.getTodoList().getValue().getTask(position).getLocationName();
+        if (locationName != null) addLocationButton.setText(locationName);
+
+        getView()
+                .findViewById(R.id.AddLocationReminderButton)
+                .setOnClickListener(
+                        v -> {
+                            getParentFragmentManager()
+                                    .setFragmentResultListener(
+                                            MapFragment.LOCATION_REQ,
+                                            this,
+                                            (requestKey, bundle) -> {
+                                                itemViewModel.setTaskLocationReminder(
+                                                        position,
+                                                        bundle.getParcelable(
+                                                                MapFragment.LOCATION_KEY),
+                                                        bundle.getString(
+                                                                MapFragment.LOCATION_NAME_KEY));
+                                                getParentFragmentManager()
+                                                        .clearFragmentResultListener(
+                                                                MapFragment.LOCATION_REQ);
+                                            });
+
+                            Navigation.findNavController(getView()).navigate(R.id.nav_map);
+                        });
 
         Button closeButton = getView().findViewById(R.id.layout_update_task_close);
         closeButton.setOnClickListener(this::closeUpdateLayout);

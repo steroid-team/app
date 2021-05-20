@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.util.List;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
+    public static final String LOCATION_REQ = MapFragment.class.toString() + "/location";
+    public static final String LOCATION_KEY = "location";
+    public static final String LOCATION_NAME_KEY = "location-name";
 
     private static final String TAG = MapFragment.class.getSimpleName();
 
@@ -165,8 +168,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            NoteDisplayFragment.position = position;
-            NoteDisplayFragment.locationName = addressList.get(0).getLocality();
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(LOCATION_KEY, position);
+            bundle.putString(LOCATION_NAME_KEY, addressList.get(0).getLocality());
+
+            getParentFragmentManager().setFragmentResult(LOCATION_REQ, bundle);
+
             Log.d("mapfragment", "data stored");
         }
         // Go back to the original fragment.

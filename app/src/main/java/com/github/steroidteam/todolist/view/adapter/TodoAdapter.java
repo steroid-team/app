@@ -111,13 +111,5 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         public void hideDeleteButton() {
             taskDelete.setVisibility(View.GONE);
         }
-
-        public String getTaskBody() {
-            return taskBody.getText().toString();
-        }
-
-        public boolean getTaskDone() {
-            return taskBox.isChecked();
-        }
     }
 }

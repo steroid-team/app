@@ -50,12 +50,20 @@ public class TodoListViewModel extends ViewModel {
         todoListRepository.updateTodo(id, todoListUpdated);
     }
 
+    public Task getTask(int index) {
+        return todoListSelected.getValue().getTask(index);
+    }
+
     public void addTask(Task task) {
         todoListRepository.putTask(selectedTodoList, task);
     }
 
     public void removeTask(int index) {
         todoListRepository.removeTask(selectedTodoList, index);
+    }
+
+    public void removeDoneTasks() {
+        todoListRepository.removeDoneTasks(selectedTodoList);
     }
 
     public void renameTask(int index, String newBody) {

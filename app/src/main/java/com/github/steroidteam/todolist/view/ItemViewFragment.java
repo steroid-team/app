@@ -15,16 +15,18 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;
-import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
@@ -32,16 +34,19 @@ import com.github.steroidteam.todolist.view.dialog.DialogListener;
 import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
 import com.github.steroidteam.todolist.view.misc.DateHighlighterTextWatcher;
 import com.github.steroidteam.todolist.view.misc.DueDateInputSpan;
-import com.github.steroidteam.todolist.viewmodel.ItemViewModel;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
+import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
+
 import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
 
+import java.util.Date;
+import java.util.List;
+
 public class ItemViewFragment extends Fragment {
 
-    private ItemViewModel itemViewModel;
+    private TodoListViewModel viewModel;
     private TodoAdapter adapter;
     public static final int PERMISSIONS_ACCESS_LOCATION = 2;
     private final PrettyTimeParser timeParser = new PrettyTimeParser();
@@ -68,13 +73,16 @@ public class ItemViewFragment extends Fragment {
         adapter = new TodoAdapter(createCustomListener());
         recyclerView.setAdapter(adapter);
 
-        UUID id = (UUID) getArguments().getSerializable(ListSelectionFragment.EXTRA_LIST_KEY);
-        TodoRepository repository = new TodoRepository(id);
-        itemViewModel = new ItemViewModel(repository);
-        itemViewModel
+        TodoViewModelFactory todoViewModelFactory =
+                ViewModelFactoryInjection.getTodoViewModelFactory(getContext());
+        viewModel =
+                new ViewModelProvider(requireActivity(), todoViewModelFactory)
+                        .get(TodoListViewModel.class);
+
+        viewModel
                 .getTodoList()
                 .observe(
-                        getActivity(),
+                        getViewLifecycleOwner(),
                         (todoList) -> {
                             TextView activityTitle = root.findViewById(R.id.activity_title);
                             activityTitle.setText(todoList.getTitle());
@@ -95,7 +103,7 @@ public class ItemViewFragment extends Fragment {
         ReminderDateBroadcast.createNotificationChannel(getActivity());
         ReminderLocationBroadcast.createLocationNotificationChannel(getActivity());
 
-        tags = itemViewModel.getTags();
+        tags = viewModel.getTags();
         tags.sort(Tag.sortByBody);
 
         return root;
@@ -125,7 +133,7 @@ public class ItemViewFragment extends Fragment {
         Task task = getTaskFromEditable(newTaskET.getText());
         if (task == null) return;
 
-        itemViewModel.addTask(task);
+        viewModel.addTask(task);
 
         // Clean the description text box.
         newTaskET.getText().clear();
@@ -170,16 +178,22 @@ public class ItemViewFragment extends Fragment {
     }
 
     public void removeTask(final int position) {
-        itemViewModel.removeTask(position);
+        viewModel.removeTask(position);
         Toast.makeText(getContext(), "Successfully removed the task !", Toast.LENGTH_SHORT).show();
     }
 
     public void closeUpdateLayout(View view) {
         ConstraintLayout updateLayout = getView().findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.GONE);
+
+        RecyclerView recyclerView = getView().findViewById(R.id.activity_itemview_itemlist);
+        recyclerView.setVisibility(View.VISIBLE);
     }
 
     public void openUpdateLayout(TodoAdapter.TaskHolder holder, final int position) {
+        RecyclerView recyclerView = getView().findViewById(R.id.activity_itemview_itemlist);
+        recyclerView.setVisibility(View.GONE);
+
         ConstraintLayout updateLayout = getView().findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.VISIBLE);
 
@@ -191,35 +205,47 @@ public class ItemViewFragment extends Fragment {
         CheckBox taskCheckedBox = getView().findViewById(R.id.layout_update_task_checkbox);
         taskCheckedBox.setChecked(holder.getTaskDone());
 
+        SaveButtonSetup(userInputBody, position);
+
+        DeleteButtonSetup(position);
+
+        Button closeButton = getView().findViewById(R.id.layout_update_task_close);
+        closeButton.setOnClickListener(this::closeUpdateLayout);
+    }
+
+    private void SaveButtonSetup(EditText userInput, final int position) {
         Button saveButton = getView().findViewById(R.id.layout_update_task_save);
         saveButton.setOnClickListener(
                 (v) -> {
                     closeUpdateLayout(v);
-                    Task task = getTaskFromEditable(userInputBody.getText());
+                    Task task = getTaskFromEditable(userInput.getText());
 
                     if (task == null) return;
 
-                    itemViewModel.renameTask(position, task.getBody());
-                    itemViewModel.setTaskDueDate(position, task.getDueDate());
+                    if (task.getBody() != null) {
+                        viewModel.renameTask(position, task.getBody());
+                    }
+                    if (task.getDueDate() != null) {
+                        viewModel.setTaskDueDate(position, task.getDueDate());
+                    }
                 });
+    }
 
+    private void DeleteButtonSetup(final int position) {
         Button deleteButton = getView().findViewById(R.id.layout_update_task_delete);
         deleteButton.setOnClickListener(
                 (v) -> {
                     closeUpdateLayout(v);
                     removeTask(position);
                 });
-
-        Button closeButton = getView().findViewById(R.id.layout_update_task_close);
-        closeButton.setOnClickListener(this::closeUpdateLayout);
     }
 
     public void checkBoxTaskListener(final int position, final boolean isChecked) {
-        itemViewModel.setTaskDone(position, isChecked);
+        viewModel.setTaskDone(position, isChecked);
     }
 
     public void tagButton(View view) {
-        tags = itemViewModel.getTags();
+        tags = viewModel.getTags();
         tags.sort(Tag.sortByBody);
         ConstraintLayout tagLayout = getView().findViewById(R.id.layout_update_tags);
         tagLayout.setVisibility(View.VISIBLE);
@@ -263,7 +289,7 @@ public class ItemViewFragment extends Fragment {
                     public void onPositiveClick(String title) {
                         if (title.length() > 0) {
                             Tag tag = new Tag(title);
-                            itemViewModel.addTag(tag);
+                            viewModel.addTag(tag);
                             createTagButton(tag, getView().findViewById(R.id.tag_row_first));
                         }
                     }

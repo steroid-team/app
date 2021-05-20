@@ -19,7 +19,7 @@ public class TodoRepository {
     private final MutableLiveData<List<Tag>> listTags;
 
     public TodoRepository(UUID todoListID) {
-        this.database = DatabaseFactory.getDb();
+        this.database = DatabaseFactory.getRemoteDb();
         oneTodoList = new MutableLiveData<>();
         this.todoListID = todoListID;
         this.oneTodoList.setValue(new TodoList("Placeholder"));

@@ -49,6 +49,35 @@ public class CustomMatchers {
         };
     }
 
+    /**
+     * Helper to check if the given text is present somewhere in a RecyclerView's n-th task.
+     *
+     * @param position the index of the child in the recycler view
+     * @param expectedSubstring the text that should be contained in the child
+     * @return Matcher to execute the test
+     */
+    public static Matcher<View> atPositionTextContains(
+            final int position, @NonNull final String expectedSubstring) {
+        return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText(
+                        "View holder at position "
+                                + String.valueOf(position)
+                                + ", expected to contain: "
+                                + expectedSubstring
+                                + " ");
+            }
+
+            @Override
+            protected boolean matchesSafely(final RecyclerView view) {
+                View taskView = view.getChildAt(position);
+                TextView bodyView = taskView.findViewById(R.id.layout_task_body);
+                return bodyView.getText().toString().contains(expectedSubstring);
+            }
+        };
+    }
+
     public static Matcher<View> atPositionCheckBox(
             final int position, @NonNull final boolean expectedBox, @NonNull final int layout_id) {
         return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {

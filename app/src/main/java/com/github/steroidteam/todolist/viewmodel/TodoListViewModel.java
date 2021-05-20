@@ -86,10 +86,10 @@ public class TodoListViewModel extends ViewModel {
     }
 
     public void addTag(Tag tag) {
-        todoListRepository.putTag(tag);
+        todoListRepository.putTag(selectedTodoList, tag);
     }
 
     public void destroyTag(Tag tag) {
-        todoListRepository.destroyTag(tag);
+        todoListRepository.destroyTag(selectedTodoList, tag);
     }
 }

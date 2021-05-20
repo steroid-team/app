@@ -19,6 +19,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import androidx.fragment.app.testing.FragmentScenario;
@@ -28,7 +29,10 @@ import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
+import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.ItemViewFragment;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -47,8 +51,19 @@ public class TagTest {
 
     @Mock Database databaseMock;
 
+    @Mock Context context;
+
     @Before
     public void setUp() {
+        doReturn(context).when(context).getApplicationContext();
+
+        TodoListCollection collection = new TodoListCollection();
+        collection.addUUID(UUID.randomUUID());
+        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
+        todoListCollectionFuture.complete(collection);
+
+        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
+
         TodoList todoList = new TodoList("Some random title");
         CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
@@ -66,11 +81,24 @@ public class TagTest {
                 .when(databaseMock)
                 .setTaskDone(any(UUID.class), anyInt(), anyBoolean());
 
+        Tag tag = new Tag("TAG");
+        CompletableFuture<Tag> tagCompletableFuture = new CompletableFuture<>();
+        tagCompletableFuture.complete(tag);
+        doReturn(tagCompletableFuture).when(databaseMock).putTag(any());
+
+        CompletableFuture<UUID> uuidCompletableFuture = new CompletableFuture<>();
+        uuidCompletableFuture.complete(UUID.randomUUID());
+        doReturn(uuidCompletableFuture).when(databaseMock).putTagInList(any(), any());
+
         DatabaseFactory.setCustomDatabase(databaseMock);
 
         CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
         tagsFuture.complete(new ArrayList<>());
         doReturn(tagsFuture).when(databaseMock).getTagsFromIds(any());
+
+        File fakeFile = new File("Fake pathname");
+        doReturn(fakeFile).when(context).getCacheDir();
+        ViewModelFactoryInjection.setCustomTodoListRepo(context, UUID.randomUUID());
 
         Bundle bundle = new Bundle();
         bundle.putSerializable("list_id", UUID.randomUUID());
@@ -87,6 +115,7 @@ public class TagTest {
 
     @Test
     public void createTagButtonWorks() {
+
         onView(withId(R.id.itemview_tag_button)).perform(click());
         onView(withParent(withId(R.id.tag_row_first))).perform(click());
         onView(withText(R.string.add_tag_suggestion)).check(matches(isDisplayed()));

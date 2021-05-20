@@ -41,8 +41,6 @@ public class RepositoryTest {
         doReturn(fakeFile).when(contextMock).getCacheDir();
         CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
         tagsFuture.complete(new ArrayList<>());
-        doReturn(tagsFuture).when(localDatabase).getTagsFromIds(any());
-        doReturn(tagsFuture).when(remoteDatabase).getTagsFromIds(any());
     }
 
     @Test

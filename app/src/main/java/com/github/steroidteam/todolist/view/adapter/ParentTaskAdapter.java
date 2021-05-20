@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,7 +44,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
         View itemView =
                 LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.parent_recycler_view_task_item, parent, false);
-        //return new ParentTaskHolder(itemView, listener);
+        // return new ParentTaskHolder(itemView, listener);
         return new ParentTaskHolder(itemView);
     }
 
@@ -76,7 +75,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
     }
 
     private TodoList getTodoListForCategory(int category) {
-        TodoList childTodoList = new TodoList(todoList.getTitle()+category);
+        TodoList childTodoList = new TodoList(todoList.getTitle() + category);
         for (int i = 0; i < todoList.getSize(); i++) {
             Task currentTask = todoList.getTask(i);
             if (isInCategory(currentTask, category)) {
@@ -114,7 +113,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
             return true;
         }
         // Later
-        if(diffDay > 7 && category == TASK_LATER) {
+        if (diffDay > 7 && category == TASK_LATER) {
             return true;
         }
         return false;
@@ -134,7 +133,6 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
         notifyDataSetChanged();
     }
 
-
     public static class ParentTaskHolder extends RecyclerView.ViewHolder {
         private final TextView taskDateCategory;
         private final RecyclerView taskListRecyclerView;
@@ -146,11 +144,9 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
             taskListRecyclerView = itemView.findViewById(R.id.child_task_recycler_view);
 
             /**
-            itemView.setOnClickListener(
-                    (View view) -> {
-                        listener.onClickCustom(ParentTaskHolder.this);
-                    });
-             **/
+             * itemView.setOnClickListener( (View view) -> {
+             * listener.onClickCustom(ParentTaskHolder.this); });
+             */
         }
 
         public interface ParentTaskCustomListener {

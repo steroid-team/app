@@ -13,10 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.jetbrains.annotations.NotNull;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {

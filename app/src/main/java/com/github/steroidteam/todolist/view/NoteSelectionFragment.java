@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,12 +19,14 @@ import com.github.steroidteam.todolist.view.dialog.DialogListener;
 import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
 import com.github.steroidteam.todolist.view.dialog.SimpleDialogFragment;
 import com.github.steroidteam.todolist.view.misc.SwipeTouchHelper;
-import com.github.steroidteam.todolist.viewmodel.NoteSelectionViewModel;
+import com.github.steroidteam.todolist.viewmodel.NoteViewModel;
+import com.github.steroidteam.todolist.viewmodel.NoteViewModelFactory;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import java.util.UUID;
 
 public class NoteSelectionFragment extends Fragment {
 
-    private NoteSelectionViewModel viewModel;
+    private NoteViewModel viewModel;
     private NoteArrayListAdapter adapter;
 
     public static final String NOTE_ID_KEY = "id";
@@ -42,7 +45,11 @@ public class NoteSelectionFragment extends Fragment {
         adapter = new NoteArrayListAdapter(createCustomListener());
         recyclerView.setAdapter(adapter);
 
-        viewModel = new NoteSelectionViewModel();
+        NoteViewModelFactory noteViewModelFactory =
+                ViewModelFactoryInjection.getNoteViewModelFactory(getContext());
+        viewModel =
+                new ViewModelProvider(requireActivity(), noteViewModelFactory)
+                        .get(NoteViewModel.class);
         viewModel
                 .getNoteList()
                 .observe(
@@ -59,9 +66,8 @@ public class NoteSelectionFragment extends Fragment {
 
     private NoteArrayListAdapter.NoteHolder.NoteCustomListener createCustomListener() {
         return holder -> {
-            Bundle bundle = new Bundle();
-            bundle.putSerializable(NOTE_ID_KEY, holder.getNote().getId());
-            Navigation.findNavController(holder.itemView).navigate(R.id.nav_note_display, bundle);
+            viewModel.selectNote(holder.getNote().getId());
+            Navigation.findNavController(holder.itemView).navigate(R.id.nav_note_display, new Bundle());
         };
     }
 
@@ -145,7 +151,7 @@ public class NoteSelectionFragment extends Fragment {
 
                     @Override
                     public void onPositiveClick(String title) {
-                        if (title.length() > 0) viewModel.renameNote(note, title);
+                        if (title.length() > 0) viewModel.renameNote(note.getId(), note.setTitle(title));
                     }
 
                     @Override

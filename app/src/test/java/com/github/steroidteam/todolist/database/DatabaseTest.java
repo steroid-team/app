@@ -32,7 +32,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FirebaseDatabaseTest {
+public class DatabaseTest {
     private static final String TODO_LIST_PATH = "/todo-lists/";
     private static final String NOTES_PATH = "/notes/";
 
@@ -44,7 +44,7 @@ public class FirebaseDatabaseTest {
     CompletableFuture<String> uploadFuture;
     CompletableFuture<String[]> listDirFuture;
 
-    FirebaseDatabase database;
+    Database database;
 
     @Before
     public void before() {
@@ -52,7 +52,7 @@ public class FirebaseDatabaseTest {
         uploadFuture = new CompletableFuture<>();
         listDirFuture = new CompletableFuture<>();
 
-        database = new FirebaseDatabase(storageServiceMock);
+        database = new FileStorageDatabase(storageServiceMock);
     }
 
     @Test
@@ -60,8 +60,46 @@ public class FirebaseDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(null);
+                    new FileStorageDatabase(null);
                 });
+    }
+
+    @Test
+    public void getLastModifiedTimeTodoRejectsNullArgs() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    database.getLastModifiedTimeTodo(null);
+                });
+    }
+
+    @Test
+    public void getLastModifiedTimeTodoWorks() {
+        Long expectedTime = System.currentTimeMillis();
+        CompletableFuture<Long> longCompletableFuture = new CompletableFuture<>();
+        longCompletableFuture.complete(expectedTime);
+        doReturn(longCompletableFuture).when(storageServiceMock).getLastModifiedTime(any());
+
+        assertEquals(expectedTime, storageServiceMock.getLastModifiedTime(NOTES_PATH).join());
+    }
+
+    @Test
+    public void getLastModifiedTimeNoteRejectsNullArgs() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    database.getLastModifiedTimeNote(null);
+                });
+    }
+
+    @Test
+    public void getLastModifiedTimeNoteWorks() {
+        Long expectedTime = System.currentTimeMillis();
+        CompletableFuture<Long> longCompletableFuture = new CompletableFuture<>();
+        longCompletableFuture.complete(expectedTime);
+        doReturn(longCompletableFuture).when(storageServiceMock).getLastModifiedTime(any());
+
+        assertEquals(expectedTime, storageServiceMock.getLastModifiedTime(TODO_LIST_PATH).join());
     }
 
     @Test
@@ -69,7 +107,7 @@ public class FirebaseDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).putTodoList(null);
+                    new FileStorageDatabase(storageServiceMock).putTodoList(null);
                 });
     }
 
@@ -170,7 +208,7 @@ public class FirebaseDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).getTodoList(null);
+                    new FileStorageDatabase(storageServiceMock).getTodoList(null);
                 });
     }
 
@@ -192,7 +230,7 @@ public class FirebaseDatabaseTest {
         doReturn(completedFuture).when(storageServiceMock).downloadBytes(expectedPath);
 
         // Try to get a valid list.
-        final FirebaseDatabase database = new FirebaseDatabase(storageServiceMock);
+        final FileStorageDatabase database = new FileStorageDatabase(storageServiceMock);
         try {
             final TodoList fetchedList = database.getTodoList(todoList.getId()).get();
 
@@ -213,13 +251,14 @@ public class FirebaseDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).putTask(null, new Task("Some task"));
+                    new FileStorageDatabase(storageServiceMock)
+                            .putTask(null, new Task("Some task"));
                 });
 
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).putTask(UUID.randomUUID(), null);
+                    new FileStorageDatabase(storageServiceMock).putTask(UUID.randomUUID(), null);
                 });
     }
 
@@ -248,7 +287,7 @@ public class FirebaseDatabaseTest {
                 .upload(any(byte[].class), eq(expectedPath));
 
         // Try to put a task in a valid list.
-        final FirebaseDatabase database = new FirebaseDatabase(storageServiceMock);
+        final FileStorageDatabase database = new FileStorageDatabase(storageServiceMock);
         database.putTask(todoList.getId(), FIXTURE_TASK_2);
 
         // Add the new task to the list, to make it look like what we would expect to be stored
@@ -266,13 +305,13 @@ public class FirebaseDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).removeTask(null, 0);
+                    new FileStorageDatabase(storageServiceMock).removeTask(null, 0);
                 });
 
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).putTask(UUID.randomUUID(), null);
+                    new FileStorageDatabase(storageServiceMock).putTask(UUID.randomUUID(), null);
                 });
     }
 
@@ -469,7 +508,7 @@ public class FirebaseDatabaseTest {
         listDirFuture.complete(new String[] {uuid1.toString(), uuid2.toString(), uuid3.toString()});
         doReturn(listDirFuture).when(storageServiceMock).listDir(anyString());
 
-        final FirebaseDatabase database = new FirebaseDatabase(storageServiceMock);
+        final FileStorageDatabase database = new FileStorageDatabase(storageServiceMock);
         try {
             List<UUID> actualList = database.getNotesList().join();
             assertEquals(uuid1, actualList.get(0));
@@ -510,13 +549,13 @@ public class FirebaseDatabaseTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).getTask(null, 0);
+                    new FileStorageDatabase(storageServiceMock).getTask(null, 0);
                 });
 
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new FirebaseDatabase(storageServiceMock).getTask(UUID.randomUUID(), null);
+                    new FileStorageDatabase(storageServiceMock).getTask(UUID.randomUUID(), null);
                 });
     }
 
@@ -542,6 +581,52 @@ public class FirebaseDatabaseTest {
             final Task fetchedTask = database.getTask(todoList.getId(), 1).get();
             verify(storageServiceMock).downloadBytes(expectedPath);
             assertEquals(FIXTURE_TASK_2, fetchedTask);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void updateTaskRejectsNullArgs() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FileStorageDatabase(storageServiceMock).updateTask(null, 0, new Task(""));
+                });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FileStorageDatabase(storageServiceMock)
+                            .updateTask(UUID.randomUUID(), null, new Task(""));
+                });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FileStorageDatabase(storageServiceMock)
+                            .updateTask(UUID.randomUUID(), 0, null);
+                });
+    }
+
+    @Test
+    public void updateTaskWorks() {
+        TodoList expectedTodoList = new TodoList("some random title");
+        Task task1 = new Task("Task 1");
+        Task task2 = new Task("Task 2");
+        expectedTodoList.addTask(task1);
+        expectedTodoList.addTask(task2);
+
+        byte[] serializedTodoList =
+                JSONSerializer.serializeTodoList(expectedTodoList).getBytes(StandardCharsets.UTF_8);
+        downloadFuture.complete(serializedTodoList);
+
+        uploadFuture.complete("Some file path");
+
+        doReturn(downloadFuture).when(storageServiceMock).downloadBytes(anyString());
+        doReturn(uploadFuture).when(storageServiceMock).upload(any(byte[].class), anyString());
+
+        try {
+            Task actualTask = database.updateTask(UUID.randomUUID(), 0, task1).join();
+            assertEquals(task1, actualTask);
         } catch (Exception e) {
             fail();
         }

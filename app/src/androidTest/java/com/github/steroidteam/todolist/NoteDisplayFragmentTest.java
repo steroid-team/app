@@ -37,6 +37,9 @@ import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.util.Utils;
 import com.github.steroidteam.todolist.view.NoteDisplayFragment;
 import com.github.steroidteam.todolist.view.NoteSelectionFragment;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
+
+import java.io.File;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.hamcrest.MatcherAssert;
@@ -69,8 +72,14 @@ public class NoteDisplayFragmentTest {
 
     @Mock Database databaseMock;
 
+    @Mock Context context;
+
     @Before
     public void init() {
+
+        // Mock context for Broadcast Reminder
+        doReturn(context).when(context).getApplicationContext();
+
         Note note = new Note(FIXTURE_DEFAULT_NOTE_TITLE);
         note.setContent(FIXTURE_DEFAULT_NOTE_CONTENT);
         CompletableFuture<Note> noteFuture = new CompletableFuture<>();
@@ -80,11 +89,13 @@ public class NoteDisplayFragmentTest {
 
         DatabaseFactory.setCustomDatabase(databaseMock);
 
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(NoteSelectionFragment.NOTE_ID_KEY, UUID.randomUUID());
+        File fakeFile = new File("Fake pathname");
+        doReturn(fakeFile).when(context).getCacheDir();
+        ViewModelFactoryInjection.setCustomTodoListRepo(context, UUID.randomUUID());
+
         scenario =
                 FragmentScenario.launchInContainer(
-                        NoteDisplayFragment.class, bundle, R.style.Theme_Asteroid);
+                        NoteDisplayFragment.class, null, R.style.Theme_Asteroid);
     }
 
     @Test

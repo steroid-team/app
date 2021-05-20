@@ -10,6 +10,8 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import android.content.Intent;
@@ -18,20 +20,32 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.contrib.DrawerActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.model.todo.TodoList;
+import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.model.user.UserFactory;
 import com.github.steroidteam.todolist.view.LoginActivity;
 import com.github.steroidteam.todolist.view.MainActivity;
 import com.google.firebase.auth.FirebaseUser;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MainActivityTest {
+
+    @Mock Database databaseMock;
 
     @Rule
     public ActivityScenarioRule<MainActivity> testRule =
@@ -40,6 +54,36 @@ public class MainActivityTest {
     @Before
     public void initIntents() {
         Intents.init();
+    }
+
+    @Before
+    public void initDatabase() {
+        // NOTE PART
+        List<UUID> notes = Collections.singletonList(UUID.randomUUID());
+        CompletableFuture<List<UUID>> notesFuture = new CompletableFuture<>();
+        notesFuture.complete(notes);
+
+        Note note = new Note("NOTE_TITLE_1");
+        CompletableFuture<Note> noteFuture = new CompletableFuture<>();
+        noteFuture.complete(note);
+
+        doReturn(notesFuture).when(databaseMock).getNotesList();
+        doReturn(noteFuture).when(databaseMock).getNote(any(UUID.class));
+
+        // TO-DO LIST PART
+        TodoListCollection collection = new TodoListCollection();
+        TodoList todoList = new TodoList("TODO_1_TITLE");
+        collection.addUUID(UUID.randomUUID());
+        CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
+        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+        todoListCollectionFuture.complete(collection);
+        todoListFuture.complete(todoList);
+
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
+
+        // SET THE MOCK DATABASE
+        DatabaseFactory.setCustomDatabase(databaseMock);
     }
 
     @After
@@ -109,6 +153,7 @@ public class MainActivityTest {
                 new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
 
         try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(mainActivity)) {
+
             // Open the drawer.
             onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
 

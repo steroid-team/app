@@ -31,12 +31,17 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.util.Utils;
 import com.github.steroidteam.todolist.view.dialog.ListSelectionDialogFragment;
 import com.github.steroidteam.todolist.viewmodel.NoteViewModel;
+import com.github.steroidteam.todolist.viewmodel.NoteViewModelFactory;
+import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
+import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import com.google.android.gms.maps.model.LatLng;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -68,7 +73,7 @@ public class NoteDisplayFragment extends Fragment {
         super.onCreate(savedInstanceState);
         View root = inflater.inflate(R.layout.fragment_note_display, container, false);
 
-        headerFileName = getActivity().getExternalCacheDir().getAbsolutePath() + "/image.png";
+        headerFileName = getActivity().getExternalCacheDir().getAbsolutePath() + "/image.jpeg";
 
         initRichEditor(root);
 
@@ -76,10 +81,11 @@ public class NoteDisplayFragment extends Fragment {
         setImagePickerListeners(root);
         setRichEditorListeners(root);
 
-        // Get the UUID of the currently selected note.
-        noteID = (UUID) getArguments().getSerializable(NoteSelectionFragment.NOTE_ID_KEY);
-
-        this.noteViewModel = new NoteViewModel(noteID);
+        NoteViewModelFactory noteViewModelFactory =
+                ViewModelFactoryInjection.getNoteViewModelFactory(getContext());
+        this.noteViewModel =
+                new ViewModelProvider(requireActivity(), noteViewModelFactory)
+                        .get(NoteViewModel.class);
 
         this.noteViewModel
                 .getHeaderID()
@@ -302,6 +308,7 @@ public class NoteDisplayFragment extends Fragment {
     }
 
     private void updateHeaderImage(Uri uri) {
+        System.err.println("--------------------------------------> URI: " + uri);
         if (uri == null) return;
 
         Bitmap bitmap;
@@ -315,10 +322,11 @@ public class NoteDisplayFragment extends Fragment {
         try (FileOutputStream output = new FileOutputStream(tmpFile)) {
             InputStream is = getContext().getContentResolver().openInputStream(uri);
             bitmap = BitmapFactory.decodeStream(is);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, output);
             is.close();
             output.close();
 
+            System.err.println("--------------------------------------> oui");
             noteViewModel.updateNoteHeader(tmpFile.getAbsolutePath());
         } catch (Exception e) {
             Toast.makeText(getContext(), "Error: could not display the image", Toast.LENGTH_LONG)

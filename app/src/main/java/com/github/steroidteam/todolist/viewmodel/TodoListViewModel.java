@@ -1,6 +1,5 @@
 package com.github.steroidteam.todolist.viewmodel;
 
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
@@ -71,7 +70,6 @@ public class TodoListViewModel extends ViewModel {
     }
 
     public void setTaskDone(int index, boolean isDone) {
-        Log.d("DEBUG", todoListSelected.getValue().toString());
         Task currentTask = todoListSelected.getValue().getTask(index);
         todoListRepository.updateTask(selectedTodoList, index, currentTask.setDone(isDone));
     }

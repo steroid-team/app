@@ -1,6 +1,6 @@
 package com.github.steroidteam.todolist.model.todo;
 
-import com.github.steroidteam.todolist.R;
+import android.graphics.Color;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.UUID;
@@ -14,23 +14,18 @@ public class Tag {
     private String body;
     private int color;
     public static Comparator<Tag> sortByBody =
-            new Comparator<Tag>() {
-                @Override
-                public int compare(Tag t1, Tag t2) {
-                    return t1.body.compareTo(t2.body);
-                }
-            };
-    private int[] colors = {
-        R.color.tag_1, R.color.tag_2, R.color.tag_3, R.color.tag_4, R.color.tag_5, R.color.tag_6
+            (t1, t2) -> t1.body.toLowerCase().compareTo(t2.body.toLowerCase());
+    private static final int[] TAG_COLORS = {
+        Color.rgb(255, 154, 162), Color.rgb(255, 183, 178),
+        Color.rgb(255, 218, 193), Color.rgb(226, 240, 203),
+        Color.rgb(181, 234, 215), Color.rgb(199, 206, 234)
     };
 
     public Tag(String body) {
         uuid = UUID.randomUUID();
         this.body = body;
         Random rand = new Random();
-        color = colors[rand.nextInt(6)];
-        // color = colors.get(0);
-        System.out.println("new color : " + color);
+        color = TAG_COLORS[rand.nextInt(6)];
     }
 
     public int getColor() {

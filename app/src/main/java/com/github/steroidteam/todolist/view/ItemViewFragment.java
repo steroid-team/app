@@ -243,7 +243,6 @@ public class ItemViewFragment extends Fragment {
         Button tagButton =
                 new Button(new ContextThemeWrapper(getContext(), R.style.TagInList), null, 0);
         tagButton.setText(tag.getBody());
-        System.out.println("Color : " + tag.getColor());
         tagButton.setBackgroundTintList(ColorStateList.valueOf(tag.getColor()));
         // tagButton.setBackgroundColor(;
         tagButton.setOnLongClickListener(

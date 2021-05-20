@@ -245,7 +245,7 @@
             <HorizontalScrollView
                 android:id="@+id/scrollTags"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:id="@+id/tag_row_first"

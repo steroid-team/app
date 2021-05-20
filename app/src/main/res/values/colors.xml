@@ -12,10 +12,4 @@
     <color name="second_drawing_button">#FF41ff47</color>
     <color name="third_drawing_button">#FF414fff</color>
     <color name="fourth_drawing_button">#FF000000</color>
-    <color name="tag_1">#FF9AA2</color>
-    <color name="tag_2">#FFB7B2</color>
-    <color name="tag_3">#FFDAC1</color>
-    <color name="tag_4">#E2F0CB</color>
-    <color name="tag_5">#B5EAD7</color>
-    <color name="tag_6">#C7CEEA</color>
 </resources>

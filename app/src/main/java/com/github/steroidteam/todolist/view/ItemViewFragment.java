@@ -92,6 +92,7 @@ public class ItemViewFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
 
         root.findViewById(R.id.new_task_btn).setOnClickListener(this::addTask);
+        root.findViewById(R.id.remove_done_tasks_btn).setOnClickListener(this::removeDoneTasks);
 
         root.findViewById(R.id.itemview_tag_button).setOnClickListener(this::tagButton);
         root.findViewById(R.id.itemview_tag_save_button).setOnClickListener(this::tagSaveButton);
@@ -176,6 +177,15 @@ public class ItemViewFragment extends Fragment {
     public void removeTask(final int position) {
         viewModel.removeTask(position);
         Toast.makeText(getContext(), "Successfully removed the task !", Toast.LENGTH_SHORT).show();
+    }
+
+    public void removeDoneTasks(View view) {
+        viewModel.removeDoneTasks();
+        Toast.makeText(
+                        getContext(),
+                        "Successfully removed all tasks you have done !",
+                        Toast.LENGTH_LONG)
+                .show();
     }
 
     public void closeUpdateLayout(View view) {

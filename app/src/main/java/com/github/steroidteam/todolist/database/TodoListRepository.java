@@ -198,6 +198,13 @@ public class TodoListRepository {
                 .thenAccept(this.observedTodoList::postValue);
     }
 
+    public void removeDoneTasks(UUID todoListID) {
+        this.localDatabase
+                .removeDoneTasks(todoListID)
+                .thenCompose(str -> this.localDatabase.getTodoList(todoListID))
+                .thenAccept(this.observedTodoList::postValue);
+    }
+
     public void updateTask(UUID todoListID, int index, Task updatedTask) {
         this.localDatabase
                 .updateTask(todoListID, index, updatedTask)

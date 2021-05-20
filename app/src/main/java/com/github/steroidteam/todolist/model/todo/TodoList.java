@@ -50,6 +50,10 @@ public class TodoList {
         }
     }
 
+    public void removeDoneTasks() {
+        list.removeIf(Task::isDone);
+    }
+
     public Task getTask(Integer index) {
         if (index >= 0 && index < list.size()) {
             return list.get(index);

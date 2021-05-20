@@ -60,6 +60,10 @@ public class TodoListViewModel extends ViewModel {
         todoListRepository.removeTask(selectedTodoList, index);
     }
 
+    public void removeDoneTasks() {
+        todoListRepository.removeDoneTasks(selectedTodoList);
+    }
+
     public void renameTask(int index, String newBody) {
         if (!newBody.equals("")) {
             Task currentTask = todoListSelected.getValue().getTask(index);

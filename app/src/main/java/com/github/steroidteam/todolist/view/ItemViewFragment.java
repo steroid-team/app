@@ -1,7 +1,9 @@
 package com.github.steroidteam.todolist.view;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,32 +13,36 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;
-import com.github.steroidteam.todolist.model.TodoRepository;
 import com.github.steroidteam.todolist.model.todo.Task;
-import com.github.steroidteam.todolist.view.adapter.ParentTaskAdapter;
 import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
 import com.github.steroidteam.todolist.view.misc.DateHighlighterTextWatcher;
 import com.github.steroidteam.todolist.view.misc.DueDateInputSpan;
-import com.github.steroidteam.todolist.viewmodel.ItemViewModel;
+import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
+import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
 
 public class ItemViewFragment extends Fragment {
 
-    private ItemViewModel itemViewModel;
-    private ParentTaskAdapter adapter;
+    private TodoListViewModel viewModel;
+    private TodoAdapter adapter;
     public static final int PERMISSIONS_ACCESS_LOCATION = 2;
     private final PrettyTimeParser timeParser = new PrettyTimeParser();
+    private ActivityResultLauncher<Intent> calendarExportIntentLauncher;
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,28 +62,40 @@ public class ItemViewFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
 
-        adapter = new ParentTaskAdapter(createCustomListener());
+        adapter = new TodoAdapter(createCustomListener());
         recyclerView.setAdapter(adapter);
 
-        UUID id = (UUID) getArguments().getSerializable(ListSelectionFragment.EXTRA_LIST_KEY);
-        TodoRepository repository = new TodoRepository(id);
+        TodoViewModelFactory todoViewModelFactory =
+                ViewModelFactoryInjection.getTodoViewModelFactory(getContext());
+        viewModel =
+                new ViewModelProvider(requireActivity(), todoViewModelFactory)
+                        .get(TodoListViewModel.class);
 
-        itemViewModel = new ItemViewModel(repository);
-        itemViewModel
+        viewModel
                 .getTodoList()
                 .observe(
-                        getActivity(),
+                        getViewLifecycleOwner(),
                         (todoList) -> {
                             TextView activityTitle = root.findViewById(R.id.activity_title);
                             activityTitle.setText(todoList.getTitle());
 
-                            adapter.setParentTodoList(todoList);
+                            adapter.setTodoList(todoList);
                         });
 
+        recyclerView = root.findViewById(R.id.activity_itemview_itemlist);
+        // The layout manager takes care of displaying the task below each other
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setHasFixedSize(true);
+
         root.findViewById(R.id.new_task_btn).setOnClickListener(this::addTask);
+        root.findViewById(R.id.remove_done_tasks_btn).setOnClickListener(this::removeDoneTasks);
 
         ReminderDateBroadcast.createNotificationChannel(getActivity());
         ReminderLocationBroadcast.createLocationNotificationChannel(getActivity());
+
+        calendarExportIntentLauncher =
+                registerForActivityResult(
+                        new ActivityResultContracts.StartActivityForResult(), (result) -> {});
 
         return root;
     }
@@ -106,7 +124,7 @@ public class ItemViewFragment extends Fragment {
         Task task = getTaskFromEditable(newTaskET.getText());
         if (task == null) return;
 
-        itemViewModel.addTask(task);
+        viewModel.addTask(task);
 
         // Clean the description text box.
         newTaskET.getText().clear();
@@ -151,52 +169,109 @@ public class ItemViewFragment extends Fragment {
     }
 
     public void removeTask(final int position) {
-        itemViewModel.removeTask(position);
+        viewModel.removeTask(position);
         Toast.makeText(getContext(), "Successfully removed the task !", Toast.LENGTH_SHORT).show();
+    }
+
+    public void removeDoneTasks(View view) {
+        viewModel.removeDoneTasks();
+        Toast.makeText(
+                        getContext(),
+                        "Successfully removed all tasks you have done !",
+                        Toast.LENGTH_LONG)
+                .show();
     }
 
     public void closeUpdateLayout(View view) {
         ConstraintLayout updateLayout = getView().findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.GONE);
+
+        RecyclerView recyclerView = getView().findViewById(R.id.activity_itemview_itemlist);
+        recyclerView.setVisibility(View.VISIBLE);
     }
 
     public void openUpdateLayout(TodoAdapter.TaskHolder holder, final int position) {
+        RecyclerView recyclerView = getView().findViewById(R.id.activity_itemview_itemlist);
+        recyclerView.setVisibility(View.GONE);
+
         ConstraintLayout updateLayout = getView().findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.VISIBLE);
 
+        Task thisTask = viewModel.getTask(position);
+
         EditText userInputBody = getView().findViewById(R.id.layout_update_task_body);
-        userInputBody.setText(holder.getTaskBody());
+        userInputBody.setText(thisTask.getBody());
         userInputBody.addTextChangedListener(
                 new DateHighlighterTextWatcher(getContext(), timeParser));
 
         CheckBox taskCheckedBox = getView().findViewById(R.id.layout_update_task_checkbox);
-        taskCheckedBox.setChecked(holder.getTaskDone());
+        taskCheckedBox.setChecked(thisTask.isDone());
+
+        SaveButtonSetup(userInputBody, position);
+        DeleteButtonSetup(position);
+        calendarExportButtonSetup(position);
+
+        Button closeButton = getView().findViewById(R.id.layout_update_task_close);
+        closeButton.setOnClickListener(this::closeUpdateLayout);
+    }
+
+    private void SaveButtonSetup(EditText userInput, final int position) {
 
         Button saveButton = getView().findViewById(R.id.layout_update_task_save);
         saveButton.setOnClickListener(
                 (v) -> {
                     closeUpdateLayout(v);
-                    Task task = getTaskFromEditable(userInputBody.getText());
+                    Task task = getTaskFromEditable(userInput.getText());
 
                     if (task == null) return;
 
-                    itemViewModel.renameTask(position, task.getBody());
-                    itemViewModel.setTaskDueDate(position, task.getDueDate());
+                    if (task.getBody() != null) {
+                        viewModel.renameTask(position, task.getBody());
+                    }
+                    if (task.getDueDate() != null) {
+                        viewModel.setTaskDueDate(position, task.getDueDate());
+                    }
                 });
+    }
 
+    private void DeleteButtonSetup(final int position) {
         Button deleteButton = getView().findViewById(R.id.layout_update_task_delete);
         deleteButton.setOnClickListener(
                 (v) -> {
                     closeUpdateLayout(v);
                     removeTask(position);
                 });
+    }
 
-        Button closeButton = getView().findViewById(R.id.layout_update_task_close);
-        closeButton.setOnClickListener(this::closeUpdateLayout);
+    private void calendarExportButtonSetup(final int position) {
+        Task thisTask = viewModel.getTask(position);
+
+        Button calendarExportButton =
+                getView().findViewById(R.id.layout_update_task_export_calendar);
+        if (thisTask.getDueDate() != null)
+            calendarExportButton.setText(thisTask.getDueDate().toString());
+        calendarExportButton.setOnClickListener(
+                (v) -> {
+                    Calendar startTime = Calendar.getInstance();
+                    // If available, use the task's due date for the calendar export. If it has
+                    // not been set, it will use the current date.
+                    if (thisTask.getDueDate() != null) {
+                        startTime.setTime(thisTask.getDueDate());
+                    }
+
+                    Intent intent =
+                            new Intent(Intent.ACTION_INSERT)
+                                    .setData(CalendarContract.Events.CONTENT_URI)
+                                    .putExtra(
+                                            CalendarContract.EXTRA_EVENT_BEGIN_TIME,
+                                            startTime.getTimeInMillis())
+                                    .putExtra(CalendarContract.Events.TITLE, thisTask.getBody());
+                    calendarExportIntentLauncher.launch(intent);
+                });
     }
 
     public void checkBoxTaskListener(final int position, final boolean isChecked) {
-        itemViewModel.setTaskDone(position, isChecked);
+        viewModel.setTaskDone(position, isChecked);
     }
 
     @Override

@@ -31,7 +31,6 @@ public class TodoRepository {
         this.database
                 .putTask(todoListID, task)
                 .thenCompose(str -> this.database.getTodoList(todoListID))
-                .thenApply(todoList -> todoList.sortByDate())
                 .thenAccept(this.oneTodoList::setValue);
     }
 
@@ -39,7 +38,6 @@ public class TodoRepository {
         this.database
                 .removeTask(todoListID, index)
                 .thenCompose(str -> this.database.getTodoList(todoListID))
-                .thenApply(todoList -> todoList.sortByDate())
                 .thenAccept(this.oneTodoList::setValue);
     }
 
@@ -52,7 +50,6 @@ public class TodoRepository {
                             return this.database.updateTask(todoListID, index, task);
                         })
                 .thenCompose(task -> this.database.getTodoList(todoListID))
-                .thenApply(todoList -> todoList.sortByDate())
                 .thenAccept(this.oneTodoList::setValue);
     }
 
@@ -77,7 +74,6 @@ public class TodoRepository {
                             return this.database.updateTask(todoListID, index, task);
                         })
                 .thenCompose(task -> this.database.getTodoList(todoListID))
-                .thenApply(todoList -> todoList.sortByDate())
                 .thenAccept(this.oneTodoList::setValue);
         this.database.getTodoList(todoListID).thenAccept(this.oneTodoList::setValue);
     }

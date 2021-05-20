@@ -1,5 +1,7 @@
 package com.github.steroidteam.todolist.view;
 
+import static com.github.steroidteam.todolist.view.NoteSelectionFragment.NOTE_ID_KEY;
+
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -43,6 +45,7 @@ public class NoteDisplayFragment extends Fragment {
     private ActivityResultLauncher<String> embeddedImagePickerActivityLauncher;
     private ActivityResultLauncher<Uri> cameraActivityLauncher;
     private final String IMAGE_MIME_TYPE = "image/*";
+    int imageDisplayWidth;
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,7 +62,7 @@ public class NoteDisplayFragment extends Fragment {
 
         // The width for any embedded image should be the editor's width. Do the math to
         // transform the dp to px, and subtract the lateral padding.
-        final int imageDisplayWidth =
+        imageDisplayWidth =
                 (int)
                                 Math.floor(
                                         getResources().getDisplayMetrics().widthPixels
@@ -154,7 +157,10 @@ public class NoteDisplayFragment extends Fragment {
         root.findViewById(R.id.audio_button)
                 .setOnClickListener(
                         v -> {
-                            Navigation.findNavController(getView()).navigate(R.id.nav_audio);
+                            Bundle bundle = new Bundle();
+                            bundle.putString(NOTE_ID_KEY, noteID.toString());
+                            Navigation.findNavController(getView())
+                                    .navigate(R.id.nav_audio, bundle);
                         });
 
         root.findViewById(R.id.editor_action_drawing_btn)

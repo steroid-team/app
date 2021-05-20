@@ -80,13 +80,13 @@ public class TagTest {
     }
 
     @Test
-    public void TagButtonOpensTagWindow() {
+    public void tagButtonOpensTagWindow() {
         onView(withId(R.id.itemview_tag_button)).perform(click());
         onView(withId(R.id.layout_update_tags)).check(matches(isDisplayed()));
     }
 
     @Test
-    public void CreateTagButtonWorks() {
+    public void createTagButtonWorks() {
         onView(withId(R.id.itemview_tag_button)).perform(click());
         onView(withParent(withId(R.id.tag_row_first))).perform(click());
         onView(withText(R.string.add_tag_suggestion)).check(matches(isDisplayed()));
@@ -101,7 +101,7 @@ public class TagTest {
     }
 
     @Test
-    public void CloseLayoutButtonWorks() {
+    public void closeLayoutButtonWorks() {
         onView(withId(R.id.itemview_tag_button)).perform(click());
         onView(withId(R.id.itemview_tag_save_button)).perform(click());
         onView(withId(R.id.layout_update_tags))

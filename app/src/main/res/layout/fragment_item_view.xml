@@ -181,6 +181,18 @@
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical">
 
+                <Button
+                    android:id="@+id/layout_update_task_export_calendar"
+                    style="@style/BorderlessButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_weight="1"
+                    android:drawableStart="@drawable/calendar_icon"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="@color/dark_grey"
+                    android:text="@string/export_to_calendar" />
+
                 <TextView
                     android:id="@+id/LocationReminderText"
                     android:layout_width="wrap_content"
@@ -232,21 +244,6 @@
             android:text="@string/delete"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
-            android:id="@+id/layout_update_task_export_calendar"
-            style="@style/BorderlessButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1"
-            android:drawableStart="@drawable/calendar_icon"
-            android:drawablePadding="8dp"
-            android:drawableTint="@color/dark_grey"
-            android:text="@string/export_to_calendar"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-            app:layout_constraintStart_toStartOf="@id/layout_update_task" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

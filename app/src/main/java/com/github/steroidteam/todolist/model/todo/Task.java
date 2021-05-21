@@ -1,5 +1,6 @@
 package com.github.steroidteam.todolist.model.todo;
 
+import com.google.android.gms.maps.model.LatLng;
 import java.util.Date;
 import java.util.Objects;
 
@@ -14,6 +15,8 @@ public class Task {
     private String body;
     private Boolean done;
     private Date dueDate;
+    private LatLng remindAtLocation;
+    private String locationName;
 
     /**
      * Constructs a new Task with a body.
@@ -28,6 +31,7 @@ public class Task {
         this.body = body;
         this.done = false;
         this.dueDate = null;
+        this.remindAtLocation = null;
     }
 
     public Task setBody(String newBody) {
@@ -38,6 +42,27 @@ public class Task {
 
     public String getBody() {
         return this.body;
+    }
+
+    public void setRemindAtLocation(LatLng location, String locationName) {
+        Objects.requireNonNull(location);
+        Objects.requireNonNull(locationName);
+
+        this.remindAtLocation = location;
+        this.locationName = locationName;
+    }
+
+    public LatLng getRemindAtLocation() {
+        return this.remindAtLocation;
+    }
+
+    public String getLocationName() {
+        return this.locationName;
+    }
+
+    public void removeLocationReminder() {
+        this.remindAtLocation = null;
+        this.locationName = null;
     }
 
     @Override

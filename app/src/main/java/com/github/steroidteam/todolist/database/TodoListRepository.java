@@ -37,6 +37,9 @@ public class TodoListRepository {
     }
 
     public LiveData<TodoList> getTodoList() {
+        if (this.observedTodoList.getValue() != null) {
+            this.observedTodoList.getValue().sortByDate();
+        }
         return this.observedTodoList;
     }
 
@@ -175,6 +178,7 @@ public class TodoListRepository {
         this.localDatabase
                 .putTask(todoListID, task)
                 .thenCompose(str -> this.localDatabase.getTodoList(todoListID))
+                .thenApply(todoList -> todoList.sortByDate())
                 .thenAccept(this.observedTodoList::postValue);
     }
 
@@ -182,6 +186,7 @@ public class TodoListRepository {
         this.localDatabase
                 .removeTask(todoListID, index)
                 .thenCompose(str -> this.localDatabase.getTodoList(todoListID))
+                .thenApply(todoList -> todoList.sortByDate())
                 .thenAccept(this.observedTodoList::postValue);
     }
 
@@ -189,6 +194,7 @@ public class TodoListRepository {
         this.localDatabase
                 .removeDoneTasks(todoListID)
                 .thenCompose(str -> this.localDatabase.getTodoList(todoListID))
+                .thenApply(todoList -> todoList.sortByDate())
                 .thenAccept(this.observedTodoList::postValue);
     }
 

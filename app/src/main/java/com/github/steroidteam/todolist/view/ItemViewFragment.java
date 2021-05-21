@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
@@ -89,6 +90,9 @@ public class ItemViewFragment extends Fragment {
 
         root.findViewById(R.id.new_task_btn).setOnClickListener(this::addTask);
         root.findViewById(R.id.remove_done_tasks_btn).setOnClickListener(this::removeDoneTasks);
+
+        ConstraintLayout updateLayout = root.findViewById(R.id.layout_update_task);
+        updateLayout.setVisibility(View.GONE);
 
         ReminderDateBroadcast.createNotificationChannel(getActivity());
         ReminderLocationBroadcast.createLocationNotificationChannel(getActivity());
@@ -241,6 +245,37 @@ public class ItemViewFragment extends Fragment {
                     closeUpdateLayout(v);
                     removeTask(position);
                 });
+
+        Button addLocationButton = getView().findViewById(R.id.AddLocationReminderButton);
+        String locationName =
+                viewModel.getTodoList().getValue().getTask(position).getLocationName();
+        if (locationName != null) addLocationButton.setText(locationName);
+
+        getView()
+                .findViewById(R.id.AddLocationReminderButton)
+                .setOnClickListener(
+                        v -> {
+                            getParentFragmentManager()
+                                    .setFragmentResultListener(
+                                            MapFragment.LOCATION_REQ,
+                                            this,
+                                            (requestKey, bundle) -> {
+                                                viewModel.setTaskLocationReminder(
+                                                        position,
+                                                        bundle.getParcelable(
+                                                                MapFragment.LOCATION_KEY),
+                                                        bundle.getString(
+                                                                MapFragment.LOCATION_NAME_KEY));
+                                                getParentFragmentManager()
+                                                        .clearFragmentResultListener(
+                                                                MapFragment.LOCATION_REQ);
+                                            });
+
+                            Navigation.findNavController(getView()).navigate(R.id.nav_map);
+                        });
+
+        Button closeButton = getView().findViewById(R.id.layout_update_task_close);
+        closeButton.setOnClickListener(this::closeUpdateLayout);
     }
 
     private void calendarExportButtonSetup(final int position) {

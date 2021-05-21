@@ -166,11 +166,8 @@ public class NoteRepository {
     public void updateNote(UUID noteID, Note updatedNote) {
         this.localDatabase
                 .updateNote(noteID, updatedNote)
-                .thenCompose(str -> this.localDatabase.getNotesList())
-                .thenAccept(
-                        uuids -> {
-                            setAllNoteLiveData(uuids, localDatabase);
-                        });
+                .thenCompose(str -> this.localDatabase.getNote(noteID))
+                .thenAccept(this.observedNote::postValue);
 
         this.remoteDatabase.updateNote(noteID, updatedNote);
     }
@@ -178,23 +175,20 @@ public class NoteRepository {
     public void setHeaderNote(UUID noteID, String imageFileName) throws FileNotFoundException {
         this.localDatabase
                 .setHeaderNote(noteID, imageFileName)
-                .thenCompose(note -> this.localDatabase.getNotesList())
-                .thenAccept(
-                        uuids -> {
-                            setAllNoteLiveData(uuids, localDatabase);
-                        });
+                .thenCompose(note -> this.localDatabase.getNote(noteID))
+                .thenAccept(this.observedNote::postValue);
 
         this.remoteDatabase.setHeaderNote(noteID, imageFileName);
     }
 
     public CompletableFuture<File> getNoteHeader(UUID imageID, String destinationPath) {
-        /*
-        File file = new File(destinationPath);
-        if(file.exists())
-            return this.localDatabase.getImage(imageID, destinationPath);
-        else
+        File file = new File(destinationPath, imageID.toString()+".jpeg");
+        System.err.println(file.exists());
+        if(file.exists()){
+            System.err.println("get image from ID : " + imageID);
+            return this.localDatabase.getImage(imageID, destinationPath);}
+        else {
             this.localDatabase.getImage(imageID, destinationPath);
-         */
-            return this.remoteDatabase.getImage(imageID, destinationPath);
+            return this.remoteDatabase.getImage(imageID, destinationPath);}
     }
 }

@@ -339,7 +339,7 @@ public class FileStorageDatabase implements Database {
         Objects.requireNonNull(imagePath);
 
         UUID headerID = UUID.randomUUID();
-        String fileSystemHeaderPath = IMAGES_PATH + headerID;
+        String fileSystemHeaderPath = IMAGES_PATH + headerID + ".jpeg";
 
         InputStream is = new FileInputStream(new File(imagePath));
 
@@ -383,7 +383,7 @@ public class FileStorageDatabase implements Database {
     @Override
     public CompletableFuture<File> getImage(
             @NonNull UUID imageID, @NonNull String destinationPath) {
-        String imageFilePath = IMAGES_PATH + imageID.toString();
+        String imageFilePath = IMAGES_PATH + imageID.toString() + ".jpeg";
 
         return this.storageService.downloadFile(imageFilePath, destinationPath);
     }

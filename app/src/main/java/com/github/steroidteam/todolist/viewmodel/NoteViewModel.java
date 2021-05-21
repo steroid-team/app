@@ -22,7 +22,7 @@ public class NoteViewModel extends ViewModel {
 
     private final LiveData<ArrayList<Note>> allNote;
     private final LiveData<Note> noteSelected;
-    private final LiveData<Optional<UUID>> headerIDMutableLiveData;
+    private final MutableLiveData<Optional<UUID>> headerIDMutableLiveData;
     private UUID selectedNoteID;
 
     public NoteViewModel(@NonNull NoteRepository noteRepository) {

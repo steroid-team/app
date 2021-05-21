@@ -35,6 +35,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.model.user.UserFactory;
 import com.github.steroidteam.todolist.util.Utils;
 import com.github.steroidteam.todolist.view.dialog.ListSelectionDialogFragment;
 import com.github.steroidteam.todolist.viewmodel.NoteViewModel;
@@ -73,7 +74,7 @@ public class NoteDisplayFragment extends Fragment {
         super.onCreate(savedInstanceState);
         View root = inflater.inflate(R.layout.fragment_note_display, container, false);
 
-        headerFileName = getActivity().getExternalCacheDir().getAbsolutePath() + "/image.jpeg";
+        headerFileName = getActivity().getCacheDir().getAbsolutePath();
 
         initRichEditor(root);
 
@@ -88,16 +89,6 @@ public class NoteDisplayFragment extends Fragment {
                         .get(NoteViewModel.class);
 
         this.noteViewModel
-                .getHeaderID()
-                .observe(
-                        getViewLifecycleOwner(),
-                        (optionalUUID -> {
-                            if (optionalUUID.isPresent()) {
-                                updateHeader(optionalUUID, root);
-                            }
-                        }));
-
-        this.noteViewModel
                 .getNote()
                 .observe(
                         getViewLifecycleOwner(),
@@ -106,6 +97,10 @@ public class NoteDisplayFragment extends Fragment {
                                 this.noteViewModel.setPositionAndLocation(position, locationName);
                                 position = null;
                                 locationName = null;
+                            }
+                            if(note.getHeaderID().isPresent()) {
+                                System.err.println("======================================== " + note.getHeaderID().get());
+                                updateHeader(note.getHeaderID(), root);
                             }
                             updateUI(root, note);
                         });
@@ -118,11 +113,15 @@ public class NoteDisplayFragment extends Fragment {
     private void updateHeader(Optional<UUID> optionalUUID, View root) {
         ConstraintLayout header = getView().findViewById(R.id.note_header);
 
+        File imagePath =
+                new File(
+                        headerFileName,
+                        "user-data/" + UserFactory.get().getUid() + "/images/");
         noteViewModel
-                .getNoteHeader(optionalUUID.get(), headerFileName)
+                .getNoteHeader(optionalUUID.get(), imagePath.getAbsolutePath())
                 .thenAccept(
                         (f) -> {
-                            Bitmap bitmap = BitmapFactory.decodeFile(headerFileName);
+                            Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
                             BitmapDrawable ob =
                                     new BitmapDrawable(getResources(), getRoundedBitmap(bitmap));
                             header.setBackgroundTintList(null);
@@ -137,7 +136,7 @@ public class NoteDisplayFragment extends Fragment {
         final Paint paint = new Paint();
         final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
         final RectF rectF = new RectF(rect);
-        final float roundPx = dip2px(getContext(), 25);
+        final float roundPx = dip2px(getContext(), 50);
         paint.setAntiAlias(true);
         Path path = new Path();
         float[] corners =
@@ -147,9 +146,9 @@ public class NoteDisplayFragment extends Fragment {
                     0,
                     0, // Top right radius in px
                     roundPx,
-                    roundPx * 2, // Bottom right radius in px
+                    roundPx, // Bottom right radius in px
                     roundPx,
-                    roundPx * 2 // Bottom left radius in px
+                    roundPx // Bottom left radius in px
                 };
         path.addRoundRect(rectF, corners, Path.Direction.CW);
         canvas.drawPath(path, paint);
@@ -253,7 +252,7 @@ public class NoteDisplayFragment extends Fragment {
                 .setOnClickListener(
                         v -> {
                             Bundle bundle = new Bundle();
-                            bundle.putString(NOTE_ID_KEY, noteID.toString());
+                            bundle.putString(NOTE_ID_KEY, noteViewModel.getNote().getValue().getId().toString());
                             Navigation.findNavController(getView())
                                     .navigate(R.id.nav_audio, bundle);
                         });
@@ -316,10 +315,12 @@ public class NoteDisplayFragment extends Fragment {
         String tmpFileName = "bitmap_tmp.png";
         File tmpFile =
                 new File(
-                        Environment.getExternalStoragePublicDirectory(
-                                Environment.DIRECTORY_PICTURES),
+                        getContext().getCacheDir(),
                         tmpFileName);
+
+        System.err.println(tmpFile.toString() + " " + tmpFile.toURI() + "                     zqdqzd" );
         try (FileOutputStream output = new FileOutputStream(tmpFile)) {
+            System.err.println("OUTPUT STREAM OK ----------- ");
             InputStream is = getContext().getContentResolver().openInputStream(uri);
             bitmap = BitmapFactory.decodeStream(is);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, output);

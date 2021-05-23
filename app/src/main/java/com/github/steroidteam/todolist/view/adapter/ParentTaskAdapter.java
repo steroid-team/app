@@ -13,7 +13,9 @@ import com.github.steroidteam.todolist.model.todo.TodoList;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.ParentTaskHolder> {
 
@@ -27,6 +29,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
     private final int TASK_WEEK = 2;
     private final int TASK_LATER = 3;
     private final int TASK_UNKNOWN = 4;
+    private final int INDEX_TASK_NOT_FOUND = -1;
 
     public ParentTaskAdapter(TodoAdapter.TaskCustomListener listener) {
         this.listener = listener;
@@ -65,9 +68,15 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
             TodoList todoListInCategory = getTodoListForCategory(position);
             layoutManager.setInitialPrefetchItemCount(todoListInCategory.getSize());
 
+            Map<Task, Integer> taskIntegerMap = new HashMap<>();
+            for (int i = 0; i < todoListInCategory.getSize(); i++) {
+                Task currTask = todoListInCategory.getTask(i);
+                taskIntegerMap.put(currTask, getPositionInTodolist(currTask));
+            }
+
             // Create a TodoChild adapter as we create a To-Do Collection Adapter
             //  in the List Selection Activity
-            TodoAdapter childAdapter = new TodoAdapter(listener);
+            TodoAdapter childAdapter = new TodoAdapter(listener, taskIntegerMap);
             childAdapter.setTodoList(todoListInCategory);
             holder.taskListRecyclerView.setLayoutManager(layoutManager);
             holder.taskListRecyclerView.setAdapter(childAdapter);
@@ -120,6 +129,17 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
         return false;
     }
 
+    public int getPositionInTodolist(Task task) {
+        for (int i = 0; i < todoList.getSize(); i++) {
+            Task currTask = todoList.getTask(i);
+            if (currTask.getBody() == task.getBody()
+                    && currTask.getDueDate() == task.getDueDate()) {
+                return i;
+            }
+        }
+        return INDEX_TASK_NOT_FOUND;
+    }
+
     @Override
     public int getItemCount() {
         return (dateCategoryList == null) ? 0 : dateCategoryList.size();
@@ -129,9 +149,30 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
         // Updates the adapter with the new todoList (the observable one)
         // this.todoList = todoList;
         this.todoList = todoList.sortByDate();
+
         // Check notifyDataSetChanged() might not be the best function
         // considering performance
         notifyDataSetChanged();
+    }
+
+    public interface ParentTaskCustomListener {
+        void onItemClick(ParentTaskAdapter.ParentTaskHolder holder, final int position);
+
+        void onItemDelete(final int position);
+
+        void onCheckedChangedCustom(int position, boolean isChecked);
+    }
+
+    public static class ParentTaskCustomListenerImplemented implements ParentTaskCustomListener {
+
+        @Override
+        public void onItemClick(ParentTaskHolder holder, int position) {}
+
+        @Override
+        public void onItemDelete(int position) {}
+
+        @Override
+        public void onCheckedChangedCustom(int position, boolean isChecked) {}
     }
 
     public static class ParentTaskHolder extends RecyclerView.ViewHolder {
@@ -148,10 +189,6 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
              * itemView.setOnClickListener( (View view) -> {
              * listener.onClickCustom(ParentTaskHolder.this); });
              */
-        }
-
-        public interface ParentTaskCustomListener {
-            void onClickCustom(ParentTaskHolder holder);
         }
     }
 }

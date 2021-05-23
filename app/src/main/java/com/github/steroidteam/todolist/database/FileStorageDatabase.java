@@ -126,6 +126,7 @@ public class FileStorageDatabase implements Database {
                             todoList.addTask(task);
                             return todoList;
                         })
+                .thenApply(todoList -> todoList.sortByDate())
                 // Re-serialize and upload the new object.
                 .thenApply(JSONSerializer::serializeTodoList)
                 .thenApply(
@@ -148,6 +149,7 @@ public class FileStorageDatabase implements Database {
                             todoList.removeTask(taskIndex);
                             return todoList;
                         })
+                .thenApply(todoList -> todoList.sortByDate())
                 .thenCompose(
                         todoList -> {
                             byte[] bytes =
@@ -172,6 +174,7 @@ public class FileStorageDatabase implements Database {
                             todoList.removeDoneTasks();
                             return todoList;
                         })
+                .thenApply(todoList -> todoList.sortByDate())
                 .thenCompose(
                         todoList -> {
                             byte[] bytes =
@@ -196,6 +199,7 @@ public class FileStorageDatabase implements Database {
                             todoList.updateTask(taskIndex, newTask);
                             return todoList;
                         })
+                .thenApply(todoList -> todoList.sortByDate())
                 // Re-serialize and upload the new object.
                 .thenCompose(todoList -> uploadTask(todoList, taskIndex, listPath));
     }

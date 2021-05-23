@@ -25,6 +25,7 @@ import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;
 import com.github.steroidteam.todolist.model.todo.Task;
+import com.github.steroidteam.todolist.view.adapter.ParentTaskAdapter;
 import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
 import com.github.steroidteam.todolist.view.misc.DateHighlighterTextWatcher;
 import com.github.steroidteam.todolist.view.misc.DueDateInputSpan;
@@ -39,7 +40,7 @@ import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
 public class ItemViewFragment extends Fragment {
 
     private TodoListViewModel viewModel;
-    private TodoAdapter adapter;
+    private ParentTaskAdapter adapter;
     public static final int PERMISSIONS_ACCESS_LOCATION = 2;
     private final PrettyTimeParser timeParser = new PrettyTimeParser();
     private ActivityResultLauncher<Intent> calendarExportIntentLauncher;
@@ -62,7 +63,7 @@ public class ItemViewFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
 
-        adapter = new TodoAdapter(createCustomListener());
+        adapter = new ParentTaskAdapter(createCustomListener());
         recyclerView.setAdapter(adapter);
 
         TodoViewModelFactory todoViewModelFactory =
@@ -79,13 +80,8 @@ public class ItemViewFragment extends Fragment {
                             TextView activityTitle = root.findViewById(R.id.activity_title);
                             activityTitle.setText(todoList.getTitle());
 
-                            adapter.setTodoList(todoList);
+                            adapter.setParentTodoList(todoList);
                         });
-
-        recyclerView = root.findViewById(R.id.activity_itemview_itemlist);
-        // The layout manager takes care of displaying the task below each other
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setHasFixedSize(true);
 
         root.findViewById(R.id.new_task_btn).setOnClickListener(this::addTask);
         root.findViewById(R.id.remove_done_tasks_btn).setOnClickListener(this::removeDoneTasks);

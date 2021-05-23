@@ -2,9 +2,11 @@ package com.github.steroidteam.todolist.model.todo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
+import com.google.android.gms.maps.model.LatLng;
 import java.util.Date;
 import org.junit.Test;
 
@@ -90,5 +92,13 @@ public class TaskTest {
         assertNotEquals(task1, task2);
 
         assertNotEquals(null, new Task(""));
+    }
+
+    @Test
+    public void setLocationReminderWorks() {
+        Task task = new Task("Some random title");
+        assertNull(task.getRemindAtLocation());
+        task.setRemindAtLocation(new LatLng(0.0, 0.0), "Nowhere");
+        assertNotNull(task.getRemindAtLocation());
     }
 }

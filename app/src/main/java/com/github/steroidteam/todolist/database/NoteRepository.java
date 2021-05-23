@@ -85,6 +85,11 @@ public class NoteRepository {
                                 }
                             }
                             return null;
+                        })
+                .thenCompose(str -> this.localDatabase.getNotesList())
+                .thenAccept(
+                        uuids -> {
+                            setAllNoteLiveData(uuids, localDatabase);
                         });
     }
 

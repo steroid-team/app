@@ -134,67 +134,103 @@
         android:paddingTop="10dp"
         android:paddingEnd="10dp"
         android:paddingBottom="15dp"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-        <CheckBox
-            android:id="@+id/layout_update_task_checkbox"
-            style="@style/TaskEntryCheckbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/layout_update_task_body"
-            style="@style/TaskEntryText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="10dp"
-            android:background="@null"
-            android:hint="@string/task_edit_hint"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:maxLines="1"
-            android:text=""
-            app:layout_constraintStart_toEndOf="@+id/layout_update_task_checkbox"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <LinearLayout
-            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-            android:background="@android:color/transparent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="18dp">
 
-            <Button
-                android:id="@+id/layout_update_task_save"
-                style="@style/TaskSaveButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="2dp"
-                android:layout_weight="1"
-                android:text="@string/save" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/layout_update_task_close"
-                style="@style/TaskUndoButton"
-                android:layout_width="wrap_content"
+                <CheckBox
+                    android:id="@+id/layout_update_task_checkbox"
+                    style="@style/TaskEntryCheckbox"
+                    android:layout_width="32dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerHorizontal="true" />
+
+                <EditText
+                    android:id="@+id/layout_update_task_body"
+                    style="@style/TaskEntryText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:background="@null"
+                    android:hint="@string/task_edit_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:text="" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/layout_update_task_export_calendar"
+                    style="@style/BorderlessButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_weight="1"
+                    android:drawableStart="@drawable/calendar_icon"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="@color/dark_grey"
+                    android:text="@string/export_to_calendar" />
+
+                <TextView
+                    android:id="@+id/LocationReminderText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/location_reminder" />
+
+                <Button
+                    android:id="@+id/AddLocationReminderButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_location" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="2dp"
-                android:layout_weight="1"
-                android:text="@string/undo" />
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/transparent">
+
+                <Button
+                    android:id="@+id/layout_update_task_save"
+                    style="@style/TaskSaveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:layout_weight="1"
+                    android:text="@string/save" />
+
+                <Button
+                    android:id="@+id/layout_update_task_close"
+                    style="@style/TaskUndoButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:layout_weight="1"
+                    android:text="@string/undo" />
+
+            </LinearLayout>
         </LinearLayout>
 
         <Button
@@ -206,21 +242,6 @@
             android:text="@string/delete"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
-            android:id="@+id/layout_update_task_export_calendar"
-            style="@style/BorderlessButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1"
-            android:drawableStart="@drawable/calendar_icon"
-            android:drawablePadding="8dp"
-            android:drawableTint="@color/dark_grey"
-            android:text="@string/export_to_calendar"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-            app:layout_constraintStart_toStartOf="@id/layout_update_task" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

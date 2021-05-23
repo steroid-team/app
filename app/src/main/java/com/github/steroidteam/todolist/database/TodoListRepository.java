@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
+import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -88,6 +89,11 @@ public class TodoListRepository {
                                 }
                             }
                             return null;
+                        })
+                .thenCompose(str -> this.localDatabase.getTodoListCollection())
+                .thenAccept(
+                        todoListCollection -> {
+                            setTodoListMutableLiveData(todoListCollection, localDatabase);
                         });
     }
 
@@ -199,5 +205,19 @@ public class TodoListRepository {
                 .thenCompose(task -> this.localDatabase.getTodoList(todoListID))
                 .thenApply(todoList -> todoList.sortByDate())
                 .thenAccept(this.observedTodoList::postValue);
+    }
+
+    public void setTaskLocationReminder(
+            UUID todoListID, int index, LatLng location, String locationName) {
+        this.localDatabase
+                .getTask(todoListID, index)
+                .thenCompose(
+                        task -> {
+                            task.setRemindAtLocation(location, locationName);
+                            return this.localDatabase.updateTask(todoListID, index, task);
+                        })
+                .thenCompose(task -> this.localDatabase.getTodoList(todoListID))
+                .thenAccept(this.observedTodoList::setValue);
+        this.localDatabase.getTodoList(todoListID).thenAccept(this.observedTodoList::setValue);
     }
 }

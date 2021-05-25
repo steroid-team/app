@@ -186,7 +186,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(4))))
+                                                .atPosition(5))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         onView(withId(R.id.layout_update_task_body)).perform(clearText(), closeSoftKeyboard());
@@ -422,7 +422,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(4))))
+                                                .atPosition(5))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         onView(withId(R.id.layout_update_task_body)).perform(closeSoftKeyboard());

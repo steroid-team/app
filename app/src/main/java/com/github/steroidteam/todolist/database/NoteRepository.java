@@ -4,8 +4,6 @@ import android.content.Context;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.github.steroidteam.todolist.model.notes.Note;
-import com.google.android.gms.maps.model.LatLng;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -185,10 +183,11 @@ public class NoteRepository {
     }
 
     public CompletableFuture<File> getNoteHeader(UUID imageID, String destinationPath) {
-        File file = new File(destinationPath, imageID.toString()+".jpeg");
-        if(file.exists()){
-            return this.localDatabase.getImage(imageID, file.getAbsolutePath());}
-        else {
-            return this.remoteDatabase.getImage(imageID, file.getAbsolutePath());}
+        File file = new File(destinationPath, imageID.toString() + ".jpeg");
+        if (file.exists()) {
+            return this.localDatabase.getImage(imageID, file.getAbsolutePath());
+        } else {
+            return this.remoteDatabase.getImage(imageID, file.getAbsolutePath());
+        }
     }
 }

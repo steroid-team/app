@@ -1,7 +1,5 @@
 package com.github.steroidteam.todolist;
 
-import android.content.Context;
-
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -22,13 +20,13 @@ import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckText
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
+import android.content.Context;
 import androidx.fragment.app.testing.FragmentScenario;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.view.NoteSelectionFragment;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,8 +49,7 @@ public class NoteSelectionFragmentTest {
 
     private FragmentScenario<NoteSelectionFragment> scenario;
     @Mock Database databaseMock;
-    @Mock
-    Context context;
+    @Mock Context context;
 
     @Before
     public void init() {

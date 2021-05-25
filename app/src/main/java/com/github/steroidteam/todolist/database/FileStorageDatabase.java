@@ -321,7 +321,6 @@ public class FileStorageDatabase implements Database {
         Task updatedTask = todoList.getTask(index);
         byte[] bytes = JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
         return this.storageService.upload(bytes, path).thenApply(str -> updatedTask);
-
     }
 
     private CompletableFuture<Note> uploadNote(Note note) {
@@ -329,7 +328,6 @@ public class FileStorageDatabase implements Database {
 
         byte[] bytes = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
         return this.storageService.upload(bytes, notePath).thenApply(str -> note);
-
     }
 
     @Override
@@ -352,28 +350,27 @@ public class FileStorageDatabase implements Database {
         CompletableFuture<Note> currentNote = getNote(noteID);
 
         // REMOVE PREVIOUS HEADER IF PRESENT
-        currentNote
-                .thenCompose(
-                        note -> {
-                            Optional<UUID> headerID = note.getHeaderID();
-                            if (headerID.isPresent()) {
-                                return this.storageService
-                                        .delete(IMAGES_PATH + headerID.get() + ".jpeg")
-                                        .thenApply(updatedNote -> null);
-                            } else {
-                                return CompletableFuture.completedFuture(null);
-                            }
-                        });
+        currentNote.thenCompose(
+                note -> {
+                    Optional<UUID> headerID = note.getHeaderID();
+                    if (headerID.isPresent()) {
+                        return this.storageService
+                                .delete(IMAGES_PATH + headerID.get() + ".jpeg")
+                                .thenApply(updatedNote -> null);
+                    } else {
+                        return CompletableFuture.completedFuture(null);
+                    }
+                });
 
         // STORE NEW HEADER
         return getNote(noteID)
-                    .thenCompose(
-                            note -> {
-                                note.setHeader(imageID);
-                                return uploadNote(note);
-                            })
-                    .thenCompose(note -> headerUploadFuture)
-                    .thenApply(str -> null);
+                .thenCompose(
+                        note -> {
+                            note.setHeader(imageID);
+                            return uploadNote(note);
+                        })
+                .thenCompose(note -> headerUploadFuture)
+                .thenApply(str -> null);
     }
 
     @Override

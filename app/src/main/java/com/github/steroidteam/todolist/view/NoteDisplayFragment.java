@@ -4,11 +4,9 @@ import static com.github.steroidteam.todolist.util.Utils.dip2px;
 import static com.github.steroidteam.todolist.view.NoteSelectionFragment.NOTE_ID_KEY;
 
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
@@ -42,8 +40,6 @@ import com.github.steroidteam.todolist.util.Utils;
 import com.github.steroidteam.todolist.view.dialog.ListSelectionDialogFragment;
 import com.github.steroidteam.todolist.viewmodel.NoteViewModel;
 import com.github.steroidteam.todolist.viewmodel.NoteViewModelFactory;
-import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
-import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import com.google.android.gms.maps.model.LatLng;
 import java.io.File;
@@ -69,14 +65,17 @@ public class NoteDisplayFragment extends Fragment {
 
     private NoteViewModel noteViewModel;
 
-    private String headerFileName;
+    private String headerFilePath;
+
+    private final int HEADER_WIDTH = 1000;
+    private final int HEADER_HEIGHT = 500;
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View root = inflater.inflate(R.layout.fragment_note_display, container, false);
 
-        headerFileName = getActivity().getCacheDir().getAbsolutePath();
+        headerFilePath = getActivity().getCacheDir().getAbsolutePath();
 
         initRichEditor(root);
 
@@ -113,25 +112,33 @@ public class NoteDisplayFragment extends Fragment {
     private void updateHeader(Optional<UUID> optionalUUID) {
         ConstraintLayout header = getView().findViewById(R.id.note_header);
 
-        if(optionalUUID.isPresent()) {
+        if (optionalUUID.isPresent()) {
 
             File imagePath =
                     new File(
-                            headerFileName,
-                            "user-data/" + UserFactory.get().getUid() + "/images/");
+                            headerFilePath, "user-data/" + UserFactory.get().getUid() + "/images/");
             noteViewModel
                     .getNoteHeader(optionalUUID.get(), imagePath.getAbsolutePath())
                     .thenAccept(
                             (f) -> {
                                 Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
+
+                                Bitmap scaled =
+                                        Bitmap.createScaledBitmap(
+                                                bitmap, HEADER_WIDTH, HEADER_HEIGHT, false);
+
                                 BitmapDrawable ob =
-                                        new BitmapDrawable(getResources(), getRoundedBitmap(bitmap));
+                                        new BitmapDrawable(
+                                                getResources(), getRoundedBitmap(scaled));
                                 header.setBackgroundTintList(null);
                                 header.setBackground(ob);
                             });
         } else {
-            header.setBackgroundTintList(ColorStateList.valueOf(getActivity().getColor(R.color.light_grey)));
-            header.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.rounded_corner_just_bottom_bg));
+            Bitmap newBitmap =
+                    Bitmap.createBitmap(HEADER_WIDTH, HEADER_HEIGHT, Bitmap.Config.ARGB_8888);
+            newBitmap.eraseColor(getActivity().getColor(R.color.light_grey));
+            BitmapDrawable ob = new BitmapDrawable(getResources(), getRoundedBitmap(newBitmap));
+            header.setBackground(ob);
         }
     }
 
@@ -142,7 +149,7 @@ public class NoteDisplayFragment extends Fragment {
         final Paint paint = new Paint();
         final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
         final RectF rectF = new RectF(rect);
-        final float roundPx = dip2px(getContext(), 50);
+        final float roundPx = dip2px(getContext(), 25);
         paint.setAntiAlias(true);
         Path path = new Path();
         float[] corners =
@@ -258,7 +265,9 @@ public class NoteDisplayFragment extends Fragment {
                 .setOnClickListener(
                         v -> {
                             Bundle bundle = new Bundle();
-                            bundle.putString(NOTE_ID_KEY, noteViewModel.getNote().getValue().getId().toString());
+                            bundle.putString(
+                                    NOTE_ID_KEY,
+                                    noteViewModel.getNote().getValue().getId().toString());
                             Navigation.findNavController(getView())
                                     .navigate(R.id.nav_audio, bundle);
                         });
@@ -318,12 +327,10 @@ public class NoteDisplayFragment extends Fragment {
         Bitmap bitmap;
 
         String tmpFileName = "bitmap_tmp.jpeg";
-        File tmpFile =
-                new File(
-                        getContext().getCacheDir(),
-                        tmpFileName);
+        File tmpFile = new File(getContext().getCacheDir(), tmpFileName);
 
-        System.err.println(tmpFile.toString() + " " + tmpFile.toURI() + "                     zqdqzd" );
+        System.err.println(
+                tmpFile.toString() + " " + tmpFile.toURI() + "                     zqdqzd");
         try (FileOutputStream output = new FileOutputStream(tmpFile)) {
             InputStream is = getContext().getContentResolver().openInputStream(uri);
             bitmap = BitmapFactory.decodeStream(is);

@@ -23,7 +23,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 import android.content.Context;
-import android.os.Bundle;
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.navigation.Navigation;
 import androidx.navigation.testing.TestNavHostController;
@@ -36,9 +35,7 @@ import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.util.Utils;
 import com.github.steroidteam.todolist.view.NoteDisplayFragment;
-import com.github.steroidteam.todolist.view.NoteSelectionFragment;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
-
 import java.io.File;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;

@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
@@ -390,7 +391,7 @@ public class DatabaseTest {
                 .upload(any(byte[].class), eq(expectedPath));
 
         // Try to update a task in a valid list.
-        final FirebaseDatabase database = new FirebaseDatabase(storageServiceMock);
+        final Database database = new FileStorageDatabase(storageServiceMock);
         database.updateTask(todoList.getId(), 0, FIXTURE_TASK_2);
 
         todoList.updateTask(0, FIXTURE_TASK_2);
@@ -587,52 +588,6 @@ public class DatabaseTest {
     }
 
     @Test
-    public void updateTaskRejectsNullArgs() {
-        assertThrows(
-                NullPointerException.class,
-                () -> {
-                    new FileStorageDatabase(storageServiceMock).updateTask(null, 0, new Task(""));
-                });
-        assertThrows(
-                NullPointerException.class,
-                () -> {
-                    new FileStorageDatabase(storageServiceMock)
-                            .updateTask(UUID.randomUUID(), null, new Task(""));
-                });
-        assertThrows(
-                NullPointerException.class,
-                () -> {
-                    new FileStorageDatabase(storageServiceMock)
-                            .updateTask(UUID.randomUUID(), 0, null);
-                });
-    }
-
-    @Test
-    public void updateTaskWorks() {
-        TodoList expectedTodoList = new TodoList("some random title");
-        Task task1 = new Task("Task 1");
-        Task task2 = new Task("Task 2");
-        expectedTodoList.addTask(task1);
-        expectedTodoList.addTask(task2);
-
-        byte[] serializedTodoList =
-                JSONSerializer.serializeTodoList(expectedTodoList).getBytes(StandardCharsets.UTF_8);
-        downloadFuture.complete(serializedTodoList);
-
-        uploadFuture.complete("Some file path");
-
-        doReturn(downloadFuture).when(storageServiceMock).downloadBytes(anyString());
-        doReturn(uploadFuture).when(storageServiceMock).upload(any(byte[].class), anyString());
-
-        try {
-            Task actualTask = database.updateTask(UUID.randomUUID(), 0, task1).join();
-            assertEquals(task1, actualTask);
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
-    @Test
     public void setAudioMemoWorks() {
         Note note = new Note("Some title");
         byte[] serializedNote = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
@@ -727,7 +682,9 @@ public class DatabaseTest {
                 FileNotFoundException.class,
                 () -> {
                     File imageFile = new File("dummy file");
-                    database.setHeaderNote(note.getId(), imageFile.getAbsolutePath(), UUID.randomUUID()).get();
+                    database.setHeaderNote(
+                                    note.getId(), imageFile.getAbsolutePath(), UUID.randomUUID())
+                            .get();
                 });
     }
 
@@ -746,33 +703,6 @@ public class DatabaseTest {
             File imageHeader = folder.newFile("some_image_file");
             database.getImage(note.getId(), imageHeader.getAbsolutePath()).get();
             verify(storageServiceMock).downloadFile(anyString(), eq(imageHeader.getAbsolutePath()));
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
-    @Test
-    public void removeHeaderWorks() {
-        Note note = new Note("Some title");
-        note.setHeader(UUID.randomUUID());
-        byte[] serializedNote = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
-
-        // Return a future like the one that the FirebaseFileStorageService would produce after
-        // successfully downloading the file.
-        final CompletableFuture<byte[]> completedFuture =
-                CompletableFuture.completedFuture(serializedNote);
-        final CompletableFuture<String> completedUpload = CompletableFuture.completedFuture("");
-        final CompletableFuture<Void> completedDelete = CompletableFuture.completedFuture(null);
-
-        doReturn(completedFuture).when(storageServiceMock).downloadBytes(anyString());
-        doReturn(completedDelete).when(storageServiceMock).delete(anyString());
-        doReturn(completedUpload).when(storageServiceMock).upload(any(byte[].class), anyString());
-
-        try {
-            database.removeHeader(note.getId()).get();
-            verify(storageServiceMock).downloadBytes(anyString());
-            verify(storageServiceMock).delete(anyString());
-            verify(storageServiceMock).upload(any(byte[].class), anyString());
         } catch (Exception e) {
             fail();
         }
@@ -799,7 +729,7 @@ public class DatabaseTest {
         try {
             File imageFile = folder.newFile("image_file");
             database.setHeaderNote(note.getId(), imageFile.getAbsolutePath(), id).get();
-            verify(storageServiceMock).downloadBytes(anyString());
+            verify(storageServiceMock, times(2)).downloadBytes(anyString());
             verify(storageServiceMock).upload(any(InputStream.class), anyString());
             verify(storageServiceMock).upload(any(byte[].class), anyString());
         } catch (Exception e) {

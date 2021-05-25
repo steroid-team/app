@@ -67,7 +67,8 @@ public class NoteSelectionFragment extends Fragment {
     private NoteArrayListAdapter.NoteHolder.NoteCustomListener createCustomListener() {
         return holder -> {
             viewModel.selectNote(holder.getNote().getId());
-            Navigation.findNavController(holder.itemView).navigate(R.id.nav_note_display, new Bundle());
+            Navigation.findNavController(holder.itemView)
+                    .navigate(R.id.nav_note_display, new Bundle());
         };
     }
 
@@ -151,7 +152,8 @@ public class NoteSelectionFragment extends Fragment {
 
                     @Override
                     public void onPositiveClick(String title) {
-                        if (title.length() > 0) viewModel.renameNote(note.getId(), note.setTitle(title));
+                        if (title.length() > 0)
+                            viewModel.renameNote(note.getId(), note.setTitle(title));
                     }
 
                     @Override

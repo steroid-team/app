@@ -186,7 +186,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         onView(withId(R.id.layout_update_task_body)).perform(clearText(), closeSoftKeyboard());
@@ -198,7 +198,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION, TASK_BODY_LAYOUT_ID)));
 
         onView(
@@ -206,7 +206,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
     }
 
@@ -272,7 +272,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
                                 0, clickChildViewWithId(R.id.layout_task_checkbox)));
@@ -282,7 +282,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         // Make sure that the database was called to update the task, and that the updated task
@@ -317,7 +317,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
 
         onView(
@@ -325,7 +325,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
     }
 
@@ -370,7 +370,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
                                 0, clickChildViewWithId(R.id.layout_task_checkbox)));
@@ -379,7 +379,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
                                 0, clickChildViewWithId(R.id.layout_task_delete_button)));
@@ -390,7 +390,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
     }
 
@@ -422,7 +422,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         onView(withId(R.id.layout_update_task_body)).perform(closeSoftKeyboard());
@@ -434,7 +434,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
 
         onView(
@@ -442,7 +442,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
     }
 
@@ -494,7 +494,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
                                 0, clickChildViewWithId(R.id.layout_task_checkbox)));
@@ -504,7 +504,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
                                 2, clickChildViewWithId(R.id.layout_task_checkbox)));
@@ -525,7 +525,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(5))))
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
     }
 
@@ -558,7 +558,7 @@ public class ItemViewFragmentTest {
                                 withId(R.id.child_task_recycler_view),
                                 withParent(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(1))))
+                                                .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         // Check that the "export to calendar" button displays the task's due date.

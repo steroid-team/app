@@ -38,7 +38,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
         dateCategoryList.add("Past");
         dateCategoryList.add("Today");
         dateCategoryList.add("Tomorrow");
-        dateCategoryList.add("This week");
+        dateCategoryList.add("Next 5 days after Tomorrow");
         dateCategoryList.add("Later");
         dateCategoryList.add("Unknown");
         sortedDateCategoryList = new ArrayList<>();
@@ -109,7 +109,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
 
     private int getIndexRealCategory(int position) {
         for (int i = 0; i < sortedDateCategoryList.size(); i++) {
-            if (sortedDateCategoryList.get(position) == dateCategoryList.get(i)) {
+            if (sortedDateCategoryList.get(position).equals(dateCategoryList.get(i))) {
                 return i;
             }
         }
@@ -154,15 +154,12 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
         if (diffDay == 1 && category == TASK_TOMORROW) {
             return true;
         }
-        // This week
-        if (diffDay < 7 && diffDay > 2 && category == TASK_WEEK) {
+        // Next 5 days after tomorrow
+        if (diffDay < 7 && diffDay > 1 && category == TASK_WEEK) {
             return true;
         }
         // Later
-        if (diffDay >= 7 && category == TASK_LATER) {
-            return true;
-        }
-        return false;
+        return diffDay >= 7 && category == TASK_LATER;
     }
 
     public int getPositionInTodolist(Task task) {

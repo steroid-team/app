@@ -168,10 +168,10 @@ public class NoteSelectionFragmentTest {
 
         onView(withId(android.R.id.button1)).perform(click());
 
-        onView(withId(R.id.alert_dialog_edit_text)).check(doesNotExist());
-
-        onView(withId(R.id.activity_noteselection_recycler))
-                .check(matches(atPositionCheckText(0, NOTE_TITLE_2, NOTE_TITLE_LAYOUT_ID)));
+        onView(
+                        new RecyclerViewMatcher(R.id.activity_noteselection_recycler)
+                                .atPositionOnView(0, NOTE_TITLE_LAYOUT_ID))
+                .check(matches(withText(NOTE_TITLE_2)));
     }
 
     @Test

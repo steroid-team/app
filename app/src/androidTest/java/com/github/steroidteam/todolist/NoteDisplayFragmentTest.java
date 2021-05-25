@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import android.content.Context;
@@ -37,6 +38,8 @@ import com.github.steroidteam.todolist.util.Utils;
 import com.github.steroidteam.todolist.view.NoteDisplayFragment;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.hamcrest.MatcherAssert;
@@ -81,14 +84,20 @@ public class NoteDisplayFragmentTest {
         note.setContent(FIXTURE_DEFAULT_NOTE_CONTENT);
         CompletableFuture<Note> noteFuture = new CompletableFuture<>();
         noteFuture.complete(note);
-        doReturn(noteFuture).when(databaseMock).getNote(any(UUID.class));
-        doReturn(noteFuture).when(databaseMock).updateNote(any(UUID.class), any(Note.class));
+
+        List<UUID> notes = Collections.singletonList(UUID.randomUUID());
+        CompletableFuture<List<UUID>> notesFuture = new CompletableFuture<>();
+        notesFuture.complete(notes);
+
+        doReturn(notesFuture).when(databaseMock).getNotesList();
+        doReturn(noteFuture).when(databaseMock).getNote(any());
+        doReturn(noteFuture).when(databaseMock).updateNote(any(), any());
 
         DatabaseFactory.setCustomDatabase(databaseMock);
 
         File fakeFile = new File("Fake pathname");
         doReturn(fakeFile).when(context).getCacheDir();
-        ViewModelFactoryInjection.setCustomTodoListRepo(context, UUID.randomUUID());
+        ViewModelFactoryInjection.setCustomNoteRepo(context, UUID.randomUUID());
 
         scenario =
                 FragmentScenario.launchInContainer(
@@ -187,7 +196,7 @@ public class NoteDisplayFragmentTest {
 
         // Make sure that the note is updated in the database.
         ArgumentCaptor<Note> captor = ArgumentCaptor.forClass(Note.class);
-        verify(databaseMock).updateNote(any(), captor.capture());
+        verify(databaseMock, times(2)).updateNote(any(), captor.capture());
         Note updatedNote = captor.getValue();
         assertThat(updatedNote.getTitle(), equalTo(FIXTURE_DEFAULT_NOTE_TITLE));
         assertThat(updatedNote.getContent(), equalTo(FIXTURE_MODIFIED_NOTE_CONTENT));

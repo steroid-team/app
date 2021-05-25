@@ -165,7 +165,12 @@ public class NoteRepository {
         this.localDatabase
                 .updateNote(noteID, updatedNote)
                 .thenCompose(str -> this.localDatabase.getNote(noteID))
-                .thenAccept(this.observedNote::postValue);
+                .thenAccept(this.observedNote::postValue)
+                .thenCompose(str -> this.localDatabase.getNotesList())
+                .thenAccept(
+                        uuids -> {
+                            setAllNoteLiveData(uuids, localDatabase);
+                        });
 
         this.remoteDatabase.updateNote(noteID, updatedNote);
     }

@@ -402,12 +402,13 @@ public class DatabaseTest {
 
         CompletableFuture<String> uploadFuture = new CompletableFuture<>();
         uploadFuture.complete("some random path");
-      
+
         verify(storageServiceMock).downloadBytes(expectedPath);
         verify(storageServiceMock).upload(serializedNewList, expectedPath);
+    }
 
-  @Test
-  public void removeDoneTasksWorks() {
+    @Test
+    public void removeDoneTasksWorks() {
         final TodoList todoList = new TodoList("My list");
         final Task FIXTURE_TASK_1 = new Task("Buy bananas");
         FIXTURE_TASK_1.setDone(true);
@@ -417,6 +418,24 @@ public class DatabaseTest {
         final Task FIXTURE_TASK_3 = new Task("Buy juice");
         FIXTURE_TASK_2.setDone(true);
         todoList.addTask(FIXTURE_TASK_3);
+        final String expectedPath = TODO_LIST_PATH + todoList.getId().toString() + ".json";
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully downloading the file.
+        final byte[] serializedOriginalList =
+                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+        final CompletableFuture<byte[]> completedDownloadFuture =
+                CompletableFuture.completedFuture(serializedOriginalList);
+        doReturn(completedDownloadFuture).when(storageServiceMock).downloadBytes(expectedPath);
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully uploading the file.
+        final CompletableFuture<String> completedUploadFuture =
+                CompletableFuture.completedFuture(expectedPath);
+        doReturn(completedUploadFuture)
+                .when(storageServiceMock)
+                .upload(any(byte[].class), eq(expectedPath));
+
         // Try to remove all done tasks from valid list.
         database.removeDoneTasks(todoList.getId());
 

@@ -50,7 +50,7 @@ import java.util.UUID;
 import jp.wasabeef.richeditor.RichEditor;
 
 public class NoteDisplayFragment extends Fragment {
-  
+
     private LatLng position; // TODO : change this !!! LISTEN TO RESULT LISTENER OF MAP
     private String locationName; // TODO : change this !!!
 

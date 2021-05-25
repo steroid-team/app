@@ -59,7 +59,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
             TodoList todoListInCategory = getTodoListForCategory(position);
             holder.itemView.setVisibility(View.VISIBLE);
             if (todoListInCategory.getSize() == 0) {
-                holder.itemView.setVisibility(View.INVISIBLE);
+                holder.itemView.setVisibility(View.GONE);
             }
             holder.taskDateCategory.setText(currentCategory);
 

@@ -24,16 +24,18 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
     // ViewPool to share view between task and to-do list
     private final RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
     private final TodoAdapter.TaskCustomListener listener;
-    private final int TASK_TODAY = 0;
-    private final int TASK_TOMORROW = 1;
-    private final int TASK_WEEK = 2;
-    private final int TASK_LATER = 3;
-    private final int TASK_UNKNOWN = 4;
+    private final int TASK_PAST = 0;
+    private final int TASK_TODAY = 1;
+    private final int TASK_TOMORROW = 2;
+    private final int TASK_WEEK = 3;
+    private final int TASK_LATER = 4;
+    private final int TASK_UNKNOWN = 5;
     private final int INDEX_TASK_NOT_FOUND = -1;
 
     public ParentTaskAdapter(TodoAdapter.TaskCustomListener listener) {
         this.listener = listener;
         dateCategoryList = new ArrayList<>();
+        dateCategoryList.add("Past");
         dateCategoryList.add("Today");
         dateCategoryList.add("Tomorrow");
         dateCategoryList.add("This week");
@@ -47,7 +49,6 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
         View itemView =
                 LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.parent_recycler_view_task_item, parent, false);
-        // return new ParentTaskHolder(itemView, listener);
         return new ParentTaskHolder(itemView);
     }
 
@@ -55,6 +56,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
     public void onBindViewHolder(@NonNull ParentTaskHolder holder, int position) {
         String currentCategory = dateCategoryList.get(position);
         if (currentCategory != null) {
+            TodoList todoListInCategory = getTodoListForCategory(position);
             holder.taskDateCategory.setText(currentCategory);
 
             // Nested layout Manager
@@ -65,7 +67,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
                             false);
 
             // Define how many child we need to prefetch when building the nested recyclerView
-            TodoList todoListInCategory = getTodoListForCategory(position);
+
             layoutManager.setInitialPrefetchItemCount(todoListInCategory.getSize());
 
             Map<Task, Integer> taskIntegerMap = new HashMap<>();
@@ -110,8 +112,12 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(dueDate);
         int diffDay = calendar.get(Calendar.DAY_OF_YEAR) - calendar2.get(Calendar.DAY_OF_YEAR);
+        // Past
+        if (diffDay < 0 && category == TASK_PAST) {
+            return true;
+        }
         // Today
-        if (diffDay < 1 && category == TASK_TODAY) {
+        if (diffDay == 0 && category == TASK_TODAY) {
             return true;
         }
         // Tomorrow
@@ -147,32 +153,11 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
 
     public void setParentTodoList(TodoList todoList) {
         // Updates the adapter with the new todoList (the observable one)
-        // this.todoList = todoList;
         this.todoList = todoList.sortByDate();
 
         // Check notifyDataSetChanged() might not be the best function
         // considering performance
         notifyDataSetChanged();
-    }
-
-    public interface ParentTaskCustomListener {
-        void onItemClick(ParentTaskAdapter.ParentTaskHolder holder, final int position);
-
-        void onItemDelete(final int position);
-
-        void onCheckedChangedCustom(int position, boolean isChecked);
-    }
-
-    public static class ParentTaskCustomListenerImplemented implements ParentTaskCustomListener {
-
-        @Override
-        public void onItemClick(ParentTaskHolder holder, int position) {}
-
-        @Override
-        public void onItemDelete(int position) {}
-
-        @Override
-        public void onCheckedChangedCustom(int position, boolean isChecked) {}
     }
 
     public static class ParentTaskHolder extends RecyclerView.ViewHolder {
@@ -184,11 +169,6 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
 
             taskDateCategory = itemView.findViewById(R.id.date_category);
             taskListRecyclerView = itemView.findViewById(R.id.child_task_recycler_view);
-
-            /**
-             * itemView.setOnClickListener( (View view) -> {
-             * listener.onClickCustom(ParentTaskHolder.this); });
-             */
         }
     }
 }

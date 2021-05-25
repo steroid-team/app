@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.ParentTaskHolder> {
 
-    private List<String> dateCategoryList;
+    private List<String> dateCategoryList, sortedDateCategoryList;
     private TodoList todoList;
     // ViewPool to share view between task and to-do list
     private final RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
@@ -41,6 +41,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
         dateCategoryList.add("This week");
         dateCategoryList.add("Later");
         dateCategoryList.add("Unknown");
+        sortedDateCategoryList = new ArrayList<>();
     }
 
     @NonNull
@@ -54,9 +55,10 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
 
     @Override
     public void onBindViewHolder(@NonNull ParentTaskHolder holder, int position) {
-        String currentCategory = dateCategoryList.get(position);
+        int realPosition = getIndexRealCategory(position);
+        String currentCategory = sortedDateCategoryList.get(position);
         if (currentCategory != null) {
-            TodoList todoListInCategory = getTodoListForCategory(position);
+            TodoList todoListInCategory = getTodoListForCategory(realPosition);
             holder.itemView.setVisibility(View.VISIBLE);
             if (todoListInCategory.getSize() == 0) {
                 holder.itemView.setVisibility(View.GONE);
@@ -88,6 +90,30 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
             holder.taskListRecyclerView.setAdapter(childAdapter);
             holder.taskListRecyclerView.setRecycledViewPool(viewPool);
         }
+    }
+
+    private void sortCategoryList() {
+        sortedDateCategoryList.clear();
+        List<Integer> noTaskCategories = new ArrayList<>();
+        for (int i = 0; i < dateCategoryList.size(); i++) {
+            if (getTodoListForCategory(i).getSize() == 0) {
+                noTaskCategories.add(i);
+            } else {
+                sortedDateCategoryList.add(dateCategoryList.get(i));
+            }
+        }
+        for (int i = 0; i < noTaskCategories.size(); i++) {
+            sortedDateCategoryList.add(dateCategoryList.get(noTaskCategories.get(i)));
+        }
+    }
+
+    private int getIndexRealCategory(int position) {
+        for (int i = 0; i < sortedDateCategoryList.size(); i++) {
+            if (sortedDateCategoryList.get(position) == dateCategoryList.get(i)) {
+                return i;
+            }
+        }
+        return INDEX_TASK_NOT_FOUND;
     }
 
     private TodoList getTodoListForCategory(int category) {
@@ -133,7 +159,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
             return true;
         }
         // Later
-        if (diffDay > 7 && category == TASK_LATER) {
+        if (diffDay >= 7 && category == TASK_LATER) {
             return true;
         }
         return false;
@@ -158,7 +184,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
     public void setParentTodoList(TodoList todoList) {
         // Updates the adapter with the new todoList (the observable one)
         this.todoList = todoList.sortByDate();
-
+        sortCategoryList();
         // Check notifyDataSetChanged() might not be the best function
         // considering performance
         notifyDataSetChanged();

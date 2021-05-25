@@ -128,6 +128,7 @@ public class FileStorageDatabase implements Database {
                             todoList.addTask(task);
                             return todoList;
                         })
+                .thenApply(todoList -> todoList.sortByDate())
                 // Re-serialize and upload the new object.
                 .thenApply(JSONSerializer::serializeTodoList)
                 .thenApply(
@@ -150,6 +151,32 @@ public class FileStorageDatabase implements Database {
                             todoList.removeTask(taskIndex);
                             return todoList;
                         })
+                .thenApply(todoList -> todoList.sortByDate())
+                .thenCompose(
+                        todoList -> {
+                            byte[] bytes =
+                                    JSONSerializer.serializeTodoList(todoList)
+                                            .getBytes(StandardCharsets.UTF_8);
+                            return this.storageService
+                                    .upload(bytes, listPath)
+                                    .thenApply(str -> todoList);
+                        });
+    }
+
+    @Override
+    public CompletableFuture<TodoList> removeDoneTasks(@NonNull UUID todoListID) {
+        Objects.requireNonNull(todoListID);
+        String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
+
+        // Fetch the remote list that we are about to update
+        return getTodoList(todoListID)
+                // Remove all done tasks from the object
+                .thenApply(
+                        todoList -> {
+                            todoList.removeDoneTasks();
+                            return todoList;
+                        })
+                .thenApply(todoList -> todoList.sortByDate())
                 .thenCompose(
                         todoList -> {
                             byte[] bytes =
@@ -174,6 +201,7 @@ public class FileStorageDatabase implements Database {
                             todoList.updateTask(taskIndex, newTask);
                             return todoList;
                         })
+                .thenApply(todoList -> todoList.sortByDate())
                 // Re-serialize and upload the new object.
                 .thenCompose(todoList -> uploadTask(todoList, taskIndex, listPath));
     }

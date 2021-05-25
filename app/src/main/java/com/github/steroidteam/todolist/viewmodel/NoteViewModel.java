@@ -22,7 +22,7 @@ public class NoteViewModel extends ViewModel {
 
     private final LiveData<ArrayList<Note>> allNote;
     private final LiveData<Note> noteSelected;
-    private final MutableLiveData<Optional<UUID>> headerIDMutableLiveData;
+
     private UUID selectedNoteID;
 
     public NoteViewModel(@NonNull NoteRepository noteRepository) {
@@ -31,7 +31,6 @@ public class NoteViewModel extends ViewModel {
 
         this.allNote = noteRepository.getAllNote();
         this.noteSelected = noteRepository.getNote();
-        this.headerIDMutableLiveData = new MutableLiveData<>();
     }
 
     public void selectNote(UUID id) {
@@ -41,10 +40,6 @@ public class NoteViewModel extends ViewModel {
 
     public LiveData<Note> getNote() {
         return this.noteSelected;
-    }
-
-    public LiveData<Optional<UUID>> getHeaderID() {
-        return this.headerIDMutableLiveData;
     }
 
     public LiveData<ArrayList<Note>> getNoteList() {
@@ -78,7 +73,6 @@ public class NoteViewModel extends ViewModel {
     }
 
     public void updateNoteHeader(String imageFileName) throws FileNotFoundException {
-        System.err.println("--------------------------------------> " + selectedNoteID.toString() + " " + imageFileName);
         this.noteRepository
                 .setHeaderNote(selectedNoteID, imageFileName);
     }

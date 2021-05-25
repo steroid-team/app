@@ -166,9 +166,10 @@ public class LocalFileStorageService implements FileStorageService {
             FileOutputStream fos = new FileOutputStream(file);
             byte[] buffer = new byte[1024];
             int bytesLen;
-            while ((bytesLen = data.read()) != -1) {
+            while ((bytesLen = data.read(buffer)) > 0) {
                 fos.write(buffer, 0, bytesLen);
             }
+            fos.flush();
             fos.close();
         } catch (Exception ignored) {
         } finally {

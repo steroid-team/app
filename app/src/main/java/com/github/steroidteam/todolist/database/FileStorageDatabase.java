@@ -333,13 +333,12 @@ public class FileStorageDatabase implements Database {
     }
 
     @Override
-    public CompletableFuture<Void> setHeaderNote(UUID noteID, String imagePath)
+    public CompletableFuture<Void> setHeaderNote(UUID noteID, String imagePath, UUID imageID)
             throws FileNotFoundException {
         Objects.requireNonNull(noteID);
         Objects.requireNonNull(imagePath);
 
-        UUID headerID = UUID.randomUUID();
-        String fileSystemHeaderPath = IMAGES_PATH + headerID + ".jpeg";
+        String fileSystemHeaderPath = IMAGES_PATH + imageID + ".jpeg";
 
         InputStream is = new FileInputStream(new File(imagePath));
 
@@ -349,42 +348,38 @@ public class FileStorageDatabase implements Database {
 
         /* In the mean time, get the Note then set the associated header ID,
          * then synchronize everything */
-        return getNote(noteID)
-                .thenCompose(
-                        note -> {
-                            note.setHeader(headerID);
-                            return uploadNote(note);
-                        })
-                .thenCompose(note -> headerUploadFuture)
-                .thenApply(str -> null);
-    }
 
-    @Override
-    public CompletableFuture<Void> removeHeader(UUID noteID) {
-        return getNote(noteID)
+        CompletableFuture<Note> currentNote = getNote(noteID);
+
+        // REMOVE PREVIOUS HEADER IF PRESENT
+        currentNote
                 .thenCompose(
                         note -> {
                             Optional<UUID> headerID = note.getHeaderID();
-
-                            /* If there is some audio memo to remove */
                             if (headerID.isPresent()) {
-                                note.removeHeader();
-                                CompletableFuture<Note> uploadNoteFuture = uploadNote(note);
                                 return this.storageService
-                                        .delete(IMAGES_PATH + headerID.get())
-                                        .thenCompose(str -> uploadNoteFuture)
+                                        .delete(IMAGES_PATH + headerID.get() + ".jpeg")
                                         .thenApply(updatedNote -> null);
                             } else {
                                 return CompletableFuture.completedFuture(null);
                             }
                         });
+
+        // STORE NEW HEADER
+        return getNote(noteID)
+                    .thenCompose(
+                            note -> {
+                                note.setHeader(imageID);
+                                return uploadNote(note);
+                            })
+                    .thenCompose(note -> headerUploadFuture)
+                    .thenApply(str -> null);
     }
 
     @Override
     public CompletableFuture<File> getImage(
             @NonNull UUID imageID, @NonNull String destinationPath) {
-        String imageFilePath = IMAGES_PATH + imageID.toString() + ".jpeg";
-
+        String imageFilePath = IMAGES_PATH + imageID + ".jpeg";
         return this.storageService.downloadFile(imageFilePath, destinationPath);
     }
 }

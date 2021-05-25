@@ -173,22 +173,22 @@ public class NoteRepository {
     }
 
     public void setHeaderNote(UUID noteID, String imageFileName) throws FileNotFoundException {
+
+        UUID newUUID = UUID.randomUUID();
+
         this.localDatabase
-                .setHeaderNote(noteID, imageFileName)
+                .setHeaderNote(noteID, imageFileName, newUUID)
                 .thenCompose(note -> this.localDatabase.getNote(noteID))
                 .thenAccept(this.observedNote::postValue);
 
-        this.remoteDatabase.setHeaderNote(noteID, imageFileName);
+        this.remoteDatabase.setHeaderNote(noteID, imageFileName, newUUID);
     }
 
     public CompletableFuture<File> getNoteHeader(UUID imageID, String destinationPath) {
         File file = new File(destinationPath, imageID.toString()+".jpeg");
-        System.err.println(file.exists());
         if(file.exists()){
-            System.err.println("get image from ID : " + imageID);
-            return this.localDatabase.getImage(imageID, destinationPath);}
+            return this.localDatabase.getImage(imageID, file.getAbsolutePath());}
         else {
-            this.localDatabase.getImage(imageID, destinationPath);
-            return this.remoteDatabase.getImage(imageID, destinationPath);}
+            return this.remoteDatabase.getImage(imageID, file.getAbsolutePath());}
     }
 }

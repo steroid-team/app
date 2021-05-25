@@ -191,16 +191,8 @@ public interface Database {
      * @param imagePath A file path to the image to upload in the header of the note
      * @return a void future which completes whenever the image is persisted in the database.
      */
-    CompletableFuture<Void> setHeaderNote(UUID noteID, String imagePath)
+    CompletableFuture<Void> setHeaderNote(UUID noteID, String imagePath, UUID imageID)
             throws FileNotFoundException;
-
-    /**
-     * Removes and deletes the associated image of a note
-     *
-     * @param noteID the note UUID to wich the image is attached to
-     * @return a void future which completes whenever the image is persisted in the database.
-     */
-    CompletableFuture<Void> removeHeader(UUID noteID);
 
     /**
      * Downloads an image file and stores it at the specified destination path on the local

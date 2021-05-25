@@ -727,7 +727,7 @@ public class DatabaseTest {
                 FileNotFoundException.class,
                 () -> {
                     File imageFile = new File("dummy file");
-                    database.setHeaderNote(note.getId(), imageFile.getAbsolutePath()).get();
+                    database.setHeaderNote(note.getId(), imageFile.getAbsolutePath(), UUID.randomUUID()).get();
                 });
     }
 
@@ -794,9 +794,11 @@ public class DatabaseTest {
                 .upload(any(InputStream.class), anyString());
         doReturn(completedUpload).when(storageServiceMock).upload(any(byte[].class), anyString());
 
+        UUID id = UUID.randomUUID();
+
         try {
             File imageFile = folder.newFile("image_file");
-            database.setHeaderNote(note.getId(), imageFile.getAbsolutePath()).get();
+            database.setHeaderNote(note.getId(), imageFile.getAbsolutePath(), id).get();
             verify(storageServiceMock).downloadBytes(anyString());
             verify(storageServiceMock).upload(any(InputStream.class), anyString());
             verify(storageServiceMock).upload(any(byte[].class), anyString());

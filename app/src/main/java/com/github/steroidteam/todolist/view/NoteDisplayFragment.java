@@ -4,9 +4,11 @@ import static com.github.steroidteam.todolist.util.Utils.dip2px;
 import static com.github.steroidteam.todolist.view.NoteSelectionFragment.NOTE_ID_KEY;
 
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
@@ -93,15 +95,13 @@ public class NoteDisplayFragment extends Fragment {
                 .observe(
                         getViewLifecycleOwner(),
                         note -> {
+                            System.out.println("NOTEEE ID : " + note.getId());
                             if (position != null && locationName != null) {
                                 this.noteViewModel.setPositionAndLocation(position, locationName);
                                 position = null;
                                 locationName = null;
                             }
-                            if(note.getHeaderID().isPresent()) {
-                                System.err.println("======================================== " + note.getHeaderID().get());
-                                updateHeader(note.getHeaderID(), root);
-                            }
+                            updateHeader(note.getHeaderID());
                             updateUI(root, note);
                         });
 
@@ -110,23 +110,29 @@ public class NoteDisplayFragment extends Fragment {
         return root;
     }
 
-    private void updateHeader(Optional<UUID> optionalUUID, View root) {
+    private void updateHeader(Optional<UUID> optionalUUID) {
         ConstraintLayout header = getView().findViewById(R.id.note_header);
 
-        File imagePath =
-                new File(
-                        headerFileName,
-                        "user-data/" + UserFactory.get().getUid() + "/images/");
-        noteViewModel
-                .getNoteHeader(optionalUUID.get(), imagePath.getAbsolutePath())
-                .thenAccept(
-                        (f) -> {
-                            Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
-                            BitmapDrawable ob =
-                                    new BitmapDrawable(getResources(), getRoundedBitmap(bitmap));
-                            header.setBackgroundTintList(null);
-                            header.setBackground(ob);
-                        });
+        if(optionalUUID.isPresent()) {
+
+            File imagePath =
+                    new File(
+                            headerFileName,
+                            "user-data/" + UserFactory.get().getUid() + "/images/");
+            noteViewModel
+                    .getNoteHeader(optionalUUID.get(), imagePath.getAbsolutePath())
+                    .thenAccept(
+                            (f) -> {
+                                Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
+                                BitmapDrawable ob =
+                                        new BitmapDrawable(getResources(), getRoundedBitmap(bitmap));
+                                header.setBackgroundTintList(null);
+                                header.setBackground(ob);
+                            });
+        } else {
+            header.setBackgroundTintList(ColorStateList.valueOf(getActivity().getColor(R.color.light_grey)));
+            header.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.rounded_corner_just_bottom_bg));
+        }
     }
 
     private Bitmap getRoundedBitmap(Bitmap bitmap) {
@@ -307,12 +313,11 @@ public class NoteDisplayFragment extends Fragment {
     }
 
     private void updateHeaderImage(Uri uri) {
-        System.err.println("--------------------------------------> URI: " + uri);
         if (uri == null) return;
 
         Bitmap bitmap;
 
-        String tmpFileName = "bitmap_tmp.png";
+        String tmpFileName = "bitmap_tmp.jpeg";
         File tmpFile =
                 new File(
                         getContext().getCacheDir(),
@@ -320,14 +325,12 @@ public class NoteDisplayFragment extends Fragment {
 
         System.err.println(tmpFile.toString() + " " + tmpFile.toURI() + "                     zqdqzd" );
         try (FileOutputStream output = new FileOutputStream(tmpFile)) {
-            System.err.println("OUTPUT STREAM OK ----------- ");
             InputStream is = getContext().getContentResolver().openInputStream(uri);
             bitmap = BitmapFactory.decodeStream(is);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, output);
             is.close();
             output.close();
 
-            System.err.println("--------------------------------------> oui");
             noteViewModel.updateNoteHeader(tmpFile.getAbsolutePath());
         } catch (Exception e) {
             Toast.makeText(getContext(), "Error: could not display the image", Toast.LENGTH_LONG)

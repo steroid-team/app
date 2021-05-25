@@ -57,6 +57,10 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
         String currentCategory = dateCategoryList.get(position);
         if (currentCategory != null) {
             TodoList todoListInCategory = getTodoListForCategory(position);
+            holder.itemView.setVisibility(View.VISIBLE);
+            if (todoListInCategory.getSize() == 0) {
+                holder.itemView.setVisibility(View.INVISIBLE);
+            }
             holder.taskDateCategory.setText(currentCategory);
 
             // Nested layout Manager

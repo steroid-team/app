@@ -21,7 +21,6 @@ public class TodoListRepository {
     private final MutableLiveData<ArrayList<TodoList>> allTodoLiveData;
     private final MutableLiveData<TodoList> observedTodoList;
     private final MutableLiveData<List<Tag>> listTags;
-    private final UUID observedTodoListID;
 
     public TodoListRepository(Context context) {
         this.localDatabase = DatabaseFactory.getLocalDb(context.getCacheDir());
@@ -33,9 +32,6 @@ public class TodoListRepository {
         fetchData();
 
         listTags = new MutableLiveData<>();
-        listTags.setValue(new ArrayList<>());
-        setTagsList();
-        observedTodoListID = observedTodoList.getValue().getId();
     }
 
     public void selectTodolist(UUID id) {
@@ -234,26 +230,26 @@ public class TodoListRepository {
         return listTags.getValue();
     }
 
-    public void putTag(Tag tag) {
+    public void putTag(UUID todoListID, Tag tag) {
         localDatabase
                 .putTag(tag)
-                .thenCompose(t -> localDatabase.putTagInList(observedTodoListID, t.getId()))
-                .thenCompose(str -> localDatabase.getTodoList(observedTodoListID))
+                .thenCompose(t -> localDatabase.putTagInList(todoListID, t.getId()))
+                .thenCompose(str -> localDatabase.getTodoList(todoListID))
                 .thenAccept(observedTodoList::postValue)
                 .thenAccept(
                         str ->
                                 localDatabase
-                                        .getTagsFromList(observedTodoListID)
+                                        .getTagsFromList(todoListID)
                                         .thenAccept(tags -> listTags.postValue(tags)));
     }
 
-    public void destroyTag(Tag tag) {
+    public void destroyTag(UUID todoListID, Tag tag) {
         localDatabase
                 .removeTag(tag.getId())
                 .thenAccept(
                         str ->
                                 localDatabase
-                                        .getTagsFromList(observedTodoListID)
+                                        .getTagsFromList(todoListID)
                                         .thenAccept(tags -> listTags.postValue(tags)));
     }
 

@@ -31,6 +31,7 @@ import com.github.steroidteam.todolist.view.dialog.ListSelectionDialogFragment;
 import com.google.android.gms.maps.model.LatLng;
 import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.UUID;
 import jp.wasabeef.richeditor.RichEditor;
 
@@ -59,6 +60,7 @@ public class NoteDisplayFragment extends Fragment {
         richEditor.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.bg_grey));
         int padding = (int) getResources().getDimension(R.dimen.note_body_padding);
         richEditor.setPadding(padding, padding, padding, 0);
+        richEditor.getSettings().setAllowFileAccess(true);
 
         // The width for any embedded image should be the editor's width. Do the math to
         // transform the dp to px, and subtract the lateral padding.
@@ -101,6 +103,7 @@ public class NoteDisplayFragment extends Fragment {
                 registerForActivityResult(
                         new ActivityResultContracts.GetContent(),
                         uri -> {
+                            System.out.println(uri.toString());
                             if (uri != null)
                                 richEditor.insertImage(uri.toString(), "", imageDisplayWidth);
                         });
@@ -166,6 +169,14 @@ public class NoteDisplayFragment extends Fragment {
         root.findViewById(R.id.editor_action_drawing_btn)
                 .setOnClickListener(
                         v -> {
+                            getParentFragmentManager().setFragmentResultListener(DrawingFragment.DRAW_REQ,this,
+                                    ((requestKey, result) -> {
+                                        String uri = result.getString(DrawingFragment.DRAW_KEY);
+                                        if (uri != null) {
+                                            richEditor.focusEditor();
+                                            richEditor.insertImage(uri, "test", imageDisplayWidth);
+                                        }
+                                    }));
                             // Go to the drawing view.
                             Navigation.findNavController(getView()).navigate(R.id.nav_drawing);
                         });

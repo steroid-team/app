@@ -1,9 +1,14 @@
 package com.github.steroidteam.todolist.view;
 
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +18,8 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
 import com.github.steroidteam.todolist.R;
 import com.larswerkman.holocolorpicker.ColorPicker;
 import com.larswerkman.holocolorpicker.SaturationBar;
@@ -20,11 +27,14 @@ import com.larswerkman.holocolorpicker.ValueBar;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.UUID;
 
 public class DrawingFragment extends Fragment {
 
     public DrawingView drawingCanvas;
+    public static String DRAW_REQ = DrawingFragment.class.toString() + "/draw";
+    public static String DRAW_KEY = "DrawingKey";
     private ColorPicker colorPicker;
     private LinearLayout colorPickerWindow;
     private FrameLayout canvasLayout;
@@ -150,16 +160,27 @@ public class DrawingFragment extends Fragment {
         try (FileOutputStream output = new FileOutputStream(bitmapFile)) {
             drawingCanvas.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, output);
             output.close();
-            MediaScannerConnection.scanFile(
-                    this.getContext(),
-                    new String[] {bitmapFile.toString()},
-                    null,
-                    (path, uri) -> {
-                        getParentFragmentManager().popBackStack();
-                    });
+            FragmentManager manager = getParentFragmentManager();
+            Bundle bundle = new Bundle();
+            Uri uri = Uri.fromFile(bitmapFile);
+            bundle.putString(DRAW_KEY, uri.toString());
+            manager.setFragmentResult(DRAW_REQ, bundle);
+            manager.popBackStack();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String getRealPathFromURI(Uri contentUri) {
+        String res = null;
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getContext().getContentResolver().query(contentUri, proj, null, null, null);
+        if(cursor.moveToFirst()){;
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            res = cursor.getString(column_index);
+        }
+        cursor.close();
+        return res;
     }
 
     public void eraseButton(View view) {

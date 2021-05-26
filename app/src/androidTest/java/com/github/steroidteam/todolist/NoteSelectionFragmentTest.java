@@ -20,11 +20,14 @@ import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckText
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
+import android.content.Context;
 import androidx.fragment.app.testing.FragmentScenario;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.view.NoteSelectionFragment;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -46,9 +49,14 @@ public class NoteSelectionFragmentTest {
 
     private FragmentScenario<NoteSelectionFragment> scenario;
     @Mock Database databaseMock;
+    @Mock Context context;
 
     @Before
     public void init() {
+
+        // Mock context for Broadcast Reminder
+        doReturn(context).when(context).getApplicationContext();
+
         List<UUID> notes = Collections.singletonList(UUID.randomUUID());
         CompletableFuture<List<UUID>> notesFuture = new CompletableFuture<>();
         notesFuture.complete(notes);
@@ -67,6 +75,10 @@ public class NoteSelectionFragmentTest {
         doReturn(noteFuture).when(databaseMock).updateNote(any(UUID.class), any(Note.class));
 
         DatabaseFactory.setCustomDatabase(databaseMock);
+
+        File fakeFile = new File("Fake pathname");
+        doReturn(fakeFile).when(context).getCacheDir();
+        ViewModelFactoryInjection.setCustomNoteRepo(context, UUID.randomUUID());
 
         scenario =
                 FragmentScenario.launchInContainer(
@@ -156,10 +168,10 @@ public class NoteSelectionFragmentTest {
 
         onView(withId(android.R.id.button1)).perform(click());
 
-        onView(withId(R.id.alert_dialog_edit_text)).check(doesNotExist());
-
-        onView(withId(R.id.activity_noteselection_recycler))
-                .check(matches(atPositionCheckText(0, NOTE_TITLE_2, NOTE_TITLE_LAYOUT_ID)));
+        onView(
+                        new RecyclerViewMatcher(R.id.activity_noteselection_recycler)
+                                .atPositionOnView(0, NOTE_TITLE_LAYOUT_ID))
+                .check(matches(withText(NOTE_TITLE_2)));
     }
 
     @Test

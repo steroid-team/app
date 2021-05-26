@@ -10,8 +10,14 @@ public class Note {
     private final UUID id;
     private String title;
     private String content;
+
     private LatLng latLng;
+    private String locationName;
+
     private UUID audioMemoId;
+    private UUID header;
+
+    public static final String NO_LOCATION = "No location";
 
     public Note(@NonNull String title) {
         if (title == null) {
@@ -21,7 +27,9 @@ public class Note {
         this.title = title;
         this.content = "";
         this.latLng = null;
+        this.locationName = NO_LOCATION;
         this.audioMemoId = null;
+        this.header = null;
     }
 
     public UUID getId() {
@@ -40,9 +48,18 @@ public class Note {
         return latLng;
     }
 
+    public String getLocationName() {
+        return locationName;
+    }
+
     public Optional<UUID> getAudioMemoId() {
         if (audioMemoId == null) return Optional.empty();
         else return Optional.of(audioMemoId);
+    }
+
+    public Optional<UUID> getHeaderID() {
+        if (header == null) return Optional.empty();
+        else return Optional.of(header);
     }
 
     public Note setTitle(@NonNull String title) {
@@ -50,12 +67,19 @@ public class Note {
         return this;
     }
 
-    public void setContent(@NonNull String content) {
+    public Note setContent(@NonNull String content) {
         this.content = content;
+        return this;
     }
 
-    public void setLatLng(@NonNull LatLng latLng) {
+    public Note setLatLng(@NonNull LatLng latLng) {
         this.latLng = latLng;
+        return this;
+    }
+
+    public Note setLocationName(@NonNull String locationName) {
+        this.locationName = locationName;
+        return this;
     }
 
     public void setAudioMemoId(@NonNull UUID audioMemoId) {
@@ -64,5 +88,14 @@ public class Note {
 
     public void removeAudioMemoId() {
         audioMemoId = null;
+    }
+
+    public Note setHeader(UUID headerID) {
+        this.header = headerID;
+        return this;
+    }
+
+    public void removeHeader() {
+        this.header = null;
     }
 }

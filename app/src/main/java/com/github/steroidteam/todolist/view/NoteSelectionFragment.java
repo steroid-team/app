@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.model.user.UserFactory;
 import com.github.steroidteam.todolist.view.adapter.NoteArrayListAdapter;
 import com.github.steroidteam.todolist.view.dialog.DialogListener;
 import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
@@ -22,6 +23,9 @@ import com.github.steroidteam.todolist.view.misc.SwipeTouchHelper;
 import com.github.steroidteam.todolist.viewmodel.NoteViewModel;
 import com.github.steroidteam.todolist.viewmodel.NoteViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
+
+import java.io.File;
+import java.util.Optional;
 import java.util.UUID;
 
 public class NoteSelectionFragment extends Fragment {
@@ -29,12 +33,19 @@ public class NoteSelectionFragment extends Fragment {
     private NoteViewModel viewModel;
     private NoteArrayListAdapter adapter;
 
+    private File imagePath;
+
     public static final String NOTE_ID_KEY = "id";
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View root = inflater.inflate(R.layout.fragment_note_selection, container, false);
+
+        String headerFilePath = getActivity().getCacheDir().getAbsolutePath();
+        File imagePath =
+                new File(
+                        headerFilePath, "user-data/" + UserFactory.get().getUid() + "/images/");
 
         root.findViewById(R.id.create_note_button).setOnClickListener(this::createNote);
 
@@ -55,6 +66,16 @@ public class NoteSelectionFragment extends Fragment {
                 .observe(
                         getViewLifecycleOwner(),
                         (noteList) -> {
+                            for(Note note: noteList) {
+                                Optional<UUID> optionalUUID = note.getHeaderID();
+                                optionalUUID.ifPresent(uuid ->
+                                        viewModel.getNoteHeader(uuid, imagePath.getAbsolutePath())
+                                            .thenAccept(f -> {
+                                                System.out.println("UPDATE HEADERRRRRRRRRRRRRRR");
+                                                adapter.putHeaderPath(note.getId(), f);
+                                                adapter.notifyDataSetChanged();
+                                            }));
+                            }
                             adapter.setNoteList(noteList);
                             adapter.notifyDataSetChanged();
                         });

@@ -72,6 +72,14 @@ public interface Database {
     CompletableFuture<TodoList> removeTask(UUID todoListID, Integer taskIndex);
 
     /**
+     * Removes all done tasks of a to-do list from the database.
+     *
+     * @param todoListID The id of the associated list of the task.
+     * @return the updated todoList
+     */
+    CompletableFuture<TodoList> removeDoneTasks(UUID todoListID);
+
+    /**
      * Updates a task in the database.
      *
      * @param todoListID The id of the associated list of the task.
@@ -200,4 +208,25 @@ public interface Database {
     CompletableFuture<List<Tag>> getTagsFromIds(List<UUID> ids);
 
     CompletableFuture<List<Tag>> getTagsFromList(UUID listId);
+    /**
+     * Saves and associate an image to a note (in the header of the note). If an image already
+     * exists, it is replaced and DELETED !
+     *
+     * @param noteID the note UUID to wich the image is attached to
+     * @param imagePath A file path to the image to upload in the header of the note
+     * @return a void future which completes whenever the image is persisted in the database.
+     */
+    CompletableFuture<Void> setHeaderNote(UUID noteID, String imagePath, UUID imageID)
+            throws FileNotFoundException;
+
+    /**
+     * Downloads an image file and stores it at the specified destination path on the local
+     * filesystem.
+     *
+     * @param imageID the UUID of the image to download
+     * @param destinationPath the path on the local filesystem where the file should be stored when
+     *     download completes.
+     * @return a File future which completes whenever the image is present on the local filesystem.
+     */
+    CompletableFuture<File> getImage(UUID imageID, String destinationPath);
 }

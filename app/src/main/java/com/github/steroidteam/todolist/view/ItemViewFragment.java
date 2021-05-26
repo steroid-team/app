@@ -1,9 +1,11 @@
 package com.github.steroidteam.todolist.view;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.text.Editable;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -15,11 +17,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
@@ -35,6 +40,7 @@ import com.github.steroidteam.todolist.view.misc.DueDateInputSpan;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +53,7 @@ public class ItemViewFragment extends Fragment {
     public static final int PERMISSIONS_ACCESS_LOCATION = 2;
     private final PrettyTimeParser timeParser = new PrettyTimeParser();
     List<Tag> tags;
+    private ActivityResultLauncher<Intent> calendarExportIntentLauncher;
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,6 +99,10 @@ public class ItemViewFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
 
         root.findViewById(R.id.new_task_btn).setOnClickListener(this::addTask);
+        root.findViewById(R.id.remove_done_tasks_btn).setOnClickListener(this::removeDoneTasks);
+
+        ConstraintLayout updateLayout = root.findViewById(R.id.layout_update_task);
+        updateLayout.setVisibility(View.GONE);
 
         root.findViewById(R.id.itemview_tag_button).setOnClickListener(this::tagButton);
         root.findViewById(R.id.itemview_tag_save_button).setOnClickListener(this::tagSaveButton);
@@ -101,6 +112,10 @@ public class ItemViewFragment extends Fragment {
 
         tags = viewModel.getTags();
         tags.sort(Tag.sortByBody);
+
+        calendarExportIntentLauncher =
+                registerForActivityResult(
+                        new ActivityResultContracts.StartActivityForResult(), (result) -> {});
 
         return root;
     }
@@ -178,6 +193,15 @@ public class ItemViewFragment extends Fragment {
         Toast.makeText(getContext(), "Successfully removed the task !", Toast.LENGTH_SHORT).show();
     }
 
+    public void removeDoneTasks(View view) {
+        viewModel.removeDoneTasks();
+        Toast.makeText(
+                        getContext(),
+                        "Successfully removed all tasks you have done !",
+                        Toast.LENGTH_LONG)
+                .show();
+    }
+
     public void closeUpdateLayout(View view) {
         ConstraintLayout updateLayout = getView().findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.GONE);
@@ -193,23 +217,26 @@ public class ItemViewFragment extends Fragment {
         ConstraintLayout updateLayout = getView().findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.VISIBLE);
 
+        Task thisTask = viewModel.getTask(position);
+
         EditText userInputBody = getView().findViewById(R.id.layout_update_task_body);
-        userInputBody.setText(holder.getTaskBody());
+        userInputBody.setText(thisTask.getBody());
         userInputBody.addTextChangedListener(
                 new DateHighlighterTextWatcher(getContext(), timeParser));
 
         CheckBox taskCheckedBox = getView().findViewById(R.id.layout_update_task_checkbox);
-        taskCheckedBox.setChecked(holder.getTaskDone());
+        taskCheckedBox.setChecked(thisTask.isDone());
 
         SaveButtonSetup(userInputBody, position);
-
         DeleteButtonSetup(position);
+        calendarExportButtonSetup(position);
 
         Button closeButton = getView().findViewById(R.id.layout_update_task_close);
         closeButton.setOnClickListener(this::closeUpdateLayout);
     }
 
     private void SaveButtonSetup(EditText userInput, final int position) {
+
         Button saveButton = getView().findViewById(R.id.layout_update_task_save);
         saveButton.setOnClickListener(
                 (v) -> {
@@ -233,6 +260,64 @@ public class ItemViewFragment extends Fragment {
                 (v) -> {
                     closeUpdateLayout(v);
                     removeTask(position);
+                });
+
+        Button addLocationButton = getView().findViewById(R.id.AddLocationReminderButton);
+        String locationName =
+                viewModel.getTodoList().getValue().getTask(position).getLocationName();
+        if (locationName != null) addLocationButton.setText(locationName);
+
+        getView()
+                .findViewById(R.id.AddLocationReminderButton)
+                .setOnClickListener(
+                        v -> {
+                            getParentFragmentManager()
+                                    .setFragmentResultListener(
+                                            MapFragment.LOCATION_REQ,
+                                            this,
+                                            (requestKey, bundle) -> {
+                                                viewModel.setTaskLocationReminder(
+                                                        position,
+                                                        bundle.getParcelable(
+                                                                MapFragment.LOCATION_KEY),
+                                                        bundle.getString(
+                                                                MapFragment.LOCATION_NAME_KEY));
+                                                getParentFragmentManager()
+                                                        .clearFragmentResultListener(
+                                                                MapFragment.LOCATION_REQ);
+                                            });
+
+                            Navigation.findNavController(getView()).navigate(R.id.nav_map);
+                        });
+
+        Button closeButton = getView().findViewById(R.id.layout_update_task_close);
+        closeButton.setOnClickListener(this::closeUpdateLayout);
+    }
+
+    private void calendarExportButtonSetup(final int position) {
+        Task thisTask = viewModel.getTask(position);
+
+        Button calendarExportButton =
+                getView().findViewById(R.id.layout_update_task_export_calendar);
+        if (thisTask.getDueDate() != null)
+            calendarExportButton.setText(thisTask.getDueDate().toString());
+        calendarExportButton.setOnClickListener(
+                (v) -> {
+                    Calendar startTime = Calendar.getInstance();
+                    // If available, use the task's due date for the calendar export. If it has
+                    // not been set, it will use the current date.
+                    if (thisTask.getDueDate() != null) {
+                        startTime.setTime(thisTask.getDueDate());
+                    }
+
+                    Intent intent =
+                            new Intent(Intent.ACTION_INSERT)
+                                    .setData(CalendarContract.Events.CONTENT_URI)
+                                    .putExtra(
+                                            CalendarContract.EXTRA_EVENT_BEGIN_TIME,
+                                            startTime.getTimeInMillis())
+                                    .putExtra(CalendarContract.Events.TITLE, thisTask.getBody());
+                    calendarExportIntentLauncher.launch(intent);
                 });
     }
 

@@ -28,6 +28,7 @@ public class FileStorageDatabase implements Database {
     private static final String NOTES_PATH = "/notes/";
     private static final String AUDIO_MEMOS_PATH = "/audio-memos/";
     private static final String TAGS_PATH = "/tags/";
+    private static final String IMAGES_PATH = "/images/";
     private final FileStorageService storageService;
 
     public FileStorageDatabase(@NonNull FileStorageService storageService) {
@@ -128,6 +129,7 @@ public class FileStorageDatabase implements Database {
                             todoList.addTask(task);
                             return todoList;
                         })
+                .thenApply(todoList -> todoList.sortByDate())
                 // Re-serialize and upload the new object.
                 .thenApply(JSONSerializer::serializeTodoList)
                 .thenApply(
@@ -150,6 +152,32 @@ public class FileStorageDatabase implements Database {
                             todoList.removeTask(taskIndex);
                             return todoList;
                         })
+                .thenApply(todoList -> todoList.sortByDate())
+                .thenCompose(
+                        todoList -> {
+                            byte[] bytes =
+                                    JSONSerializer.serializeTodoList(todoList)
+                                            .getBytes(StandardCharsets.UTF_8);
+                            return this.storageService
+                                    .upload(bytes, listPath)
+                                    .thenApply(str -> todoList);
+                        });
+    }
+
+    @Override
+    public CompletableFuture<TodoList> removeDoneTasks(@NonNull UUID todoListID) {
+        Objects.requireNonNull(todoListID);
+        String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
+
+        // Fetch the remote list that we are about to update
+        return getTodoList(todoListID)
+                // Remove all done tasks from the object
+                .thenApply(
+                        todoList -> {
+                            todoList.removeDoneTasks();
+                            return todoList;
+                        })
+                .thenApply(todoList -> todoList.sortByDate())
                 .thenCompose(
                         todoList -> {
                             byte[] bytes =
@@ -174,6 +202,7 @@ public class FileStorageDatabase implements Database {
                             todoList.updateTask(taskIndex, newTask);
                             return todoList;
                         })
+                .thenApply(todoList -> todoList.sortByDate())
                 // Re-serialize and upload the new object.
                 .thenCompose(todoList -> uploadTask(todoList, taskIndex, listPath));
     }
@@ -478,5 +507,55 @@ public class FileStorageDatabase implements Database {
         return getTodoList(listId)
                 .thenApply(list -> list.getTagsIds())
                 .thenCompose(tagsIds -> getTagsFromIds(tagsIds));
+    }
+
+    @Override
+    public CompletableFuture<Void> setHeaderNote(UUID noteID, String imagePath, UUID imageID)
+            throws FileNotFoundException {
+        Objects.requireNonNull(noteID);
+        Objects.requireNonNull(imagePath);
+
+        String fileSystemHeaderPath = IMAGES_PATH + imageID + ".jpeg";
+
+        InputStream is = new FileInputStream(new File(imagePath));
+
+        /* First, upload the header image */
+        CompletableFuture<String> headerUploadFuture =
+                this.storageService.upload(is, fileSystemHeaderPath);
+
+        /* In the mean time, get the Note then set the associated header ID,
+         * then synchronize everything */
+
+        CompletableFuture<Note> currentNote = getNote(noteID);
+
+        // REMOVE PREVIOUS HEADER IF PRESENT
+        currentNote.thenCompose(
+                note -> {
+                    Optional<UUID> headerID = note.getHeaderID();
+                    if (headerID.isPresent()) {
+                        return this.storageService
+                                .delete(IMAGES_PATH + headerID.get() + ".jpeg")
+                                .thenApply(updatedNote -> null);
+                    } else {
+                        return CompletableFuture.completedFuture(null);
+                    }
+                });
+
+        // STORE NEW HEADER
+        return getNote(noteID)
+                .thenCompose(
+                        note -> {
+                            note.setHeader(imageID);
+                            return uploadNote(note);
+                        })
+                .thenCompose(note -> headerUploadFuture)
+                .thenApply(str -> null);
+    }
+
+    @Override
+    public CompletableFuture<File> getImage(
+            @NonNull UUID imageID, @NonNull String destinationPath) {
+        String imageFilePath = IMAGES_PATH + imageID + ".jpeg";
+        return this.storageService.downloadFile(imageFilePath, destinationPath);
     }
 }

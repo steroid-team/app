@@ -2,6 +2,7 @@ package com.github.steroidteam.todolist.model.todo;
 
 import androidx.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -48,6 +49,10 @@ public class TodoList {
             // Otherwise we use .remove(Object o) and not .remove(int index) as wanted.
             list.remove((int) index);
         }
+    }
+
+    public void removeDoneTasks() {
+        list.removeIf(Task::isDone);
     }
 
     public Task getTask(Integer index) {
@@ -101,6 +106,28 @@ public class TodoList {
 
     public boolean containsTag(UUID tagId) {
         return tags.contains(tagId);
+    }
+
+    public TodoList sortByDate() {
+        Collections.sort(
+                list,
+                (task, t1) -> {
+                    Date date1 = task.getDueDate();
+                    Date date2 = t1.getDueDate();
+                    // We use the convention that null > than others
+                    if (date1 == null && date2 == null) {
+                        return 0;
+                    }
+                    if (date1 == null && date2 != null) {
+                        return 1;
+                    }
+                    if (date1 != null && date2 == null) {
+                        return -1;
+                    }
+
+                    return date1.compareTo(date2);
+                });
+        return this;
     }
 
     @Override

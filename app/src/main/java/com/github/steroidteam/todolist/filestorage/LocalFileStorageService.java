@@ -81,8 +81,18 @@ public class LocalFileStorageService implements FileStorageService {
     @Override
     public CompletableFuture<File> downloadFile(
             @NonNull @NotNull String path, @NonNull @NotNull String destinationPath) {
-        System.err.println("downloadFile method is NEVER USED LOCALLY!");
-        return null;
+
+        /*
+         * WARNING!
+         *
+         * As you are managing file locally there are already present so we just return the destinationPath.
+         * If they are not you should download it from the remote database.
+         */
+
+        CompletableFuture<File> fileCompletableFuture = new CompletableFuture<>();
+        File file = getFile(this.getRootFile(), this.getUserspaceRef(path));
+        fileCompletableFuture.complete(file);
+        return fileCompletableFuture;
     }
 
     @Override
@@ -156,9 +166,10 @@ public class LocalFileStorageService implements FileStorageService {
             FileOutputStream fos = new FileOutputStream(file);
             byte[] buffer = new byte[1024];
             int bytesLen;
-            while ((bytesLen = data.read()) != -1) {
+            while ((bytesLen = data.read(buffer)) > 0) {
                 fos.write(buffer, 0, bytesLen);
             }
+            fos.flush();
             fos.close();
         } catch (Exception ignored) {
         } finally {

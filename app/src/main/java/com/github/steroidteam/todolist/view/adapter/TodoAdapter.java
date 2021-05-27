@@ -13,14 +13,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
+import java.util.Map;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
     private TodoList todoList;
     private TaskCustomListener listener;
+    private Map<Task, Integer> taskIntegerMap;
 
-    public TodoAdapter(TaskCustomListener listener) {
+    public TodoAdapter(TaskCustomListener listener, Map<Task, Integer> taskIntegerMap) {
         this.listener = listener;
+        this.taskIntegerMap = taskIntegerMap;
     }
 
     @NonNull
@@ -36,6 +39,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
     public void onBindViewHolder(@NonNull TaskHolder holder, int position) {
         Task currentTask = todoList.getTask(position);
 
+        holder.setPosition(taskIntegerMap.get(currentTask));
         holder.taskBody.setText(currentTask.getBody());
         holder.taskBox.setChecked(currentTask.isDone());
 
@@ -58,7 +62,8 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
     public void setTodoList(TodoList todoList) {
         // Updates the adapter with the new todoList (the observable one)
-        this.todoList = todoList;
+        // this.todoList = todoList;
+        this.todoList = todoList.sortByDate();
         // Check notifyDataSetChanged() might not be the best function
         // considering performance
         notifyDataSetChanged();
@@ -77,6 +82,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         private final TextView taskBody;
         private final CheckBox taskBox;
         private final Button taskDelete;
+        private int position;
 
         public TaskHolder(@NonNull View itemView) {
             super(itemView);
@@ -86,22 +92,23 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
             taskBox.setOnClickListener(
                     (v) -> {
-                        int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
-                            listener.onCheckedChangedCustom(
-                                    getAdapterPosition(), taskBox.isChecked());
+                            listener.onCheckedChangedCustom(position, taskBox.isChecked());
                         }
                     });
 
-            taskDelete.setOnClickListener(v -> listener.onItemDelete(getAdapterPosition()));
+            taskDelete.setOnClickListener(v -> listener.onItemDelete(position));
 
             itemView.setOnClickListener(
                     (v) -> {
-                        int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
-                            listener.onItemClick(this, getAdapterPosition());
+                            listener.onItemClick(this, position);
                         }
                     });
+        }
+
+        public void setPosition(int position) {
+            this.position = position;
         }
 
         public void displayDeleteButton() {

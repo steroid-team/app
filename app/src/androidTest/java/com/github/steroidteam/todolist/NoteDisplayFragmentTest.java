@@ -17,22 +17,29 @@ import static androidx.test.espresso.web.webdriver.DriverAtoms.findElement;
 import static androidx.test.espresso.web.webdriver.DriverAtoms.getText;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import android.os.Bundle;
+import android.content.Context;
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.navigation.Navigation;
 import androidx.navigation.testing.TestNavHostController;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.web.webdriver.Locator;
+import androidx.test.platform.app.InstrumentationRegistry;
 import com.github.steroidteam.todolist.customviewactions.RichEditorGetHtml;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.util.Utils;
 import com.github.steroidteam.todolist.view.NoteDisplayFragment;
-import com.github.steroidteam.todolist.view.NoteSelectionFragment;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.hamcrest.MatcherAssert;
@@ -65,21 +72,36 @@ public class NoteDisplayFragmentTest {
 
     @Mock Database databaseMock;
 
+    @Mock Context context;
+
     @Before
     public void init() {
+
+        // Mock context for Broadcast Reminder
+        doReturn(context).when(context).getApplicationContext();
+
         Note note = new Note(FIXTURE_DEFAULT_NOTE_TITLE);
         note.setContent(FIXTURE_DEFAULT_NOTE_CONTENT);
         CompletableFuture<Note> noteFuture = new CompletableFuture<>();
         noteFuture.complete(note);
-        doReturn(noteFuture).when(databaseMock).getNote(any(UUID.class));
+
+        List<UUID> notes = Collections.singletonList(UUID.randomUUID());
+        CompletableFuture<List<UUID>> notesFuture = new CompletableFuture<>();
+        notesFuture.complete(notes);
+
+        doReturn(notesFuture).when(databaseMock).getNotesList();
+        doReturn(noteFuture).when(databaseMock).getNote(any());
+        doReturn(noteFuture).when(databaseMock).updateNote(any(), any());
 
         DatabaseFactory.setCustomDatabase(databaseMock);
 
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(NoteSelectionFragment.NOTE_ID_KEY, UUID.randomUUID());
+        File fakeFile = new File("Fake pathname");
+        doReturn(fakeFile).when(context).getCacheDir();
+        ViewModelFactoryInjection.setCustomNoteRepo(context, UUID.randomUUID());
+
         scenario =
                 FragmentScenario.launchInContainer(
-                        NoteDisplayFragment.class, bundle, R.style.Theme_Asteroid);
+                        NoteDisplayFragment.class, null, R.style.Theme_Asteroid);
     }
 
     @Test
@@ -169,12 +191,12 @@ public class NoteDisplayFragmentTest {
                 .withElement(findElement(Locator.ID, "editor"))
                 .check(webMatches(getText(), containsString(FIXTURE_MODIFIED_NOTE_CONTENT)));
 
-        // Hit the "save" button.
-        onView(withId(R.id.notedisplay_save_btn)).perform(click());
+        // Makes the rich editor lost focus
+        onView(withId(R.id.note_header)).perform(click());
 
         // Make sure that the note is updated in the database.
         ArgumentCaptor<Note> captor = ArgumentCaptor.forClass(Note.class);
-        verify(databaseMock).putNote(any(), captor.capture());
+        verify(databaseMock, times(2)).updateNote(any(), captor.capture());
         Note updatedNote = captor.getValue();
         assertThat(updatedNote.getTitle(), equalTo(FIXTURE_DEFAULT_NOTE_TITLE));
         assertThat(updatedNote.getContent(), equalTo(FIXTURE_MODIFIED_NOTE_CONTENT));
@@ -185,5 +207,16 @@ public class NoteDisplayFragmentTest {
         onView(withId(R.id.camera_button)).perform(click());
         onView(withText("How do you want to add an image ?")).check(matches(isDisplayed()));
         onView(withText("Take a photo")).perform(click());
+    }
+
+    @Test
+    public void dip2pxWorks() {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        float scale = context.getResources().getDisplayMetrics().density;
+        float dpInput = 10;
+
+        int pxExpected = (int) (dpInput * scale + 0.5f);
+
+        assertEquals(pxExpected, Utils.dip2px(context, dpInput));
     }
 }

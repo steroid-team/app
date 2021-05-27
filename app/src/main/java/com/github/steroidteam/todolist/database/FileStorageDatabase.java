@@ -26,6 +26,8 @@ public class FileStorageDatabase implements Database {
     private static final String TODO_LIST_PATH = "/todo-lists/";
     private static final String NOTES_PATH = "/notes/";
     private static final String AUDIO_MEMOS_PATH = "/audio-memos/";
+    private static final String IMAGES_PATH = "/images/";
+
     private final FileStorageService storageService;
 
     public FileStorageDatabase(@NonNull FileStorageService storageService) {
@@ -354,5 +356,55 @@ public class FileStorageDatabase implements Database {
 
         byte[] bytes = JSONSerializer.serializeNote(note).getBytes(StandardCharsets.UTF_8);
         return this.storageService.upload(bytes, notePath).thenApply(str -> note);
+    }
+
+    @Override
+    public CompletableFuture<Void> setHeaderNote(UUID noteID, String imagePath, UUID imageID)
+            throws FileNotFoundException {
+        Objects.requireNonNull(noteID);
+        Objects.requireNonNull(imagePath);
+
+        String fileSystemHeaderPath = IMAGES_PATH + imageID + ".jpeg";
+
+        InputStream is = new FileInputStream(new File(imagePath));
+
+        /* First, upload the header image */
+        CompletableFuture<String> headerUploadFuture =
+                this.storageService.upload(is, fileSystemHeaderPath);
+
+        /* In the mean time, get the Note then set the associated header ID,
+         * then synchronize everything */
+
+        CompletableFuture<Note> currentNote = getNote(noteID);
+
+        // REMOVE PREVIOUS HEADER IF PRESENT
+        currentNote.thenCompose(
+                note -> {
+                    Optional<UUID> headerID = note.getHeaderID();
+                    if (headerID.isPresent()) {
+                        return this.storageService
+                                .delete(IMAGES_PATH + headerID.get() + ".jpeg")
+                                .thenApply(updatedNote -> null);
+                    } else {
+                        return CompletableFuture.completedFuture(null);
+                    }
+                });
+
+        // STORE NEW HEADER
+        return getNote(noteID)
+                .thenCompose(
+                        note -> {
+                            note.setHeader(imageID);
+                            return uploadNote(note);
+                        })
+                .thenCompose(note -> headerUploadFuture)
+                .thenApply(str -> null);
+    }
+
+    @Override
+    public CompletableFuture<File> getImage(
+            @NonNull UUID imageID, @NonNull String destinationPath) {
+        String imageFilePath = IMAGES_PATH + imageID + ".jpeg";
+        return this.storageService.downloadFile(imageFilePath, destinationPath);
     }
 }

@@ -4,6 +4,8 @@ import android.content.Context;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.github.steroidteam.todolist.model.notes.Note;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -167,6 +169,8 @@ public class NoteRepository {
     public void updateNote(UUID noteID, Note updatedNote) {
         this.localDatabase
                 .updateNote(noteID, updatedNote)
+                .thenCompose(str -> this.localDatabase.getNote(noteID))
+                .thenAccept(this.observedNote::postValue)
                 .thenCompose(str -> this.localDatabase.getNotesList())
                 .thenAccept(
                         uuids -> {
@@ -174,5 +178,26 @@ public class NoteRepository {
                         });
 
         this.remoteDatabase.updateNote(noteID, updatedNote);
+    }
+
+    public void setHeaderNote(UUID noteID, String imageFileName) throws FileNotFoundException {
+
+        UUID newUUID = UUID.randomUUID();
+
+        this.localDatabase
+                .setHeaderNote(noteID, imageFileName, newUUID)
+                .thenCompose(note -> this.localDatabase.getNote(noteID))
+                .thenAccept(this.observedNote::postValue);
+
+        this.remoteDatabase.setHeaderNote(noteID, imageFileName, newUUID);
+    }
+
+    public CompletableFuture<File> getNoteHeader(UUID imageID, String destinationPath) {
+        File file = new File(destinationPath, imageID.toString() + ".jpeg");
+        if (file.exists()) {
+            return this.localDatabase.getImage(imageID, file.getAbsolutePath());
+        } else {
+            return this.remoteDatabase.getImage(imageID, file.getAbsolutePath());
+        }
     }
 }

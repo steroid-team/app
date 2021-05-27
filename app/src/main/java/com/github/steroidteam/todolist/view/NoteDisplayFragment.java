@@ -95,7 +95,6 @@ public class NoteDisplayFragment extends Fragment {
                 .observe(
                         getViewLifecycleOwner(),
                         note -> {
-                            System.out.println("NOTEEE ID : " + note.getId());
                             if (position != null && locationName != null) {
                                 this.noteViewModel.setPositionAndLocation(position, locationName);
                                 position = null;

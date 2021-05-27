@@ -53,7 +53,7 @@ public class TodoListRepository {
 
     public LiveData<TodoList> getTodoList() {
         if (this.observedTodoList.getValue() != null) {
-            this.observedTodoList.getValue().sortByDate();
+            this.observedTodoList.getValue().sortByDate().sortByDone();
         }
         return this.observedTodoList;
     }
@@ -217,6 +217,7 @@ public class TodoListRepository {
         this.localDatabase
                 .updateTask(todoListID, index, updatedTask)
                 .thenCompose(task -> this.localDatabase.getTodoList(todoListID))
+                .thenApply(todoList -> todoList.sortByDate())
                 .thenAccept(this.observedTodoList::postValue);
     }
 

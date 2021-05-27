@@ -165,16 +165,13 @@
                     android:id="@+id/layout_update_task_checkbox"
                     style="@style/TaskEntryCheckbox"
                     android:layout_width="32dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_height="wrap_content" />
 
                 <EditText
                     android:id="@+id/layout_update_task_body"
                     style="@style/TaskEntryText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
                     android:background="@null"
                     android:hint="@string/task_edit_hint"
                     android:importantForAutofill="no"
@@ -186,16 +183,25 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/locationReminderText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/date_reminder"
+                    android:textStyle="bold" />
 
                 <Button
                     android:id="@+id/layout_update_task_export_calendar"
                     style="@style/BorderlessButton"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:drawableStart="@drawable/calendar_icon"
                     android:drawablePadding="8dp"
@@ -215,12 +221,17 @@
                     android:id="@+id/LocationReminderText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/location_reminder" />
+                    android:layout_marginTop="20dp"
+                    android:text="@string/location_reminder"
+                    android:textStyle="bold" />
 
                 <Button
                     android:id="@+id/AddLocationReminderButton"
-                    android:layout_width="match_parent"
+                    style="@style/BorderlessButton"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:drawableStart="@android:drawable/ic_menu_mylocation"
                     android:text="@string/add_location" />
             </LinearLayout>
 

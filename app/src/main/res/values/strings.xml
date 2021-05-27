@@ -100,5 +100,6 @@
     <string name="add_location">Add location</string>
     <string name="location_reminder">Location reminder</string>
     <string name="export_to_calendar">Export to calendar</string>
+    <string name="date_reminder">Date reminder</string>
     <string name="remove_due_date">Remove due date</string>
 </resources>

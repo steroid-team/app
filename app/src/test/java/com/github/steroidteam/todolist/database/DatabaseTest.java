@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -786,7 +787,7 @@ public class DatabaseTest {
     public void putTagWorks() {
         final Tag tag = new Tag("Work");
         final String expectedPath = TAGS_PATH + tag.getId().toString() + ".json";
-        final byte[] serializedList =
+        final byte[] serializedTag =
                 JSONSerializer.serializeTag(tag).getBytes(StandardCharsets.UTF_8);
 
         // Return a future like the one that the FirebaseFileStorageService would produce after
@@ -804,7 +805,7 @@ public class DatabaseTest {
             fail();
         }
 
-        verify(storageServiceMock).upload(serializedList, expectedPath);
+        verify(storageServiceMock).upload(serializedTag, expectedPath);
     }
 
     @Test
@@ -823,6 +824,54 @@ public class DatabaseTest {
                 () -> {
                     new FileStorageDatabase(storageServiceMock).getTag(null);
                 });
+    }
+
+    @Test
+    public void removeTagWorks() {
+        final UUID tagID = UUID.randomUUID();
+        final String expectedTagPath = TAGS_PATH + tagID.toString() + ".json";
+        final TodoList todoList = new TodoList("Todolist");
+        todoList.addTagId(tagID);
+        final String expectedTodoListPath = TODO_LIST_PATH + todoList.getId().toString() + ".json";
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully removing the file.
+        final CompletableFuture<Void> completedFuture = CompletableFuture.completedFuture(null);
+        doReturn(completedFuture).when(storageServiceMock).delete(expectedTagPath);
+
+        final byte[] serializedList =
+                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully downloading the file.
+        final CompletableFuture<byte[]> completedFutureDownload =
+                CompletableFuture.completedFuture(serializedList);
+        doReturn(completedFutureDownload).when(storageServiceMock).downloadBytes(any());
+
+        UUID uuid1 = UUID.randomUUID();
+        UUID uuid2 = tagID;
+        UUID uuid3 = UUID.randomUUID();
+
+        CompletableFuture<String[]> listDirFuture = new CompletableFuture<>();
+        listDirFuture.complete(new String[] {uuid1.toString(), uuid2.toString(), uuid3.toString()});
+        doReturn(listDirFuture).when(storageServiceMock).listDir(anyString());
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully uploading the file.
+        final CompletableFuture<String> completedFutureUpload =
+                CompletableFuture.completedFuture(expectedTodoListPath);
+        doReturn(completedFutureUpload)
+                .when(storageServiceMock)
+                .upload(any(byte[].class), anyString());
+
+        // Try to remove a list.
+        try {
+            database.removeTag(tagID).join();
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(storageServiceMock).delete(expectedTagPath);
     }
 
     @Test
@@ -947,10 +996,64 @@ public class DatabaseTest {
     }
 
     @Test
-    public void getTagsFromIdsWorks() {}
+    public void getTagsFromIdsWorks() {
+        Tag expectedTag = new Tag("TAG");
+        List<UUID> idsList = new ArrayList<>();
+        idsList.add(expectedTag.getId());
+        idsList.add(expectedTag.getId());
+
+        byte[] serializedTag =
+                JSONSerializer.serializeTag(expectedTag).getBytes(StandardCharsets.UTF_8);
+        downloadFuture.complete(serializedTag);
+
+        doReturn(downloadFuture).when(storageServiceMock).downloadBytes(anyString());
+
+        try {
+            List<Tag> actualCollection = database.getTagsFromIds(idsList).join();
+            assertEquals(expectedTag.getId(), actualCollection.get(0).getId());
+            assertEquals(expectedTag.getBody(), actualCollection.get(0).getBody());
+            assertEquals(expectedTag.getId(), actualCollection.get(1).getId());
+            assertEquals(expectedTag.getBody(), actualCollection.get(1).getBody());
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
 
     @Test
-    public void getTagsFromList() {}
+    public void getTagsFromList() {
+        TodoList list = new TodoList("Todolist");
+        Tag expectedTag = new Tag("Tag");
+        list.addTagId(expectedTag.getId());
+        list.addTagId(expectedTag.getId());
+        String targetPathTodoList = TODO_LIST_PATH + list.getId().toString() + ".json";
+        String targetPathTag = TAGS_PATH + expectedTag.getId().toString() + ".json";
+
+        CompletableFuture<byte[]> downloadFutureTag = new CompletableFuture<>();
+        CompletableFuture<byte[]> downloadFutureTodoList = new CompletableFuture<>();
+
+        byte[] serializedTag =
+                JSONSerializer.serializeTag(expectedTag).getBytes(StandardCharsets.UTF_8);
+        downloadFutureTag.complete(serializedTag);
+
+        byte[] serializedTodoList =
+                JSONSerializer.serializeTodoList(list).getBytes(StandardCharsets.UTF_8);
+        downloadFutureTodoList.complete(serializedTodoList);
+
+        doReturn(downloadFutureTag).when(storageServiceMock).downloadBytes(targetPathTag);
+        doReturn(downloadFutureTodoList).when(storageServiceMock).downloadBytes(targetPathTodoList);
+
+        try {
+            List<Tag> actualCollection = database.getTagsFromList(list.getId()).join();
+            assertEquals(expectedTag.getId(), actualCollection.get(0).getId());
+            assertEquals(expectedTag.getBody(), actualCollection.get(0).getBody());
+            assertEquals(expectedTag.getId(), actualCollection.get(1).getId());
+            assertEquals(expectedTag.getBody(), actualCollection.get(1).getBody());
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
 
     @Test
     public void updateTagWorks() {

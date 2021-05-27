@@ -151,4 +151,10 @@
         <item name="android:layout_height">64dp</item>
     </style>
 
+    <style name="DailyPlanningTask">
+        <item name="android:textColor">@color/activity_title</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">@font/nunitosans_bold</item>
+    </style>
+
 </resources>

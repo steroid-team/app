@@ -112,6 +112,15 @@ public class TodoList {
         return this;
     }
 
+    public TodoList sortByDone() {
+        Collections.sort(
+                list,
+                (task, t1) -> {
+                    return Boolean.compare(task.isDone(), t1.isDone());
+                });
+        return this;
+    }
+
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();

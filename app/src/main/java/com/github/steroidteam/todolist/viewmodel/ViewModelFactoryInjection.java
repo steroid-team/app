@@ -50,4 +50,13 @@ public final class ViewModelFactoryInjection {
         todoListRepository = new TodoListRepository(context);
         todoListRepository.selectTodolist(id);
     }
+
+    @VisibleForTesting(otherwise = MODE_PRIVATE)
+    public static void setCustomNoteRepo(Context context, UUID id) {
+        // NEEDED FOR TEST:
+        // when you invoke ItemViewFragment, normally the ListSelectionFragment
+        // will tell the repository which to-do list has been chosen.
+        noteRepository = new NoteRepository(context);
+        noteRepository.selectNote(id);
+    }
 }

@@ -351,7 +351,6 @@ public class ItemViewFragment extends Fragment {
                 new Button(new ContextThemeWrapper(getContext(), R.style.TagInList), null, 0);
         tagButton.setText(tag.getBody());
         tagButton.setBackgroundTintList(ColorStateList.valueOf(tag.getColor()));
-        // tagButton.setBackgroundColor(;
         tagButton.setOnLongClickListener(
                 view -> {
                     destroyTag(tag);
@@ -392,8 +391,7 @@ public class ItemViewFragment extends Fragment {
     }
 
     public void destroyTag(Tag tag) {
-        // TODO : Uncomment after fixing method in repository/database
-        // itemViewModel.destroyTag(tag);
+        viewModel.destroyTag(tag);
     }
 
     @Override

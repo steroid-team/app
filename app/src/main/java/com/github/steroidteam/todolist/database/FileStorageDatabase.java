@@ -403,9 +403,7 @@ public class FileStorageDatabase implements Database {
 
     @Override
     public CompletableFuture<Void> removeImage(UUID imageID) {
-        return this.storageService
-                                .delete(IMAGES_PATH + imageID + ".jpeg")
-                                .thenApply(v -> null);
+        return this.storageService.delete(IMAGES_PATH + imageID + ".jpeg").thenApply(v -> null);
     }
 
     @Override

@@ -17,7 +17,6 @@ import static androidx.test.espresso.web.webdriver.DriverAtoms.findElement;
 import static androidx.test.espresso.web.webdriver.DriverAtoms.getText;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -29,12 +28,10 @@ import androidx.navigation.Navigation;
 import androidx.navigation.testing.TestNavHostController;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.web.webdriver.Locator;
-import androidx.test.platform.app.InstrumentationRegistry;
 import com.github.steroidteam.todolist.customviewactions.RichEditorGetHtml;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
 import com.github.steroidteam.todolist.model.notes.Note;
-import com.github.steroidteam.todolist.util.Utils;
 import com.github.steroidteam.todolist.view.NoteDisplayFragment;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import java.io.File;
@@ -207,16 +204,5 @@ public class NoteDisplayFragmentTest {
         onView(withId(R.id.camera_button)).perform(click());
         onView(withText("How do you want to add an image ?")).check(matches(isDisplayed()));
         onView(withText("Take a photo")).perform(click());
-    }
-
-    @Test
-    public void dip2pxWorks() {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        float scale = context.getResources().getDisplayMetrics().density;
-        float dpInput = 10;
-
-        int pxExpected = (int) (dpInput * scale + 0.5f);
-
-        assertEquals(pxExpected, Utils.dip2px(context, dpInput));
     }
 }

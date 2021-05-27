@@ -23,7 +23,6 @@ import com.github.steroidteam.todolist.view.misc.SwipeTouchHelper;
 import com.github.steroidteam.todolist.viewmodel.NoteViewModel;
 import com.github.steroidteam.todolist.viewmodel.NoteViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
-
 import java.io.File;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,8 +31,6 @@ public class NoteSelectionFragment extends Fragment {
 
     private NoteViewModel viewModel;
     private NoteArrayListAdapter adapter;
-
-    private File imagePath;
 
     public static final String NOTE_ID_KEY = "id";
 
@@ -44,8 +41,7 @@ public class NoteSelectionFragment extends Fragment {
 
         String headerFilePath = getActivity().getCacheDir().getAbsolutePath();
         File imagePath =
-                new File(
-                        headerFilePath, "user-data/" + UserFactory.get().getUid() + "/images/");
+                new File(headerFilePath, "user-data/" + UserFactory.get().getUid() + "/images/");
 
         root.findViewById(R.id.create_note_button).setOnClickListener(this::createNote);
 
@@ -66,14 +62,19 @@ public class NoteSelectionFragment extends Fragment {
                 .observe(
                         getViewLifecycleOwner(),
                         (noteList) -> {
-                            for(Note note: noteList) {
+                            for (Note note : noteList) {
                                 Optional<UUID> optionalUUID = note.getHeaderID();
-                                optionalUUID.ifPresent(uuid ->
-                                        viewModel.getNoteHeader(uuid, imagePath.getAbsolutePath())
-                                            .thenAccept(f -> {
-                                                adapter.putHeaderPath(note.getId(), f);
-                                                adapter.notifyDataSetChanged();
-                                            }));
+                                optionalUUID.ifPresent(
+                                        uuid ->
+                                                viewModel
+                                                        .getNoteHeader(
+                                                                uuid, imagePath.getAbsolutePath())
+                                                        .thenAccept(
+                                                                f -> {
+                                                                    adapter.putHeaderPath(
+                                                                            note.getId(), f);
+                                                                    adapter.notifyDataSetChanged();
+                                                                }));
                             }
                             adapter.setNoteList(noteList);
                             adapter.notifyDataSetChanged();
@@ -98,8 +99,7 @@ public class NoteSelectionFragment extends Fragment {
                     @Override
                     public void onSwipeLeft(RecyclerView.ViewHolder viewHolder, int position) {
                         removeNote(
-                                ((NoteArrayListAdapter.NoteHolder) viewHolder).getNote(),
-                                position);
+                                ((NoteArrayListAdapter.NoteHolder) viewHolder).getNote(), position);
                     }
 
                     @Override

@@ -71,7 +71,6 @@ public class NoteSelectionFragment extends Fragment {
                                 optionalUUID.ifPresent(uuid ->
                                         viewModel.getNoteHeader(uuid, imagePath.getAbsolutePath())
                                             .thenAccept(f -> {
-                                                System.out.println("UPDATE HEADERRRRRRRRRRRRRRR");
                                                 adapter.putHeaderPath(note.getId(), f);
                                                 adapter.notifyDataSetChanged();
                                             }));
@@ -99,7 +98,7 @@ public class NoteSelectionFragment extends Fragment {
                     @Override
                     public void onSwipeLeft(RecyclerView.ViewHolder viewHolder, int position) {
                         removeNote(
-                                ((NoteArrayListAdapter.NoteHolder) viewHolder).getNote().getId(),
+                                ((NoteArrayListAdapter.NoteHolder) viewHolder).getNote(),
                                 position);
                     }
 
@@ -140,7 +139,7 @@ public class NoteSelectionFragment extends Fragment {
         newFragment.show(getParentFragmentManager(), "add_dialog");
     }
 
-    private void removeNote(final UUID id, final int position) {
+    private void removeNote(final Note note, final int position) {
         DialogListener simpleDialogListener =
                 new DialogListener() {
 
@@ -151,7 +150,7 @@ public class NoteSelectionFragment extends Fragment {
 
                     @Override
                     public void onPositiveClick() {
-                        viewModel.removeNote(id);
+                        viewModel.removeNote(note.getId(), note.getHeaderID());
                     }
 
                     @Override

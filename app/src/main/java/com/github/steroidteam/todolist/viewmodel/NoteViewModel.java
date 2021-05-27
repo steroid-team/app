@@ -9,6 +9,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -47,8 +48,9 @@ public class NoteViewModel extends ViewModel {
         this.noteRepository.putNote(newNote);
     }
 
-    public void removeNote(UUID noteID) {
+    public void removeNote(UUID noteID, Optional<UUID> headerID) {
         this.noteRepository.removeNote(noteID);
+        headerID.ifPresent(this.noteRepository::removeImage);
     }
 
     public void renameNote(UUID noteID, Note updatedNote) {

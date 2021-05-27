@@ -54,6 +54,9 @@ public class NoteDisplayFragment extends Fragment {
 
         setOnClickListeners(root);
 
+        View noteHeader = root.findViewById(R.id.note_header);
+        noteHeader.setTag(R.drawable.rounded_corner_just_bottom_bg); // Use it for testing purposes
+
         // Rich text editor setup.
         richEditor = root.findViewById(R.id.notedisplay_text_editor);
         richEditor.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.bg_grey));
@@ -207,6 +210,7 @@ public class NoteDisplayFragment extends Fragment {
         BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
         header.setBackgroundTintList(null);
         header.setBackground(ob);
+        header.setTag(0); // For testing purposes
     }
 
     // Returns the File for a photo stored on disk given the fileName

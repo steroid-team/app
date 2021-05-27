@@ -499,16 +499,6 @@ public class ItemViewFragmentTest {
                         RecyclerViewActions.actionOnItemAtPosition(
                                 0, clickChildViewWithId(R.id.layout_task_checkbox)));
 
-        onView(
-                        allOf(
-                                withId(R.id.child_task_recycler_view),
-                                withParent(
-                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
-                                                .atPosition(0))))
-                .perform(
-                        RecyclerViewActions.actionOnItemAtPosition(
-                                2, clickChildViewWithId(R.id.layout_task_checkbox)));
-
         onView(withId(R.id.remove_done_tasks_btn)).perform(click());
 
         /* Then we should return one task */

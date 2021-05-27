@@ -156,4 +156,18 @@ public class TagTest {
         Tag tag = new Tag("TagTitle");
         assertEquals("Tag{TagTitle}", tag.toString());
     }
+
+    @Test
+    public void sortByBodyWorks() {
+        Tag tag0 = new Tag("ABC");
+        Tag tag1 = new Tag("BCD");
+        List<Tag> list = new ArrayList<>();
+        list.add(tag1);
+        list.add(tag0);
+        assertEquals(tag1, list.get(0));
+        assertEquals(tag0, list.get(1));
+        list.sort(Tag.sortByBody);
+        assertEquals(tag0, list.get(0));
+        assertEquals(tag1, list.get(1));
+    }
 }

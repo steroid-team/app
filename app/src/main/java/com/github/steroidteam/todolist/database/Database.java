@@ -208,6 +208,8 @@ public interface Database {
     CompletableFuture<List<Tag>> getTagsFromIds(List<UUID> ids);
 
     CompletableFuture<List<Tag>> getTagsFromList(UUID listId);
+
+    CompletableFuture<Tag> updateTag(UUID tagID, Tag tag);
     /**
      * Saves and associate an image to a note (in the header of the note). If an image already
      * exists, it is replaced and DELETED !

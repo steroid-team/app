@@ -361,7 +361,7 @@ public class FileStorageDatabase implements Database {
 
     public CompletableFuture<List<UUID>> getTagsIdsFromList(@NonNull UUID todoListID) {
         Objects.requireNonNull(todoListID);
-        return getTodoList(todoListID).thenApply(todoList -> todoList.getTagsIds());
+        return getTodoList(todoListID).thenApply(TodoList::getTagsIds);
     }
 
     public CompletableFuture<Tag> putTag(@NonNull Tag tag) {
@@ -375,22 +375,19 @@ public class FileStorageDatabase implements Database {
     }
 
     private void removeTagFromTDLs(UUID tagId) {
-        getTag(tagId)
+        getTodoListCollection()
                 .thenAccept(
-                        tag -> {
-                            getTodoListCollection()
-                                    .thenAccept(
-                                            col -> {
-                                                for (int i = 0; i < col.getSize(); ++i) {
-                                                    UUID todoListId = col.getUUID(i);
-                                                    getTodoList(todoListId)
-                                                            .thenAccept(
-                                                                    todoList -> {
-                                                                        removeTagFromList(
-                                                                                todoListId, tagId);
-                                                                    });
-                                                }
-                                            });
+                        col -> {
+                            for (int i = 0; i < col.getSize(); ++i) {
+                                UUID todoListId = col.getUUID(i);
+                                getTodoList(todoListId)
+                                        .thenAccept(
+                                                todoList -> {
+                                                    if (todoList.containsTag(tagId)) {
+                                                        removeTagFromList(todoListId, tagId);
+                                                    }
+                                                });
+                            }
                         });
     }
 
@@ -490,23 +487,22 @@ public class FileStorageDatabase implements Database {
 
     public CompletableFuture<List<Tag>> getTagsFromIds(List<UUID> ids) {
         List<CompletableFuture<Tag>> tagFutures =
-                ids.stream().map(id -> getTag(id)).collect(Collectors.toList());
+                ids.stream().map(this::getTag).collect(Collectors.toList());
 
         CompletableFuture<Void> futureOfList =
-                CompletableFuture.allOf(
-                        tagFutures.toArray(new CompletableFuture[tagFutures.size()]));
+                CompletableFuture.allOf(tagFutures.toArray(new CompletableFuture[0]));
 
         return futureOfList.thenApply(
                 v ->
                         tagFutures.stream()
-                                .map(future -> future.join())
+                                .map(CompletableFuture::join)
                                 .collect(Collectors.<Tag>toList()));
     }
 
     public CompletableFuture<List<Tag>> getTagsFromList(UUID listId) {
         return getTodoList(listId)
-                .thenApply(list -> list.getTagsIds())
-                .thenCompose(tagsIds -> getTagsFromIds(tagsIds));
+                .thenApply(TodoList::getTagsIds)
+                .thenCompose(this::getTagsFromIds);
     }
 
     @Override

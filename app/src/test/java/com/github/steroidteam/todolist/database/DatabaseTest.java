@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verify;
 
 import com.github.steroidteam.todolist.filestorage.FirebaseFileStorageService;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
@@ -36,6 +37,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class DatabaseTest {
     private static final String TODO_LIST_PATH = "/todo-lists/";
     private static final String NOTES_PATH = "/notes/";
+    private static final String TAGS_PATH = "/tags/";
 
     @Rule public TemporaryFolder folder = new TemporaryFolder();
 
@@ -775,6 +777,192 @@ public class DatabaseTest {
             verify(storageServiceMock, times(2)).downloadBytes(anyString());
             verify(storageServiceMock).upload(any(InputStream.class), anyString());
             verify(storageServiceMock).upload(any(byte[].class), anyString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void putTagWorks() {
+        final Tag tag = new Tag("Work");
+        final String expectedPath = TAGS_PATH + tag.getId().toString() + ".json";
+        final byte[] serializedList =
+                JSONSerializer.serializeTag(tag).getBytes(StandardCharsets.UTF_8);
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully uploading the file.
+        final CompletableFuture<String> completedFuture =
+                CompletableFuture.completedFuture(expectedPath);
+        doReturn(completedFuture)
+                .when(storageServiceMock)
+                .upload(any(byte[].class), eq(expectedPath));
+
+        // Try to add a valid tag.
+        try {
+            assertEquals(tag, database.putTag(tag).join());
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(storageServiceMock).upload(serializedList, expectedPath);
+    }
+
+    @Test
+    public void removeTagRejectsNullTodoListID() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    database.removeTag(null);
+                });
+    }
+
+    @Test
+    public void getTagRejectsNullTodoListID() {
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    new FileStorageDatabase(storageServiceMock).getTag(null);
+                });
+    }
+
+    @Test
+    public void getTagWorks() {
+        final Tag tag = new Tag("Work");
+        final String expectedPath = TAGS_PATH + tag.getId().toString() + ".json";
+        final byte[] serializedTag =
+                JSONSerializer.serializeTag(tag).getBytes(StandardCharsets.UTF_8);
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully downloading the file.
+        final CompletableFuture<byte[]> completedFuture =
+                CompletableFuture.completedFuture(serializedTag);
+        doReturn(completedFuture).when(storageServiceMock).downloadBytes(expectedPath);
+
+        // Try to get a valid list.
+        final FileStorageDatabase database = new FileStorageDatabase(storageServiceMock);
+        try {
+            final Tag fetchedTag = database.getTag(tag.getId()).get();
+
+            verify(storageServiceMock).downloadBytes(expectedPath);
+            assertEquals(tag.getId(), fetchedTag.getId());
+            assertEquals(tag.getColor(), fetchedTag.getColor());
+            assertEquals(tag.getBody(), fetchedTag.getBody());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void putTagInListWorks() {
+        final TodoList todoList = new TodoList("My list");
+        final Tag FIXTURE_TAG_1 = new Tag("Work");
+        final Tag FIXTURE_TAG_2 = new Tag("Free time");
+        todoList.addTagId(FIXTURE_TAG_1.getId());
+        final String expectedPath = TODO_LIST_PATH + todoList.getId().toString() + ".json";
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully downloading the file.
+        final byte[] serializedOriginalList =
+                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+        final CompletableFuture<byte[]> completedDownloadFuture =
+                CompletableFuture.completedFuture(serializedOriginalList);
+        doReturn(completedDownloadFuture).when(storageServiceMock).downloadBytes(expectedPath);
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully uploading the file.
+        final CompletableFuture<String> completedUploadFuture =
+                CompletableFuture.completedFuture(expectedPath);
+        doReturn(completedUploadFuture)
+                .when(storageServiceMock)
+                .upload(any(byte[].class), eq(expectedPath));
+
+        // Try to put a taf in a valid list.
+        final FileStorageDatabase database = new FileStorageDatabase(storageServiceMock);
+        database.putTagInList(todoList.getId(), FIXTURE_TAG_2.getId());
+
+        // Add the new task to the list, to make it look like what we would expect to be stored
+        // in the database.
+        todoList.addTagId(FIXTURE_TAG_2.getId());
+        final byte[] serializedNewList =
+                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+
+        verify(storageServiceMock).downloadBytes(expectedPath);
+        verify(storageServiceMock).upload(serializedNewList, expectedPath);
+    }
+
+    @Test
+    public void removeTagFromListWorks() {
+        final TodoList todoList = new TodoList("My list");
+        final Tag FIXTURE_TAG_1 = new Tag("Work");
+        todoList.addTagId(FIXTURE_TAG_1.getId());
+        final String expectedPath = TODO_LIST_PATH + todoList.getId().toString() + ".json";
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully downloading the file.
+        final byte[] serializedOriginalList =
+                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+        final CompletableFuture<byte[]> completedDownloadFuture =
+                CompletableFuture.completedFuture(serializedOriginalList);
+        doReturn(completedDownloadFuture).when(storageServiceMock).downloadBytes(expectedPath);
+
+        // Return a future like the one that the FirebaseFileStorageService would produce after
+        // successfully uploading the file.
+        final CompletableFuture<String> completedUploadFuture =
+                CompletableFuture.completedFuture(expectedPath);
+        doReturn(completedUploadFuture)
+                .when(storageServiceMock)
+                .upload(any(byte[].class), eq(expectedPath));
+
+        // Try to remove a task from valid list.
+        database.removeTagFromList(todoList.getId(), FIXTURE_TAG_1.getId());
+
+        // Remote the task from list, to make it look like what we would expect to be stored
+        // in the database.
+        todoList.removeTagId(FIXTURE_TAG_1.getId());
+        final byte[] serializedNewList =
+                JSONSerializer.serializeTodoList(todoList).getBytes(StandardCharsets.UTF_8);
+
+        verify(storageServiceMock).downloadBytes(expectedPath);
+        verify(storageServiceMock).upload(serializedNewList, expectedPath);
+    }
+
+    @Test
+    public void getTagsListWorks() {
+        UUID uuid1 = UUID.randomUUID();
+        UUID uuid2 = UUID.randomUUID();
+        UUID uuid3 = UUID.randomUUID();
+
+        listDirFuture.complete(new String[] {uuid1.toString(), uuid2.toString(), uuid3.toString()});
+        doReturn(listDirFuture).when(storageServiceMock).listDir(anyString());
+
+        final FileStorageDatabase database = new FileStorageDatabase(storageServiceMock);
+        try {
+            List<UUID> actualList = database.getTagsList().join();
+            assertEquals(uuid1, actualList.get(0));
+            assertEquals(uuid2, actualList.get(1));
+            assertEquals(uuid3, actualList.get(2));
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void getTagsFromIdsWorks() {}
+
+    @Test
+    public void getTagsFromList() {}
+
+    @Test
+    public void updateTagWorks() {
+        Tag expectedTag = new Tag("some random title");
+
+        CompletableFuture<String> uploadFuture = new CompletableFuture<>();
+        uploadFuture.complete("some random path");
+        doReturn(uploadFuture).when(storageServiceMock).upload(any(byte[].class), anyString());
+
+        try {
+            Tag actualTag = database.updateTag(UUID.randomUUID(), expectedTag).join();
+            assertEquals(expectedTag, actualTag);
         } catch (Exception e) {
             fail();
         }

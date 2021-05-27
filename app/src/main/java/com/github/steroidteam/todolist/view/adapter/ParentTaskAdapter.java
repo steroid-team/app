@@ -30,6 +30,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
     private final int TASK_WEEK = 3;
     private final int TASK_LATER = 4;
     private final int TASK_UNKNOWN = 5;
+    private final int TASK_DONE = 6;
     private final int INDEX_TASK_NOT_FOUND = -1;
 
     public ParentTaskAdapter(TodoAdapter.TaskCustomListener listener) {
@@ -41,6 +42,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
         dateCategoryList.add("Next 5 days after Tomorrow");
         dateCategoryList.add("Later");
         dateCategoryList.add("Unknown");
+        dateCategoryList.add("Done");
         sortedDateCategoryList = new ArrayList<>();
     }
 
@@ -129,6 +131,15 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
 
     private boolean isInCategory(Task task, int category) {
         Date dueDate = task.getDueDate();
+
+        if (task.isDone() && category == TASK_DONE) {
+            return true;
+        }
+
+        if (task.isDone() && category != TASK_DONE) {
+            return false;
+        }
+
         // Unknown date
         if (dueDate == null && category == TASK_UNKNOWN) {
             return true;

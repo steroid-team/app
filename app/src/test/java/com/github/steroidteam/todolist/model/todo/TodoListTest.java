@@ -52,18 +52,22 @@ public class TodoListTest {
 
     @Test
     public void sortByDoneWorks() {
-        TodoList todoList = new TodoList("todo");
-        Task t1= new Task("1");
-        Task t2= new Task("2");
-        Task t3= new Task("3");
+        String body = "a body";
+        TodoList todoList = new TodoList(body);
+        Task t1 = new Task("1");
+        Task t2 = new Task("2");
+        Task t3 = new Task("3");
 
         t2.setDone(true);
-        t3.setDone(true);
 
         todoList.addTask(t1);
         todoList.addTask(t2);
         todoList.addTask(t3);
-        System.out.println(todoList.toString());
-        System.out.println(todoList.sortByDone().toString());
+        // T2 should be the last task as it is done.
+        TodoList expectedTodoList = new TodoList(body);
+        expectedTodoList.addTask(t1);
+        expectedTodoList.addTask(t3);
+        expectedTodoList.addTask(t2);
+        assertEquals(expectedTodoList.toString(), todoList.sortByDone().toString());
     }
 }

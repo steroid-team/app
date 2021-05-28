@@ -252,7 +252,7 @@ public class FileStorageDatabase implements Database {
 
     @Override
     public CompletableFuture<List<UUID>> getNotesList() {
-        return getListHelper(NOTES_PATH);
+        return getListFromPath(NOTES_PATH);
     }
 
     @Override
@@ -468,7 +468,7 @@ public class FileStorageDatabase implements Database {
     }
 
     public CompletableFuture<List<UUID>> getTagsList() {
-        return getListHelper(TAGS_PATH);
+        return getListFromPath(TAGS_PATH);
     }
 
     public CompletableFuture<List<Tag>> getTagsFromIds(List<UUID> ids) {
@@ -541,7 +541,7 @@ public class FileStorageDatabase implements Database {
         return this.storageService.downloadFile(imageFilePath, destinationPath);
     }
 
-    private CompletableFuture<List<UUID>> getListHelper(String path) {
+    private CompletableFuture<List<UUID>> getListFromPath(String path) {
         CompletableFuture<String[]> listDir = this.storageService.listDir(path);
 
         return listDir.thenApply(

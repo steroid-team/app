@@ -46,7 +46,8 @@ public class JSONSerializerTest {
                         + ("\"id\":\"" + todoList.getId().toString() + "\",")
                         + "\"list\":[],"
                         + ("\"title\":\"" + LIST_TITLE + "\",")
-                        + ("\"date\":\"" + expectedFormattedDate + "\"")
+                        + ("\"date\":\"" + expectedFormattedDate + "\",")
+                        + "\"tags\":[]"
                         + "}";
         assertEquals(expectedSerializedObject, actualSerializedObject);
     }
@@ -76,7 +77,8 @@ public class JSONSerializerTest {
                         + ("\"done\":" + false)
                         + "}],"
                         + ("\"title\":\"" + LIST_TITLE + "\",")
-                        + ("\"date\":\"" + expectedFormattedDate + "\"")
+                        + ("\"date\":\"" + expectedFormattedDate + "\",")
+                        + "\"tags\":[]"
                         + "}";
         assertEquals(expectedSerializedObject, actualSerializedObject);
     }

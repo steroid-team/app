@@ -1,6 +1,8 @@
 package com.github.steroidteam.todolist.database;
 
+import androidx.annotation.NonNull;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
@@ -191,6 +193,23 @@ public interface Database {
      */
     CompletableFuture<File> getAudioMemo(UUID audioID, String destinationPath);
 
+    CompletableFuture<UUID> putTagInList(UUID todoListID, UUID tagId);
+
+    CompletableFuture<TodoList> removeTagFromList(UUID todoListID, UUID tagId);
+
+    CompletableFuture<Tag> putTag(@NonNull Tag tag);
+
+    CompletableFuture<Void> removeTag(UUID tagID);
+
+    CompletableFuture<Tag> getTag(UUID tagID);
+
+    CompletableFuture<List<UUID>> getTagsList();
+
+    CompletableFuture<List<Tag>> getTagsFromIds(List<UUID> ids);
+
+    CompletableFuture<List<Tag>> getTagsFromList(UUID listId);
+
+    CompletableFuture<Tag> updateTag(UUID tagID, Tag tag);
     /**
      * Saves and associate an image to a note (in the header of the note). If an image already
      * exists, it is replaced and DELETED !

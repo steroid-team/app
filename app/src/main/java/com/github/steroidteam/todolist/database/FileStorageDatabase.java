@@ -252,14 +252,7 @@ public class FileStorageDatabase implements Database {
 
     @Override
     public CompletableFuture<List<UUID>> getNotesList() {
-        CompletableFuture<String[]> listNotesDir = this.storageService.listDir(NOTES_PATH);
-
-        return listNotesDir.thenApply(
-                fileNames ->
-                        Arrays.stream(fileNames)
-                                .map(fileName -> fileName.split(".json")[0])
-                                .map(UUID::fromString)
-                                .collect(Collectors.toList()));
+        return getListHelper(NOTES_PATH);
     }
 
     @Override
@@ -475,14 +468,7 @@ public class FileStorageDatabase implements Database {
     }
 
     public CompletableFuture<List<UUID>> getTagsList() {
-        CompletableFuture<String[]> listTagsDir = this.storageService.listDir(TAGS_PATH);
-
-        return listTagsDir.thenApply(
-                fileNames ->
-                        Arrays.stream(fileNames)
-                                .map(fileName -> fileName.split(".json")[0])
-                                .map(UUID::fromString)
-                                .collect(Collectors.toList()));
+        return getListHelper(TAGS_PATH);
     }
 
     public CompletableFuture<List<Tag>> getTagsFromIds(List<UUID> ids) {
@@ -553,5 +539,16 @@ public class FileStorageDatabase implements Database {
             @NonNull UUID imageID, @NonNull String destinationPath) {
         String imageFilePath = IMAGES_PATH + imageID + ".jpeg";
         return this.storageService.downloadFile(imageFilePath, destinationPath);
+    }
+
+    private CompletableFuture<List<UUID>> getListHelper(String path) {
+        CompletableFuture<String[]> listDir = this.storageService.listDir(path);
+
+        return listDir.thenApply(
+                fileNames ->
+                        Arrays.stream(fileNames)
+                                .map(fileName -> fileName.split(".json")[0])
+                                .map(UUID::fromString)
+                                .collect(Collectors.toList()));
     }
 }

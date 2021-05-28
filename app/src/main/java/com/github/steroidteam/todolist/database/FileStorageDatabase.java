@@ -5,6 +5,7 @@ import static com.github.steroidteam.todolist.util.Utils.checkNonNullArgs;
 import androidx.annotation.NonNull;
 import com.github.steroidteam.todolist.filestorage.FileStorageService;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
@@ -26,8 +27,8 @@ public class FileStorageDatabase implements Database {
     private static final String TODO_LIST_PATH = "/todo-lists/";
     private static final String NOTES_PATH = "/notes/";
     private static final String AUDIO_MEMOS_PATH = "/audio-memos/";
+    private static final String TAGS_PATH = "/tags/";
     private static final String IMAGES_PATH = "/images/";
-
     private final FileStorageService storageService;
 
     public FileStorageDatabase(@NonNull FileStorageService storageService) {
@@ -251,14 +252,7 @@ public class FileStorageDatabase implements Database {
 
     @Override
     public CompletableFuture<List<UUID>> getNotesList() {
-        CompletableFuture<String[]> listDir = this.storageService.listDir(NOTES_PATH);
-
-        return listDir.thenApply(
-                fileNames ->
-                        Arrays.stream(fileNames)
-                                .map(fileName -> fileName.split(".json")[0])
-                                .map(UUID::fromString)
-                                .collect(Collectors.toList()));
+        return getListFromPath(NOTES_PATH);
     }
 
     @Override
@@ -358,6 +352,145 @@ public class FileStorageDatabase implements Database {
         return this.storageService.upload(bytes, notePath).thenApply(str -> note);
     }
 
+    public CompletableFuture<List<UUID>> getTagsIdsFromList(@NonNull UUID todoListID) {
+        Objects.requireNonNull(todoListID);
+        return getTodoList(todoListID).thenApply(TodoList::getTagsIds);
+    }
+
+    public CompletableFuture<Tag> putTag(@NonNull Tag tag) {
+        Objects.requireNonNull(tag);
+        String targetPath = TAGS_PATH + tag.getId().toString() + ".json";
+
+        // Serialize the task as an UTF-8 encoded JSON object.
+        byte[] fileBytes = JSONSerializer.serializeTag(tag).getBytes(StandardCharsets.UTF_8);
+
+        return this.storageService.upload(fileBytes, targetPath).thenApply(str -> tag);
+    }
+
+    private void removeTagFromTDLs(UUID tagId) {
+        getTodoListCollection()
+                .thenAccept(
+                        col -> {
+                            for (int i = 0; i < col.getSize(); ++i) {
+                                UUID todoListId = col.getUUID(i);
+                                getTodoList(todoListId)
+                                        .thenAccept(
+                                                todoList -> {
+                                                    if (todoList.containsTag(tagId)) {
+                                                        removeTagFromList(todoListId, tagId);
+                                                    }
+                                                });
+                            }
+                        });
+    }
+
+    public CompletableFuture<Void> removeTag(UUID tagId) {
+        Objects.requireNonNull(tagId);
+        String targetPath = TAGS_PATH + tagId.toString() + ".json";
+
+        removeTagFromTDLs(tagId);
+
+        return this.storageService
+                .delete(targetPath)
+                .thenCompose(
+                        str -> {
+                            CompletableFuture<Void> future = new CompletableFuture<>();
+                            future.complete(null);
+                            return future;
+                        });
+    }
+
+    public CompletableFuture<Tag> getTag(UUID tagID) {
+        Objects.requireNonNull(tagID);
+        String targetPath = TAGS_PATH + tagID.toString() + ".json";
+
+        return this.storageService
+                .downloadBytes(targetPath)
+                .thenApply(
+                        bytes ->
+                                JSONSerializer.deserializeTag(
+                                        new String(bytes, StandardCharsets.UTF_8)));
+    }
+
+    public CompletableFuture<Tag> updateTag(UUID tagID, Tag tag) {
+        Objects.requireNonNull(tagID);
+        Objects.requireNonNull(tag);
+
+        String targetPath = TAGS_PATH + tagID.toString() + ".json";
+        byte[] fBytes = JSONSerializer.serializeTag(tag).getBytes(StandardCharsets.UTF_8);
+
+        return this.storageService.upload(fBytes, targetPath).thenApply(str -> tag);
+    }
+
+    public CompletableFuture<UUID> putTagInList(UUID todoListID, UUID tagId) {
+        Objects.requireNonNull(todoListID);
+        Objects.requireNonNull(tagId);
+        String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
+
+        // Fetch the remote list that we are about to update.
+        return getTodoList(todoListID)
+                // Add the new task to the object.
+                .thenApply(
+                        todoList -> {
+                            todoList.addTagId(tagId);
+                            return todoList;
+                        })
+                // Re-serialize and upload the new object.
+                .thenApply(JSONSerializer::serializeTodoList)
+                .thenApply(
+                        serializedTodoList -> serializedTodoList.getBytes(StandardCharsets.UTF_8))
+                .thenCompose(bytes -> this.storageService.upload(bytes, listPath))
+                .thenApply(str -> tagId);
+    }
+
+    public CompletableFuture<TodoList> removeTagFromList(UUID todoListID, UUID tagId) {
+        Objects.requireNonNull(todoListID);
+        Objects.requireNonNull(tagId);
+        String listPath = TODO_LIST_PATH + todoListID.toString() + ".json";
+
+        // Fetch the remote list that we are about to update.
+        return getTodoList(todoListID)
+                // Remove the tag from the object.
+                .thenApply(
+                        todoList -> {
+                            todoList.removeTagId(tagId);
+                            return todoList;
+                        })
+                .thenCompose(
+                        todoList -> {
+                            byte[] bytes =
+                                    JSONSerializer.serializeTodoList(todoList)
+                                            .getBytes(StandardCharsets.UTF_8);
+                            return this.storageService
+                                    .upload(bytes, listPath)
+                                    .thenApply(str -> todoList);
+                        });
+    }
+
+    public CompletableFuture<List<UUID>> getTagsList() {
+        return getListFromPath(TAGS_PATH);
+    }
+
+    public CompletableFuture<List<Tag>> getTagsFromIds(List<UUID> ids) {
+        List<CompletableFuture<Tag>> tagFutures =
+                ids.stream().map(this::getTag).collect(Collectors.toList());
+
+        CompletableFuture<Void> futureOfList =
+                CompletableFuture.allOf(tagFutures.toArray(new CompletableFuture[0]));
+
+        return futureOfList.thenApply(
+                v ->
+                        tagFutures.stream()
+                                .map(CompletableFuture::join)
+                                .collect(Collectors.<Tag>toList()));
+    }
+
+    public CompletableFuture<List<Tag>> getTagsFromList(UUID listId) {
+        return getTodoList(listId)
+                .thenApply(TodoList::getTagsIds)
+                .thenCompose(this::getTagsFromIds);
+    }
+
     @Override
     public CompletableFuture<Void> setHeaderNote(UUID noteID, String imagePath, UUID imageID)
             throws FileNotFoundException {
@@ -406,5 +539,16 @@ public class FileStorageDatabase implements Database {
             @NonNull UUID imageID, @NonNull String destinationPath) {
         String imageFilePath = IMAGES_PATH + imageID + ".jpeg";
         return this.storageService.downloadFile(imageFilePath, destinationPath);
+    }
+
+    private CompletableFuture<List<UUID>> getListFromPath(String path) {
+        CompletableFuture<String[]> listDir = this.storageService.listDir(path);
+
+        return listDir.thenApply(
+                fileNames ->
+                        Arrays.stream(fileNames)
+                                .map(fileName -> fileName.split(".json")[0])
+                                .map(UUID::fromString)
+                                .collect(Collectors.toList()));
     }
 }

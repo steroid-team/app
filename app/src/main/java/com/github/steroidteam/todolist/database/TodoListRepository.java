@@ -3,11 +3,13 @@ package com.github.steroidteam.todolist.database;
 import android.content.Context;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -18,6 +20,7 @@ public class TodoListRepository {
 
     private final MutableLiveData<ArrayList<TodoList>> allTodoLiveData;
     private final MutableLiveData<TodoList> observedTodoList;
+    private final MutableLiveData<List<Tag>> listTags;
 
     public TodoListRepository(Context context) {
         this.localDatabase = DatabaseFactory.getLocalDb(context.getCacheDir());
@@ -27,10 +30,21 @@ public class TodoListRepository {
         observedTodoList = new MutableLiveData<>();
 
         fetchData();
+
+        listTags = new MutableLiveData<>();
     }
 
     public void selectTodolist(UUID id) {
-        this.localDatabase.getTodoList(id).thenAccept(this.observedTodoList::postValue);
+        localDatabase.getTodoList(id).thenAccept(this.observedTodoList::postValue);
+        localDatabase
+                .getTodoList(id)
+                .thenAccept(
+                        list -> {
+                            List<UUID> tagsIds = list.getTagsIds();
+                            localDatabase
+                                    .getTagsFromIds(tagsIds)
+                                    .thenAccept(tags -> listTags.postValue(tags));
+                        });
     }
 
     public LiveData<ArrayList<TodoList>> getAllTodo() {
@@ -39,7 +53,7 @@ public class TodoListRepository {
 
     public LiveData<TodoList> getTodoList() {
         if (this.observedTodoList.getValue() != null) {
-            this.observedTodoList.getValue().sortByDate();
+            this.observedTodoList.getValue().sortByDate().sortByDone();
         }
         return this.observedTodoList;
     }
@@ -205,6 +219,39 @@ public class TodoListRepository {
                 .thenCompose(task -> this.localDatabase.getTodoList(todoListID))
                 .thenApply(todoList -> todoList.sortByDate())
                 .thenAccept(this.observedTodoList::postValue);
+    }
+
+    private void setTagsList() {
+        List<UUID> tagsIds = observedTodoList.getValue().getTagsIds();
+        localDatabase.getTagsFromIds(tagsIds).thenAccept(tagsList -> listTags.setValue(tagsList));
+    }
+
+    public List<Tag> getTags() {
+        setTagsList();
+        return listTags.getValue();
+    }
+
+    public void putTag(UUID todoListID, Tag tag) {
+        localDatabase
+                .putTag(tag)
+                .thenCompose(t -> localDatabase.putTagInList(todoListID, t.getId()))
+                .thenCompose(str -> localDatabase.getTodoList(todoListID))
+                .thenAccept(observedTodoList::postValue)
+                .thenAccept(
+                        str ->
+                                localDatabase
+                                        .getTagsFromList(todoListID)
+                                        .thenAccept(tags -> listTags.postValue(tags)));
+    }
+
+    public void destroyTag(UUID todoListID, Tag tag) {
+        localDatabase
+                .removeTag(tag.getId())
+                .thenAccept(
+                        str ->
+                                localDatabase
+                                        .getTagsFromList(todoListID)
+                                        .thenAccept(tags -> listTags.postValue(tags)));
     }
 
     public void setTaskLocationReminder(

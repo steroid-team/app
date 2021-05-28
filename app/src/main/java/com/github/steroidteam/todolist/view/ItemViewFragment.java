@@ -2,26 +2,21 @@ package com.github.steroidteam.todolist.view;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.text.Editable;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -30,20 +25,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;
-import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.view.adapter.ParentTaskAdapter;
 import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
-import com.github.steroidteam.todolist.view.dialog.DialogListener;
-import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
 import com.github.steroidteam.todolist.view.misc.DateHighlighterTextWatcher;
 import com.github.steroidteam.todolist.view.misc.DueDateInputSpan;
+import com.github.steroidteam.todolist.view.misc.TagView;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
 
@@ -53,8 +45,8 @@ public class ItemViewFragment extends Fragment {
     private ParentTaskAdapter adapter;
     public static final int PERMISSIONS_ACCESS_LOCATION = 2;
     private final PrettyTimeParser timeParser = new PrettyTimeParser();
-    List<Tag> tags;
     private ActivityResultLauncher<Intent> calendarExportIntentLauncher;
+    private final TagView tagView = new TagView();
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -100,14 +92,13 @@ public class ItemViewFragment extends Fragment {
         ConstraintLayout updateLayout = root.findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.GONE);
 
-        root.findViewById(R.id.itemview_tag_button).setOnClickListener(this::tagButton);
-        root.findViewById(R.id.itemview_tag_save_button).setOnClickListener(this::tagSaveButton);
+        root.findViewById(R.id.itemview_tag_button)
+                .setOnClickListener(v -> tagView.tagButton(this, viewModel));
+        root.findViewById(R.id.itemview_tag_save_button)
+                .setOnClickListener(v -> tagView.tagSaveButton(this));
 
         ReminderDateBroadcast.createNotificationChannel(getActivity());
         ReminderLocationBroadcast.createLocationNotificationChannel(getActivity());
-
-        tags = viewModel.getTags();
-        tags.sort(Tag.sortByBody);
 
         calendarExportIntentLauncher =
                 registerForActivityResult(
@@ -319,75 +310,6 @@ public class ItemViewFragment extends Fragment {
 
     public void checkBoxTaskListener(final int position, final boolean isChecked) {
         viewModel.setTaskDone(position, isChecked);
-    }
-
-    public void tagButton(View view) {
-        tags = viewModel.getTags();
-        tags.sort(Tag.sortByBody);
-        ConstraintLayout tagLayout = getView().findViewById(R.id.layout_update_tags);
-        tagLayout.setVisibility(View.VISIBLE);
-        LinearLayout row = getView().findViewById(R.id.tag_row_first);
-        row.removeAllViews();
-        Button plusButton =
-                new Button(new ContextThemeWrapper(getContext(), R.style.TagInList), null, 0);
-        plusButton.setText("+");
-        plusButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
-        plusButton.setOnClickListener(this::createTag);
-        row.addView(plusButton);
-        tags.forEach(tag -> createTagButton(tag, row));
-    }
-
-    public void tagSaveButton(View view) {
-        ConstraintLayout tagLayout = getView().findViewById(R.id.layout_update_tags);
-        tagLayout.setVisibility(View.GONE);
-    }
-
-    private void createTagButton(Tag tag, LinearLayout row) {
-        Button tagButton =
-                new Button(new ContextThemeWrapper(getContext(), R.style.TagInList), null, 0);
-        tagButton.setText(tag.getBody());
-        tagButton.setBackgroundTintList(ColorStateList.valueOf(tag.getColor()));
-        tagButton.setOnLongClickListener(
-                view -> {
-                    destroyTag(tag);
-                    row.removeView(tagButton);
-                    return true;
-                });
-        row.addView(tagButton);
-    }
-
-    public void createTag(View view) {
-
-        DialogListener dialogListener =
-                new DialogListener() {
-
-                    @Override
-                    public void onPositiveClick(String title) {
-                        if (title.length() > 0) {
-                            Tag tag = new Tag(title);
-                            viewModel.addTag(tag);
-                            createTagButton(tag, getView().findViewById(R.id.tag_row_first));
-                        }
-                    }
-
-                    @Override
-                    public void onPositiveClick() {
-                        // NEVER CALLED
-                    }
-
-                    @Override
-                    public void onNegativeClick() {
-                        // DO NOTHING
-                    }
-                };
-
-        DialogFragment newFragment =
-                new InputDialogFragment().newInstance(dialogListener, R.string.add_tag_suggestion);
-        newFragment.show(getParentFragmentManager(), "add_tag_dialog");
-    }
-
-    public void destroyTag(Tag tag) {
-        viewModel.destroyTag(tag);
     }
 
     @Override

@@ -252,9 +252,9 @@ public class FileStorageDatabase implements Database {
 
     @Override
     public CompletableFuture<List<UUID>> getNotesList() {
-        CompletableFuture<String[]> listDir = this.storageService.listDir(NOTES_PATH);
+        CompletableFuture<String[]> listNotesDir = this.storageService.listDir(NOTES_PATH);
 
-        return listDir.thenApply(
+        return listNotesDir.thenApply(
                 fileNames ->
                         Arrays.stream(fileNames)
                                 .map(fileName -> fileName.split(".json")[0])
@@ -475,9 +475,9 @@ public class FileStorageDatabase implements Database {
     }
 
     public CompletableFuture<List<UUID>> getTagsList() {
-        CompletableFuture<String[]> listDir = this.storageService.listDir(TAGS_PATH);
+        CompletableFuture<String[]> listTagsDir = this.storageService.listDir(TAGS_PATH);
 
-        return listDir.thenApply(
+        return listTagsDir.thenApply(
                 fileNames ->
                         Arrays.stream(fileNames)
                                 .map(fileName -> fileName.split(".json")[0])

@@ -49,4 +49,25 @@ public class TodoListTest {
         str.append("Todo-List{").append(t2.toString()).append(",").append("\n").append("}");
         assertEquals(str.toString(), td.toString());
     }
+
+    @Test
+    public void sortByDoneWorks() {
+        String body = "a body";
+        TodoList todoList = new TodoList(body);
+        Task t1 = new Task("1");
+        Task t2 = new Task("2");
+        Task t3 = new Task("3");
+
+        t2.setDone(true);
+
+        todoList.addTask(t1);
+        todoList.addTask(t2);
+        todoList.addTask(t3);
+        // T2 should be the last task as it is done.
+        TodoList expectedTodoList = new TodoList(body);
+        expectedTodoList.addTask(t1);
+        expectedTodoList.addTask(t3);
+        expectedTodoList.addTask(t2);
+        assertEquals(expectedTodoList.toString(), todoList.sortByDone().toString());
+    }
 }

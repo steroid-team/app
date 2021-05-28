@@ -20,6 +20,7 @@ public class TodoList {
     private final List<Task> list;
     private String title;
     private final Date date;
+    private final List<UUID> tags;
 
     /**
      * Constructs a new to-do list.
@@ -35,6 +36,7 @@ public class TodoList {
         this.list = new ArrayList<>();
         this.title = title;
         this.date = new Date(System.currentTimeMillis());
+        this.tags = new ArrayList<>();
     }
 
     public void addTask(Task task) {
@@ -90,6 +92,22 @@ public class TodoList {
         return this;
     }
 
+    public void addTagId(UUID tagId) {
+        tags.add(tagId);
+    }
+
+    public boolean removeTagId(UUID tagId) {
+        return tags.remove(tagId);
+    }
+
+    public List<UUID> getTagsIds() {
+        return tags;
+    }
+
+    public boolean containsTag(UUID tagId) {
+        return tags.contains(tagId);
+    }
+
     public TodoList sortByDate() {
         Collections.sort(
                 list,
@@ -108,6 +126,15 @@ public class TodoList {
                     }
 
                     return date1.compareTo(date2);
+                });
+        return this;
+    }
+
+    public TodoList sortByDone() {
+        Collections.sort(
+                list,
+                (task, t1) -> {
+                    return Boolean.compare(task.isDone(), t1.isDone());
                 });
         return this;
     }

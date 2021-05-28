@@ -2,6 +2,7 @@ package com.github.steroidteam.todolist.util;
 
 import androidx.annotation.NonNull;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -57,5 +58,15 @@ public class JSONSerializer {
     public static Note deserializeNote(@NonNull String serializedNote) {
         Objects.requireNonNull(serializedNote);
         return JSONSerializer.gson.fromJson(serializedNote, Note.class);
+    }
+
+    public static String serializeTag(Tag tag) {
+        Objects.requireNonNull(tag);
+        return JSONSerializer.gson.toJson(tag);
+    }
+
+    public static Tag deserializeTag(@NonNull String serializedTag) {
+        Objects.requireNonNull(serializedTag);
+        return JSONSerializer.gson.fromJson(serializedTag, Tag.class);
     }
 }

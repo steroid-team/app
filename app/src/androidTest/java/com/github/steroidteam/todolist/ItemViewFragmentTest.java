@@ -6,13 +6,16 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckBox;
 import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckText;
 import static com.github.steroidteam.todolist.CustomMatchers.clickChildViewWithId;
+import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -38,14 +41,17 @@ import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.ItemViewFragment;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -112,6 +118,10 @@ public class ItemViewFragmentTest {
         todoListCollectionFuture.complete(collection);
         doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
 
+        CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
+        tagsFuture.complete(new ArrayList<>());
+        doReturn(tagsFuture).when(databaseMock).getTagsFromIds(any());
+
         DatabaseFactory.setCustomDatabase(databaseMock);
 
         File fakeFile = new File("Fake pathname");
@@ -143,7 +153,7 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.new_task_text)).check(matches(withText("")));
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION, TASK_BODY_LAYOUT_ID)));
+                .check(matches(hasDescendant(withText(TASK_DESCRIPTION))));
     }
 
     @Test
@@ -178,17 +188,32 @@ public class ItemViewFragmentTest {
         // Hit the button to create a new task.
         onView(withId(R.id.new_task_btn)).perform(click());
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         onView(withId(R.id.layout_update_task_body)).perform(clearText(), closeSoftKeyboard());
 
         onView(withId(R.id.layout_update_task_save)).perform(click());
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION, TASK_BODY_LAYOUT_ID)));
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
     }
 
@@ -249,12 +274,22 @@ public class ItemViewFragmentTest {
         // Hit the button to create a new task.
         onView(withId(R.id.new_task_btn)).perform(click());
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
                                 0, clickChildViewWithId(R.id.layout_task_checkbox)));
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         // Make sure that the database was called to update the task, and that the updated task
@@ -284,10 +319,20 @@ public class ItemViewFragmentTest {
 
         onView(withId(R.id.layout_update_task_save)).perform(click());
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
     }
 
@@ -327,17 +372,32 @@ public class ItemViewFragmentTest {
         doReturn(taskFuture).when(databaseMock).getTask(any(), anyInt());
 
         // Try to remove the first task
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
                                 0, clickChildViewWithId(R.id.layout_task_checkbox)));
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
                                 0, clickChildViewWithId(R.id.layout_task_delete_button)));
 
         // after deleting the first item we check that we have the second one at position 0.
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
     }
 
@@ -364,17 +424,32 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.new_task_btn)).perform(click());
 
         // Try to remove the first task
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         onView(withId(R.id.layout_update_task_body)).perform(closeSoftKeyboard());
 
         onView(withId(R.id.layout_update_task_delete)).perform(click());
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
     }
 
@@ -421,15 +496,15 @@ public class ItemViewFragmentTest {
         doReturn(todoListFuture).when(databaseMock).getTodoList(any());
 
         // Set some tasks as done and then remove them using the dedicated button
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
                                 0, clickChildViewWithId(R.id.layout_task_checkbox)));
-
-        onView(withId(R.id.activity_itemview_itemlist))
-                .perform(
-                        RecyclerViewActions.actionOnItemAtPosition(
-                                2, clickChildViewWithId(R.id.layout_task_checkbox)));
 
         onView(withId(R.id.remove_done_tasks_btn)).perform(click());
 
@@ -442,7 +517,12 @@ public class ItemViewFragmentTest {
 
         // after deleting the first and the third item we check that we have the second one at
         // position 0.
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
     }
 
@@ -470,7 +550,12 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.new_task_btn)).perform(click());
 
         // Open the update layout.
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         // Check that the "export to calendar" button displays the task's due date.

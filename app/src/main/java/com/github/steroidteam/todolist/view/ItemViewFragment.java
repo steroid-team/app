@@ -36,7 +36,6 @@ import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import com.google.android.gms.maps.model.LatLng;
-
 import java.util.Calendar;
 import java.util.Date;
 import org.jetbrains.annotations.NotNull;
@@ -266,8 +265,9 @@ public class ItemViewFragment extends Fragment {
                                             MapFragment.LOCATION_REQ,
                                             this,
                                             (requestKey, bundle) -> {
-                                                LatLng result = bundle.getParcelable(
-                                                        MapFragment.LOCATION_KEY);
+                                                LatLng result =
+                                                        bundle.getParcelable(
+                                                                MapFragment.LOCATION_KEY);
                                                 Location loc = new Location("");
                                                 loc.setLatitude(result.latitude);
                                                 loc.setLongitude(result.longitude);
@@ -279,7 +279,9 @@ public class ItemViewFragment extends Fragment {
                                                 getParentFragmentManager()
                                                         .clearFragmentResultListener(
                                                                 MapFragment.LOCATION_REQ);
-                                                ReminderLocationBroadcast.createLocationNotification(loc, getActivity());
+                                                ReminderLocationBroadcast
+                                                        .createLocationNotification(
+                                                                loc, getActivity());
                                             });
 
                             Navigation.findNavController(getView()).navigate(R.id.nav_map);

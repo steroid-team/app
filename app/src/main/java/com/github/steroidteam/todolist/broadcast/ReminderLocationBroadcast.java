@@ -25,7 +25,7 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
     public static CharSequence NAME_LOCATION_CHANNEL = "ReminderLocationChannel";
     public static String DESCRIPTION_LOCATION_CHANNEL = "Channel for the location reminder";
     // The radius of the central point alert region in meters
-    private static final float RADIUS = 100;
+    private static final float RADIUS = 1000;
 
     @Override
     public void onReceive(Context context, Intent intent) {

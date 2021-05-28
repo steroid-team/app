@@ -2,6 +2,7 @@ package com.github.steroidteam.todolist.view;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.text.Editable;
@@ -34,6 +35,8 @@ import com.github.steroidteam.todolist.view.misc.TagView;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.Calendar;
 import java.util.Date;
 import org.jetbrains.annotations.NotNull;
@@ -263,15 +266,20 @@ public class ItemViewFragment extends Fragment {
                                             MapFragment.LOCATION_REQ,
                                             this,
                                             (requestKey, bundle) -> {
+                                                LatLng result = bundle.getParcelable(
+                                                        MapFragment.LOCATION_KEY);
+                                                Location loc = new Location("");
+                                                loc.setLatitude(result.latitude);
+                                                loc.setLongitude(result.longitude);
                                                 viewModel.setTaskLocationReminder(
                                                         position,
-                                                        bundle.getParcelable(
-                                                                MapFragment.LOCATION_KEY),
+                                                        result,
                                                         bundle.getString(
                                                                 MapFragment.LOCATION_NAME_KEY));
                                                 getParentFragmentManager()
                                                         .clearFragmentResultListener(
                                                                 MapFragment.LOCATION_REQ);
+                                                ReminderLocationBroadcast.createLocationNotification(loc, getActivity());
                                             });
 
                             Navigation.findNavController(getView()).navigate(R.id.nav_map);

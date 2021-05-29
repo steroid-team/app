@@ -14,6 +14,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckBox;
 import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckText;
+import static com.github.steroidteam.todolist.CustomMatchers.atPositionTextContains;
 import static com.github.steroidteam.todolist.CustomMatchers.clickChildViewWithId;
 import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
@@ -48,7 +49,9 @@ import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.ItemViewFragment;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -224,15 +227,17 @@ public class ItemViewFragmentTest {
         fixtureDates.put("Deliver at 8 PM the package", " at 8 PM");
         fixtureDates.put(
                 "The day after tomorrow at 13:00 buy 3 avocados",
-                "The day after " + "tomorrow at 13:00 ");
+                "The day after tomorrow at 13:00 ");
 
         PrettyTimeParser timeParser = new PrettyTimeParser();
 
         for (Map.Entry<String, String> entry : fixtureDates.entrySet()) {
             String originalTaskDescription = entry.getKey();
+            Task task = new Task(originalTaskDescription.replace(entry.getValue(), ""));
 
             // Start the view with an empty list.
             TodoList todoList = new TodoList("Some random title");
+            todoList.addTask(task);
             CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
             todoListFuture.complete(todoList);
             doReturn(todoListFuture).when(databaseMock).getTodoList(any());
@@ -244,11 +249,76 @@ public class ItemViewFragmentTest {
             // Hit the button to create a new task.
             onView(withId(R.id.new_task_btn)).perform(click());
 
-            Task task = new Task(originalTaskDescription.replace(entry.getValue(), ""));
             task.setDueDate(timeParser.parse(entry.getValue()).get(0));
 
             verify(databaseMock).putTask(any(), eq(task));
         }
+    }
+
+    @Test
+    public void dueDatesAreDisplayed() {
+        // Creating all fixture tasks in a single batch and then testing them is a bit more
+        // complicated because they will be grouped in different date blocks.
+        // Thus, create and test each fixture individually.
+        Calendar c;
+        List<String> fixtureDates = new ArrayList<>();
+        // Start the view with an empty list.
+        TodoList todoList = new TodoList("Some random title");
+        Task task = new Task("Task");
+        todoList.addTask(task);
+        CompletableFuture<TodoList> todoListFuture;
+
+        c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 12);
+        c.set(Calendar.MINUTE, 0);
+        task.setDueDate(c.getTime());
+        todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
+        triggerTaskRefresh();
+        onView(withId(R.id.activity_itemview_itemlist))
+                .check(matches(atPositionTextContains(0, " 12:00")));
+
+        c = Calendar.getInstance();
+        // If the current month is December, next month will be also next year and the year will
+        // be displayed. Let's make the test deterministic by including that scenario.
+        if (c.get(Calendar.MONTH) == Calendar.DECEMBER) {
+            c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 1);
+        } else {
+            c.set(Calendar.MONTH, c.get(Calendar.MONTH) + 1);
+        }
+        task.setDueDate(c.getTime());
+        todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
+        triggerTaskRefresh();
+        onView(withId(R.id.activity_itemview_itemlist))
+                .check(
+                        matches(
+                                atPositionTextContains(
+                                        0,
+                                        new SimpleDateFormat(" MM-dd HH:mm").format(c.getTime()))));
+
+        c = Calendar.getInstance();
+        c.set(Calendar.YEAR, c.get(Calendar.YEAR) + 1);
+        task.setDueDate(c.getTime());
+        todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
+        triggerTaskRefresh();
+        onView(withId(R.id.activity_itemview_itemlist))
+                .check(
+                        matches(
+                                atPositionTextContains(
+                                        0,
+                                        new SimpleDateFormat(" yyyy-MM-dd HH:mm")
+                                                .format(c.getTime()))));
+    }
+
+    private void triggerTaskRefresh() {
+        // Create a random task to refresh the task list.
+        onView(withId(R.id.new_task_text)).perform(typeText("Task"), closeSoftKeyboard());
+        onView(withId(R.id.new_task_btn)).perform(click());
     }
 
     @Test

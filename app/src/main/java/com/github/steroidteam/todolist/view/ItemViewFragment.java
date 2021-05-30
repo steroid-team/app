@@ -112,8 +112,8 @@ public class ItemViewFragment extends Fragment {
     public TodoAdapter.TaskCustomListener createCustomListener() {
         return new TodoAdapter.TaskCustomListener() {
             @Override
-            public void onItemClick(TodoAdapter.TaskHolder holder, final int position) {
-                openUpdateLayout(holder, position);
+            public void onItemClick(final int position) {
+                openUpdateLayout(position);
             }
 
             public void onItemDelete(final int position) {
@@ -199,7 +199,7 @@ public class ItemViewFragment extends Fragment {
         recyclerView.setVisibility(View.VISIBLE);
     }
 
-    public void openUpdateLayout(TodoAdapter.TaskHolder holder, final int position) {
+    public void openUpdateLayout(final int position) {
         RecyclerView recyclerView = getView().findViewById(R.id.activity_itemview_itemlist);
         recyclerView.setVisibility(View.GONE);
 

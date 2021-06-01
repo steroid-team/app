@@ -1,6 +1,7 @@
 package com.github.steroidteam.todolist.view;
 
 import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
@@ -16,6 +17,10 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -33,6 +38,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.UUID;
 
 public class DrawingFragment extends Fragment {
@@ -60,6 +66,8 @@ public class DrawingFragment extends Fragment {
     private final char THIRD_BUTTON = 3;
     private final char FOURTH_BUTTON = 4;
     private final char COLOR_CHOOSE_BUTTON = 0;
+
+    private ActivityResultLauncher<String[]> requestPermissionLauncher;
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -91,6 +99,16 @@ public class DrawingFragment extends Fragment {
         colorPicker.addValueBar(valueBar);
 
         setUpButtonAndColor(root);
+
+        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(),
+                new ActivityResultCallback<Map<String, Boolean>>() {
+                    @Override
+                    public void onActivityResult(Map<String, Boolean> result) {
+                        Toast.makeText(getContext(), "Error:" + result.get(Manifest.permission.WRITE_EXTERNAL_STORAGE), Toast.LENGTH_LONG)
+                                .show();
+                        saveButton(root.findViewById(R.id.drawing_save_btn));
+                    }
+                });
 
         return root;
     }
@@ -154,6 +172,29 @@ public class DrawingFragment extends Fragment {
     }
 
     public void saveButton(View view) {
+
+        if (ContextCompat.checkSelfPermission(
+                this.getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED) {
+            // You can use the API that requires the permission.
+            Toast.makeText(getContext(), "GRANTED", Toast.LENGTH_SHORT)
+                    .show();
+
+            System.out.println("OUIIIIIIIIIIIIIIIIII 1");
+        } else {
+            // You can directly ask for the permission.
+            // The registered ActivityResultCallback gets the result of this request.
+            Toast.makeText(getContext(), "REQUEST", Toast.LENGTH_SHORT)
+                    .show();
+
+            System.out.println("OUIIIIIIIIIIIIIIIIII 3");
+
+            requestPermissionLauncher.launch(
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE});
+        }
+
+        System.out.println("OUIIIIIIIIIIIIIIIIII");
 
         String tmpFileName = "bitmap_tmp.png";
         File tmpFile = new File(

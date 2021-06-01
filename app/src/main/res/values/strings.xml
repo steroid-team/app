@@ -49,16 +49,6 @@
         <item>Take a photo</item>
     </string-array>
 
-    <!-- Note editor -->
-    <string name="bold">Bold</string>
-    <string name="italics">Italics</string>
-    <string name="underline">Underline</string>
-    <string name="strikethrough">Strikethrough</string>
-    <string name="unordered_list">Unordered list</string>
-    <string name="insert_image">Insert image</string>
-    <string name="ordered_list">Ordered list</string>
-    <string name="add_drawing">Add drawing</string>
-
     <!-- Drawing -->
     <string name="drawing_activity_title">Handwritten Note</string>
 
@@ -77,6 +67,18 @@
     <string name="record_button">Record</string>
     <string name="stop_record_button">Stop recording</string>
     <string name="audio_btn_description">Audio</string>
+
+    <!-- Note editor -->
+    <string name="bold">Bold</string>
+    <string name="italics">Italics</string>
+    <string name="underline">Underline</string>
+    <string name="strikethrough">Strikethrough</string>
+    <string name="blockquote">Blockquote</string>
+    <string name="unordered_list">Unordered list</string>
+    <string name="insert_image">Insert image</string>
+    <string name="ordered_list">Ordered list</string>
+    <string name="add_drawing">Add drawing</string>
+    <string name="add_tag_suggestion">\"Enter tag name\"</string>
 
     <!-- Notification Reminder -->
     <string name="title_date_reminder">The due date has come !</string>

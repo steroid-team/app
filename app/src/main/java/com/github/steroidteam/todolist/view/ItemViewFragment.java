@@ -30,6 +30,7 @@ import com.github.steroidteam.todolist.view.adapter.ParentTaskAdapter;
 import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
 import com.github.steroidteam.todolist.view.misc.DateHighlighterTextWatcher;
 import com.github.steroidteam.todolist.view.misc.DueDateInputSpan;
+import com.github.steroidteam.todolist.view.misc.TagView;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
@@ -45,6 +46,7 @@ public class ItemViewFragment extends Fragment {
     public static final int PERMISSIONS_ACCESS_LOCATION = 2;
     private final PrettyTimeParser timeParser = new PrettyTimeParser();
     private ActivityResultLauncher<Intent> calendarExportIntentLauncher;
+    private final TagView tagView = new TagView();
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,6 +92,11 @@ public class ItemViewFragment extends Fragment {
         ConstraintLayout updateLayout = root.findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.GONE);
 
+        root.findViewById(R.id.itemview_tag_button)
+                .setOnClickListener(v -> tagView.tagButton(this, viewModel));
+        root.findViewById(R.id.itemview_tag_save_button)
+                .setOnClickListener(v -> tagView.tagSaveButton(this));
+
         ReminderDateBroadcast.createNotificationChannel(getActivity());
         ReminderLocationBroadcast.createLocationNotificationChannel(getActivity());
 
@@ -103,8 +110,8 @@ public class ItemViewFragment extends Fragment {
     public TodoAdapter.TaskCustomListener createCustomListener() {
         return new TodoAdapter.TaskCustomListener() {
             @Override
-            public void onItemClick(TodoAdapter.TaskHolder holder, final int position) {
-                openUpdateLayout(holder, position);
+            public void onItemClick(final int position) {
+                openUpdateLayout(position);
             }
 
             public void onItemDelete(final int position) {
@@ -190,7 +197,7 @@ public class ItemViewFragment extends Fragment {
         recyclerView.setVisibility(View.VISIBLE);
     }
 
-    public void openUpdateLayout(TodoAdapter.TaskHolder holder, final int position) {
+    public void openUpdateLayout(final int position) {
         RecyclerView recyclerView = getView().findViewById(R.id.activity_itemview_itemlist);
         recyclerView.setVisibility(View.GONE);
 

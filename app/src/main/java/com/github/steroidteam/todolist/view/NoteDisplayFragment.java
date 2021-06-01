@@ -177,6 +177,7 @@ public class NoteDisplayFragment extends Fragment {
         noteTitle.setText(note.getTitle());
 
         // RICH EDITOR
+        System.err.println("on uqziodiopqzdjôpqkdo^qzd : ======== > " + note.getContent());
         richEditor.setHtml(note.getContent());
 
         // LOCATION
@@ -333,6 +334,7 @@ public class NoteDisplayFragment extends Fragment {
                         new ActivityResultContracts.GetContent(),
                         uri -> {
                             if (uri != null)
+                                System.err.println("INSERT IMAGE FROM FILE PICKER: " + uri.toString());
                                 richEditor.insertImage(uri.toString(), "", imageDisplayWidth);
                         });
     }
@@ -385,5 +387,19 @@ public class NoteDisplayFragment extends Fragment {
         super.onPause();
         position = null;
         locationName = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        System.out.println("================================================ RESUME !!!!!");
+
+        Uri drawingPath = noteViewModel.getTmpDrawingPath();
+        if(drawingPath!=null) {
+            richEditor.focusEditor();
+            richEditor.insertImage(drawingPath.toString(), "", imageDisplayWidth);
+            noteViewModel.setTmpDrawingPath(null);
+        }
     }
 }

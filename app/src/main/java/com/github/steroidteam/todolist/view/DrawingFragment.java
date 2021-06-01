@@ -1,25 +1,38 @@
 package com.github.steroidteam.todolist.view;
 
+import android.Manifest;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.viewmodel.NoteViewModel;
+import com.github.steroidteam.todolist.viewmodel.NoteViewModelFactory;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import com.larswerkman.holocolorpicker.ColorPicker;
 import com.larswerkman.holocolorpicker.SaturationBar;
 import com.larswerkman.holocolorpicker.ValueBar;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 public class DrawingFragment extends Fragment {
@@ -141,6 +154,37 @@ public class DrawingFragment extends Fragment {
     }
 
     public void saveButton(View view) {
+
+        String tmpFileName = "bitmap_tmp.png";
+        File tmpFile = new File(
+                Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_PICTURES),
+                tmpFileName);
+
+        try (FileOutputStream output = new FileOutputStream(tmpFile)) {
+            drawingCanvas.getBitmap().compress(Bitmap.CompressFormat.PNG, 50, output);
+            output.close();
+
+            MediaScannerConnection.scanFile(
+                    this.getContext(),
+                    new String[] {tmpFile.toString()},
+                    null,
+                    (path, uri) -> {
+                        NoteViewModelFactory noteViewModelFactory =
+                                ViewModelFactoryInjection.getNoteViewModelFactory(getContext());
+                        NoteViewModel noteViewModel =
+                                new ViewModelProvider(requireActivity(), noteViewModelFactory)
+                                        .get(NoteViewModel.class);
+
+                        noteViewModel.setTmpDrawingPath(uri);
+                        getParentFragmentManager().popBackStack();
+                    });
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Error: could not saved the image", Toast.LENGTH_LONG)
+                    .show();
+        }
+
+        /*
         String fileName = "bitmap" + UUID.randomUUID().toString() + ".png";
         File bitmapFile =
                 new File(
@@ -159,7 +203,7 @@ public class DrawingFragment extends Fragment {
                     });
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public void eraseButton(View view) {

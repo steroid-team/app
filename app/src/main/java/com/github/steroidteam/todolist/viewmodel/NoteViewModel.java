@@ -1,16 +1,21 @@
 package com.github.steroidteam.todolist.viewmodel;
 
+import android.net.Uri;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import com.github.steroidteam.todolist.database.NoteRepository;
 import com.github.steroidteam.todolist.model.notes.Note;
+import com.github.steroidteam.todolist.view.NoteDisplayFragment;
 import com.google.android.gms.maps.model.LatLng;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+
+import jp.wasabeef.richeditor.RichEditor;
 
 public class NoteViewModel extends ViewModel {
 
@@ -21,12 +26,16 @@ public class NoteViewModel extends ViewModel {
 
     private UUID selectedNoteID;
 
+    private Uri tmpDrawingPath;
+
     public NoteViewModel(@NonNull NoteRepository noteRepository) {
         super();
         this.noteRepository = noteRepository;
 
         this.allNote = noteRepository.getAllNote();
         this.noteSelected = noteRepository.getNote();
+
+        this.tmpDrawingPath = null;
     }
 
     public void selectNote(UUID id) {
@@ -73,5 +82,13 @@ public class NoteViewModel extends ViewModel {
 
     public CompletableFuture<File> getNoteHeader(UUID imageID, String destinationPath) {
         return this.noteRepository.getNoteHeader(imageID, destinationPath);
+    }
+
+    public Uri getTmpDrawingPath() {
+        return tmpDrawingPath;
+    }
+
+    public void setTmpDrawingPath(Uri tmpDrawingPath) {
+        this.tmpDrawingPath = tmpDrawingPath;
     }
 }

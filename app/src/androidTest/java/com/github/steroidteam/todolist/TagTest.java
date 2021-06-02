@@ -95,6 +95,8 @@ public class TagTest {
         CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
         tagsFuture.complete(new ArrayList<>());
         doReturn(tagsFuture).when(databaseMock).getTagsFromIds(any());
+        doReturn(tagsFuture).when(databaseMock).getAllTagsIds();
+        doReturn(tagsFuture).when(databaseMock).getAllTags();
 
         File fakeFile = new File("Fake pathname");
         doReturn(fakeFile).when(context).getCacheDir();
@@ -117,7 +119,7 @@ public class TagTest {
     public void createTagButtonWorks() {
 
         onView(withId(R.id.itemview_tag_button)).perform(click());
-        onView(withParent(withId(R.id.tag_row_first))).perform(click());
+        onView(withParent(withId(R.id.tag_row_global))).perform(click());
         onView(withText(R.string.add_tag_suggestion)).check(matches(isDisplayed()));
 
         onView(withId(R.id.alert_dialog_edit_text))
@@ -126,7 +128,7 @@ public class TagTest {
         // button1 = positive button
         onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
         onView(withText(R.string.add_tag_suggestion)).check(doesNotExist());
-        onView(withId(R.id.tag_row_first)).check(matches(hasChildCount(2)));
+        onView(withId(R.id.tag_row_global)).check(matches(hasChildCount(2)));
     }
 
     @Test

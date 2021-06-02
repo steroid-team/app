@@ -203,11 +203,11 @@ public interface Database {
 
     CompletableFuture<Tag> getTag(UUID tagID);
 
-    CompletableFuture<List<UUID>> getTagsList();
+    CompletableFuture<List<UUID>> getAllTagsIds();
+
+    CompletableFuture<List<Tag>> getAllTags();
 
     CompletableFuture<List<Tag>> getTagsFromIds(List<UUID> ids);
-
-    CompletableFuture<List<Tag>> getTagsFromList(UUID listId);
 
     CompletableFuture<Tag> updateTag(UUID tagID, Tag tag);
     /**

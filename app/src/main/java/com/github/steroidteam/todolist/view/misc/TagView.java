@@ -17,21 +17,47 @@ import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import java.util.List;
 
 public class TagView {
-    public void tagButton(Fragment fragment, TodoListViewModel viewModel) {
-        List<Tag> tags = viewModel.getTags();
-        tags.sort(Tag.sortByBody);
-        ConstraintLayout tagLayout = fragment.getView().findViewById(R.id.layout_update_tags);
-        tagLayout.setVisibility(View.VISIBLE);
-        LinearLayout row = fragment.getView().findViewById(R.id.tag_row_first);
-        row.removeAllViews();
+    private boolean initiated = false;
+
+    private void init(Fragment fragment, TodoListViewModel viewModel) {
+        List<Tag> localTags = viewModel.getTagsFromList();
+        List<Tag> globalTags = viewModel.getUnlinkedTags();
+
+        localTags.sort(Tag.sortByBody);
+        globalTags.sort(Tag.sortByBody);
+        System.out.println("Local tags : ");
+        for (int i = 0; i < localTags.size(); i++) {
+            System.out.println(localTags.get(i));
+        }
+        System.out.println("Global tags : ");
+        for (int i = 0; i < globalTags.size(); i++) {
+            System.out.println(globalTags.get(i));
+        }
+
+        LinearLayout localRow = fragment.getView().findViewById(R.id.tag_row_local);
+        LinearLayout globalRow = fragment.getView().findViewById(R.id.tag_row_global);
+        localRow.removeAllViews();
+        globalRow.removeAllViews();
         Button plusButton =
                 new Button(
                         new ContextThemeWrapper(fragment.getContext(), R.style.TagInList), null, 0);
         plusButton.setText("+");
         plusButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
         plusButton.setOnClickListener(v -> createTag(fragment, viewModel));
-        row.addView(plusButton);
-        tags.forEach(tag -> createTagButton(fragment, tag, row, viewModel));
+        globalRow.addView(plusButton);
+        localTags.forEach(
+                tag -> createLocalTagButton(fragment, tag, localRow, globalRow, viewModel));
+        globalTags.forEach(
+                tag -> createGlobalTagButton(fragment, tag, localRow, globalRow, viewModel));
+        initiated = true;
+    }
+
+    public void tagButton(Fragment fragment, TodoListViewModel viewModel) {
+        ConstraintLayout tagLayout = fragment.getView().findViewById(R.id.layout_update_tags);
+        tagLayout.setVisibility(View.VISIBLE);
+        if (!initiated) {
+            init(fragment, viewModel);
+        }
     }
 
     public void tagSaveButton(Fragment fragment) {
@@ -39,20 +65,50 @@ public class TagView {
         tagLayout.setVisibility(View.GONE);
     }
 
-    private void createTagButton(
-            Fragment fragment, Tag tag, LinearLayout row, TodoListViewModel viewModel) {
+    private void createLocalTagButton(
+            Fragment fragment,
+            Tag tag,
+            LinearLayout localRow,
+            LinearLayout globalRow,
+            TodoListViewModel viewModel) {
         Button tagButton =
                 new Button(
                         new ContextThemeWrapper(fragment.getContext(), R.style.TagInList), null, 0);
         tagButton.setText(tag.getBody());
         tagButton.setBackgroundTintList(ColorStateList.valueOf(tag.getColor()));
+        tagButton.setOnClickListener(
+                view -> {
+                    viewModel.removeTagFromTodolist(tag);
+                    localRow.removeView(tagButton);
+                    globalRow.addView(tagButton);
+                });
+        localRow.addView(tagButton);
+    }
+
+    private void createGlobalTagButton(
+            Fragment fragment,
+            Tag tag,
+            LinearLayout localRow,
+            LinearLayout globalRow,
+            TodoListViewModel viewModel) {
+        Button tagButton =
+                new Button(
+                        new ContextThemeWrapper(fragment.getContext(), R.style.TagInList), null, 0);
+        tagButton.setText(tag.getBody());
+        tagButton.setBackgroundTintList(ColorStateList.valueOf(tag.getColor()));
+        tagButton.setOnClickListener(
+                view -> {
+                    viewModel.putTagInTodolist(tag);
+                    globalRow.removeView(tagButton);
+                    localRow.addView(tagButton);
+                });
         tagButton.setOnLongClickListener(
                 view -> {
+                    globalRow.removeView(tagButton);
                     viewModel.destroyTag(tag);
-                    row.removeView(tagButton);
                     return true;
                 });
-        row.addView(tagButton);
+        globalRow.addView(tagButton);
     }
 
     public void createTag(Fragment fragment, TodoListViewModel viewModel) {
@@ -64,11 +120,12 @@ public class TagView {
                     public void onPositiveClick(String title) {
                         if (title.length() > 0) {
                             Tag tag = new Tag(title);
-                            viewModel.addTag(tag);
-                            createTagButton(
+                            viewModel.putTag(tag);
+                            createGlobalTagButton(
                                     fragment,
                                     tag,
-                                    fragment.getView().findViewById(R.id.tag_row_first),
+                                    fragment.getView().findViewById(R.id.tag_row_local),
+                                    fragment.getView().findViewById(R.id.tag_row_global),
                                     viewModel);
                         }
                     }

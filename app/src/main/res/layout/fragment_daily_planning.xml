@@ -60,61 +60,125 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/set_done_button"
+        <LinearLayout
+
+            android:id="@+id/set_done_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_marginStart="32dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_baseline_check_24"
-            app:backgroundTint="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:rippleColor="@android:color/black" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/today_plan_button"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/set_done_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_baseline_check_24"
+                app:backgroundTint="@android:color/white"
+                app:rippleColor="@android:color/black" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Done"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:id="@+id/today_plan_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_marginStart="32dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_baseline_arrow_downward_24"
-            app:backgroundTint="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/set_done_button"
-            app:layout_constraintTop_toTopOf="parent"
-            app:rippleColor="@android:color/black" />
+            app:layout_constraintStart_toEndOf="@id/set_done_layout"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/other_day_plan_button"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/today_plan_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_baseline_arrow_downward_24"
+                app:backgroundTint="@android:color/white"
+                app:rippleColor="@android:color/black" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Today"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:id="@+id/other_day_plan_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_marginStart="32dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_baseline_arrow_forward_24"
-            app:backgroundTint="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/today_plan_button"
-            app:layout_constraintTop_toTopOf="parent"
-            app:rippleColor="@android:color/black" />
+            app:layout_constraintStart_toEndOf="@id/today_plan_layout"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/delete_task_button"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/other_day_plan_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_baseline_arrow_forward_24"
+                app:backgroundTint="@android:color/white"
+                app:rippleColor="@android:color/black" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Later"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:id="@+id/delete_task_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_marginStart="32dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_baseline_clear_24"
-            app:backgroundTint="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/other_day_plan_button"
-            app:layout_constraintTop_toTopOf="parent"
-            app:rippleColor="@android:color/black" />
+            app:layout_constraintStart_toEndOf="@id/other_day_plan_layout"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/delete_task_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_baseline_clear_24"
+                app:backgroundTint="@android:color/white"
+                app:rippleColor="@android:color/black" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Delete"
+                android:gravity="center"/>
+
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

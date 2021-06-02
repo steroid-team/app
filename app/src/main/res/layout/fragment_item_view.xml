@@ -232,7 +232,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:drawableStart="@android:drawable/ic_menu_mylocation"
+                    app:icon="@drawable/location_icon"
+                    app:iconSize="17dp"
+                    app:iconTint="@color/dark_grey"
+                    app:iconPadding="5dp"
+                    app:iconGravity="textStart"
                     android:text="@string/add_location" />
             </LinearLayout>
 

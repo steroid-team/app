@@ -219,6 +219,7 @@ public class ItemViewFragment extends Fragment {
         SaveButtonSetup(userInputBody, position);
         DeleteButtonSetup(position);
         calendarExportButtonSetup(position);
+        removeDueDateButtonSetup(position);
 
         Button closeButton = getView().findViewById(R.id.layout_update_task_close);
         closeButton.setOnClickListener(this::closeUpdateLayout);
@@ -289,6 +290,25 @@ public class ItemViewFragment extends Fragment {
 
         Button closeButton = getView().findViewById(R.id.layout_update_task_close);
         closeButton.setOnClickListener(this::closeUpdateLayout);
+    }
+
+    private void removeDueDateButtonSetup(final int position) {
+        Task thisTask = viewModel.getTask(position);
+        Button button = getView().findViewById(R.id.layout_update_remove_due_date);
+
+        if (thisTask.getDueDate() == null) {
+            button.setVisibility(View.GONE);
+        } else {
+            button.setVisibility(View.VISIBLE);
+            button.setOnClickListener(
+                    v -> {
+                        viewModel.setTaskDueDate(position, null);
+                        // Reset the text in the calendar export button.
+                        Button calendarExportButton =
+                                getView().findViewById(R.id.layout_update_task_export_calendar);
+                        calendarExportButton.setText(R.string.export_to_calendar);
+                    });
+        }
     }
 
     private void calendarExportButtonSetup(final int position) {

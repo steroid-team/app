@@ -45,6 +45,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 import jp.wasabeef.richeditor.RichEditor;
@@ -54,7 +55,6 @@ public class NoteDisplayFragment extends Fragment {
     private LatLng position; // TODO : change this !!! LISTEN TO RESULT LISTENER OF MAP
     private String locationName; // TODO : change this !!!
 
-    private UUID noteID;
     private RichEditor richEditor;
     private Uri cameraFileUri;
     private ActivityResultLauncher<String> headerImagePickerActivityLauncher;
@@ -177,7 +177,6 @@ public class NoteDisplayFragment extends Fragment {
         noteTitle.setText(note.getTitle());
 
         // RICH EDITOR
-        System.err.println("on uqziodiopqzdjôpqkdo^qzd : ======== > " + note.getContent());
         richEditor.setHtml(note.getContent());
 
         // LOCATION
@@ -334,7 +333,6 @@ public class NoteDisplayFragment extends Fragment {
                         new ActivityResultContracts.GetContent(),
                         uri -> {
                             if (uri != null)
-                                System.err.println("INSERT IMAGE FROM FILE PICKER: " + uri.toString());
                                 richEditor.insertImage(uri.toString(), "", imageDisplayWidth);
                         });
     }
@@ -347,8 +345,6 @@ public class NoteDisplayFragment extends Fragment {
         String tmpFileName = "bitmap_tmp.jpeg";
         File tmpFile = new File(getContext().getCacheDir(), tmpFileName);
 
-        System.err.println(
-                tmpFile.toString() + " " + tmpFile.toURI() + "                     zqdqzd");
         try (FileOutputStream output = new FileOutputStream(tmpFile)) {
             InputStream is = getContext().getContentResolver().openInputStream(uri);
             bitmap = BitmapFactory.decodeStream(is);
@@ -393,12 +389,18 @@ public class NoteDisplayFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        System.out.println("================================================ RESUME !!!!!");
-
         Uri drawingPath = noteViewModel.getTmpDrawingPath();
-        if(drawingPath!=null) {
-            richEditor.focusEditor();
-            richEditor.insertImage(drawingPath.toString(), "", imageDisplayWidth);
+
+        if (drawingPath != null) {
+
+            File drawingFile = new File(URI.create(drawingPath.toString()).getPath());
+            if (drawingFile.exists()) {
+                richEditor.focusEditor();
+                richEditor.insertImage(drawingPath.toString(), "", imageDisplayWidth);
+                noteViewModel.setTmpDrawingPath(null);
+            }
+
+            // File not present in the database
             noteViewModel.setTmpDrawingPath(null);
         }
     }

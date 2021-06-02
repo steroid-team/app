@@ -1,21 +1,17 @@
 package com.github.steroidteam.todolist.viewmodel;
 
 import android.net.Uri;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import com.github.steroidteam.todolist.database.NoteRepository;
 import com.github.steroidteam.todolist.model.notes.Note;
-import com.github.steroidteam.todolist.view.NoteDisplayFragment;
 import com.google.android.gms.maps.model.LatLng;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
-import jp.wasabeef.richeditor.RichEditor;
 
 public class NoteViewModel extends ViewModel {
 

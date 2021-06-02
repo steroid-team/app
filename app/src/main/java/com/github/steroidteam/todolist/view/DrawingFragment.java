@@ -3,12 +3,9 @@ package com.github.steroidteam.todolist.view;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,17 +13,12 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.viewmodel.NoteViewModel;
 import com.github.steroidteam.todolist.viewmodel.NoteViewModelFactory;
@@ -36,9 +28,6 @@ import com.larswerkman.holocolorpicker.SaturationBar;
 import com.larswerkman.holocolorpicker.ValueBar;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
 import java.util.UUID;
 
 public class DrawingFragment extends Fragment {
@@ -100,15 +89,33 @@ public class DrawingFragment extends Fragment {
 
         setUpButtonAndColor(root);
 
-        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(),
-                new ActivityResultCallback<Map<String, Boolean>>() {
-                    @Override
-                    public void onActivityResult(Map<String, Boolean> result) {
-                        Toast.makeText(getContext(), "Error:" + result.get(Manifest.permission.WRITE_EXTERNAL_STORAGE), Toast.LENGTH_LONG)
-                                .show();
-                        saveButton(root.findViewById(R.id.drawing_save_btn));
-                    }
-                });
+        requestPermissionLauncher =
+                registerForActivityResult(
+                        new ActivityResultContracts.RequestMultiplePermissions(),
+                        result -> {
+                            Boolean externalWritePermission =
+                                    result.get(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                            Boolean externalReadPermission =
+                                    result.get(Manifest.permission.READ_EXTERNAL_STORAGE);
+
+                            if (externalReadPermission != null && externalWritePermission != null) {
+                                if (externalReadPermission && externalWritePermission) {
+                                    storeDrawing();
+                                } else {
+                                    Toast.makeText(
+                                                    getContext(),
+                                                    "Error: without permissions, the app can't save your drawing!",
+                                                    Toast.LENGTH_LONG)
+                                            .show();
+                                }
+                            } else {
+                                Toast.makeText(
+                                                getContext(),
+                                                "Error: without permissions, the app can't save your drawing!",
+                                                Toast.LENGTH_LONG)
+                                        .show();
+                            }
+                        });
 
         return root;
     }
@@ -172,79 +179,52 @@ public class DrawingFragment extends Fragment {
     }
 
     public void saveButton(View view) {
-
         if (ContextCompat.checkSelfPermission(
-                this.getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                PackageManager.PERMISSION_GRANTED) {
-            // You can use the API that requires the permission.
-            Toast.makeText(getContext(), "GRANTED", Toast.LENGTH_SHORT)
-                    .show();
+                                this.getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(
+                                this.getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
 
-            System.out.println("OUIIIIIIIIIIIIIIIIII 1");
+            // Permission already granted.
+            storeDrawing();
         } else {
             // You can directly ask for the permission.
             // The registered ActivityResultCallback gets the result of this request.
-            Toast.makeText(getContext(), "REQUEST", Toast.LENGTH_SHORT)
-                    .show();
-
-            System.out.println("OUIIIIIIIIIIIIIIIIII 3");
-
             requestPermissionLauncher.launch(
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE});
+                    new String[] {
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    });
         }
+    }
 
-        System.out.println("OUIIIIIIIIIIIIIIIIII");
-
-        String tmpFileName = "bitmap_tmp.png";
-        File tmpFile = new File(
-                Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_PICTURES),
-                tmpFileName);
+    private void storeDrawing() {
+        String tmpFileName = "bitmap_tmp_" + UUID.randomUUID().toString() + ".png";
+        File tmpFile =
+                new File(
+                        Environment.getExternalStoragePublicDirectory(
+                                Environment.DIRECTORY_PICTURES),
+                        tmpFileName);
 
         try (FileOutputStream output = new FileOutputStream(tmpFile)) {
             drawingCanvas.getBitmap().compress(Bitmap.CompressFormat.PNG, 50, output);
             output.close();
 
-            MediaScannerConnection.scanFile(
-                    this.getContext(),
-                    new String[] {tmpFile.toString()},
-                    null,
-                    (path, uri) -> {
-                        NoteViewModelFactory noteViewModelFactory =
-                                ViewModelFactoryInjection.getNoteViewModelFactory(getContext());
-                        NoteViewModel noteViewModel =
-                                new ViewModelProvider(requireActivity(), noteViewModelFactory)
-                                        .get(NoteViewModel.class);
+            Uri uri = Uri.fromFile(tmpFile);
 
-                        noteViewModel.setTmpDrawingPath(uri);
-                        getParentFragmentManager().popBackStack();
-                    });
+            NoteViewModelFactory noteViewModelFactory =
+                    ViewModelFactoryInjection.getNoteViewModelFactory(getContext());
+            NoteViewModel noteViewModel =
+                    new ViewModelProvider(requireActivity(), noteViewModelFactory)
+                            .get(NoteViewModel.class);
+
+            noteViewModel.setTmpDrawingPath(uri);
+            getParentFragmentManager().popBackStack();
         } catch (Exception e) {
             Toast.makeText(getContext(), "Error: could not saved the image", Toast.LENGTH_LONG)
                     .show();
         }
-
-        /*
-        String fileName = "bitmap" + UUID.randomUUID().toString() + ".png";
-        File bitmapFile =
-                new File(
-                        Environment.getExternalStoragePublicDirectory(
-                                Environment.DIRECTORY_PICTURES),
-                        fileName);
-        try (FileOutputStream output = new FileOutputStream(bitmapFile)) {
-            drawingCanvas.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, output);
-            output.close();
-            MediaScannerConnection.scanFile(
-                    this.getContext(),
-                    new String[] {bitmapFile.toString()},
-                    null,
-                    (path, uri) -> {
-                        getParentFragmentManager().popBackStack();
-                    });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
     }
 
     public void eraseButton(View view) {

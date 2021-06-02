@@ -61,7 +61,7 @@
             android:scaleType="fitCenter"
             app:layout_constraintEnd_toStartOf="@+id/camera_button"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_menu_mylocation" />
+            app:srcCompat="@drawable/location_icon" />
 
         <ImageButton
             android:id="@+id/audio_button"

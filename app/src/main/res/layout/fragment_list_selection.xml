@@ -46,11 +46,11 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_marginEnd="24dp"
+            android:contentDescription="@string/search_btn_description"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/search_icon"
-            android:contentDescription="@string/search_btn_description" />
+            app:srcCompat="@drawable/search_icon" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -67,7 +67,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/list_selection_toolbar"/>
+        app:layout_constraintTop_toBottomOf="@+id/list_selection_toolbar" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/create_todo_button"

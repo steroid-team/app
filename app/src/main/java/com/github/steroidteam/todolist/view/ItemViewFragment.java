@@ -228,9 +228,6 @@ public class ItemViewFragment extends Fragment {
         DeleteButtonSetup(position);
         calendarExportButtonSetup(position);
         removeDueDateButtonSetup(position);
-
-        Button closeButton = getView().findViewById(R.id.layout_update_task_close);
-        closeButton.setOnClickListener(this::closeUpdateLayout);
     }
 
     private void SaveButtonSetup(EditText userInput, final int position) {
@@ -287,9 +284,6 @@ public class ItemViewFragment extends Fragment {
 
                             Navigation.findNavController(getView()).navigate(R.id.nav_map);
                         });
-
-        Button closeButton = getView().findViewById(R.id.layout_update_task_close);
-        closeButton.setOnClickListener(this::closeUpdateLayout);
     }
 
     private void removeDueDateButtonSetup(final int position) {

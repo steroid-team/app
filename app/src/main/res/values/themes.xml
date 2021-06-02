@@ -102,6 +102,11 @@
         <item name="contentPaddingRight">15dp</item>
         <item name="contentPaddingTop">14dp</item>
     </style>
+
+    <style name="NewTaskInput">
+        <item name="android:background">@drawable/rounded_corner_bg_outline_light</item>
+    </style>
+
     <!-- Dialog Theme -->
     <style name="Dialog" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:textColorPrimary">@color/dark_blue</item>

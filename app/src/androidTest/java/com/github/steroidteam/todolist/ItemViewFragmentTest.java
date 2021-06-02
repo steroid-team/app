@@ -6,14 +6,20 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckBox;
 import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckText;
+import static com.github.steroidteam.todolist.CustomMatchers.atPositionTextContains;
 import static com.github.steroidteam.todolist.CustomMatchers.clickChildViewWithId;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -38,14 +44,19 @@ import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.ItemViewFragment;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -54,7 +65,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
 
@@ -112,6 +125,10 @@ public class ItemViewFragmentTest {
         todoListCollectionFuture.complete(collection);
         doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
 
+        CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
+        tagsFuture.complete(new ArrayList<>());
+        doReturn(tagsFuture).when(databaseMock).getTagsFromIds(any());
+
         DatabaseFactory.setCustomDatabase(databaseMock);
 
         File fakeFile = new File("Fake pathname");
@@ -143,7 +160,7 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.new_task_text)).check(matches(withText("")));
 
         onView(withId(R.id.activity_itemview_itemlist))
-                .check(matches(atPositionCheckText(0, TASK_DESCRIPTION, TASK_BODY_LAYOUT_ID)));
+                .check(matches(hasDescendant(withText(TASK_DESCRIPTION))));
     }
 
     @Test
@@ -178,17 +195,32 @@ public class ItemViewFragmentTest {
         // Hit the button to create a new task.
         onView(withId(R.id.new_task_btn)).perform(click());
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         onView(withId(R.id.layout_update_task_body)).perform(clearText(), closeSoftKeyboard());
 
         onView(withId(R.id.layout_update_task_save)).perform(click());
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION, TASK_BODY_LAYOUT_ID)));
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
     }
 
@@ -199,15 +231,17 @@ public class ItemViewFragmentTest {
         fixtureDates.put("Deliver at 8 PM the package", " at 8 PM");
         fixtureDates.put(
                 "The day after tomorrow at 13:00 buy 3 avocados",
-                "The day after " + "tomorrow at 13:00 ");
+                "The day after tomorrow at 13:00 ");
 
         PrettyTimeParser timeParser = new PrettyTimeParser();
 
         for (Map.Entry<String, String> entry : fixtureDates.entrySet()) {
             String originalTaskDescription = entry.getKey();
+            Task task = new Task(originalTaskDescription.replace(entry.getValue(), ""));
 
             // Start the view with an empty list.
             TodoList todoList = new TodoList("Some random title");
+            todoList.addTask(task);
             CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
             todoListFuture.complete(todoList);
             doReturn(todoListFuture).when(databaseMock).getTodoList(any());
@@ -219,11 +253,76 @@ public class ItemViewFragmentTest {
             // Hit the button to create a new task.
             onView(withId(R.id.new_task_btn)).perform(click());
 
-            Task task = new Task(originalTaskDescription.replace(entry.getValue(), ""));
             task.setDueDate(timeParser.parse(entry.getValue()).get(0));
 
             verify(databaseMock).putTask(any(), eq(task));
         }
+    }
+
+    @Test
+    public void dueDatesAreDisplayed() {
+        // Creating all fixture tasks in a single batch and then testing them is a bit more
+        // complicated because they will be grouped in different date blocks.
+        // Thus, create and test each fixture individually.
+        Calendar c;
+        List<String> fixtureDates = new ArrayList<>();
+        // Start the view with an empty list.
+        TodoList todoList = new TodoList("Some random title");
+        Task task = new Task("Task");
+        todoList.addTask(task);
+        CompletableFuture<TodoList> todoListFuture;
+
+        c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 12);
+        c.set(Calendar.MINUTE, 0);
+        task.setDueDate(c.getTime());
+        todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
+        triggerTaskRefresh();
+        onView(withId(R.id.activity_itemview_itemlist))
+                .check(matches(atPositionTextContains(0, " 12:00")));
+
+        c = Calendar.getInstance();
+        // If the current month is December, next month will be also next year and the year will
+        // be displayed. Let's make the test deterministic by including that scenario.
+        if (c.get(Calendar.MONTH) == Calendar.DECEMBER) {
+            c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 1);
+        } else {
+            c.set(Calendar.MONTH, c.get(Calendar.MONTH) + 1);
+        }
+        task.setDueDate(c.getTime());
+        todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
+        triggerTaskRefresh();
+        onView(withId(R.id.activity_itemview_itemlist))
+                .check(
+                        matches(
+                                atPositionTextContains(
+                                        0,
+                                        new SimpleDateFormat(" MM-dd HH:mm").format(c.getTime()))));
+
+        c = Calendar.getInstance();
+        c.set(Calendar.YEAR, c.get(Calendar.YEAR) + 1);
+        task.setDueDate(c.getTime());
+        todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
+        triggerTaskRefresh();
+        onView(withId(R.id.activity_itemview_itemlist))
+                .check(
+                        matches(
+                                atPositionTextContains(
+                                        0,
+                                        new SimpleDateFormat(" yyyy-MM-dd HH:mm")
+                                                .format(c.getTime()))));
+    }
+
+    private void triggerTaskRefresh() {
+        // Create a random task to refresh the task list.
+        onView(withId(R.id.new_task_text)).perform(typeText("Task"), closeSoftKeyboard());
+        onView(withId(R.id.new_task_btn)).perform(click());
     }
 
     @Test
@@ -249,12 +348,22 @@ public class ItemViewFragmentTest {
         // Hit the button to create a new task.
         onView(withId(R.id.new_task_btn)).perform(click());
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
                                 0, clickChildViewWithId(R.id.layout_task_checkbox)));
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         // Make sure that the database was called to update the task, and that the updated task
@@ -284,10 +393,20 @@ public class ItemViewFragmentTest {
 
         onView(withId(R.id.layout_update_task_save)).perform(click());
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
     }
 
@@ -327,17 +446,32 @@ public class ItemViewFragmentTest {
         doReturn(taskFuture).when(databaseMock).getTask(any(), anyInt());
 
         // Try to remove the first task
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
                                 0, clickChildViewWithId(R.id.layout_task_checkbox)));
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
                                 0, clickChildViewWithId(R.id.layout_task_delete_button)));
 
         // after deleting the first item we check that we have the second one at position 0.
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
     }
 
@@ -364,17 +498,32 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.new_task_btn)).perform(click());
 
         // Try to remove the first task
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         onView(withId(R.id.layout_update_task_body)).perform(closeSoftKeyboard());
 
         onView(withId(R.id.layout_update_task_delete)).perform(click());
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
 
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
     }
 
@@ -421,15 +570,15 @@ public class ItemViewFragmentTest {
         doReturn(todoListFuture).when(databaseMock).getTodoList(any());
 
         // Set some tasks as done and then remove them using the dedicated button
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(
                         RecyclerViewActions.actionOnItemAtPosition(
                                 0, clickChildViewWithId(R.id.layout_task_checkbox)));
-
-        onView(withId(R.id.activity_itemview_itemlist))
-                .perform(
-                        RecyclerViewActions.actionOnItemAtPosition(
-                                2, clickChildViewWithId(R.id.layout_task_checkbox)));
 
         onView(withId(R.id.remove_done_tasks_btn)).perform(click());
 
@@ -442,7 +591,12 @@ public class ItemViewFragmentTest {
 
         // after deleting the first and the third item we check that we have the second one at
         // position 0.
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
     }
 
@@ -470,7 +624,12 @@ public class ItemViewFragmentTest {
         onView(withId(R.id.new_task_btn)).perform(click());
 
         // Open the update layout.
-        onView(withId(R.id.activity_itemview_itemlist))
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         // Check that the "export to calendar" button displays the task's due date.
@@ -492,6 +651,76 @@ public class ItemViewFragmentTest {
                         hasExtra(CalendarContract.Events.TITLE, TASK_DESCRIPTION)
                         ));
          */
+    }
+
+    @Test
+    public void removeDueDateButtonWorks() {
+        final String TASK_DESCRIPTION = "Eat lunch";
+
+        // Create a todolist with a single task, which only contains a task with a due date set.
+        Task task = new Task(TASK_DESCRIPTION);
+        Date dueDate = new Date();
+        task.setDueDate(dueDate);
+        TodoList todoList = new TodoList("Some random title");
+        todoList.addTask(task);
+        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
+
+        // Type a task description in the "new task" text field.
+        onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
+
+        // Hit the button to create a new task.
+        onView(withId(R.id.new_task_btn)).perform(click());
+
+        // Open the update layout.
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        // Check that the button is displayed.
+        onView(withId(R.id.layout_update_remove_due_date)).check(matches(isDisplayed()));
+
+        // Hit the button to remove the due date.
+        onView(withId(R.id.layout_update_remove_due_date)).perform(click());
+
+        ArgumentCaptor<Task> taskCaptor = ArgumentCaptor.forClass(Task.class);
+        Mockito.verify(databaseMock).updateTask(any(), any(), taskCaptor.capture());
+        assertNull(taskCaptor.getValue().getDueDate());
+
+        // Check that the calendar export button has been reset.
+        onView(withId(R.id.layout_update_task_export_calendar))
+                .check(matches(withText(R.string.export_to_calendar)));
+    }
+
+    @Test
+    public void remoteDueDateButtonNotDisplayedOnEmptyDueDate() {
+        final String TASK_DESCRIPTION = "Eat lunch";
+
+        // Create a todolist with a single task, which only contains a task with a due date set.
+        Task task = new Task(TASK_DESCRIPTION);
+        TodoList todoList = new TodoList("Some random title");
+        todoList.addTask(task);
+        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
+
+        // Type a task description in the "new task" text field.
+        onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
+
+        // Hit the button to create a new task.
+        onView(withId(R.id.new_task_btn)).perform(click());
+
+        // Open the update layout.
+        onView(withId(R.id.activity_itemview_itemlist))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        // Check that the button is NOT displayed.
+        onView(withId(R.id.layout_update_remove_due_date)).check(matches(not(isDisplayed())));
     }
 
     @Test

@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import com.github.steroidteam.todolist.database.TodoListRepository;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class TodoListViewModel extends ViewModel {
@@ -81,7 +83,25 @@ public class TodoListViewModel extends ViewModel {
 
     public void setTaskDueDate(int index, Date date) {
         Task currentTask = todoListSelected.getValue().getTask(index);
-        todoListRepository.updateTask(selectedTodoList, index, currentTask.setDueDate(date));
+        Task updatedTask;
+        if (date == null) {
+            updatedTask = currentTask.removeDueDate();
+        } else {
+            updatedTask = currentTask.setDueDate(date);
+        }
+        todoListRepository.updateTask(selectedTodoList, index, updatedTask);
+    }
+
+    public List<Tag> getTags() {
+        return todoListRepository.getTags();
+    }
+
+    public void addTag(Tag tag) {
+        todoListRepository.putTag(selectedTodoList, tag);
+    }
+
+    public void destroyTag(Tag tag) {
+        todoListRepository.destroyTag(selectedTodoList, tag);
     }
 
     public void setTaskLocationReminder(int index, LatLng location, String locationName) {

@@ -26,9 +26,11 @@ import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;
 import com.github.steroidteam.todolist.model.todo.Task;
+import com.github.steroidteam.todolist.view.adapter.ParentTaskAdapter;
 import com.github.steroidteam.todolist.view.adapter.TodoAdapter;
 import com.github.steroidteam.todolist.view.misc.DateHighlighterTextWatcher;
 import com.github.steroidteam.todolist.view.misc.DueDateInputSpan;
+import com.github.steroidteam.todolist.view.misc.TagView;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
@@ -40,10 +42,11 @@ import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
 public class ItemViewFragment extends Fragment {
 
     private TodoListViewModel viewModel;
-    private TodoAdapter adapter;
+    private ParentTaskAdapter adapter;
     public static final int PERMISSIONS_ACCESS_LOCATION = 2;
     private final PrettyTimeParser timeParser = new PrettyTimeParser();
     private ActivityResultLauncher<Intent> calendarExportIntentLauncher;
+    private final TagView tagView = new TagView();
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,7 +66,7 @@ public class ItemViewFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
 
-        adapter = new TodoAdapter(createCustomListener());
+        adapter = new ParentTaskAdapter(createCustomListener());
         recyclerView.setAdapter(adapter);
 
         TodoViewModelFactory todoViewModelFactory =
@@ -80,13 +83,8 @@ public class ItemViewFragment extends Fragment {
                             TextView activityTitle = root.findViewById(R.id.activity_title);
                             activityTitle.setText(todoList.getTitle());
 
-                            adapter.setTodoList(todoList);
+                            adapter.setParentTodoList(todoList);
                         });
-
-        recyclerView = root.findViewById(R.id.activity_itemview_itemlist);
-        // The layout manager takes care of displaying the task below each other
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setHasFixedSize(true);
 
         root.findViewById(R.id.new_task_btn).setOnClickListener(this::addTask);
         root.findViewById(R.id.remove_done_tasks_btn).setOnClickListener(this::removeDoneTasks);
@@ -94,6 +92,11 @@ public class ItemViewFragment extends Fragment {
 
         ConstraintLayout updateLayout = root.findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.GONE);
+
+        root.findViewById(R.id.itemview_tag_button)
+                .setOnClickListener(v -> tagView.tagButton(this, viewModel));
+        root.findViewById(R.id.itemview_tag_save_button)
+                .setOnClickListener(v -> tagView.tagSaveButton(this));
 
         ReminderDateBroadcast.createNotificationChannel(getActivity());
         ReminderLocationBroadcast.createLocationNotificationChannel(getActivity());
@@ -108,8 +111,8 @@ public class ItemViewFragment extends Fragment {
     public TodoAdapter.TaskCustomListener createCustomListener() {
         return new TodoAdapter.TaskCustomListener() {
             @Override
-            public void onItemClick(TodoAdapter.TaskHolder holder, final int position) {
-                openUpdateLayout(holder, position);
+            public void onItemClick(final int position) {
+                openUpdateLayout(position);
             }
 
             public void onItemDelete(final int position) {
@@ -195,7 +198,7 @@ public class ItemViewFragment extends Fragment {
         recyclerView.setVisibility(View.VISIBLE);
     }
 
-    public void openUpdateLayout(TodoAdapter.TaskHolder holder, final int position) {
+    public void openUpdateLayout(final int position) {
         RecyclerView recyclerView = getView().findViewById(R.id.activity_itemview_itemlist);
         recyclerView.setVisibility(View.GONE);
 
@@ -215,6 +218,7 @@ public class ItemViewFragment extends Fragment {
         SaveButtonSetup(userInputBody, position);
         DeleteButtonSetup(position);
         calendarExportButtonSetup(position);
+        removeDueDateButtonSetup(position);
 
         Button closeButton = getView().findViewById(R.id.layout_update_task_close);
         closeButton.setOnClickListener(this::closeUpdateLayout);
@@ -277,6 +281,25 @@ public class ItemViewFragment extends Fragment {
 
         Button closeButton = getView().findViewById(R.id.layout_update_task_close);
         closeButton.setOnClickListener(this::closeUpdateLayout);
+    }
+
+    private void removeDueDateButtonSetup(final int position) {
+        Task thisTask = viewModel.getTask(position);
+        Button button = getView().findViewById(R.id.layout_update_remove_due_date);
+
+        if (thisTask.getDueDate() == null) {
+            button.setVisibility(View.GONE);
+        } else {
+            button.setVisibility(View.VISIBLE);
+            button.setOnClickListener(
+                    v -> {
+                        viewModel.setTaskDueDate(position, null);
+                        // Reset the text in the calendar export button.
+                        Button calendarExportButton =
+                                getView().findViewById(R.id.layout_update_task_export_calendar);
+                        calendarExportButton.setText(R.string.export_to_calendar);
+                    });
+        }
     }
 
     private void calendarExportButtonSetup(final int position) {

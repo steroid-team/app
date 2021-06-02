@@ -240,32 +240,6 @@
                     android:text="@string/add_location" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@android:color/transparent">
-
-                <Button
-                    android:id="@+id/layout_update_task_save"
-                    style="@style/TaskSaveButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:layout_weight="1"
-                    android:text="@string/save" />
-
-                <Button
-                    android:id="@+id/layout_update_task_close"
-                    style="@style/TaskUndoButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:layout_weight="1"
-                    android:text="@string/undo" />
-
-            </LinearLayout>
         </LinearLayout>
 
         <Button
@@ -276,7 +250,18 @@
             android:layout_marginBottom="16dp"
             android:text="@string/delete"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/layout_update_task_save"
+            style="@style/TaskSaveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/save"
+            app:layout_constraintBottom_toTopOf="@+id/layout_update_task_delete"
+            tools:layout_editor_absoluteX="24dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -6,4 +6,8 @@
     <style name="BigInput">
         <item name="android:background">@drawable/rounded_corner_bg_outline_dark</item>
     </style>
+
+    <style name="TaskUpdateLayout">
+        <item name="android:backgroundTint">@android:color/black</item>
+    </style>
 </resources>

@@ -39,7 +39,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
         dateCategoryList.add("Past due");
         dateCategoryList.add("Today");
         dateCategoryList.add("Tomorrow");
-        dateCategoryList.add("Next 5 days after Tomorrow");
+        dateCategoryList.add("Next 7 days");
         dateCategoryList.add("Later");
         dateCategoryList.add("Unknown");
         dateCategoryList.add("Done");

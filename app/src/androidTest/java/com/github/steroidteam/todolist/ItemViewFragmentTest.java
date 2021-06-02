@@ -136,7 +136,7 @@ public class ItemViewFragmentTest {
         ViewModelFactoryInjection.setCustomTodoListRepo(context, UUID.randomUUID());
         scenario =
                 FragmentScenario.launchInContainer(
-                        ItemViewFragment.class, null, R.style.Theme_Asteroid);
+                        ItemViewFragment.class, null, R.style.AsteroidTheme);
     }
 
     @Test

@@ -82,7 +82,7 @@ public class NoteSelectionFragmentTest {
 
         scenario =
                 FragmentScenario.launchInContainer(
-                        NoteSelectionFragment.class, null, R.style.Theme_Asteroid);
+                        NoteSelectionFragment.class, null, R.style.AsteroidTheme);
     }
 
     @Test

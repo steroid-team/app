@@ -93,7 +93,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:layout_weight="1"
-        android:background="@drawable/rounded_corner_bg"
+        style="@style/NewTaskInput"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -123,7 +123,7 @@
             android:layout_marginBottom="7dp"
             android:layout_weight="1"
             android:background="@drawable/rounded_corner_bg"
-            android:backgroundTint="@color/colorPrimary"
+            android:backgroundTint="?attr/colorPrimary"
             android:contentDescription="@string/new_task"
             android:padding="10dp"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -83,7 +83,13 @@ public class TodoListViewModel extends ViewModel {
 
     public void setTaskDueDate(int index, Date date) {
         Task currentTask = todoListSelected.getValue().getTask(index);
-        todoListRepository.updateTask(selectedTodoList, index, currentTask.setDueDate(date));
+        Task updatedTask;
+        if (date == null) {
+            updatedTask = currentTask.removeDueDate();
+        } else {
+            updatedTask = currentTask.setDueDate(date);
+        }
+        todoListRepository.updateTask(selectedTodoList, index, updatedTask);
     }
 
     public List<Tag> getTags() {

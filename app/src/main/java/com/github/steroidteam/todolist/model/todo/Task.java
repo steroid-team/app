@@ -104,8 +104,9 @@ public class Task {
         return this;
     }
 
-    public void removeDueDate() {
+    public Task removeDueDate() {
         this.dueDate = null;
+        return this;
     }
 
     public Date getDueDate() {

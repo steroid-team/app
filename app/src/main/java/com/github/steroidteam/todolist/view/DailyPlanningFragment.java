@@ -23,7 +23,7 @@ import java.util.Date;
 public class DailyPlanningFragment extends Fragment {
 
     private TodoListViewModel viewModel;
-    private int currentTaskIndex = 0;
+    private int currentTaskIndex = -1;
 
     @Override
     public View onCreateView(
@@ -72,6 +72,10 @@ public class DailyPlanningFragment extends Fragment {
         root.findViewById(R.id.afternoon_button).setOnClickListener(new SetDateListener(Plan.AFTERNOON));
         root.findViewById(R.id.evening_button).setOnClickListener(new SetDateListener(Plan.EVENING));
         root.findViewById(R.id.night_button).setOnClickListener(new SetDateListener(Plan.NIGHT));
+        root.findViewById(R.id.tomorrow_button).setOnClickListener(new SetDateListener(Plan.TOMORROW));
+        root.findViewById(R.id.twodays_plan_button).setOnClickListener(new SetDateListener(Plan.TWODAYS));
+        root.findViewById(R.id.week_plan_button).setOnClickListener(new SetDateListener(Plan.WEEK));
+        root.findViewById(R.id.oneday_button).setOnClickListener(new SetDateListener(Plan.ONEDAY));
     }
 
     public void setDoneButtonListener(View view) {
@@ -97,7 +101,6 @@ public class DailyPlanningFragment extends Fragment {
      * Used as placeholder waiting for more features (selecting day and hour / integrate viewmodel
      */
     public void skipTaskInPlan(View view) {
-        currentTaskIndex++;
         findNextUnplannedTask();
     }
 
@@ -106,7 +109,8 @@ public class DailyPlanningFragment extends Fragment {
      */
     private void findNextUnplannedTask() {
         TodoList list = viewModel.getTodoList().getValue();
-        while (currentTaskIndex < list.getSize()) {
+        while (currentTaskIndex + 1 < list.getSize()) {
+            currentTaskIndex++;
             Task task = list.getTask(currentTaskIndex);
             Date date = task.getDueDate();
             if (!task.isDone()
@@ -117,7 +121,6 @@ public class DailyPlanningFragment extends Fragment {
                 text.setText(task.getBody());
                 return;
             }
-            currentTaskIndex++;
         }
         getParentFragmentManager().popBackStack();
     }
@@ -146,6 +149,13 @@ public class DailyPlanningFragment extends Fragment {
             }
 
             viewModel.setTaskDueDate(currentTaskIndex, date);
+            findNextUnplannedTask();
+            ConstraintLayout mainPlan = getView().findViewById(R.id.main_plan);
+            mainPlan.setVisibility(View.VISIBLE);
+            ConstraintLayout todayPlan = getView().findViewById(R.id.today_plan);
+            todayPlan.setVisibility(View.GONE);
+            ConstraintLayout otherDayPlan = getView().findViewById(R.id.other_day_plan);
+            otherDayPlan.setVisibility(View.GONE);
         }
     }
 }

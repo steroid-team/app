@@ -36,7 +36,7 @@ public class ParentTaskAdapter extends RecyclerView.Adapter<ParentTaskAdapter.Pa
     public ParentTaskAdapter(TodoAdapter.TaskCustomListener listener) {
         this.listener = listener;
         dateCategoryList = new ArrayList<>();
-        dateCategoryList.add("Past");
+        dateCategoryList.add("Past due");
         dateCategoryList.add("Today");
         dateCategoryList.add("Tomorrow");
         dateCategoryList.add("Next 5 days after Tomorrow");

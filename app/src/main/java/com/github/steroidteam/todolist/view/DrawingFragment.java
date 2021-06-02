@@ -69,6 +69,19 @@ public class DrawingFragment extends Fragment {
         saturationBar = root.findViewById(R.id.drawing_saturation_bar);
         valueBar = root.findViewById(R.id.drawing_value_bar);
 
+        setButtonListener(root);
+
+        drawingCanvas = new DrawingView(getContext());
+        canvasLayout.addView(drawingCanvas);
+        colorPicker.addSaturationBar(saturationBar);
+        colorPicker.addValueBar(valueBar);
+
+        setUpButtonAndColor(root);
+        setRequestPermissionLauncher();
+        return root;
+    }
+
+    private void setButtonListener(View root) {
         root.findViewById(R.id.drawing_first_btn).setOnClickListener(this::firstButton);
         root.findViewById(R.id.drawing_second_btn).setOnClickListener(this::secondButton);
         root.findViewById(R.id.drawing_third_btn).setOnClickListener(this::thirdButton);
@@ -81,15 +94,26 @@ public class DrawingFragment extends Fragment {
         root.findViewById(R.id.drawing_back_btn)
                 .setOnClickListener((view) -> getParentFragmentManager().popBackStack());
         root.findViewById(R.id.drawing_save_btn).setOnClickListener(this::saveButton);
+    }
 
-        drawingCanvas = new DrawingView(getContext());
-        canvasLayout.addView(drawingCanvas);
-        colorPicker.addSaturationBar(saturationBar);
-        colorPicker.addValueBar(valueBar);
+    private void setUpButtonAndColor(View root) {
+        // SET BUTTON
+        firstButton = root.findViewById(R.id.drawing_first_btn);
+        secondButton = root.findViewById(R.id.drawing_second_btn);
+        thirdButton = root.findViewById(R.id.drawing_third_btn);
+        fourthButton = root.findViewById(R.id.drawing_fourth_btn);
+        colorChooseButton = root.findViewById(R.id.drawing_fifth_btn);
 
-        setUpButtonAndColor(root);
+        // SET COLOR OF BUTTONS:
+        firstButtonColor = getActivity().getColor(R.color.first_drawing_button);
+        secondButtonColor = getActivity().getColor(R.color.second_drawing_button);
+        thirdButtonColor = getActivity().getColor(R.color.third_drawing_button);
+        fourthButtonColor = getActivity().getColor(R.color.fourth_drawing_button);
+        setButtonBackground();
+    }
 
-        requestPermissionLauncher =
+    private void setRequestPermissionLauncher() {
+        this.requestPermissionLauncher =
                 registerForActivityResult(
                         new ActivityResultContracts.RequestMultiplePermissions(),
                         result -> {
@@ -116,24 +140,6 @@ public class DrawingFragment extends Fragment {
                                         .show();
                             }
                         });
-
-        return root;
-    }
-
-    private void setUpButtonAndColor(View root) {
-        // SET BUTTON
-        firstButton = root.findViewById(R.id.drawing_first_btn);
-        secondButton = root.findViewById(R.id.drawing_second_btn);
-        thirdButton = root.findViewById(R.id.drawing_third_btn);
-        fourthButton = root.findViewById(R.id.drawing_fourth_btn);
-        colorChooseButton = root.findViewById(R.id.drawing_fifth_btn);
-
-        // SET COLOR OF BUTTONS:
-        firstButtonColor = getActivity().getColor(R.color.first_drawing_button);
-        secondButtonColor = getActivity().getColor(R.color.second_drawing_button);
-        thirdButtonColor = getActivity().getColor(R.color.third_drawing_button);
-        fourthButtonColor = getActivity().getColor(R.color.fourth_drawing_button);
-        setButtonBackground();
     }
 
     private void setPaintColor(int color) {

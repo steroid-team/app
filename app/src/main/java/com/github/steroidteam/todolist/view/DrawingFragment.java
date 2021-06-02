@@ -3,7 +3,7 @@ package com.github.steroidteam.todolist.view;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
+import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -217,16 +217,20 @@ public class DrawingFragment extends Fragment {
             drawingCanvas.getBitmap().compress(Bitmap.CompressFormat.PNG, 50, output);
             output.close();
 
-            Uri uri = Uri.fromFile(tmpFile);
+            MediaScannerConnection.scanFile(
+                    this.getContext(),
+                    new String[] {tmpFile.toString()},
+                    null,
+                    (path, uri) -> {
+                        NoteViewModelFactory noteViewModelFactory =
+                                ViewModelFactoryInjection.getNoteViewModelFactory(getContext());
+                        NoteViewModel noteViewModel =
+                                new ViewModelProvider(requireActivity(), noteViewModelFactory)
+                                        .get(NoteViewModel.class);
 
-            NoteViewModelFactory noteViewModelFactory =
-                    ViewModelFactoryInjection.getNoteViewModelFactory(getContext());
-            NoteViewModel noteViewModel =
-                    new ViewModelProvider(requireActivity(), noteViewModelFactory)
-                            .get(NoteViewModel.class);
-
-            noteViewModel.setTmpDrawingPath(uri);
-            getParentFragmentManager().popBackStack();
+                        noteViewModel.setTmpDrawingPath(uri);
+                        getParentFragmentManager().popBackStack();
+                    });
         } catch (Exception e) {
             Toast.makeText(getContext(), "Error: could not saved the image", Toast.LENGTH_LONG)
                     .show();

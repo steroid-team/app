@@ -45,7 +45,6 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 import jp.wasabeef.richeditor.RichEditor;
@@ -392,15 +391,8 @@ public class NoteDisplayFragment extends Fragment {
         Uri drawingPath = noteViewModel.getTmpDrawingPath();
 
         if (drawingPath != null) {
-
-            File drawingFile = new File(URI.create(drawingPath.toString()).getPath());
-            if (drawingFile.exists()) {
-                richEditor.focusEditor();
-                richEditor.insertImage(drawingPath.toString(), "", imageDisplayWidth);
-                noteViewModel.setTmpDrawingPath(null);
-            }
-
-            // File not present in the database
+            richEditor.focusEditor();
+            richEditor.insertImage(drawingPath.toString(), "", imageDisplayWidth);
             noteViewModel.setTmpDrawingPath(null);
         }
     }

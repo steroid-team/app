@@ -135,7 +135,8 @@
         <item name="android:background">@drawable/rounded_corner_bg_outline_dark</item>
         <item name="android:backgroundTint">@color/light_grey</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:text">X</item>
+        <item name="srcCompat">@drawable/plus_icon</item>
+        <item name="android:rotation">45</item>
     </style>
 
     <style name="TagInList">

@@ -6,6 +6,12 @@
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
+    <style name="ToolbarActionButton">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:tint">@android:color/white</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
     <style name="BigInput">
         <item name="android:background">@drawable/rounded_corner_bg_outline_dark</item>
     </style>

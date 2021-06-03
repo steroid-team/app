@@ -39,7 +39,6 @@
     </style>
 
     <style name="ActivityTitle">
-        <item name="android:textColor">@color/activity_title</item>
         <item name="android:textSize">30sp</item>
         <item name="android:fontFamily">@font/nunitosans_bold</item>
     </style>

@@ -38,7 +38,7 @@
         android:scaleY="1.2"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
-        android:background="@drawable/rounded_corner_bg"
+        android:background="@drawable/rounded_corner_bg_outline_dark"
         android:scaleType="fitCenter"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"

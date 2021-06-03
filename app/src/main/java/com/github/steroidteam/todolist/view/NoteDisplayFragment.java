@@ -75,6 +75,9 @@ public class NoteDisplayFragment extends Fragment {
         super.onCreate(savedInstanceState);
         View root = inflater.inflate(R.layout.fragment_note_display, container, false);
 
+        View noteHeader = root.findViewById(R.id.note_header);
+        noteHeader.setTag(R.drawable.rounded_corner_just_bottom_bg); // Use it for testing purposes
+
         headerFilePath = getActivity().getCacheDir().getAbsolutePath();
 
         initRichEditor(root);
@@ -131,6 +134,7 @@ public class NoteDisplayFragment extends Fragment {
                                                 getResources(), getRoundedBitmap(scaled));
                                 header.setBackgroundTintList(null);
                                 header.setBackground(ob);
+                                header.setTag(0); // For testing purposes
                             });
         } else {
             Bitmap newBitmap =
@@ -138,6 +142,7 @@ public class NoteDisplayFragment extends Fragment {
             newBitmap.eraseColor(getActivity().getColor(R.color.light_grey));
             BitmapDrawable ob = new BitmapDrawable(getResources(), getRoundedBitmap(newBitmap));
             header.setBackground(ob);
+            header.setTag(0); // For testing purposes
         }
     }
 
@@ -341,6 +346,8 @@ public class NoteDisplayFragment extends Fragment {
 
         Bitmap bitmap;
 
+        ConstraintLayout header = getView().findViewById(R.id.note_header);
+
         String tmpFileName = "bitmap_tmp.jpeg";
         File tmpFile = new File(getContext().getCacheDir(), tmpFileName);
 
@@ -352,6 +359,15 @@ public class NoteDisplayFragment extends Fragment {
             output.close();
 
             noteViewModel.updateNoteHeader(tmpFile.getAbsolutePath());
+
+            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, HEADER_WIDTH, HEADER_HEIGHT, false);
+
+            BitmapDrawable ob = new BitmapDrawable(getResources(), getRoundedBitmap(scaled));
+
+            header.setBackgroundTintList(null);
+            header.setBackground(ob);
+            header.setTag(0); // For testing purposes
+
         } catch (Exception e) {
             Toast.makeText(getContext(), "Error: could not display the image", Toast.LENGTH_LONG)
                     .show();

@@ -1,6 +1,8 @@
 package com.github.steroidteam.todolist.view.adapter;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
@@ -11,6 +13,7 @@ import android.text.style.DynamicDrawableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 import android.text.style.RelativeSizeSpan;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,10 +57,17 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         Task currentTask = todoList.getTask(position);
 
         holder.setPosition(taskIntegerMap.get(currentTask));
-        holder.taskBody.setText(currentTask.getBody());
-        if (currentTask.getDueDate() != null) {
-            Context context = holder.itemView.getContext();
 
+        Context context = holder.itemView.getContext();
+        SpannableString taskBodySS = new SpannableString(currentTask.getBody());
+        taskBodySS.setSpan(
+                new ForegroundColorSpan(fetchTextPrimaryColour(context)),
+                0,
+                taskBodySS.length(),
+                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        holder.taskBody.setText(taskBodySS);
+
+        if (currentTask.getDueDate() != null) {
             SpannableString dueDate = createDateSpan(context, currentTask.getDueDate());
 
             // Add some margin between the task's body and the due date.
@@ -195,5 +205,17 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
         public void hideDeleteButton() {
             taskDelete.setVisibility(View.GONE);
         }
+    }
+
+    static int fetchTextPrimaryColour(Context context) {
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
+        TypedArray arr =
+                context.obtainStyledAttributes(
+                        typedValue.data, new int[] {android.R.attr.textColorPrimary});
+        int primaryColor = arr.getColor(0, -1);
+        arr.recycle();
+        return primaryColor;
     }
 }

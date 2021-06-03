@@ -23,6 +23,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerInParent="true"
         android:layout_toEndOf="@+id/layout_task_checkbox"
+        android:background="@android:color/transparent"
         android:ellipsize="end" />
 
     <ImageButton

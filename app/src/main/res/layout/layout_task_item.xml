@@ -25,12 +25,15 @@
         android:layout_toEndOf="@+id/layout_task_checkbox"
         android:ellipsize="end" />
 
-    <Button
+    <ImageButton
         android:id="@+id/layout_task_delete_button"
+        style="@style/DeleteButtonInRecyclerView"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_alignParentEnd="true"
         android:layout_centerInParent="true"
-        style="@style/DeleteButtonInRecyclerView"
+        android:contentDescription="@string/delete"
+        android:scaleX="0.7"
+        android:scaleY="0.7"
         android:visibility="gone" />
 </RelativeLayout>

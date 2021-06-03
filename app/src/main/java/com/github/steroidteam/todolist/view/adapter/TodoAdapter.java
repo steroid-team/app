@@ -14,8 +14,8 @@ import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -158,7 +158,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TaskHolder> {
 
         private final TextView taskBody;
         private final CheckBox taskBox;
-        private final Button taskDelete;
+        private final ImageButton taskDelete;
         private int position;
 
         public TaskHolder(@NonNull View itemView) {

@@ -1,5 +1,6 @@
 package com.github.steroidteam.todolist.viewmodel;
 
+import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
@@ -21,12 +22,16 @@ public class NoteViewModel extends ViewModel {
 
     private UUID selectedNoteID;
 
+    private Uri tmpDrawingPath;
+
     public NoteViewModel(@NonNull NoteRepository noteRepository) {
         super();
         this.noteRepository = noteRepository;
 
         this.allNote = noteRepository.getAllNote();
         this.noteSelected = noteRepository.getNote();
+
+        this.tmpDrawingPath = null;
     }
 
     public void selectNote(UUID id) {
@@ -73,5 +78,13 @@ public class NoteViewModel extends ViewModel {
 
     public CompletableFuture<File> getNoteHeader(UUID imageID, String destinationPath) {
         return this.noteRepository.getNoteHeader(imageID, destinationPath);
+    }
+
+    public Uri getTmpDrawingPath() {
+        return tmpDrawingPath;
+    }
+
+    public void setTmpDrawingPath(Uri tmpDrawingPath) {
+        this.tmpDrawingPath = tmpDrawingPath;
     }
 }

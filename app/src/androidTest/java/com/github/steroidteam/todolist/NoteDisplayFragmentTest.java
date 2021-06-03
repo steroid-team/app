@@ -1,11 +1,14 @@
 package com.github.steroidteam.todolist;
 
+import static android.app.Activity.RESULT_OK;
+import static android.provider.MediaStore.ACTION_IMAGE_CAPTURE;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -19,15 +22,23 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import android.app.Instrumentation;
 import android.content.Context;
+import android.content.Intent;
+import android.view.View;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.navigation.Navigation;
 import androidx.navigation.testing.TestNavHostController;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.intent.Intents;
+import androidx.test.espresso.intent.matcher.IntentMatchers;
+import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.espresso.web.webdriver.Locator;
 import androidx.test.platform.app.InstrumentationRegistry;
 import com.github.steroidteam.todolist.customviewactions.RichEditorGetHtml;
@@ -38,10 +49,12 @@ import com.github.steroidteam.todolist.util.Utils;
 import com.github.steroidteam.todolist.view.NoteDisplayFragment;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import org.hamcrest.Description;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,7 +88,7 @@ public class NoteDisplayFragmentTest {
     @Mock Context context;
 
     @Before
-    public void init() {
+    public void init() throws FileNotFoundException {
 
         // Mock context for Broadcast Reminder
         doReturn(context).when(context).getApplicationContext();
@@ -89,9 +102,15 @@ public class NoteDisplayFragmentTest {
         CompletableFuture<List<UUID>> notesFuture = new CompletableFuture<>();
         notesFuture.complete(notes);
 
+        CompletableFuture<Void> voidFuture = new CompletableFuture<>();
+        voidFuture.complete(null);
+
         doReturn(notesFuture).when(databaseMock).getNotesList();
         doReturn(noteFuture).when(databaseMock).getNote(any());
         doReturn(noteFuture).when(databaseMock).updateNote(any(), any());
+        doReturn(voidFuture)
+                .when(databaseMock)
+                .setHeaderNote(any(UUID.class), anyString(), any(UUID.class));
 
         DatabaseFactory.setCustomDatabase(databaseMock);
 
@@ -208,6 +227,70 @@ public class NoteDisplayFragmentTest {
         onView(withText("How do you want to add an image ?")).check(matches(isDisplayed()));
         onView(withText("Take a photo")).perform(click());
     }
+
+    @Test
+    public void updateImageCaptureHeaderWorks() throws FileNotFoundException {
+        Intents.init();
+        Intents.intending(IntentMatchers.hasAction(ACTION_IMAGE_CAPTURE))
+                .respondWith(new Instrumentation.ActivityResult(RESULT_OK, new Intent()));
+
+        onView(withId(R.id.camera_button)).perform(click());
+        onView(withText("Take a photo")).perform(click());
+        intended(IntentMatchers.hasAction(ACTION_IMAGE_CAPTURE));
+
+        onView(withId(R.id.note_header))
+                .check(
+                        matches(
+                                new BoundedMatcher<View, ConstraintLayout>(ConstraintLayout.class) {
+
+                                    @Override
+                                    public void describeTo(Description description) {
+                                        description.appendText("with background : ");
+                                    }
+
+                                    @Override
+                                    protected boolean matchesSafely(ConstraintLayout item) {
+                                        return (Integer) item.getTag()
+                                                != R.drawable.rounded_corner_just_bottom_bg;
+                                    }
+                                }));
+        Intents.release();
+    }
+
+    /*
+     * Ce test est maudit. Et les dieux google et SO nous ont abandonnés :/
+     *
+    @Test
+    public void updateImageFilePickerHeaderWorks() {
+        Intents.init();
+
+        Uri uri = Uri.parse("android.resource://"+InstrumentationRegistry.getInstrumentation().getContext().getPackageName()+"/"+R.drawable.asteroid_banner);
+        Bundle bundle = new Bundle();
+        ArrayList<Parcelable> parcels = new ArrayList<>();
+        Intent resultData = new Intent();
+        parcels.add(uri);
+        bundle.putParcelableArrayList(ACTION_GET_CONTENT, parcels); // Is this what the file pick would return ?
+        resultData.putExtras(bundle);
+
+        Intents.intending(IntentMatchers.hasAction(ACTION_GET_CONTENT)).respondWith(new Instrumentation.ActivityResult(RESULT_OK, resultData));
+
+        onView(withId(R.id.camera_button)).perform(click());
+        onView(withText("Pick a file")).perform(click());
+        intended(IntentMatchers.hasAction(ACTION_GET_CONTENT));
+        onView(withId(R.id.note_header)).check(matches(new BoundedMatcher<View, ConstraintLayout>(ConstraintLayout.class) {
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("with background : ");
+            }
+
+            @Override
+            protected boolean matchesSafely(ConstraintLayout item) {
+                return (Integer)item.getTag() != R.drawable.rounded_corner_just_bottom_bg;
+            }
+        }));
+        Intents.release();
+    } */
 
     @Test
     public void dip2pxWorks() {

@@ -1,5 +1,6 @@
 <resources>
     <style name="AsteroidTheme" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">#854FCF</item>
         <item name="android:windowBackground">@android:color/black</item>
     </style>
 

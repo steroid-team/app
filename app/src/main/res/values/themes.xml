@@ -7,6 +7,8 @@
         <item name="android:textViewStyle">@style/NunitoTextViewStyle</item>
 
         <item name="android:windowBackground">@color/bg_grey</item>
+        <item name="android:statusBarColor">@color/bg_grey</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="LoginTheme" parent="FirebaseUI">

@@ -141,9 +141,42 @@ public class DailyPlanningFragment extends Fragment {
             Date date = new Date();
             Calendar c = Calendar.getInstance();
             c.setTime(date);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+
             switch (plan) {
+                case TODAY:
+                    // Nothing more to do
+                    break;
                 case TOMORROW:
                     c.add(Calendar.DATE, 1);
+                    date = c.getTime();
+                    break;
+                case TWODAYS:
+                    c.add(Calendar.DATE, 2);
+                    date = c.getTime();
+                    break;
+                case WEEK:
+                    c.add(Calendar.DATE, 7);
+                    date = c.getTime();
+                    break;
+                case ONEDAY:
+                    date = null;
+                    break;
+                case MIDDAY:
+                    c.set(Calendar.HOUR_OF_DAY, 12);
+                    date = c.getTime();
+                    break;
+                case AFTERNOON:
+                    c.set(Calendar.HOUR_OF_DAY, 15);
+                    date = c.getTime();
+                    break;
+                case EVENING:
+                    c.set(Calendar.HOUR_OF_DAY, 19);
+                    date = c.getTime();
+                    break;
+                case NIGHT:
+                    c.set(Calendar.HOUR_OF_DAY, 22);
                     date = c.getTime();
                     break;
             }

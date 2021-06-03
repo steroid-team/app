@@ -378,7 +378,7 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="true"
-                    android:src="@drawable/ic_baseline_arrow_forward_24"
+                    android:src="@drawable/ic_baseline_chevron_right_24"
                     app:backgroundTint="@android:color/white"
                     app:rippleColor="@android:color/black" />
 
@@ -408,7 +408,7 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="true"
-                    android:src="@drawable/ic_baseline_arrow_forward_24"
+                    android:src="@drawable/ic_baseline_chevron_right_24"
                     app:backgroundTint="@android:color/white"
                     app:rippleColor="@android:color/black" />
 
@@ -438,7 +438,7 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="true"
-                    android:src="@drawable/ic_baseline_arrow_forward_24"
+                    android:src="@drawable/ic_baseline_last_page_24"
                     app:backgroundTint="@android:color/white"
                     app:rippleColor="@android:color/black" />
 

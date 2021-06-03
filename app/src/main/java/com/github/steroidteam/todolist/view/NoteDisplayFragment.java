@@ -336,7 +336,7 @@ public class NoteDisplayFragment extends Fragment {
 
             Bitmap scaled = Bitmap.createScaledBitmap(bitmap, HEADER_WIDTH, HEADER_HEIGHT, false);
 
-            BitmapDrawable ob = new BitmapDrawable(getResources(), getRoundedBitmap(scaled));
+            BitmapDrawable ob = new BitmapDrawable(getResources(), scaled);
 
             header.setBackgroundTintList(null);
             header.setBackground(ob);

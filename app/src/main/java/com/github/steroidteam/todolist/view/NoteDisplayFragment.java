@@ -54,7 +54,6 @@ public class NoteDisplayFragment extends Fragment {
     private LatLng position; // TODO : change this !!! LISTEN TO RESULT LISTENER OF MAP
     private String locationName; // TODO : change this !!!
 
-    private UUID noteID;
     private RichEditor richEditor;
     private Uri cameraFileUri;
     private ActivityResultLauncher<String> headerImagePickerActivityLauncher;
@@ -75,6 +74,9 @@ public class NoteDisplayFragment extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View root = inflater.inflate(R.layout.fragment_note_display, container, false);
+
+        View noteHeader = root.findViewById(R.id.note_header);
+        noteHeader.setTag(R.drawable.rounded_corner_just_bottom_bg); // Use it for testing purposes
 
         headerFilePath = getActivity().getCacheDir().getAbsolutePath();
 
@@ -132,6 +134,7 @@ public class NoteDisplayFragment extends Fragment {
                                                 getResources(), getRoundedBitmap(scaled));
                                 header.setBackgroundTintList(null);
                                 header.setBackground(ob);
+                                header.setTag(0); // For testing purposes
                             });
         } else {
             Bitmap newBitmap =
@@ -139,6 +142,7 @@ public class NoteDisplayFragment extends Fragment {
             newBitmap.eraseColor(getActivity().getColor(R.color.light_grey));
             BitmapDrawable ob = new BitmapDrawable(getResources(), getRoundedBitmap(newBitmap));
             header.setBackground(ob);
+            header.setTag(0); // For testing purposes
         }
     }
 
@@ -342,11 +346,11 @@ public class NoteDisplayFragment extends Fragment {
 
         Bitmap bitmap;
 
+        ConstraintLayout header = getView().findViewById(R.id.note_header);
+
         String tmpFileName = "bitmap_tmp.jpeg";
         File tmpFile = new File(getContext().getCacheDir(), tmpFileName);
 
-        System.err.println(
-                tmpFile.toString() + " " + tmpFile.toURI() + "                     zqdqzd");
         try (FileOutputStream output = new FileOutputStream(tmpFile)) {
             InputStream is = getContext().getContentResolver().openInputStream(uri);
             bitmap = BitmapFactory.decodeStream(is);
@@ -355,6 +359,15 @@ public class NoteDisplayFragment extends Fragment {
             output.close();
 
             noteViewModel.updateNoteHeader(tmpFile.getAbsolutePath());
+
+            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, HEADER_WIDTH, HEADER_HEIGHT, false);
+
+            BitmapDrawable ob = new BitmapDrawable(getResources(), getRoundedBitmap(scaled));
+
+            header.setBackgroundTintList(null);
+            header.setBackground(ob);
+            header.setTag(0); // For testing purposes
+
         } catch (Exception e) {
             Toast.makeText(getContext(), "Error: could not display the image", Toast.LENGTH_LONG)
                     .show();
@@ -385,5 +398,18 @@ public class NoteDisplayFragment extends Fragment {
         super.onPause();
         position = null;
         locationName = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Uri drawingPath = noteViewModel.getTmpDrawingPath();
+
+        if (drawingPath != null) {
+            richEditor.focusEditor();
+            richEditor.insertImage(drawingPath.toString(), "", imageDisplayWidth);
+            noteViewModel.setTmpDrawingPath(null);
+        }
     }
 }

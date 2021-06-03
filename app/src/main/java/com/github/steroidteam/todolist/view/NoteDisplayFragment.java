@@ -54,7 +54,6 @@ public class NoteDisplayFragment extends Fragment {
     private LatLng position; // TODO : change this !!! LISTEN TO RESULT LISTENER OF MAP
     private String locationName; // TODO : change this !!!
 
-    private UUID noteID;
     private RichEditor richEditor;
     private Uri cameraFileUri;
     private ActivityResultLauncher<String> headerImagePickerActivityLauncher;
@@ -352,8 +351,6 @@ public class NoteDisplayFragment extends Fragment {
         String tmpFileName = "bitmap_tmp.jpeg";
         File tmpFile = new File(getContext().getCacheDir(), tmpFileName);
 
-        System.err.println(
-                tmpFile.toString() + " " + tmpFile.toURI() + "                     zqdqzd");
         try (FileOutputStream output = new FileOutputStream(tmpFile)) {
             InputStream is = getContext().getContentResolver().openInputStream(uri);
             bitmap = BitmapFactory.decodeStream(is);
@@ -401,5 +398,18 @@ public class NoteDisplayFragment extends Fragment {
         super.onPause();
         position = null;
         locationName = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Uri drawingPath = noteViewModel.getTmpDrawingPath();
+
+        if (drawingPath != null) {
+            richEditor.focusEditor();
+            richEditor.insertImage(drawingPath.toString(), "", imageDisplayWidth);
+            noteViewModel.setTmpDrawingPath(null);
+        }
     }
 }

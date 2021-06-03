@@ -103,7 +103,7 @@
         <item name="contentPaddingTop">14dp</item>
     </style>
 
-    <style name="NewTaskInput">
+    <style name="BigInput">
         <item name="android:background">@drawable/rounded_corner_bg_outline_light</item>
     </style>
 

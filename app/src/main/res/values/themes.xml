@@ -84,7 +84,7 @@
 
     <style name="ToolbarActionButton">
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
-        <item name="android:tint">#000000</item>
+        <item name="android:tint">@android:color/black</item>
         <item name="android:scaleType">fitCenter</item>
     </style>
     <style name="SelectionList.CardView">

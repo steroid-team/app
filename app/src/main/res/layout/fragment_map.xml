@@ -32,6 +32,7 @@
         android:clickable="true"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:backgroundTint="?attr/colorPrimary"
         app:srcCompat="?android:attr/textCheckMark"
         android:focusable="true"
         android:contentDescription="@string/save_location" />

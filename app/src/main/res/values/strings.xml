@@ -20,6 +20,9 @@
     <string name="apply">Apply</string>
     <string name="erase">Erase</string>
 
+    <!-- Profile Fragment -->
+    <string name="profile_title">Profile</string>
+
     <!-- Task Management -->
     <string name="title_todo">My todo list</string>
     <string name="task_creation_placeholder">Do something great</string>

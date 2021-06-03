@@ -15,4 +15,13 @@
             android:icon="@drawable/note"
             android:title="@string/menu_notes" />
     </group>
+
+    <item android:title="Settings">
+        <menu>
+            <item
+                android:id="@+id/nav_profile"
+                android:icon="@drawable/profile"
+                android:title="Profile" />
+        </menu>
+    </item>
 </menu>

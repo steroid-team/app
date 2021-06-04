@@ -7,10 +7,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.DialogFragment;
 import com.github.steroidteam.todolist.R;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class InputDialogFragment extends DialogFragment {
 
@@ -38,9 +37,9 @@ public class InputDialogFragment extends DialogFragment {
         LayoutInflater inflater = this.getLayoutInflater();
         View user_input = inflater.inflate(R.layout.alert_dialog_input, null);
 
-        AlertDialog.Builder builder =
-                new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.Dialog))
-                        .setTitle(title)
+        MaterialAlertDialogBuilder builder =
+                new MaterialAlertDialogBuilder(getActivity())
+                        .setMessage(title)
                         .setPositiveButton(
                                 R.string.confirm,
                                 (DialogInterface dialog, int which) -> {
@@ -61,7 +60,6 @@ public class InputDialogFragment extends DialogFragment {
 
         dialog.setCanceledOnTouchOutside(false);
         dialog.getWindow().setGravity(Gravity.TOP);
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         return dialog;
     }
 }

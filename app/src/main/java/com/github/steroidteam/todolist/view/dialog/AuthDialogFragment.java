@@ -13,7 +13,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class AuthDialogFragment extends DialogFragment {
 
-    private final String DIALOG_TITLE = getResources().getString(R.string.authenticate_message);
+    private final String DIALOG_TITLE = "Please, you need to re-authenticate!";
     private AuthDialogListener listener;
 
     public AuthDialogFragment() {

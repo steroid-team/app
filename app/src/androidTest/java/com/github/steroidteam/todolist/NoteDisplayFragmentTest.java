@@ -288,15 +288,4 @@ public class NoteDisplayFragmentTest {
         }));
         Intents.release();
     } */
-
-    @Test
-    public void dip2pxWorks() {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        float scale = context.getResources().getDisplayMetrics().density;
-        float dpInput = 10;
-
-        int pxExpected = (int) (dpInput * scale + 0.5f);
-
-        assertEquals(pxExpected, Utils.dip2px(context, dpInput));
-    }
 }

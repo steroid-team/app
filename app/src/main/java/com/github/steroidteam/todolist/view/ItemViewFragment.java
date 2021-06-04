@@ -35,8 +35,6 @@ import com.github.steroidteam.todolist.view.misc.TagView;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
-import com.google.android.gms.location.GeofencingClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.Calendar;
 import java.util.Date;

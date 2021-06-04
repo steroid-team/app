@@ -10,16 +10,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.view.ItemViewFragment;
 import com.google.android.gms.location.Geofence;
@@ -39,7 +35,8 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        String taskDescription = intent.getStringExtra(context.getString(R.string.content_location_reminder));
+        String taskDescription =
+                intent.getStringExtra(context.getString(R.string.content_location_reminder));
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, REMINDER_LOC_CHANNEL_ID)
                         .setContentTitle(context.getString(R.string.title_location_reminder))
@@ -68,21 +65,25 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
     }
 
     // Just call this method to put a notification based on the location
-    public static boolean createLocationNotification(Location location, String taskDescription, Activity activity) {
+    public static boolean createLocationNotification(
+            Location location, String taskDescription, Activity activity) {
         Intent intent =
                 new Intent(activity.getApplicationContext(), ReminderLocationBroadcast.class);
-        intent.putExtra(activity.getApplicationContext().getString(R.string.content_location_reminder), taskDescription);
+        intent.putExtra(
+                activity.getApplicationContext().getString(R.string.content_location_reminder),
+                taskDescription);
         PendingIntent pendingIntent =
-                PendingIntent.getBroadcast(activity.getApplicationContext(), unique_ID++, intent, 0);
+                PendingIntent.getBroadcast(
+                        activity.getApplicationContext(), unique_ID++, intent, 0);
 
         LocationManager locationManager =
                 (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
         if (managePermissions(activity, locationManager, location, pendingIntent)) {
             Toast.makeText(
-                    activity.getApplicationContext(),
-                    activity.getApplicationContext().getString(R.string.toast_reminder),
-                    Toast.LENGTH_SHORT)
+                            activity.getApplicationContext(),
+                            activity.getApplicationContext().getString(R.string.toast_reminder),
+                            Toast.LENGTH_SHORT)
                     .show();
             return true;
         }
@@ -110,18 +111,21 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
         }
         geofencingClient = LocationServices.getGeofencingClient(activity);
 
-        Geofence geofence = new Geofence.Builder().setRequestId(loc.toString())
-                .setCircularRegion(loc.getLatitude(), loc.getLongitude(), RADIUS)
-                .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER).build();
+        Geofence geofence =
+                new Geofence.Builder()
+                        .setRequestId(loc.toString())
+                        .setCircularRegion(loc.getLatitude(), loc.getLongitude(), RADIUS)
+                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                        .build();
 
-        GeofencingRequest request = new GeofencingRequest.Builder()
-                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
-                .addGeofence(geofence)
-                .build();
+        GeofencingRequest request =
+                new GeofencingRequest.Builder()
+                        .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+                        .addGeofence(geofence)
+                        .build();
 
         geofencingClient.addGeofences(request, pendingIntent);
-        //locMan.addProximityAlert(loc.getLatitude(), loc.getLongitude(), RADIUS, -1, pendingIntent);
         return true;
     }
 }

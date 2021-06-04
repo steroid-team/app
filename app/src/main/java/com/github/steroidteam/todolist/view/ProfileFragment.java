@@ -33,6 +33,8 @@ public class ProfileFragment extends Fragment {
     private TextView userMail;
     private EditText userMailEditable;
 
+    private EditText userPwdEditable;
+
     @Override
     public View onCreateView(
             @NonNull @NotNull LayoutInflater inflater,
@@ -47,6 +49,8 @@ public class ProfileFragment extends Fragment {
 
         this.userMail = root.findViewById(R.id.profile_mail_text);
         this.userMailEditable = root.findViewById(R.id.profile_mail_edit_text);
+
+        this.userPwdEditable = root.findViewById(R.id.profile_pwd_edit_text);
 
         userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
 
@@ -92,6 +96,7 @@ public class ProfileFragment extends Fragment {
         editMailLayout.setVisibility(View.INVISIBLE);
         setButtonNameListener(root);
         setButtonMailListener(root);
+        initModifPwdBtn(root);
 
         return root;
     }
@@ -158,6 +163,29 @@ public class ProfileFragment extends Fragment {
             userNameEditable.setText(user.getDisplayName());
             userMailEditable.setText(user.getEmail());
         }
+    }
+
+    private void initModifPwdBtn(View root) {
+        ConstraintLayout editablePwdLayout = root.findViewById(R.id.profile_pwd_edit);
+        editablePwdLayout.setVisibility(View.INVISIBLE);
+
+        // Listener Button Edit
+        Button buttonDisplayEditLayout = root.findViewById(R.id.profile_pwd_edit_btn);
+        buttonDisplayEditLayout.setOnClickListener(
+                v -> {
+                    if (editablePwdLayout.getVisibility() == View.INVISIBLE) {
+                        reAuth(editablePwdLayout);
+                    }
+                });
+
+        // Listener Button Save
+        Button buttonSavePwd = root.findViewById(R.id.profile_pwd_edit_save);
+        buttonSavePwd.setOnClickListener(
+                view -> {
+                    String newPassword = userPwdEditable.getText().toString();
+                    userViewModel.updatePassword(newPassword);
+                    displayEditLayout(editablePwdLayout);
+                });
     }
 
     private void reAuth(ConstraintLayout view) {

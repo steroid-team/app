@@ -25,7 +25,6 @@
     <!-- Profile Fragment -->
     <string name="profile_title">Profile</string>
     <string name="modify_password">Modify password</string>
-    <string name="authenticate_message">Please, you need to re-authenticate!</string>
 
 
         <!-- Task Management -->

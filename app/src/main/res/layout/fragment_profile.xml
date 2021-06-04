@@ -235,5 +235,57 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <LinearLayout
+            android:id="@+id/profile_pwd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_mail_edit">
+
+            <Button
+                android:id="@+id/profile_pwd_edit_btn"
+                style="@style/TaskSaveButton"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".3"
+                android:text="@string/modify_password" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/profile_pwd_edit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/profile_pwd_edit_text"
+                    style="@style/UserProfileInput"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".8"
+                    android:backgroundTint="@android:color/black"
+                    android:gravity="center_vertical"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:textCursorDrawable="@drawable/custom_cursor"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/profile_pwd_edit_save"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/profile_pwd_edit_save"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_weight=".3"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/button_tick_selector"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

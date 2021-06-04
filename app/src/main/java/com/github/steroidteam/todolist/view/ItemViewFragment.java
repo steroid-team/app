@@ -255,8 +255,7 @@ public class ItemViewFragment extends Fragment {
 
         Button addLocationButton = getView().findViewById(R.id.AddLocationReminderButton);
         Task currTask = viewModel.getTask(position);
-        String locationName =
-                viewModel.getTodoList().getValue().getTask(position).getLocationName();
+        String locationName = currTask.getLocationName();
         String taskDesc = currTask.getBody();
 
         if (locationName != null) {

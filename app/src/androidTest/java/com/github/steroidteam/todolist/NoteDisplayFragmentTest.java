@@ -117,7 +117,7 @@ public class NoteDisplayFragmentTest {
 
         scenario =
                 FragmentScenario.launchInContainer(
-                        NoteDisplayFragment.class, null, R.style.Theme_Asteroid);
+                        NoteDisplayFragment.class, null, R.style.AsteroidTheme);
     }
 
     @Test

@@ -110,7 +110,7 @@ public class ProfileFragment extends Fragment {
         ConstraintLayout editableNameLayout = root.findViewById(R.id.profile_name_edit);
 
         // Listener Button Edit
-        Button buttonDisplayEditLayout = (Button) root.findViewById(R.id.profile_name_edit_btn);
+        Button buttonDisplayEditLayout = root.findViewById(R.id.profile_name_edit_btn);
         buttonDisplayEditLayout.setOnClickListener(v -> displayEditLayout(editableNameLayout));
 
         // Listener Button Save
@@ -128,7 +128,7 @@ public class ProfileFragment extends Fragment {
         ConstraintLayout editableMailLayout = root.findViewById(R.id.profile_mail_edit);
 
         // Listener Button Edit
-        Button buttonDisplayEditLayout = (Button) root.findViewById(R.id.profile_mail_edit_btn);
+        Button buttonDisplayEditLayout = root.findViewById(R.id.profile_mail_edit_btn);
         buttonDisplayEditLayout.setOnClickListener(v -> displayEditLayout(editableMailLayout));
 
         // Listener Button Save
@@ -163,7 +163,7 @@ public class ProfileFragment extends Fragment {
         editablePwdLayout.setVisibility(View.INVISIBLE);
 
         // Listener Button Edit
-        Button buttonDisplayEditLayout = (Button) root.findViewById(R.id.profile_pwd_edit_btn);
+        Button buttonDisplayEditLayout = root.findViewById(R.id.profile_pwd_edit_btn);
         buttonDisplayEditLayout.setOnClickListener(
                 v -> {
                     if (editablePwdLayout.getVisibility() == View.INVISIBLE) {

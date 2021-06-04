@@ -5,11 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -21,6 +25,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
 
@@ -50,6 +56,20 @@ public class ProfileFragment extends Fragment {
                 .observe(getViewLifecycleOwner(),
                         this::setViews);
 
+        userViewModel.getErrorOccurred()
+                .observe(getViewLifecycleOwner(),
+                        bool -> {
+                    if(bool) {
+                        Toast.makeText(
+                                getContext(),
+                                "Error: unable to connect to Firebase or wrong input!",
+                                Toast.LENGTH_LONG)
+                                .show();
+                        userViewModel.errorOccurredDone();
+                        setViews(Objects.requireNonNull(userViewModel.getUser().getValue()));
+                    }
+                });
+
         ConstraintLayout editNameLayout = root.findViewById(R.id.profile_name_edit);
         editNameLayout.setVisibility(View.INVISIBLE);
         ConstraintLayout editMailLayout = root.findViewById(R.id.profile_mail_edit);
@@ -71,7 +91,7 @@ public class ProfileFragment extends Fragment {
         ConstraintLayout editableNameLayout = root.findViewById(R.id.profile_name_edit);
 
         // Listener Button Edit
-        Button buttonDisplayEditLayout = root.findViewById(R.id.profile_name_edit_btn);
+        Button buttonDisplayEditLayout = (Button) root.findViewById(R.id.profile_name_edit_btn);
         buttonDisplayEditLayout.setOnClickListener(v -> displayEditLayout(editableNameLayout));
 
         // Listener Button Save
@@ -91,7 +111,7 @@ public class ProfileFragment extends Fragment {
         ConstraintLayout editableMailLayout = root.findViewById(R.id.profile_mail_edit);
 
         // Listener Button Edit
-        Button buttonDisplayEditLayout = root.findViewById(R.id.profile_mail_edit_btn);
+        Button buttonDisplayEditLayout = (Button) root.findViewById(R.id.profile_mail_edit_btn);
         buttonDisplayEditLayout.setOnClickListener(v -> displayEditLayout(editableMailLayout));
 
         // Listener Button Mail
@@ -108,6 +128,15 @@ public class ProfileFragment extends Fragment {
             layout.setVisibility(View.INVISIBLE);
         } else {
             layout.setVisibility(View.VISIBLE);
+            setEditView();
+        }
+    }
+
+    private void setEditView() {
+        FirebaseUser user = userViewModel.getUser().getValue();
+        if(user!=null) {
+            userNameEditable.setText(user.getDisplayName());
+            userMailEditable.setText(user.getEmail());
         }
     }
 }

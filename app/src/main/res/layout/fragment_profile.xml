@@ -43,6 +43,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        style="@style/ProfileLayout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -62,6 +66,7 @@
 
             <TextView
                 android:id="@+id/profile_name_title"
+                style="@style/SelectionList.Entry.Title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight=".3"
@@ -78,6 +83,9 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight=".8"
+                    android:layout_marginStart="16dp"
+                    android:gravity="center_vertical"
+                    style="@style/TaskEntryText"
                     android:text="TextView"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/profile_name_edit_btn"
@@ -86,10 +94,11 @@
 
                 <Button
                     android:id="@+id/profile_name_edit_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_weight=".3"
-                    android:text="Button"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/button_selector_color"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -118,10 +127,10 @@
 
             <Button
                 android:id="@+id/profile_name_edit_save"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight=".3"
-                android:text="Button"
+                style="@style/TaskSaveButton"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -141,6 +150,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight=".3"
+                style="@style/SelectionList.Entry.Title"
                 android:text="E-mail:" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -154,6 +164,9 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight=".8"
+                    android:layout_marginStart="16dp"
+                    android:gravity="center_vertical"
+                    style="@style/TaskEntryText"
                     android:text="TextView"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/profile_mail_edit_btn"
@@ -162,10 +175,11 @@
 
                 <Button
                     android:id="@+id/profile_mail_edit_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_weight=".3"
-                    android:text="Button"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/button_selector_color"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

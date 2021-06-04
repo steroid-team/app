@@ -11,6 +11,18 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 public class UserViewModel extends ViewModel {
 
     private MutableLiveData<FirebaseUser> userLiveData;
+    private MutableLiveData<Boolean> errorOccurred;
+
+    public LiveData<Boolean> getErrorOccurred() {
+        if(errorOccurred==null) {
+            errorOccurred = new MutableLiveData<>(false);
+        }
+        return errorOccurred;
+    }
+
+    public void errorOccurredDone() {
+        errorOccurred.postValue(false);
+    }
 
     public LiveData<FirebaseUser> getUser() {
         if(userLiveData==null) {
@@ -28,7 +40,7 @@ public class UserViewModel extends ViewModel {
         if(userLiveData.getValue()!=null) {
             userLiveData.getValue().updateProfile(request)
                 .addOnSuccessListener(v -> loadUser())
-                .addOnFailureListener(v -> loadUser());
+                .addOnFailureListener(v -> errorOccurred.postValue(true));
         }
     }
 
@@ -36,7 +48,7 @@ public class UserViewModel extends ViewModel {
         if(userLiveData.getValue()!=null) {
             userLiveData.getValue().updateEmail(newMail)
                     .addOnSuccessListener(v -> loadUser())
-                    .addOnFailureListener(v -> loadUser());
+                    .addOnFailureListener(v -> errorOccurred.postValue(true));
         }
     }
 }

@@ -106,6 +106,7 @@ public class ItemViewFragment extends Fragment {
         root.findViewById(R.id.itemview_tag_button)
                 .setOnClickListener(
                         v -> {
+                            updateLayout.setVisibility(View.GONE);
                             tagView.tagButton();
                         });
         root.findViewById(R.id.itemview_tag_save_button)

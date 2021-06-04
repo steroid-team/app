@@ -36,13 +36,6 @@ public class ProfileFragmentTest {
     private String name;
     private String email;
 
-    static ArgumentCaptor<OnCompleteListener> testOnCompleteListener =
-            ArgumentCaptor.forClass(OnCompleteListener.class);
-    static ArgumentCaptor<OnSuccessListener> testOnSuccessListener =
-            ArgumentCaptor.forClass(OnSuccessListener.class);
-    static ArgumentCaptor<OnFailureListener> testOnFailureListener =
-            ArgumentCaptor.forClass(OnFailureListener.class);
-
     private FragmentScenario<ProfileFragment> scenario;
 
     @Mock FirebaseUser user;

@@ -60,7 +60,7 @@ public class AudioRecorderFragmentTest {
         bundle.putString(NoteSelectionFragment.NOTE_ID_KEY, UUID.randomUUID().toString());
         FragmentScenario<AudioRecorderFragment> scenario =
                 FragmentScenario.launchInContainer(
-                        AudioRecorderFragment.class, bundle, R.style.Theme_Asteroid);
+                        AudioRecorderFragment.class, bundle, R.style.AsteroidTheme);
     }
 
     @Test

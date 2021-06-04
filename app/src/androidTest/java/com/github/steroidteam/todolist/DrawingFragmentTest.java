@@ -73,7 +73,7 @@ public class DrawingFragmentTest {
         UserFactory.set(mockedUser);
         scenario =
                 FragmentScenario.launchInContainer(
-                        DrawingFragment.class, null, R.style.Theme_Asteroid);
+                        DrawingFragment.class, null, R.style.AsteroidTheme);
         CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
         todoListCollectionFuture.complete(new TodoListCollection());
         doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();

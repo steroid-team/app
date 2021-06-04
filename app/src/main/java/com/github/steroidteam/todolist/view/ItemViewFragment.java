@@ -53,9 +53,19 @@ public class ItemViewFragment extends Fragment {
         super.onCreate(savedInstanceState);
         View root = inflater.inflate(R.layout.fragment_item_view, container, false);
 
-        // Add a click listener to the "back" button to return to the previous activity.
+        // Add a click listener to the "back" button to return to the previous view (either the
+        // list selection fragment, or the item view if the update layout was open).
         root.findViewById(R.id.back_button)
-                .setOnClickListener(v -> getParentFragmentManager().popBackStack());
+                .setOnClickListener(
+                        v -> {
+                            ConstraintLayout updateLayout =
+                                    getView().findViewById(R.id.layout_update_task);
+                            if (updateLayout.getVisibility() == View.VISIBLE) {
+                                closeUpdateLayout(v);
+                            } else {
+                                getParentFragmentManager().popBackStack();
+                            }
+                        });
 
         EditText newTaskText = root.findViewById(R.id.new_task_text);
         newTaskText.addTextChangedListener(
@@ -218,9 +228,6 @@ public class ItemViewFragment extends Fragment {
         DeleteButtonSetup(position);
         calendarExportButtonSetup(position);
         removeDueDateButtonSetup(position);
-
-        Button closeButton = getView().findViewById(R.id.layout_update_task_close);
-        closeButton.setOnClickListener(this::closeUpdateLayout);
     }
 
     private void SaveButtonSetup(EditText userInput, final int position) {
@@ -277,9 +284,6 @@ public class ItemViewFragment extends Fragment {
 
                             Navigation.findNavController(getView()).navigate(R.id.nav_map);
                         });
-
-        Button closeButton = getView().findViewById(R.id.layout_update_task_close);
-        closeButton.setOnClickListener(this::closeUpdateLayout);
     }
 
     private void removeDueDateButtonSetup(final int position) {

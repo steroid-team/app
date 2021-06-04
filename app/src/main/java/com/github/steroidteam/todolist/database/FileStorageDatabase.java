@@ -1,8 +1,7 @@
 package com.github.steroidteam.todolist.database;
 
-import static com.github.steroidteam.todolist.util.Utils.checkNonNullArgs;
-
 import androidx.annotation.NonNull;
+
 import com.github.steroidteam.todolist.filestorage.FileStorageService;
 import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.model.todo.Tag;
@@ -10,6 +9,7 @@ import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.util.JSONSerializer;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -22,6 +22,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
+import static com.github.steroidteam.todolist.util.Utils.checkNonNullArgs;
 
 public class FileStorageDatabase implements Database {
     private static final String TODO_LIST_PATH = "/todo-lists/";
@@ -482,6 +484,17 @@ public class FileStorageDatabase implements Database {
                         tagFutures.stream()
                                 .map(CompletableFuture::join)
                                 .collect(Collectors.<Tag>toList()));
+    }
+
+    public CompletableFuture<List<UUID>> getTagsIdsFromList(@NonNull UUID todoListID) {
+        Objects.requireNonNull(todoListID);
+        return getTodoList(todoListID).thenApply(TodoList::getTagsIds);
+    }
+
+    public CompletableFuture<List<Tag>> getTagsFromList(UUID listId) {
+        return getTodoList(listId)
+                .thenApply(TodoList::getTagsIds)
+                .thenCompose(this::getTagsFromIds);
     }
 
     @Override

@@ -44,7 +44,6 @@
     </style>
 
     <style name="TagTitle">
-        <item name="android:textColor">@color/activity_title</item>
         <item name="android:textSize">20sp</item>
         <item name="android:fontFamily">@font/nunitosans_bold</item>
     </style>

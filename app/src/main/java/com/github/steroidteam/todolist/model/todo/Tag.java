@@ -47,11 +47,11 @@ public class Tag {
 
     @Override
     public String toString() {
-        return ("Tag{" + body + "}");
+        return ("Tag{" + body + ", " + uuid.toString() + "}");
     }
 
     @Override
     public boolean equals(Object otherTag) {
-        return (otherTag instanceof Tag && ((Tag) otherTag).getId() == uuid);
+        return (otherTag instanceof Tag && ((Tag) otherTag).getId().equals(uuid));
     }
 }

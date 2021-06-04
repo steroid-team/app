@@ -14,56 +14,76 @@ import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.view.dialog.DialogListener;
 import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class TagView {
-    private Fragment fragment;
-    private View root;
-    private TodoListViewModel viewModel;
-    private ConstraintLayout tagLayout;
-    private LinearLayout localRow;
-    private LinearLayout globalRow;
+    private final Fragment fragment;
+    private final TodoListViewModel viewModel;
+    private final ConstraintLayout tagLayout;
+    private final LinearLayout localRow;
+    private final LinearLayout unlinkedRow;
     private List<Tag> localTags;
     private List<Tag> globalTags;
+    private List<Tag> unlinkedTags;
 
     public TagView(Fragment fragment, TodoListViewModel viewModel, View root) {
         this.fragment = fragment;
-        this.root = root;
         this.viewModel = viewModel;
-        localTags = viewModel.getTagsFromList();
-        globalTags = viewModel.getUnlinkedTags();
         tagLayout = root.findViewById(R.id.layout_update_tags);
         localRow = root.findViewById(R.id.tag_row_local);
-        globalRow = root.findViewById(R.id.tag_row_global);
+        unlinkedRow = root.findViewById(R.id.tag_row_global);
         init();
     }
 
     private void init() {
+        localTags = viewModel.getTagsFromList();
+        if (localTags == null){
+            localTags = new ArrayList<>();
+        }
+        globalTags = viewModel.getGlobalTags();
+        if (globalTags == null){
+            globalTags = new ArrayList<>();
+        }
+        //unlinkedTags = globalTags;
+        //for(Tag localTag : localTags) {
+         //   for(Tag globalTag : globalTags) {
+        //        if (localTag.equals(globalTag)) {
+        //            unlinkedTags.remove(globalTag);
+        //        }
+        //    }
+        //}
         localTags.sort(Tag.sortByBody);
-        globalTags.sort(Tag.sortByBody);
+        unlinkedTags.sort(Tag.sortByBody);
         System.out.println("Local tags : ");
         for (int i = 0; i < localTags.size(); i++) {
             System.out.println(localTags.get(i));
+        }
+        System.out.println("Unlinked tags : ");
+        for (int i = 0; i < unlinkedTags.size(); i++) {
+            System.out.println(unlinkedTags.get(i));
         }
         System.out.println("Global tags : ");
         for (int i = 0; i < globalTags.size(); i++) {
             System.out.println(globalTags.get(i));
         }
         localRow.removeAllViews();
-        globalRow.removeAllViews();
+        unlinkedRow.removeAllViews();
         Button plusButton =
                 new Button(
                         new ContextThemeWrapper(fragment.getContext(), R.style.TagInList), null, 0);
         plusButton.setText("+");
         plusButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
         plusButton.setOnClickListener(v -> createTag());
-        globalRow.addView(plusButton);
-        localTags.forEach(tag -> createLocalTagButton(tag));
-        globalTags.forEach(tag -> createGlobalTagButton(tag));
+        unlinkedRow.addView(plusButton);
+        localTags.forEach(this::createLocalTagButton);
+        unlinkedTags.forEach(this::createGlobalTagButton);
     }
 
     public void tagButton() {
         tagLayout.setVisibility(View.VISIBLE);
+        init();
     }
 
     public void tagSaveButton() {
@@ -95,16 +115,16 @@ public class TagView {
                 view -> {
                     viewModel.putTagInTodolist(tag);
 
-                    globalRow.removeView(tagButton);
+                    unlinkedRow.removeView(tagButton);
                     createLocalTagButton(tag);
                 });
         tagButton.setOnLongClickListener(
                 view -> {
-                    globalRow.removeView(tagButton);
+                    unlinkedRow.removeView(tagButton);
                     viewModel.destroyTag(tag);
                     return true;
                 });
-        globalRow.addView(tagButton);
+        unlinkedRow.addView(tagButton);
     }
 
     public void createTag() {

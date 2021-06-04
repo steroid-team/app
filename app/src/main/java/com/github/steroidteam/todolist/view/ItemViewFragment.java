@@ -13,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -22,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.broadcast.ReminderDateBroadcast;
 import com.github.steroidteam.todolist.broadcast.ReminderLocationBroadcast;
@@ -34,10 +36,12 @@ import com.github.steroidteam.todolist.view.misc.TagView;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
-import java.util.Calendar;
-import java.util.Date;
+
 import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class ItemViewFragment extends Fragment {
 
@@ -103,7 +107,8 @@ public class ItemViewFragment extends Fragment {
         updateLayout.setVisibility(View.GONE);
 
         tagView = new TagView(this, viewModel, root);
-        root.findViewById(R.id.itemview_tag_button).setOnClickListener(v -> tagView.tagButton());
+        root.findViewById(R.id.itemview_tag_button).setOnClickListener(v -> {
+            tagView.tagButton();});
         root.findViewById(R.id.itemview_tag_save_button)
                 .setOnClickListener(v -> tagView.tagSaveButton());
 

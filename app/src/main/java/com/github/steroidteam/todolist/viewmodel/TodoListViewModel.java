@@ -93,11 +93,11 @@ public class TodoListViewModel extends ViewModel {
     }
 
     public List<Tag> getTagsFromList() {
-        return todoListRepository.getLocalTags();
+        return todoListRepository.getLocalTags(selectedTodoList).getValue();
     }
 
-    public List<Tag> getUnlinkedTags() {
-        return todoListRepository.getUnlinkedTags();
+    public List<Tag> getGlobalTags() {
+        return todoListRepository.getGlobalTags().getValue();
     }
 
     public void putTagInTodolist(Tag tag) {

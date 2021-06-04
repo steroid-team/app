@@ -159,7 +159,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onSavePressed(View view) {
         if (marker != null) {
             LatLng position = marker.getPosition();
-            Log.d("mapfragment", "onSavePressed");
 
             Geocoder geocoder = new Geocoder(getContext());
             List<Address> addressList = null;
@@ -174,8 +173,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             bundle.putString(LOCATION_NAME_KEY, addressList.get(0).getLocality());
 
             getParentFragmentManager().setFragmentResult(LOCATION_REQ, bundle);
-
-            Log.d("mapfragment", "data stored");
         }
         // Go back to the original fragment.
         getParentFragmentManager().popBackStack();

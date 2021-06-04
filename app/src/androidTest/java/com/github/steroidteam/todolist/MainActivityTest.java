@@ -91,7 +91,6 @@ public class MainActivityTest {
         Intents.release();
     }
 
-
     @Test
     public void redirectsToLoginActivityWhenNullUser() {
         // We start the main activity with no logged in user, triggering a redirect to the
@@ -158,7 +157,6 @@ public class MainActivityTest {
         }
     }
 
-    /*
     @Test
     public void navDrawerHeaderShowsUserInfo() {
         final String FIXTURE_USER_NAME = "John Doe";
@@ -182,5 +180,4 @@ public class MainActivityTest {
             onView(withId(R.id.nav_user_email)).check(matches(withText(FIXTURE_USER_EMAIL)));
         }
     }
-    */
 }

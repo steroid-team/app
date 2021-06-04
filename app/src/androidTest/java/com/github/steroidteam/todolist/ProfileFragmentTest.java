@@ -18,15 +18,11 @@ import static org.mockito.Mockito.verify;
 import androidx.fragment.app.testing.FragmentScenario;
 import com.github.steroidteam.todolist.model.user.UserFactory;
 import com.github.steroidteam.todolist.view.ProfileFragment;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseUser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 

@@ -7,10 +7,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.DialogFragment;
 import com.github.steroidteam.todolist.R;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class AuthDialogFragment extends DialogFragment {
 
@@ -34,8 +33,8 @@ public class AuthDialogFragment extends DialogFragment {
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogLayout = inflater.inflate(R.layout.auth_dialog, null);
 
-        AlertDialog.Builder builder =
-                new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.Dialog))
+        MaterialAlertDialogBuilder builder =
+                new MaterialAlertDialogBuilder(getActivity())
                         .setTitle(DIALOG_TITLE)
                         .setPositiveButton(
                                 R.string.confirm,

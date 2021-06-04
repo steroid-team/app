@@ -14,7 +14,6 @@ import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.view.dialog.DialogListener;
 import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,35 +38,25 @@ public class TagView {
 
     private void init() {
         localTags = viewModel.getTagsFromList();
-        if (localTags == null){
+        if (localTags == null) {
             localTags = new ArrayList<>();
         }
         globalTags = viewModel.getGlobalTags();
-        if (globalTags == null){
+        if (globalTags == null) {
             globalTags = new ArrayList<>();
         }
-        //unlinkedTags = globalTags;
-        //for(Tag localTag : localTags) {
-         //   for(Tag globalTag : globalTags) {
-        //        if (localTag.equals(globalTag)) {
-        //            unlinkedTags.remove(globalTag);
-        //        }
-        //    }
-        //}
+        unlinkedTags = globalTags;
+        for (int i = 0; i < localTags.size(); i++) {
+            Tag localTag = localTags.get(i);
+            for (int j = 0; j < globalTags.size(); j++) {
+                Tag globalTag = globalTags.get(j);
+                if (localTag.equals(globalTag)) {
+                    unlinkedTags.remove(globalTag);
+                }
+            }
+        }
         localTags.sort(Tag.sortByBody);
         unlinkedTags.sort(Tag.sortByBody);
-        System.out.println("Local tags : ");
-        for (int i = 0; i < localTags.size(); i++) {
-            System.out.println(localTags.get(i));
-        }
-        System.out.println("Unlinked tags : ");
-        for (int i = 0; i < unlinkedTags.size(); i++) {
-            System.out.println(unlinkedTags.get(i));
-        }
-        System.out.println("Global tags : ");
-        for (int i = 0; i < globalTags.size(); i++) {
-            System.out.println(globalTags.get(i));
-        }
         localRow.removeAllViews();
         unlinkedRow.removeAllViews();
         Button plusButton =

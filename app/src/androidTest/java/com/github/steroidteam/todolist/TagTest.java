@@ -1,33 +1,5 @@
 package com.github.steroidteam.todolist;
 
-import android.content.Context;
-import android.graphics.Color;
-import android.os.Bundle;
-
-import androidx.fragment.app.testing.FragmentScenario;
-import androidx.test.espresso.matcher.ViewMatchers;
-
-import com.github.steroidteam.todolist.database.Database;
-import com.github.steroidteam.todolist.database.DatabaseFactory;
-import com.github.steroidteam.todolist.model.todo.Tag;
-import com.github.steroidteam.todolist.model.todo.Task;
-import com.github.steroidteam.todolist.model.todo.TodoList;
-import com.github.steroidteam.todolist.model.todo.TodoListCollection;
-import com.github.steroidteam.todolist.view.ItemViewFragment;
-import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -46,6 +18,30 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.os.Bundle;
+import androidx.fragment.app.testing.FragmentScenario;
+import androidx.test.espresso.matcher.ViewMatchers;
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.model.todo.Tag;
+import com.github.steroidteam.todolist.model.todo.Task;
+import com.github.steroidteam.todolist.model.todo.TodoList;
+import com.github.steroidteam.todolist.model.todo.TodoListCollection;
+import com.github.steroidteam.todolist.view.ItemViewFragment;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TagTest {

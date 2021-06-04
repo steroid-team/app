@@ -86,10 +86,6 @@ public class TodoListViewModel extends ViewModel {
         todoListRepository.updateTask(selectedTodoList, index, currentTask.setDueDate(date));
     }
 
-    public List<Tag> getAllTags() {
-        return todoListRepository.getGlobalTags();
-    }
-
     public List<Tag> getTagsFromList() {
         return todoListRepository.getLocalTags();
     }

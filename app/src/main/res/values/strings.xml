@@ -9,6 +9,8 @@
     <string name="menu_notes">Notes</string>
     <string name="menu_todo_lists">Todos</string>
     <string name="menu_btn_description">Open menu</string>
+    <string name="profile">Profile</string>
+    <string name="credits">Credits</string>
 
     <string name="search_btn_description">Search</string>
     <string name="back_btn_description">Back</string>
@@ -104,4 +106,4 @@
     <string name="export_to_calendar">Export to calendar</string>
     <string name="date_reminder">Date reminder</string>
     <string name="remove_due_date">Remove due date</string>
-</resources>
+    </resources>

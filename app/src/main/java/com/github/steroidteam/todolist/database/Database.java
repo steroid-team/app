@@ -226,6 +226,14 @@ public interface Database {
             throws FileNotFoundException;
 
     /**
+     * Removes and deletes an image
+     *
+     * @param noteID the image UUID
+     * @return a void future which completes whenever the image is deleted from the database.
+     */
+    CompletableFuture<Void> removeImage(UUID noteID);
+
+    /**
      * Downloads an image file and stores it at the specified destination path on the local
      * filesystem.
      *

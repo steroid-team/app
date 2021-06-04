@@ -541,6 +541,11 @@ public class FileStorageDatabase implements Database {
     }
 
     @Override
+    public CompletableFuture<Void> removeImage(UUID imageID) {
+        return this.storageService.delete(IMAGES_PATH + imageID + ".jpeg").thenApply(v -> null);
+    }
+
+    @Override
     public CompletableFuture<File> getImage(
             @NonNull UUID imageID, @NonNull String destinationPath) {
         String imageFilePath = IMAGES_PATH + imageID + ".jpeg";

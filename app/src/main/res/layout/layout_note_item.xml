@@ -16,13 +16,16 @@
 
         <ImageView
             android:id="@+id/layout_note_picture"
-            android:layout_width="372dp"
-            android:layout_height="251dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="false"
+            android:contentDescription="@string/note_header_image"
+            android:maxHeight="100dp"
             android:src="@drawable/asteroid_banner"
             app:layout_constraintBottom_toTopOf="@+id/layout_note_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:contentDescription="@string/note_header_image" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/layout_note_title"

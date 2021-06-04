@@ -20,6 +20,10 @@
         <item name="android:backgroundTint">@android:color/black</item>
     </style>
 
+    <style name="ProfileLayout">
+        <item name="android:backgroundTint">@android:color/black</item>
+    </style>
+
     <style name="BlackCanvasButton" parent="DrawingButton">
         <item name="android:backgroundTint">@color/dark_grey</item>
     </style>

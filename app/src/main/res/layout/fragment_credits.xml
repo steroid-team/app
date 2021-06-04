@@ -41,23 +41,23 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ScrollView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:scrollbars = "vertical"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:fontFamily="@font/nunitosans_light"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/credits_toolbar">
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fontFamily="@font/nunitosans_light"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/credits_toolbar">
 
-            <TextView
-                android:id="@+id/credits_body"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/credits_body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-        </ScrollView>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

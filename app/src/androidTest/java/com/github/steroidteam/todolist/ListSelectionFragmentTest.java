@@ -1,5 +1,30 @@
 package com.github.steroidteam.todolist;
 
+import android.content.Context;
+
+import androidx.fragment.app.testing.FragmentScenario;
+
+import com.github.steroidteam.todolist.database.Database;
+import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.model.todo.Tag;
+import com.github.steroidteam.todolist.model.todo.TodoList;
+import com.github.steroidteam.todolist.model.todo.TodoListCollection;
+import com.github.steroidteam.todolist.view.ListSelectionFragment;
+import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -20,25 +45,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
-import android.content.Context;
-import androidx.fragment.app.testing.FragmentScenario;
-import com.github.steroidteam.todolist.database.Database;
-import com.github.steroidteam.todolist.database.DatabaseFactory;
-import com.github.steroidteam.todolist.model.todo.TodoList;
-import com.github.steroidteam.todolist.model.todo.TodoListCollection;
-import com.github.steroidteam.todolist.view.ListSelectionFragment;
-import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListSelectionFragmentTest {
@@ -70,6 +76,9 @@ public class ListSelectionFragmentTest {
         CompletableFuture<Void> future = new CompletableFuture<>();
         future.complete(null);
         doReturn(future).when(databaseMock).removeTodoList(any(UUID.class));
+        CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
+        tagsFuture.complete(new ArrayList<>());
+        doReturn(tagsFuture).when(databaseMock).getAllTags();
 
         doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
         doReturn(todoListFuture).when(databaseMock).putTodoList(any(TodoList.class));

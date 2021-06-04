@@ -35,6 +35,8 @@ import com.github.steroidteam.todolist.view.misc.TagView;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
+import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.Calendar;
 import java.util.Date;
@@ -53,6 +55,7 @@ public class ItemViewFragment extends Fragment {
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         View root = inflater.inflate(R.layout.fragment_item_view, container, false);
 
         // Add a click listener to the "back" button to return to the previous activity.
@@ -253,8 +256,10 @@ public class ItemViewFragment extends Fragment {
                 });
 
         Button addLocationButton = getView().findViewById(R.id.AddLocationReminderButton);
+        Task currTask = viewModel.getTask(position);
         String locationName =
                 viewModel.getTodoList().getValue().getTask(position).getLocationName();
+        String taskDesc = currTask.getBody();
         if (locationName != null) addLocationButton.setText(locationName);
 
         getView()
@@ -282,7 +287,7 @@ public class ItemViewFragment extends Fragment {
                                                                 MapFragment.LOCATION_REQ);
                                                 ReminderLocationBroadcast
                                                         .createLocationNotification(
-                                                                loc, getActivity());
+                                                                loc, taskDesc, getActivity());
                                             });
 
                             Navigation.findNavController(getView()).navigate(R.id.nav_map);

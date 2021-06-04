@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 public class TodoListRepository {
 
@@ -21,7 +20,8 @@ public class TodoListRepository {
 
     private final MutableLiveData<ArrayList<TodoList>> allTodoLiveData;
     private final MutableLiveData<TodoList> observedTodoList;
-    private final MutableLiveData<List<Tag>> todolistTags;
+    private final MutableLiveData<List<Tag>> localTags;
+    private final MutableLiveData<List<Tag>> unlinkedTags;
     private final MutableLiveData<List<Tag>> globalTags;
 
     public TodoListRepository(Context context) {
@@ -30,26 +30,16 @@ public class TodoListRepository {
 
         allTodoLiveData = new MutableLiveData<>();
         observedTodoList = new MutableLiveData<>();
+        localTags = new MutableLiveData<>();
+        unlinkedTags = new MutableLiveData<>();
+        globalTags = new MutableLiveData<>();
 
         fetchData();
-
-        todolistTags = new MutableLiveData<>();
-        todolistTags.setValue(new ArrayList<>());
-        globalTags = new MutableLiveData<>();
-        globalTags.setValue(new ArrayList<>());
     }
 
     public void selectTodolist(UUID id) {
         localDatabase.getTodoList(id).thenAccept(this.observedTodoList::postValue);
-        localDatabase
-                .getTodoList(id)
-                .thenAccept(
-                        list -> {
-                            List<UUID> tagsIds = list.getTagsIds();
-                            localDatabase
-                                    .getTagsFromIds(tagsIds)
-                                    .thenAccept(tags -> todolistTags.postValue(tags));
-                        });
+        setTagsLists(id);
     }
 
     public LiveData<ArrayList<TodoList>> getAllTodo() {
@@ -225,34 +215,19 @@ public class TodoListRepository {
                 .thenApply(todoList -> todoList.sortByDate())
                 .thenAccept(this.observedTodoList::postValue);
     }
-
-    private void setTagsList() {
-        if (observedTodoList.getValue() != null) {
-            List<UUID> localTagsIds = observedTodoList.getValue().getTagsIds();
-            localDatabase.getTagsFromIds(localTagsIds).thenAccept(todolistTags::setValue);
-        }
-        localDatabase
-                .getAllTagsIds()
-                .thenCompose(localDatabase::getTagsFromIds)
-                .thenAccept(globalTags::setValue);
+    public LiveData<List<Tag>> getLocalTags(UUID todoListID) {
+        setTagsLists(todoListID);
+        return localTags;
     }
 
-    public List<Tag> getLocalTags() {
-        setTagsList();
-        return todolistTags.getValue();
+    public LiveData<List<Tag>> getGlobalTags() {
+        localDatabase.getAllTags().thenAccept(tags -> globalTags.postValue(tags));
+        return globalTags;
     }
 
-    public List<Tag> getGlobalTags() {
-        setTagsList();
-        return localDatabase.getAllTags().join();
-    }
-
-    public List<Tag> getUnlinkedTags() {
-        List<UUID> ids = getGlobalTags().stream().map(Tag::getId).collect(Collectors.toList());
-        List<UUID> localIds = getLocalTags().stream().map(Tag::getId).collect(Collectors.toList());
-        ids.removeAll(localIds);
-        ids.removeAll(localIds);
-        return localDatabase.getTagsFromIds(ids).join();
+    public LiveData<List<Tag>> getUnlinkedTags(UUID todoListID) {
+        setTagsLists(todoListID);
+        return unlinkedTags;
     }
 
     public CompletableFuture<List<Tag>> getTagsFromList(UUID listId) {
@@ -264,14 +239,28 @@ public class TodoListRepository {
                 .putTagInList(todoListID, tagId)
                 .thenCompose(str -> localDatabase.getTodoList(todoListID))
                 .thenApply(TodoList::sortByDate)
-                .thenAccept(this.observedTodoList::postValue);
+                .thenAccept(observedTodoList::postValue)
+                .thenCompose(str -> localDatabase.getTagsFromList(todoListID))
+                .thenAccept(tags -> localTags.postValue(tags))
+                .thenAccept(
+                        str -> {
+                            List<Tag> unlinked = globalTags.getValue();
+                            unlinked.removeAll(globalTags.getValue());
+                            unlinkedTags.postValue(unlinked);
+                        });
     }
 
     public void putTag(Tag tag) {
         localDatabase
                 .putTag(tag)
                 .thenCompose(str -> localDatabase.getAllTags())
-                .thenAccept(globalTags::setValue);
+                .thenAccept(globalTags::postValue)
+                .thenAccept(
+                        str -> {
+                            List<Tag> unlinked = globalTags.getValue();
+                            unlinked.removeAll(localTags.getValue());
+                            unlinkedTags.postValue(unlinked);
+                        });
 
         remoteDatabase.putTag(tag);
     }
@@ -281,7 +270,15 @@ public class TodoListRepository {
                 .removeTagFromList(todoListID, tagId)
                 .thenCompose(s -> localDatabase.getTodoList(todoListID))
                 .thenApply(TodoList::sortByDate)
-                .thenAccept(this.observedTodoList::postValue);
+                .thenAccept(this.observedTodoList::postValue)
+                .thenCompose(str -> localDatabase.getTagsFromList(todoListID))
+                .thenAccept(tags -> localTags.postValue(tags))
+                .thenAccept(
+                        str -> {
+                            List<Tag> unlinked = globalTags.getValue();
+                            unlinked.removeAll(globalTags.getValue());
+                            unlinkedTags.postValue(unlinked);
+                        });
     }
 
     public void destroyTag(Tag tag) {
@@ -291,7 +288,29 @@ public class TodoListRepository {
                 .thenAccept(globalTags::setValue)
                 .thenCompose(str -> localDatabase.getTodoList(observedTodoList.getValue().getId()))
                 .thenApply(TodoList::sortByDate)
-                .thenAccept(this.observedTodoList::postValue);
+                .thenAccept(this.observedTodoList::postValue)
+                .thenCompose(str -> localDatabase.getAllTags())
+                .thenAccept(globalTags::postValue)
+                .thenAccept(
+                        str -> {
+                            List<Tag> unlinked = globalTags.getValue();
+                            unlinked.removeAll(globalTags.getValue());
+                            unlinkedTags.postValue(unlinked);
+                        });
+    }
+
+    private void setTagsLists(UUID todoListID) {
+        localDatabase
+                .getTagsFromList(todoListID)
+                .thenAccept(tags -> localTags.postValue(tags))
+                .thenCompose(str -> localDatabase.getAllTags())
+                .thenAccept(allTags -> globalTags.postValue(allTags))
+                .thenAccept(
+                        str -> {
+                            List<Tag> unlinked = globalTags.getValue();
+                            unlinked.removeAll(globalTags.getValue());
+                            unlinkedTags.postValue(unlinked);
+                        });
     }
 
     public void setTaskLocationReminder(

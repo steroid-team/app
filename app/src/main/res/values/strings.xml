@@ -102,4 +102,6 @@
     <string name="export_to_calendar">Export to calendar</string>
     <string name="date_reminder">Date reminder</string>
     <string name="remove_due_date">Remove due date</string>
-</resources>
+        <string name="other_labels">Other labels</string>
+        <string name="todolist_labels">Todolist labels</string>
+    </resources>

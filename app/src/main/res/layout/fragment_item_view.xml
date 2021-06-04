@@ -31,7 +31,7 @@
 
         <TextView
             android:id="@+id/activity_title"
-            style="@style/ActivityTitle"
+            style="@style/ViewTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -45,6 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
             android:src="@android:drawable/stat_notify_more"
+            style="@style/ToolbarActionButton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -92,7 +93,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:layout_weight="1"
-        android:background="@drawable/rounded_corner_bg"
+        style="@style/BigInput"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -122,7 +123,7 @@
             android:layout_marginBottom="7dp"
             android:layout_weight="1"
             android:background="@drawable/rounded_corner_bg"
-            android:backgroundTint="@color/colorPrimary"
+            android:backgroundTint="?attr/colorPrimary"
             android:contentDescription="@string/new_task"
             android:padding="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -134,11 +135,11 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_update_task"
+        style="@style/TaskUpdateLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
         android:background="@drawable/rounded_corner_just_top_bg"
         android:paddingStart="10dp"
         android:paddingTop="10dp"
@@ -146,8 +147,10 @@
         android:paddingBottom="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="1.0">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -203,9 +206,9 @@
                     android:layout_height="0dp"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:drawableStart="@drawable/calendar_icon"
-                    android:drawablePadding="8dp"
-                    android:drawableTint="@color/dark_grey"
+                    app:icon="@drawable/calendar_icon"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/dark_grey"
                     android:text="@string/export_to_calendar" />
 
                 <Button
@@ -214,7 +217,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:drawableStart="@drawable/ic_baseline_delete_24_icon"
+                    app:icon="@drawable/ic_baseline_delete_24_icon"
+                    app:iconSize="25dp"
+                    app:iconTint="@color/dark_grey"
+                    app:iconPadding="0dp"
+                    app:iconGravity="textStart"
                     android:text="@string/remove_due_date" />
 
                 <TextView
@@ -231,36 +238,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:drawableStart="@android:drawable/ic_menu_mylocation"
+                    app:icon="@drawable/location_icon"
+                    app:iconSize="17dp"
+                    app:iconTint="@color/dark_grey"
+                    app:iconPadding="5dp"
+                    app:iconGravity="textStart"
                     android:text="@string/add_location" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@android:color/transparent">
-
-                <Button
-                    android:id="@+id/layout_update_task_save"
-                    style="@style/TaskSaveButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:layout_weight="1"
-                    android:text="@string/save" />
-
-                <Button
-                    android:id="@+id/layout_update_task_close"
-                    style="@style/TaskUndoButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:layout_weight="1"
-                    android:text="@string/undo" />
-
-            </LinearLayout>
         </LinearLayout>
 
         <Button
@@ -271,7 +256,18 @@
             android:layout_marginBottom="16dp"
             android:text="@string/delete"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/layout_update_task_save"
+            style="@style/TaskSaveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/save"
+            app:layout_constraintBottom_toTopOf="@+id/layout_update_task_delete"
+            tools:layout_editor_absoluteX="24dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -311,6 +307,13 @@
             tools:layout_editor_absoluteX="10dp"
             tools:layout_editor_absoluteY="10dp">
 
+            <TextView
+                android:id="@+id/local_tags_title"
+                style="@style/TagTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/todolist_labels" />
+
             <HorizontalScrollView
                 android:id="@+id/scroll_tags_local"
                 android:layout_width="match_parent"
@@ -325,6 +328,13 @@
                 </LinearLayout>
 
             </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/globals_tags_title"
+                style="@style/TagTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/other_labels" />
 
             <HorizontalScrollView
                 android:id="@+id/scroll_tags_global"

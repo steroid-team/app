@@ -509,7 +509,7 @@ public class FileStorageDatabase implements Database {
         CompletableFuture<String> headerUploadFuture =
                 this.storageService.upload(is, fileSystemHeaderPath);
 
-        /* In the mean time, get the Note then set the associated header ID,
+        /* In the mean time, get the Note then set the associated header ID
          * then synchronize everything */
 
         CompletableFuture<Note> currentNote = getNote(noteID);
@@ -536,6 +536,11 @@ public class FileStorageDatabase implements Database {
                         })
                 .thenCompose(note -> headerUploadFuture)
                 .thenApply(str -> null);
+    }
+
+    @Override
+    public CompletableFuture<Void> removeImage(UUID imageID) {
+        return this.storageService.delete(IMAGES_PATH + imageID + ".jpeg").thenApply(v -> null);
     }
 
     @Override

@@ -93,16 +93,12 @@ public class TodoListViewModel extends ViewModel {
         todoListRepository.updateTask(selectedTodoList, index, updatedTask);
     }
 
-    public CompletableFuture<List<Tag>> getTagsFromList(UUID listId) {
-        return todoListRepository.getTagsFromList(listId);
+    public List<Tag> getTagsFromList() {
+        return todoListRepository.getLocalTags(selectedTodoList).getValue();
     }
 
-    public List<Tag> getLocalTags() {
-        return todoListRepository.getLocalTags();
-    }
-
-    public List<Tag> getUnlinkedTags() {
-        return todoListRepository.getUnlinkedTags();
+    public List<Tag> getGlobalTags() {
+        return todoListRepository.getGlobalTags().getValue();
     }
 
     public void putTagInTodolist(Tag tag) {

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.steroidteam.todolist.R;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.view.adapter.TodoArrayListAdapter;
 import com.github.steroidteam.todolist.view.dialog.DialogListener;
@@ -25,6 +26,7 @@ import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ListSelectionFragment extends Fragment {
@@ -59,8 +61,8 @@ public class ListSelectionFragment extends Fragment {
                         (todoListArrayList) -> {
                             adapter.setTodoListCollection(todoListArrayList);
                             for (TodoList todo : todoListArrayList) {
-                                viewModel.getTagsFromList(todo.getId()).thenAccept(tags ->
-                                        adapter.putTagsInMap(todo.getId(), tags));
+                                List<Tag> tags = viewModel.getTagsFromList();
+                                adapter.putTagsInMap(todo.getId(), tags);
                             }
                             adapter.notifyDataSetChanged();
                         });

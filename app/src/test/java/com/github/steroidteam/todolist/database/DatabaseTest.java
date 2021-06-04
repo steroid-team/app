@@ -784,6 +784,20 @@ public class DatabaseTest {
     }
 
     @Test
+    public void removeImageWorks() {
+        final CompletableFuture<Void> completedDelete = CompletableFuture.completedFuture(null);
+
+        doReturn(completedDelete).when(storageServiceMock).delete(anyString());
+
+        try {
+            database.removeImage(UUID.randomUUID()).get();
+            verify(storageServiceMock).delete(anyString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
     public void putTagWorks() {
         final Tag tag = new Tag("Work");
         final String expectedPath = TAGS_PATH + tag.getId().toString() + ".json";

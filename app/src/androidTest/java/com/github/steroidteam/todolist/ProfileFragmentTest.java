@@ -13,7 +13,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
 
 import androidx.fragment.app.testing.FragmentScenario;
 import com.github.steroidteam.todolist.model.user.UserFactory;
@@ -102,20 +101,5 @@ public class ProfileFragmentTest {
         onView(withId(R.id.profile_mail_edit_save)).perform(click());
 
         onView(withId(R.id.profile_mail_text)).check(matches(withText(newMail)));
-    }
-
-    @Test
-    public void checkUpdatePwd() {
-        String newPass = "123";
-        onView(withId(R.id.profile_pwd_edit_btn)).perform(click());
-        onView(withId(R.id.alert_dialog_email)).perform(clearText(), typeText(email));
-        onView(withId(R.id.alert_dialog_password)).perform(clearText(), typeText("PASSWORD"));
-        closeSoftKeyboard();
-
-        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
-        onView(withId(R.id.profile_pwd_edit_text)).perform(clearText(), typeText(newPass));
-        onView(withId(R.id.profile_pwd_edit_save)).perform(click());
-
-        verify(user).updatePassword(newPass);
     }
 }

@@ -4,6 +4,7 @@ import static com.github.steroidteam.todolist.util.Utils.dip2px;
 import static com.github.steroidteam.todolist.view.NoteSelectionFragment.NOTE_ID_KEY;
 
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -218,7 +219,6 @@ public class NoteDisplayFragment extends Fragment {
     private void initRichEditor(View root) {
         // Rich text editor setup.
         richEditor = root.findViewById(R.id.notedisplay_text_editor);
-        richEditor.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.bg_grey));
         int padding = (int) getResources().getDimension(R.dimen.note_body_padding);
         richEditor.setPadding(padding, padding, padding, 0);
 
@@ -230,6 +230,21 @@ public class NoteDisplayFragment extends Fragment {
                                         getResources().getDisplayMetrics().widthPixels
                                                 / getResources().getDisplayMetrics().density)
                         - 2 * padding;
+
+        switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                // Night mode: black background, white text.
+                richEditor.setBackgroundColor(0);
+                richEditor.setEditorFontColor(ContextCompat.getColor(getContext(), R.color.white));
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+            case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                // Light mode: light grey background, black text.
+                richEditor.setBackgroundColor(
+                        ContextCompat.getColor(getContext(), R.color.bg_grey));
+                richEditor.setEditorFontColor(0);
+                break;
+        }
     }
 
     private void setImagePickerListeners(View root) {

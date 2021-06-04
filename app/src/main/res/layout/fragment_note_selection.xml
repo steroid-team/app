@@ -31,7 +31,7 @@
 
         <TextView
             android:id="@+id/activity_title"
-            style="@style/ActivityTitle"
+            style="@style/ViewTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/note_activity_title"
@@ -66,9 +66,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
-
-    </androidx.recyclerview.widget.RecyclerView>
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/create_note_button"
@@ -80,7 +78,8 @@
         android:contentDescription="@string/new_note_btn_description"
         android:focusable="true"
         android:src="@drawable/plus_icon"
-        app:backgroundTint="@color/dark_blue"
+        app:backgroundTint="?attr/colorPrimary"
+        app:tint="@android:color/white"
         app:elevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

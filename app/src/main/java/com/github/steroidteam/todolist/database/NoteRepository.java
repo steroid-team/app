@@ -60,6 +60,7 @@ public class NoteRepository {
                 .thenCombine(
                         this.localDatabase.getNotesList(),
                         (remoteNoteList, localNoteList) -> {
+                            List<CompletableFuture<Void>> completableFutureList = new ArrayList<>();
 
                             // CHECK THAT ALL REMOTE NOTE WILL BE IN THE LOCAL DATABASE
                             for (UUID noteID : remoteNoteList) {
@@ -71,21 +72,38 @@ public class NoteRepository {
                                 } else {
                                     // The note is not present in the local file system.
                                     // We need to add it:
-                                    this.remoteDatabase
-                                            .getNote(noteID)
-                                            .thenAccept(
-                                                    note -> {
-                                                        this.localDatabase.putNote(noteID, note);
-                                                    });
+                                    CompletableFuture<Void> future =
+                                            this.remoteDatabase
+                                                    .getNote(noteID)
+                                                    .thenAccept(
+                                                            note -> {
+                                                                this.localDatabase.putNote(
+                                                                        noteID, note);
+                                                            });
+                                    completableFutureList.add(future);
                                 }
                             }
 
                             // REMOVE ALL TO-DO THAT ARE NOT IN THE REMOTE DATABASE
                             for (UUID noteID : localNoteList) {
                                 if (!remoteNoteList.contains(noteID)) {
-                                    this.localDatabase.removeNote(noteID);
+                                    CompletableFuture<Void> future2 =
+                                            this.localDatabase.removeNote(noteID);
+                                    completableFutureList.add(future2);
                                 }
                             }
+
+                            CompletableFuture<Void> futureOfList =
+                                    CompletableFuture.allOf(
+                                            completableFutureList.toArray(
+                                                    new CompletableFuture[0]));
+
+                            futureOfList
+                                    .thenCompose(str -> this.localDatabase.getNotesList())
+                                    .thenAccept(
+                                            uuids -> {
+                                                setAllNoteLiveData(uuids, localDatabase);
+                                            });
                             return null;
                         })
                 .thenCompose(str -> this.localDatabase.getNotesList())

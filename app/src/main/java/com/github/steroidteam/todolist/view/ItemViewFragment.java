@@ -306,8 +306,11 @@ public class ItemViewFragment extends Fragment {
 
         Button calendarExportButton =
                 getView().findViewById(R.id.layout_update_task_export_calendar);
-        if (thisTask.getDueDate() != null)
+        if (thisTask.getDueDate() != null) {
             calendarExportButton.setText(thisTask.getDueDate().toString());
+        } else {
+            calendarExportButton.setText(R.string.export_to_calendar);
+        }
         calendarExportButton.setOnClickListener(
                 (v) -> {
                     Calendar startTime = Calendar.getInstance();

@@ -75,6 +75,9 @@ public class ListSelectionFragmentTest {
         CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
         tagsFuture.complete(new ArrayList<>());
         doReturn(tagsFuture).when(databaseMock).getAllTags();
+        doReturn(tagsFuture).when(databaseMock).getTagsFromIds(any());
+        doReturn(tagsFuture).when(databaseMock).getAllTagsIds();
+        doReturn(tagsFuture).when(databaseMock).getTagsFromList(any());
 
         doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
         doReturn(todoListFuture).when(databaseMock).putTodoList(any(TodoList.class));

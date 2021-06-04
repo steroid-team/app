@@ -1,6 +1,7 @@
 package com.github.steroidteam.todolist;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -97,5 +98,24 @@ public class DailyPlanningFragmentTest {
         doReturn(taskFuture).when(databaseMock).getTask(any(), anyInt());
 
         onView(withId(R.id.task_description)).check(matches(withText(TASK_DESCRIPTION)));
+    }
+
+    @Test
+    public void setTaskForTodayWorks() throws InterruptedException {
+        final String TASK_DESCRIPTION = "Buy bananas";
+
+        TodoList todoList = new TodoList("Some random title");
+        Task task = new Task(TASK_DESCRIPTION);
+        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
+
+        CompletableFuture<Task> taskFuture = new CompletableFuture<>();
+        taskFuture.complete(task);
+        doReturn(taskFuture).when(databaseMock).getTask(any(), anyInt());
+
+        onView(withId(R.id.today_plan_button)).perform(click());
+        Thread.sleep(300);
+        onView(withId(R.id.today_none_button)).perform(click());
     }
 }

@@ -16,7 +16,6 @@ import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
-
 import java.util.Calendar;
 import java.util.Date;
 
@@ -67,13 +66,18 @@ public class DailyPlanningFragment extends Fragment {
         root.findViewById(R.id.other_day_plan_button).setOnClickListener(this::switchToOtherDay);
         root.findViewById(R.id.delete_task_button).setOnClickListener(this::skipTaskInPlan);
 
-        root.findViewById(R.id.today_none_button).setOnClickListener(new SetDateListener(Plan.TODAY));
+        root.findViewById(R.id.today_none_button)
+                .setOnClickListener(new SetDateListener(Plan.TODAY));
         root.findViewById(R.id.midday_button).setOnClickListener(new SetDateListener(Plan.MIDDAY));
-        root.findViewById(R.id.afternoon_button).setOnClickListener(new SetDateListener(Plan.AFTERNOON));
-        root.findViewById(R.id.evening_button).setOnClickListener(new SetDateListener(Plan.EVENING));
+        root.findViewById(R.id.afternoon_button)
+                .setOnClickListener(new SetDateListener(Plan.AFTERNOON));
+        root.findViewById(R.id.evening_button)
+                .setOnClickListener(new SetDateListener(Plan.EVENING));
         root.findViewById(R.id.night_button).setOnClickListener(new SetDateListener(Plan.NIGHT));
-        root.findViewById(R.id.tomorrow_button).setOnClickListener(new SetDateListener(Plan.TOMORROW));
-        root.findViewById(R.id.twodays_plan_button).setOnClickListener(new SetDateListener(Plan.TWODAYS));
+        root.findViewById(R.id.tomorrow_button)
+                .setOnClickListener(new SetDateListener(Plan.TOMORROW));
+        root.findViewById(R.id.twodays_plan_button)
+                .setOnClickListener(new SetDateListener(Plan.TWODAYS));
         root.findViewById(R.id.week_plan_button).setOnClickListener(new SetDateListener(Plan.WEEK));
         root.findViewById(R.id.oneday_button).setOnClickListener(new SetDateListener(Plan.ONEDAY));
     }
@@ -126,7 +130,15 @@ public class DailyPlanningFragment extends Fragment {
     }
 
     private enum Plan {
-        TODAY, TOMORROW, TWODAYS, WEEK, ONEDAY, MIDDAY, AFTERNOON, EVENING, NIGHT
+        TODAY,
+        TOMORROW,
+        TWODAYS,
+        WEEK,
+        ONEDAY,
+        MIDDAY,
+        AFTERNOON,
+        EVENING,
+        NIGHT
     }
 
     private class SetDateListener implements View.OnClickListener {

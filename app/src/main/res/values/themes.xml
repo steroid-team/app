@@ -147,5 +147,8 @@
         <item name="android:layout_width">64dp</item>
         <item name="android:layout_height">64dp</item>
     </style>
+    <style name="BlackCanvasButton" parent="DrawingButton">
+        <item name="android:backgroundTint">@android:color/black</item>
+    </style>
 
 </resources>

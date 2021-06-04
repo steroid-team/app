@@ -3,11 +3,9 @@ package com.github.steroidteam.todolist.view.dialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.ContextThemeWrapper;
 import android.view.Gravity;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import com.github.steroidteam.todolist.R;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class ListSelectionDialogFragment extends DialogFragment {
 
@@ -36,12 +34,11 @@ public class ListSelectionDialogFragment extends DialogFragment {
         int items = getArguments().getInt(ITEMS_KEY);
 
         Dialog dialog =
-                new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.Dialog))
+                new MaterialAlertDialogBuilder(getActivity())
                         .setTitle(title)
                         .setItems(items, listener)
                         .create();
         dialog.getWindow().setGravity(Gravity.CENTER);
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         return dialog;
     }
 }

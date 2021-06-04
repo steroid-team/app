@@ -2,6 +2,7 @@ package com.github.steroidteam.todolist.view;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.text.Editable;
@@ -34,6 +35,7 @@ import com.github.steroidteam.todolist.view.misc.TagView;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import com.github.steroidteam.todolist.viewmodel.TodoViewModelFactory;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
+import com.google.android.gms.maps.model.LatLng;
 import java.util.Calendar;
 import java.util.Date;
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +53,7 @@ public class ItemViewFragment extends Fragment {
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         View root = inflater.inflate(R.layout.fragment_item_view, container, false);
 
         // Add a click listener to the "back" button to return to the previous view (either the
@@ -262,9 +265,15 @@ public class ItemViewFragment extends Fragment {
                 });
 
         Button addLocationButton = getView().findViewById(R.id.AddLocationReminderButton);
-        String locationName =
-                viewModel.getTodoList().getValue().getTask(position).getLocationName();
-        if (locationName != null) addLocationButton.setText(locationName);
+        Task currTask = viewModel.getTask(position);
+        String locationName = currTask.getLocationName();
+        String taskDesc = currTask.getBody();
+
+        if (locationName != null) {
+            addLocationButton.setText(locationName);
+        } else {
+            addLocationButton.setText(R.string.add_location);
+        }
 
         getView()
                 .findViewById(R.id.AddLocationReminderButton)
@@ -275,15 +284,23 @@ public class ItemViewFragment extends Fragment {
                                             MapFragment.LOCATION_REQ,
                                             this,
                                             (requestKey, bundle) -> {
+                                                LatLng result =
+                                                        bundle.getParcelable(
+                                                                MapFragment.LOCATION_KEY);
+                                                Location loc = new Location("");
+                                                loc.setLatitude(result.latitude);
+                                                loc.setLongitude(result.longitude);
                                                 viewModel.setTaskLocationReminder(
                                                         position,
-                                                        bundle.getParcelable(
-                                                                MapFragment.LOCATION_KEY),
+                                                        result,
                                                         bundle.getString(
                                                                 MapFragment.LOCATION_NAME_KEY));
                                                 getParentFragmentManager()
                                                         .clearFragmentResultListener(
                                                                 MapFragment.LOCATION_REQ);
+                                                ReminderLocationBroadcast
+                                                        .createLocationNotification(
+                                                                loc, taskDesc, getActivity());
                                             });
 
                             Navigation.findNavController(getView()).navigate(R.id.nav_map);

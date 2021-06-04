@@ -793,7 +793,7 @@ public class ItemViewFragmentTest {
                                 public void onLocationChanged(@NonNull Location location) {
                                     assertEquals(
                                             ReminderLocationBroadcast.createLocationNotification(
-                                                    location, fragment.getActivity()),
+                                                    location, "TEST", fragment.getActivity()),
                                             true);
                                 }
 

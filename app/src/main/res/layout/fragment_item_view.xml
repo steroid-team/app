@@ -311,6 +311,13 @@
             tools:layout_editor_absoluteX="10dp"
             tools:layout_editor_absoluteY="10dp">
 
+            <TextView
+                android:id="@+id/local_tags_title"
+                style="@style/TagTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/todolist_labels" />
+
             <HorizontalScrollView
                 android:id="@+id/scroll_tags_local"
                 android:layout_width="match_parent"
@@ -325,6 +332,13 @@
                 </LinearLayout>
 
             </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/globals_tags_title"
+                style="@style/TagTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/other_labels" />
 
             <HorizontalScrollView
                 android:id="@+id/scroll_tags_global"

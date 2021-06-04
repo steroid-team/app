@@ -61,7 +61,6 @@ public class AuthDialogFragment extends DialogFragment {
 
         dialog.setCanceledOnTouchOutside(false);
         dialog.getWindow().setGravity(Gravity.TOP);
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         return dialog;
     }
 

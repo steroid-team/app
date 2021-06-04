@@ -17,7 +17,9 @@ import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckText
 import static com.github.steroidteam.todolist.CustomMatchers.atPositionTextContains;
 import static com.github.steroidteam.todolist.CustomMatchers.clickChildViewWithId;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -63,7 +65,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ocpsoft.prettytime.nlp.PrettyTimeParser;
 
@@ -647,6 +651,76 @@ public class ItemViewFragmentTest {
                         hasExtra(CalendarContract.Events.TITLE, TASK_DESCRIPTION)
                         ));
          */
+    }
+
+    @Test
+    public void removeDueDateButtonWorks() {
+        final String TASK_DESCRIPTION = "Eat lunch";
+
+        // Create a todolist with a single task, which only contains a task with a due date set.
+        Task task = new Task(TASK_DESCRIPTION);
+        Date dueDate = new Date();
+        task.setDueDate(dueDate);
+        TodoList todoList = new TodoList("Some random title");
+        todoList.addTask(task);
+        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
+
+        // Type a task description in the "new task" text field.
+        onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
+
+        // Hit the button to create a new task.
+        onView(withId(R.id.new_task_btn)).perform(click());
+
+        // Open the update layout.
+        onView(
+                        allOf(
+                                withId(R.id.child_task_recycler_view),
+                                withParent(
+                                        new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
+                                                .atPosition(0))))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        // Check that the button is displayed.
+        onView(withId(R.id.layout_update_remove_due_date)).check(matches(isDisplayed()));
+
+        // Hit the button to remove the due date.
+        onView(withId(R.id.layout_update_remove_due_date)).perform(click());
+
+        ArgumentCaptor<Task> taskCaptor = ArgumentCaptor.forClass(Task.class);
+        Mockito.verify(databaseMock).updateTask(any(), any(), taskCaptor.capture());
+        assertNull(taskCaptor.getValue().getDueDate());
+
+        // Check that the calendar export button has been reset.
+        onView(withId(R.id.layout_update_task_export_calendar))
+                .check(matches(withText(R.string.export_to_calendar)));
+    }
+
+    @Test
+    public void remoteDueDateButtonNotDisplayedOnEmptyDueDate() {
+        final String TASK_DESCRIPTION = "Eat lunch";
+
+        // Create a todolist with a single task, which only contains a task with a due date set.
+        Task task = new Task(TASK_DESCRIPTION);
+        TodoList todoList = new TodoList("Some random title");
+        todoList.addTask(task);
+        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
+        todoListFuture.complete(todoList);
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
+
+        // Type a task description in the "new task" text field.
+        onView(withId(R.id.new_task_text)).perform(typeText(TASK_DESCRIPTION), closeSoftKeyboard());
+
+        // Hit the button to create a new task.
+        onView(withId(R.id.new_task_btn)).perform(click());
+
+        // Open the update layout.
+        onView(withId(R.id.activity_itemview_itemlist))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        // Check that the button is NOT displayed.
+        onView(withId(R.id.layout_update_remove_due_date)).check(matches(not(isDisplayed())));
     }
 
     @Test

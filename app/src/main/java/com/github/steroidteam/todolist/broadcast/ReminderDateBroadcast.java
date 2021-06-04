@@ -19,16 +19,17 @@ public class ReminderDateBroadcast extends BroadcastReceiver {
     public static String REMINDER_DATE_CHANNEL_ID = "notifyDateChannelID";
     public static CharSequence NAME_DATE_CHANNEL = "ReminderDateChannel";
     public static String DESCRIPTION_DATE_CHANNEL = "Channel for the date reminder";
+    private static int unique_ID = 0;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        String taskDescription =
+                intent.getStringExtra(context.getString(R.string.content_date_reminder));
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, REMINDER_DATE_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notification)
                         .setContentTitle(context.getString(R.string.title_date_reminder))
-                        .setContentText(
-                                intent.getStringExtra(
-                                        context.getString(R.string.content_date_reminder)))
+                        .setContentText(taskDescription)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
@@ -57,7 +58,8 @@ public class ReminderDateBroadcast extends BroadcastReceiver {
                 activity.getApplicationContext().getString(R.string.content_date_reminder),
                 taskDescription);
         PendingIntent pendingIntent =
-                PendingIntent.getBroadcast(activity.getApplicationContext(), 0, intent, 0);
+                PendingIntent.getBroadcast(
+                        activity.getApplicationContext(), unique_ID++, intent, 0);
 
         AlarmManager alarmManager = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
 

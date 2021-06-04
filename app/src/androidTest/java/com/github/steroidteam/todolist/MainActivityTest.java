@@ -122,7 +122,7 @@ public class MainActivityTest {
             // Open the drawer and select "Notes".
             onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
             onView(withId(R.id.drawer_layout)).check(matches(isOpen()));
-            onView(withId(R.id.nav_note_selection)).perform(click());
+            onView(withId(R.id.nav_notes)).perform(click());
             onView(withId(R.id.drawer_layout)).check(matches(isClosed()));
 
             // Note selection should be displayed now.
@@ -131,7 +131,7 @@ public class MainActivityTest {
             // Open the drawer again and select "Todos".
             onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
             onView(withId(R.id.drawer_layout)).check(matches(isOpen()));
-            onView(withId(R.id.nav_list_selection)).perform(click());
+            onView(withId(R.id.nav_todos)).perform(click());
             onView(withId(R.id.drawer_layout)).check(matches(isClosed()));
 
             // List selection should be displayed now.

@@ -51,4 +51,12 @@ public class UserViewModel extends ViewModel {
                     .addOnFailureListener(v -> errorOccurred.postValue(true));
         }
     }
+
+    public void updatePassword(String newPassword) {
+        if(userLiveData.getValue()!=null) {
+            userLiveData.getValue().updatePassword(newPassword)
+                    .addOnSuccessListener(v -> loadUser())
+                    .addOnFailureListener(v -> errorOccurred.postValue(true));
+        }
+    }
 }

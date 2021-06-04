@@ -158,4 +158,9 @@
         <item name="android:paddingRight">15dp</item>
     </style>
 
+    <style name="UserProfileInput">
+        <item name="android:fontFamily">@font/nunitosans_semibold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
 </resources>

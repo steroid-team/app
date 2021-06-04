@@ -1,10 +1,12 @@
 package com.github.steroidteam.todolist.view;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,12 +17,20 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.user.UserFactory;
+import com.github.steroidteam.todolist.view.dialog.AuthDialogFragment;
+import com.github.steroidteam.todolist.view.dialog.DialogListener;
+import com.github.steroidteam.todolist.view.dialog.SimpleDialogFragment;
 import com.github.steroidteam.todolist.viewmodel.UserViewModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
@@ -33,9 +43,11 @@ public class ProfileFragment extends Fragment {
     private UserViewModel userViewModel;
 
     private TextView userName;
-    private TextView userNameEditable;
+    private EditText userNameEditable;
     private TextView userMail;
-    private TextView userMailEditable;
+    private EditText userMailEditable;
+
+    private EditText userPwdEditable;
 
     @Override
     public View onCreateView(
@@ -49,6 +61,8 @@ public class ProfileFragment extends Fragment {
 
         this.userMail = root.findViewById(R.id.profile_mail_text);
         this.userMailEditable = root.findViewById(R.id.profile_mail_edit_text);
+
+        this.userPwdEditable = root.findViewById(R.id.profile_pwd_edit_text);
 
         userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
 
@@ -76,6 +90,7 @@ public class ProfileFragment extends Fragment {
         editMailLayout.setVisibility(View.INVISIBLE);
         setButtonNameListener(root);
         setButtonMailListener(root);
+        initModifPwdBtn(root);
 
         return root;
     }
@@ -112,9 +127,13 @@ public class ProfileFragment extends Fragment {
 
         // Listener Button Edit
         Button buttonDisplayEditLayout = (Button) root.findViewById(R.id.profile_mail_edit_btn);
-        buttonDisplayEditLayout.setOnClickListener(v -> displayEditLayout(editableMailLayout));
+        buttonDisplayEditLayout.setOnClickListener(v -> {
+            if(editableMailLayout.getVisibility()==View.INVISIBLE) {
+                reAuth(editableMailLayout);
+            }
+        });
 
-        // Listener Button Mail
+        // Listener Button Save
         Button buttonSaveMail = root.findViewById(R.id.profile_mail_edit_save);
         buttonSaveMail.setOnClickListener(view -> {
             String newMail = userMailEditable.getText().toString();
@@ -138,5 +157,52 @@ public class ProfileFragment extends Fragment {
             userNameEditable.setText(user.getDisplayName());
             userMailEditable.setText(user.getEmail());
         }
+    }
+
+    private void initModifPwdBtn(View root){
+        ConstraintLayout editablePwdLayout = root.findViewById(R.id.profile_pwd_edit);
+        editablePwdLayout.setVisibility(View.INVISIBLE);
+
+        // Listener Button Edit
+        Button buttonDisplayEditLayout = (Button) root.findViewById(R.id.profile_pwd_edit_btn);
+        buttonDisplayEditLayout.setOnClickListener(v -> {
+            if(editablePwdLayout.getVisibility()==View.INVISIBLE) {
+                reAuth(editablePwdLayout);
+            }
+        });
+
+        // Listener Button Save
+        Button buttonSavePwd = root.findViewById(R.id.profile_pwd_edit_save);
+        buttonSavePwd.setOnClickListener(view -> {
+            String newPassword = userPwdEditable.getText().toString();
+            userViewModel.updatePassword(newPassword);
+            displayEditLayout(editablePwdLayout);
+        });
+    }
+
+    private void reAuth(ConstraintLayout view) {
+        AuthDialogFragment.AuthDialogListener simpleDialogListener =
+                (email, pwd) -> {
+                    AuthCredential credential = EmailAuthProvider
+                            .getCredential(email,pwd);
+
+                    UserFactory.get().reauthenticate(credential)
+                            .addOnCompleteListener(task -> {
+                                if(task.isSuccessful()){
+                                    displayEditLayout(view);
+                                } else {
+                                    Toast.makeText(
+                                            getContext(),
+                                            "Error: You need to re-Authenticate to update critical information",
+                                            Toast.LENGTH_LONG)
+                                            .show();
+                                }
+                            });
+                };
+
+        DialogFragment newFragment =
+                new AuthDialogFragment()
+                        .newInstance(simpleDialogListener);
+        newFragment.show(getParentFragmentManager(), "auth_dialog");
     }
 }

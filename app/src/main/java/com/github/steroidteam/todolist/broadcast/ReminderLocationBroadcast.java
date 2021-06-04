@@ -28,15 +28,17 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
     public static String REMINDER_LOC_CHANNEL_ID = "notifyLocationChannelID";
     public static CharSequence NAME_LOCATION_CHANNEL = "ReminderLocationChannel";
     public static String DESCRIPTION_LOCATION_CHANNEL = "Channel for the location reminder";
+
     // The radius of the central point alert region in meters
     private static final float RADIUS = 1000;
     private static int unique_ID = 0;
     private static GeofencingClient geofencingClient;
+    private static String EXTRA_KEY_LOCATION_REMINDER = "extra_key_location_reminder";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         String taskDescription =
-                intent.getStringExtra(context.getString(R.string.content_location_reminder));
+                intent.getStringExtra(EXTRA_KEY_LOCATION_REMINDER);
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, REMINDER_LOC_CHANNEL_ID)
                         .setContentTitle(context.getString(R.string.title_location_reminder))
@@ -69,9 +71,7 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
             Location location, String taskDescription, Activity activity) {
         Intent intent =
                 new Intent(activity.getApplicationContext(), ReminderLocationBroadcast.class);
-        intent.putExtra(
-                activity.getApplicationContext().getString(R.string.content_location_reminder),
-                taskDescription);
+        intent.putExtra(EXTRA_KEY_LOCATION_REMINDER, taskDescription);
         PendingIntent pendingIntent =
                 PendingIntent.getBroadcast(
                         activity.getApplicationContext(), unique_ID++, intent, 0);

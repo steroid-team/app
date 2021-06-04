@@ -7,11 +7,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.DialogFragment;
-
 import com.github.steroidteam.todolist.R;
 
 public class AuthDialogFragment extends DialogFragment {
@@ -42,7 +40,6 @@ public class AuthDialogFragment extends DialogFragment {
                         .setPositiveButton(
                                 R.string.confirm,
                                 (DialogInterface dialog, int which) -> {
-
                                     EditText email =
                                             dialogLayout.findViewById(R.id.alert_dialog_email);
                                     String inputEmail = email.getText().toString();
@@ -57,8 +54,7 @@ public class AuthDialogFragment extends DialogFragment {
                                     dialog.dismiss();
                                 })
                         .setNegativeButton(
-                                R.string.cancel,
-                                (dialog, whichButton) -> dialog.dismiss());
+                                R.string.cancel, (dialog, whichButton) -> dialog.dismiss());
 
         builder.setView(dialogLayout);
 
@@ -73,7 +69,8 @@ public class AuthDialogFragment extends DialogFragment {
     public interface AuthDialogListener {
 
         /**
-         * Method to call when the user, click on the positive button and we want to return some inputs.
+         * Method to call when the user, click on the positive button and we want to return some
+         * inputs.
          */
         void onPositiveClick(String input1, String input2);
     }

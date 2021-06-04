@@ -53,9 +53,9 @@ public class MainActivity extends AppCompatActivity {
         View headerView = navigationView.getHeaderView(0);
 
         UserViewModel userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        userViewModel.getUser()
-                .observe(this,
-                        userObservable -> setNavHeader(headerView , userObservable));
+        userViewModel
+                .getUser()
+                .observe(this, userObservable -> setNavHeader(headerView, userObservable));
     }
 
     private void setNavHeader(View headerView, FirebaseUser user) {

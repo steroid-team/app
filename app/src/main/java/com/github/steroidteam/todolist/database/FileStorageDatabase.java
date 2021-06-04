@@ -484,6 +484,17 @@ public class FileStorageDatabase implements Database {
                                 .collect(Collectors.<Tag>toList()));
     }
 
+    public CompletableFuture<List<UUID>> getTagsIdsFromList(@NonNull UUID todoListID) {
+        Objects.requireNonNull(todoListID);
+        return getTodoList(todoListID).thenApply(TodoList::getTagsIds);
+    }
+
+    public CompletableFuture<List<Tag>> getTagsFromList(UUID listId) {
+        return getTodoList(listId)
+                .thenApply(TodoList::getTagsIds)
+                .thenCompose(this::getTagsFromIds);
+    }
+
     @Override
     public CompletableFuture<Void> setHeaderNote(UUID noteID, String imagePath, UUID imageID)
             throws FileNotFoundException {

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class TodoListViewModel extends ViewModel {
 
@@ -92,7 +93,11 @@ public class TodoListViewModel extends ViewModel {
         todoListRepository.updateTask(selectedTodoList, index, updatedTask);
     }
 
-    public List<Tag> getTagsFromList() {
+    public CompletableFuture<List<Tag>> getTagsFromList(UUID listId) {
+        return todoListRepository.getTagsFromList(listId);
+    }
+
+    public List<Tag> getLocalTags() {
         return todoListRepository.getLocalTags();
     }
 

@@ -34,7 +34,9 @@ public class TodoListRepository {
         fetchData();
 
         todolistTags = new MutableLiveData<>();
+        todolistTags.setValue(new ArrayList<>());
         globalTags = new MutableLiveData<>();
+        globalTags.setValue(new ArrayList<>());
     }
 
     public void selectTodolist(UUID id) {
@@ -225,8 +227,10 @@ public class TodoListRepository {
     }
 
     private void setTagsList() {
-        List<UUID> localTagsIds = observedTodoList.getValue().getTagsIds();
-        localDatabase.getTagsFromIds(localTagsIds).thenAccept(todolistTags::setValue);
+        if (observedTodoList.getValue() != null) {
+            List<UUID> localTagsIds = observedTodoList.getValue().getTagsIds();
+            localDatabase.getTagsFromIds(localTagsIds).thenAccept(todolistTags::setValue);
+        }
         localDatabase
                 .getAllTagsIds()
                 .thenCompose(localDatabase::getTagsFromIds)
@@ -249,6 +253,10 @@ public class TodoListRepository {
         ids.removeAll(localIds);
         ids.removeAll(localIds);
         return localDatabase.getTagsFromIds(ids).join();
+    }
+
+    public CompletableFuture<List<Tag>> getTagsFromList(UUID listId) {
+        return localDatabase.getTagsFromList(listId);
     }
 
     public void putTagInTodolist(UUID todoListID, UUID tagId) {

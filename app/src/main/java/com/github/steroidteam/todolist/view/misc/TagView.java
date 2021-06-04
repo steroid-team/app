@@ -15,6 +15,7 @@ import com.github.steroidteam.todolist.view.dialog.DialogListener;
 import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
 import java.util.List;
+import java.util.UUID;
 
 public class TagView {
     private Fragment fragment;
@@ -25,12 +26,14 @@ public class TagView {
     private LinearLayout globalRow;
     private List<Tag> localTags;
     private List<Tag> globalTags;
+    private UUID todolistId;
 
     public TagView(Fragment fragment, TodoListViewModel viewModel, View root) {
         this.fragment = fragment;
         this.root = root;
         this.viewModel = viewModel;
-        localTags = viewModel.getTagsFromList();
+        todolistId = viewModel.getTodoList().getValue().getId();
+        localTags = viewModel.getLocalTags();
         globalTags = viewModel.getUnlinkedTags();
         tagLayout = root.findViewById(R.id.layout_update_tags);
         localRow = root.findViewById(R.id.tag_row_local);

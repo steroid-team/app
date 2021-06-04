@@ -10,10 +10,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.user.UserFactory;
+import com.github.steroidteam.todolist.viewmodel.UserViewModel;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
@@ -21,7 +24,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class ProfileFragment extends Fragment {
 
-    private FirebaseUser user;
+    private UserViewModel userViewModel;
+
+    private TextView userName;
+    private TextView userNameEditable;
+    private TextView userMail;
+    private TextView userMailEditable;
 
     @Override
     public View onCreateView(
@@ -30,32 +38,76 @@ public class ProfileFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        this. user = UserFactory.get();
+        this.userName = root.findViewById(R.id.profile_name_text);
+        this.userNameEditable = root.findViewById(R.id.profile_name_edit_text);
 
-        setNameField(root);
-        setMailField(root);
+        this.userMail = root.findViewById(R.id.profile_mail_text);
+        this.userMailEditable = root.findViewById(R.id.profile_mail_edit_text);
+
+        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+
+        userViewModel.getUser()
+                .observe(getViewLifecycleOwner(),
+                        this::setViews);
+
+        ConstraintLayout editNameLayout = root.findViewById(R.id.profile_name_edit);
+        editNameLayout.setVisibility(View.INVISIBLE);
+        ConstraintLayout editMailLayout = root.findViewById(R.id.profile_mail_edit);
+        editMailLayout.setVisibility(View.INVISIBLE);
+        setButtonNameListener(root);
+        setButtonMailListener(root);
 
         return root;
     }
 
-    private void setNameField(View root) {
-        TextView view_name = root.findViewById(R.id.profile_name_text);
-        view_name.setText(user.getDisplayName());
+    private void setViews(FirebaseUser user) {
+        userName.setText(user.getDisplayName());
+        userNameEditable.setText(user.getDisplayName());
+        userMail.setText(user.getEmail());
+        userMailEditable.setText(user.getEmail());
+    }
 
-        LinearLayout editNameLayout = root.findViewById(R.id.profile_name_edit);
-        editNameLayout.setVisibility(View.INVISIBLE);
+    private void setButtonNameListener(View root) {
+        ConstraintLayout editableNameLayout = root.findViewById(R.id.profile_name_edit);
 
-        Button button = root.findViewById(R.id.profile_name_edit_save);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                view_name.setText("OIUIIIIIIIIII");
-            }
+        // Listener Button Edit
+        Button buttonDisplayEditLayout = root.findViewById(R.id.profile_name_edit_btn);
+        buttonDisplayEditLayout.setOnClickListener(v -> displayEditLayout(editableNameLayout));
+
+        // Listener Button Save
+        Button buttonSaveName = root.findViewById(R.id.profile_name_edit_save);
+        buttonSaveName.setOnClickListener(view -> {
+            String newName = userNameEditable.getText().toString();
+            userViewModel.updateUser(
+                    new UserProfileChangeRequest.Builder()
+                        .setDisplayName(newName)
+                        .build()
+            );
+            displayEditLayout(editableNameLayout);
         });
     }
 
-    private void setMailField(View root) {
-        TextView view_name = root.findViewById(R.id.profile_mail_text);
-        view_name.setText(user.getEmail());
+    private void setButtonMailListener(View root) {
+        ConstraintLayout editableMailLayout = root.findViewById(R.id.profile_mail_edit);
+
+        // Listener Button Edit
+        Button buttonDisplayEditLayout = root.findViewById(R.id.profile_mail_edit_btn);
+        buttonDisplayEditLayout.setOnClickListener(v -> displayEditLayout(editableMailLayout));
+
+        // Listener Button Mail
+        Button buttonSaveMail = root.findViewById(R.id.profile_mail_edit_save);
+        buttonSaveMail.setOnClickListener(view -> {
+            String newMail = userMailEditable.getText().toString();
+            userViewModel.updateUserMail(newMail);
+            displayEditLayout(editableMailLayout);
+        });
+    }
+
+    private void displayEditLayout(ConstraintLayout layout) {
+        if(layout.getVisibility()==View.VISIBLE) {
+            layout.setVisibility(View.INVISIBLE);
+        } else {
+            layout.setVisibility(View.VISIBLE);
+        }
     }
 }

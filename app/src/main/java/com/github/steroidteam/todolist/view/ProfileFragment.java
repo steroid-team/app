@@ -24,6 +24,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
+
 public class ProfileFragment extends Fragment {
 
     private UserViewModel userViewModel;
@@ -73,6 +74,20 @@ public class ProfileFragment extends Fragment {
                             }
                         });
 
+        userViewModel.getErrorOccurred()
+                .observe(getViewLifecycleOwner(),
+                        bool -> {
+                    if(bool) {
+                        Toast.makeText(
+                                getContext(),
+                                "Error: unable to connect to Firebase or wrong input!",
+                                Toast.LENGTH_LONG)
+                                .show();
+                        userViewModel.errorOccurredDone();
+                        setViews(Objects.requireNonNull(userViewModel.getUser().getValue()));
+                    }
+                });
+
         ConstraintLayout editNameLayout = root.findViewById(R.id.profile_name_edit);
         editNameLayout.setVisibility(View.INVISIBLE);
         ConstraintLayout editMailLayout = root.findViewById(R.id.profile_mail_edit);
@@ -114,12 +129,7 @@ public class ProfileFragment extends Fragment {
 
         // Listener Button Edit
         Button buttonDisplayEditLayout = (Button) root.findViewById(R.id.profile_mail_edit_btn);
-        buttonDisplayEditLayout.setOnClickListener(
-                v -> {
-                    if (editableMailLayout.getVisibility() == View.INVISIBLE) {
-                        reAuth(editableMailLayout);
-                    }
-                });
+        buttonDisplayEditLayout.setOnClickListener(v -> displayEditLayout(editableMailLayout));
 
         // Listener Button Save
         Button buttonSaveMail = root.findViewById(R.id.profile_mail_edit_save);

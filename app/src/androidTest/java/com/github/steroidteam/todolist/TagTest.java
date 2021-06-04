@@ -104,7 +104,7 @@ public class TagTest {
         bundle.putSerializable("list_id", UUID.randomUUID());
         scenario =
                 FragmentScenario.launchInContainer(
-                        ItemViewFragment.class, bundle, R.style.Theme_Asteroid);
+                        ItemViewFragment.class, bundle, R.style.AsteroidTheme);
     }
 
     @Test

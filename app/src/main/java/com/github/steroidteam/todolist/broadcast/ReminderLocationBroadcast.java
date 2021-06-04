@@ -37,8 +37,7 @@ public class ReminderLocationBroadcast extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        String taskDescription =
-                intent.getStringExtra(EXTRA_KEY_LOCATION_REMINDER);
+        String taskDescription = intent.getStringExtra(EXTRA_KEY_LOCATION_REMINDER);
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, REMINDER_LOC_CHANNEL_ID)
                         .setContentTitle(context.getString(R.string.title_location_reminder))

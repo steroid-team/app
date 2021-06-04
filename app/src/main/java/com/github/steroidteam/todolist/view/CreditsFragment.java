@@ -21,8 +21,8 @@ public class CreditsFragment extends Fragment {
         TextView textView = root.findViewById(R.id.credits_body);
 
         textView.setText(
-                "Copyright (C) 2021 González Gómez Yago, Graziano Leandro, Hauke Sydney Victor " +
-                        "Balthazar, Kaltenrieder Noah Alec Daniel, Pellenc Vincent Jean, Théo Damiani\n\n"
+                "Copyright (C) 2021 González Gómez Yago, Graziano Leandro, Hauke Sydney Victor "
+                        + "Balthazar, Kaltenrieder Noah Alec Daniel, Pellenc Vincent Jean, Théo Damiani\n\n"
                         + "Copyright (C) 2012 Android Holo ColorPicker, Lars Werkman\n\n"
                         + "Rich Editor used in the application:\n"
                         + "Copyright (C) 2020 Wasabeef\n"

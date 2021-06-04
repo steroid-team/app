@@ -24,7 +24,6 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
-
 public class ProfileFragment extends Fragment {
 
     private UserViewModel userViewModel;
@@ -74,19 +73,22 @@ public class ProfileFragment extends Fragment {
                             }
                         });
 
-        userViewModel.getErrorOccurred()
-                .observe(getViewLifecycleOwner(),
+        userViewModel
+                .getErrorOccurred()
+                .observe(
+                        getViewLifecycleOwner(),
                         bool -> {
-                    if(bool) {
-                        Toast.makeText(
-                                getContext(),
-                                "Error: unable to connect to Firebase or wrong input!",
-                                Toast.LENGTH_LONG)
-                                .show();
-                        userViewModel.errorOccurredDone();
-                        setViews(Objects.requireNonNull(userViewModel.getUser().getValue()));
-                    }
-                });
+                            if (bool) {
+                                Toast.makeText(
+                                                getContext(),
+                                                "Error: unable to connect to Firebase or wrong input!",
+                                                Toast.LENGTH_LONG)
+                                        .show();
+                                userViewModel.errorOccurredDone();
+                                setViews(
+                                        Objects.requireNonNull(userViewModel.getUser().getValue()));
+                            }
+                        });
 
         ConstraintLayout editNameLayout = root.findViewById(R.id.profile_name_edit);
         editNameLayout.setVisibility(View.INVISIBLE);

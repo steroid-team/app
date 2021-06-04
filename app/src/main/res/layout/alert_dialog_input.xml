@@ -9,11 +9,13 @@
         android:id="@+id/alert_dialog_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:autofillHints="@string/title_todo"
+        android:backgroundTint="@color/dark_grey"
+        android:hint="@string/title_todo"
         android:inputType="text"
         android:maxLines="1"
-        android:backgroundTint="@color/dark_grey"
-        android:textCursorDrawable="@drawable/custom_cursor"
-        android:hint="@string/title_todo"
-        android:autofillHints="@string/title_todo" />
+        android:textCursorDrawable="@drawable/custom_cursor" />
 
 </LinearLayout>

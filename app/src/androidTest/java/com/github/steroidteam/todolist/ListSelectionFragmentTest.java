@@ -87,7 +87,7 @@ public class ListSelectionFragmentTest {
 
         scenario =
                 FragmentScenario.launchInContainer(
-                        ListSelectionFragment.class, null, R.style.Theme_Asteroid);
+                        ListSelectionFragment.class, null, R.style.AsteroidTheme);
     }
 
     @Test

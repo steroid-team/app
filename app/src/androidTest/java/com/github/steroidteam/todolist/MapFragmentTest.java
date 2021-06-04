@@ -52,7 +52,7 @@ public class MapFragmentTest {
         FirebaseUser mockedUser = Mockito.mock(FirebaseUser.class);
         UserFactory.set(mockedUser);
         scenario =
-                FragmentScenario.launchInContainer(MapFragment.class, null, R.style.Theme_Asteroid);
+                FragmentScenario.launchInContainer(MapFragment.class, null, R.style.AsteroidTheme);
         CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
         todoListCollectionFuture.complete(new TodoListCollection());
         doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();

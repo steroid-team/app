@@ -200,4 +200,9 @@ public class NoteRepository {
             return this.remoteDatabase.getImage(imageID, file.getAbsolutePath());
         }
     }
+
+    public void removeImage(UUID imageID) {
+        this.localDatabase.removeImage(imageID);
+        this.remoteDatabase.removeImage(imageID);
+    }
 }

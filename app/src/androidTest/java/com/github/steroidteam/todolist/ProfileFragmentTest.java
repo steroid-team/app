@@ -54,7 +54,7 @@ public class ProfileFragmentTest {
 
         scenario =
                 FragmentScenario.launchInContainer(
-                        ProfileFragment.class, null, R.style.Theme_Asteroid);
+                        ProfileFragment.class, null, R.style.AsteroidTheme);
     }
 
     @Test

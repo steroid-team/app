@@ -14,7 +14,7 @@ import com.github.steroidteam.todolist.R;
 
 public class AuthDialogFragment extends DialogFragment {
 
-    private final String DIALOG_TITLE = "Please, you need to re-authenticate!";
+    private final String DIALOG_TITLE = getResources().getString(R.string.authenticate_message);
     private AuthDialogListener listener;
 
     public AuthDialogFragment() {

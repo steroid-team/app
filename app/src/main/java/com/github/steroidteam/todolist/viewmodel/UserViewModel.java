@@ -32,7 +32,6 @@ public class UserViewModel extends ViewModel {
     }
 
     private void loadUser() {
-        System.err.println("ON LOAD !!!!!!!!!!!!!!!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         userLiveData.postValue(UserFactory.get());
     }
 
@@ -43,7 +42,6 @@ public class UserViewModel extends ViewModel {
                     .updateProfile(request)
                     .addOnSuccessListener(
                             v -> {
-                                System.out.println("=================================>");
                                 loadUser();
                             })
                     .addOnFailureListener(

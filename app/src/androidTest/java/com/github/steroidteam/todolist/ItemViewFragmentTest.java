@@ -127,7 +127,10 @@ public class ItemViewFragmentTest {
 
         CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
         tagsFuture.complete(new ArrayList<>());
+        doReturn(tagsFuture).when(databaseMock).getAllTags();
         doReturn(tagsFuture).when(databaseMock).getTagsFromIds(any());
+        doReturn(tagsFuture).when(databaseMock).getAllTagsIds();
+        doReturn(tagsFuture).when(databaseMock).getTagsFromList(any());
 
         DatabaseFactory.setCustomDatabase(databaseMock);
 

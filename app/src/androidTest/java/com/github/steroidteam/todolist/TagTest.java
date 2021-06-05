@@ -67,7 +67,8 @@ public class TagTest {
         TodoList todoList = new TodoList("Some random title");
         CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
         todoListFuture.complete(todoList);
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any(UUID.class));
+        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
+        doReturn(todoListFuture).when(databaseMock).removeTagFromList(any(), any());
 
         Task task = new Task("Random task title");
         CompletableFuture<Task> taskFuture = new CompletableFuture<>();
@@ -95,6 +96,9 @@ public class TagTest {
         CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
         tagsFuture.complete(new ArrayList<>());
         doReturn(tagsFuture).when(databaseMock).getTagsFromIds(any());
+        doReturn(tagsFuture).when(databaseMock).getAllTagsIds();
+        doReturn(tagsFuture).when(databaseMock).getAllTags();
+        doReturn(tagsFuture).when(databaseMock).getTagsFromList(any());
 
         File fakeFile = new File("Fake pathname");
         doReturn(fakeFile).when(context).getCacheDir();
@@ -117,7 +121,7 @@ public class TagTest {
     public void createTagButtonWorks() {
 
         onView(withId(R.id.itemview_tag_button)).perform(click());
-        onView(withParent(withId(R.id.tag_row_first))).perform(click());
+        onView(withParent(withId(R.id.tag_row_global))).perform(click());
         onView(withText(R.string.add_tag_suggestion)).check(matches(isDisplayed()));
 
         onView(withId(R.id.alert_dialog_edit_text))
@@ -126,7 +130,25 @@ public class TagTest {
         // button1 = positive button
         onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
         onView(withText(R.string.add_tag_suggestion)).check(doesNotExist());
-        onView(withId(R.id.tag_row_first)).check(matches(hasChildCount(2)));
+        onView(withId(R.id.tag_row_global)).check(matches(hasChildCount(2)));
+    }
+
+    @Test
+    public void tagButtonsWork() {
+
+        onView(withId(R.id.itemview_tag_button)).perform(click());
+        onView(withParent(withId(R.id.tag_row_global))).perform(click());
+        onView(withId(R.id.alert_dialog_edit_text))
+                .inRoot(isDialog())
+                .perform(clearText(), typeText(TAG_1_TITLE));
+        // button1 = positive button
+        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
+        onView(new LinearLayoutMatcher(R.id.tag_row_global).atPosition(1)).perform(click());
+        onView(withId(R.id.tag_row_local)).check(matches(hasChildCount(1)));
+        onView(withId(R.id.tag_row_global)).check(matches(hasChildCount(1)));
+        onView(withParent(withId(R.id.tag_row_local))).perform(click());
+        onView(withId(R.id.tag_row_local)).check(matches(hasChildCount(0)));
+        onView(withId(R.id.tag_row_global)).check(matches(hasChildCount(2)));
     }
 
     @Test

@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 .signOut(this)
                 .addOnCompleteListener(
                         task -> {
+                            UserFactory.set(null);
                             Intent intent = new Intent(this, LoginActivity.class);
                             startActivity(intent);
                             finish();

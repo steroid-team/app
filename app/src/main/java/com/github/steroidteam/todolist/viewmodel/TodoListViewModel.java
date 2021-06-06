@@ -92,16 +92,28 @@ public class TodoListViewModel extends ViewModel {
         todoListRepository.updateTask(selectedTodoList, index, updatedTask);
     }
 
-    public List<Tag> getTags() {
-        return todoListRepository.getTags();
+    public List<Tag> getTagsFromList() {
+        return todoListRepository.getLocalTags(selectedTodoList).getValue();
     }
 
-    public void addTag(Tag tag) {
-        todoListRepository.putTag(selectedTodoList, tag);
+    public List<Tag> getGlobalTags() {
+        return todoListRepository.getGlobalTags().getValue();
+    }
+
+    public void putTagInTodolist(Tag tag) {
+        todoListRepository.putTagInTodolist(selectedTodoList, tag.getId());
+    }
+
+    public void putTag(Tag tag) {
+        todoListRepository.putTag(tag);
     }
 
     public void destroyTag(Tag tag) {
-        todoListRepository.destroyTag(selectedTodoList, tag);
+        todoListRepository.destroyTag(tag);
+    }
+
+    public void removeTagFromTodolist(Tag tag) {
+        todoListRepository.removeTagFromTodolist(selectedTodoList, tag.getId());
     }
 
     public void setTaskLocationReminder(int index, LatLng location, String locationName) {

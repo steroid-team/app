@@ -295,31 +295,57 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="50dp"
             android:text="@string/save"
-            app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
-            app:layout_constraintEnd_toEndOf="@+id/linearLayout2"
-            app:layout_constraintStart_toStartOf="@+id/linearLayout2" />
+            app:layout_constraintBottom_toBottomOf="@+id/tags_linear_layout"
+            app:layout_constraintEnd_toEndOf="@+id/tags_linear_layout"
+            app:layout_constraintStart_toStartOf="@+id/tags_linear_layout" />
 
         <LinearLayout
-            android:id="@+id/linearLayout2"
+            android:id="@+id/tags_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             tools:layout_editor_absoluteX="10dp"
             tools:layout_editor_absoluteY="10dp">
 
-            <HorizontalScrollView
-                android:id="@+id/scrollTags"
+            <TextView
+                android:id="@+id/local_tags_title"
+                style="@style/TagTitle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:text="@string/todolist_labels" />
+
+            <HorizontalScrollView
+                android:id="@+id/scroll_tags_local"
+                android:layout_width="match_parent"
+                android:layout_height="100dp">
 
                 <LinearLayout
-                    android:id="@+id/tag_row_first"
+                    android:id="@+id/tag_row_local"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                 </LinearLayout>
 
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/globals_tags_title"
+                style="@style/TagTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/other_labels" />
+
+            <HorizontalScrollView
+                android:id="@+id/scroll_tags_global"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/tag_row_global"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"></LinearLayout>
             </HorizontalScrollView>
 
         </LinearLayout>

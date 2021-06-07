@@ -156,4 +156,9 @@
         <item name="android:backgroundTint">@android:color/black</item>
     </style>
 
+    <style name="DailyPlanningTask">
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">@font/nunitosans_bold</item>
+    </style>
+
 </resources>

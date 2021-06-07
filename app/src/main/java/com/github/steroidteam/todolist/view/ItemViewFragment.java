@@ -101,6 +101,7 @@ public class ItemViewFragment extends Fragment {
 
         root.findViewById(R.id.new_task_btn).setOnClickListener(this::addTask);
         root.findViewById(R.id.remove_done_tasks_btn).setOnClickListener(this::removeDoneTasks);
+        root.findViewById(R.id.daily_planning_btn).setOnClickListener(this::goToDailyPlanning);
 
         ConstraintLayout updateLayout = root.findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.GONE);
@@ -359,6 +360,10 @@ public class ItemViewFragment extends Fragment {
 
     public void checkBoxTaskListener(final int position, final boolean isChecked) {
         viewModel.setTaskDone(position, isChecked);
+    }
+
+    public void goToDailyPlanning(View view) {
+        Navigation.findNavController(getView()).navigate(R.id.nav_daily_planning, new Bundle());
     }
 
     @Override

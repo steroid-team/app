@@ -18,7 +18,16 @@
     <fragment
         android:id="@+id/nav_item_view"
         android:name="com.github.steroidteam.todolist.view.ItemViewFragment"
-        tools:layout="@layout/fragment_item_view" />
+        tools:layout="@layout/fragment_item_view" >
+        <action
+            android:id="@+id/action_nav_item_view_to_nav_daily_planning"
+            app:destination="@+id/nav_daily_planning" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_daily_planning"
+        android:name="com.github.steroidteam.todolist.view.DailyPlanningFragment"
+        tools:layout="@layout/fragment_daily_planning" />
 
     <fragment
         android:id="@+id/nav_note_selection"

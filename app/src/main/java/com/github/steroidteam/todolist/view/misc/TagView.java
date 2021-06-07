@@ -14,109 +14,48 @@ import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.view.dialog.DialogListener;
 import com.github.steroidteam.todolist.view.dialog.InputDialogFragment;
 import com.github.steroidteam.todolist.viewmodel.TodoListViewModel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TagView {
-    private final Fragment fragment;
-    private final TodoListViewModel viewModel;
-    private final ConstraintLayout tagLayout;
-    private final LinearLayout localRow;
-    private final LinearLayout unlinkedRow;
-    private List<Tag> localTags;
-    private List<Tag> globalTags;
-    private List<Tag> unlinkedTags;
-
-    public TagView(Fragment fragment, TodoListViewModel viewModel, View root) {
-        this.fragment = fragment;
-        this.viewModel = viewModel;
-        tagLayout = root.findViewById(R.id.layout_update_tags);
-        localRow = root.findViewById(R.id.tag_row_local);
-        unlinkedRow = root.findViewById(R.id.tag_row_global);
-        init();
-    }
-
-    private void init() {
-        localTags = viewModel.getTagsFromList();
-        if (localTags == null) {
-            localTags = new ArrayList<>();
-        }
-        globalTags = viewModel.getGlobalTags();
-        if (globalTags == null) {
-            globalTags = new ArrayList<>();
-        }
-        unlinkedTags = globalTags;
-        for (int i = 0; i < localTags.size(); i++) {
-            Tag localTag = localTags.get(i);
-            for (int j = 0; j < globalTags.size(); j++) {
-                Tag globalTag = globalTags.get(j);
-                if (localTag.equals(globalTag)) {
-                    unlinkedTags.remove(globalTag);
-                }
-            }
-        }
-        localTags.sort(Tag.sortByBody);
-        unlinkedTags.sort(Tag.sortByBody);
-        localRow.removeAllViews();
-        unlinkedRow.removeAllViews();
+    public void tagButton(Fragment fragment, TodoListViewModel viewModel) {
+        List<Tag> tags = viewModel.getTags();
+        tags.sort(Tag.sortByBody);
+        ConstraintLayout tagLayout = fragment.getView().findViewById(R.id.layout_update_tags);
+        tagLayout.setVisibility(View.VISIBLE);
+        LinearLayout row = fragment.getView().findViewById(R.id.tag_row_first);
+        row.removeAllViews();
         Button plusButton =
                 new Button(
                         new ContextThemeWrapper(fragment.getContext(), R.style.TagInList), null, 0);
         plusButton.setText("+");
         plusButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
-        plusButton.setOnClickListener(v -> createTag());
-        unlinkedRow.addView(plusButton);
-        localTags.forEach(this::createLocalTagButton);
-        unlinkedTags.forEach(this::createGlobalTagButton);
+        plusButton.setOnClickListener(v -> createTag(fragment, viewModel));
+        row.addView(plusButton);
+        tags.forEach(tag -> createTagButton(fragment, tag, row, viewModel));
     }
 
-    public void tagButton() {
-        tagLayout.setVisibility(View.VISIBLE);
-        init();
-    }
-
-    public void tagSaveButton() {
+    public void tagSaveButton(Fragment fragment) {
+        ConstraintLayout tagLayout = fragment.getView().findViewById(R.id.layout_update_tags);
         tagLayout.setVisibility(View.GONE);
     }
 
-    private void createLocalTagButton(Tag tag) {
+    private void createTagButton(
+            Fragment fragment, Tag tag, LinearLayout row, TodoListViewModel viewModel) {
         Button tagButton =
                 new Button(
                         new ContextThemeWrapper(fragment.getContext(), R.style.TagInList), null, 0);
         tagButton.setText(tag.getBody());
         tagButton.setBackgroundTintList(ColorStateList.valueOf(tag.getColor()));
-        tagButton.setOnClickListener(
-                view -> {
-                    viewModel.removeTagFromTodolist(tag);
-                    localRow.removeView(tagButton);
-                    createGlobalTagButton(tag);
-                });
-        localRow.addView(tagButton);
-    }
-
-    private void createGlobalTagButton(Tag tag) {
-        Button tagButton =
-                new Button(
-                        new ContextThemeWrapper(fragment.getContext(), R.style.TagInList), null, 0);
-        tagButton.setText(tag.getBody());
-        tagButton.setBackgroundTintList(ColorStateList.valueOf(tag.getColor()));
-        tagButton.setOnClickListener(
-                view -> {
-                    viewModel.putTagInTodolist(tag);
-
-                    unlinkedRow.removeView(tagButton);
-                    createLocalTagButton(tag);
-                });
         tagButton.setOnLongClickListener(
                 view -> {
-                    unlinkedRow.removeView(tagButton);
                     viewModel.destroyTag(tag);
+                    row.removeView(tagButton);
                     return true;
                 });
-        unlinkedRow.addView(tagButton);
+        row.addView(tagButton);
     }
 
-    public void createTag() {
+    public void createTag(Fragment fragment, TodoListViewModel viewModel) {
 
         DialogListener dialogListener =
                 new DialogListener() {
@@ -125,8 +64,12 @@ public class TagView {
                     public void onPositiveClick(String title) {
                         if (title.length() > 0) {
                             Tag tag = new Tag(title);
-                            viewModel.putTag(tag);
-                            createGlobalTagButton(tag);
+                            viewModel.addTag(tag);
+                            createTagButton(
+                                    fragment,
+                                    tag,
+                                    fragment.getView().findViewById(R.id.tag_row_first),
+                                    viewModel);
                         }
                     }
 

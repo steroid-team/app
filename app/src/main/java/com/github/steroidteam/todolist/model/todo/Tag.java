@@ -52,6 +52,6 @@ public class Tag {
 
     @Override
     public boolean equals(Object otherTag) {
-        return (otherTag instanceof Tag && ((Tag) otherTag).getId().equals(uuid));
+        return (otherTag instanceof Tag && ((Tag) otherTag).getId() == uuid);
     }
 }

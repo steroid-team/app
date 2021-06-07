@@ -48,7 +48,7 @@ public class ItemViewFragment extends Fragment {
     public static final int PERMISSIONS_ACCESS_LOCATION = 2;
     private final PrettyTimeParser timeParser = new PrettyTimeParser();
     private ActivityResultLauncher<Intent> calendarExportIntentLauncher;
-    private TagView tagView;
+    private final TagView tagView = new TagView();
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -105,15 +105,10 @@ public class ItemViewFragment extends Fragment {
         ConstraintLayout updateLayout = root.findViewById(R.id.layout_update_task);
         updateLayout.setVisibility(View.GONE);
 
-        tagView = new TagView(this, viewModel, root);
         root.findViewById(R.id.itemview_tag_button)
-                .setOnClickListener(
-                        v -> {
-                            updateLayout.setVisibility(View.GONE);
-                            tagView.tagButton();
-                        });
+                .setOnClickListener(v -> tagView.tagButton(this, viewModel));
         root.findViewById(R.id.itemview_tag_save_button)
-                .setOnClickListener(v -> tagView.tagSaveButton());
+                .setOnClickListener(v -> tagView.tagSaveButton(this));
 
         ReminderDateBroadcast.createNotificationChannel(getActivity());
         ReminderLocationBroadcast.createLocationNotificationChannel(getActivity());

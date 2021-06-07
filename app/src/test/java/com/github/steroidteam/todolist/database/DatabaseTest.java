@@ -990,6 +990,26 @@ public class DatabaseTest {
     }
 
     @Test
+    public void getTagsListWorks() {
+        UUID uuid1 = UUID.randomUUID();
+        UUID uuid2 = UUID.randomUUID();
+        UUID uuid3 = UUID.randomUUID();
+
+        listDirFuture.complete(new String[] {uuid1.toString(), uuid2.toString(), uuid3.toString()});
+        doReturn(listDirFuture).when(storageServiceMock).listDir(anyString());
+
+        final FileStorageDatabase database = new FileStorageDatabase(storageServiceMock);
+        try {
+            List<UUID> actualList = database.getTagsList().join();
+            assertEquals(uuid1, actualList.get(0));
+            assertEquals(uuid2, actualList.get(1));
+            assertEquals(uuid3, actualList.get(2));
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
     public void getTagsFromIdsWorks() {
         Tag expectedTag = new Tag("TAG");
         List<UUID> idsList = new ArrayList<>();
@@ -1015,43 +1035,30 @@ public class DatabaseTest {
     }
 
     @Test
-    public void getAllTagsIdsWorks() {
-        UUID uuid1 = UUID.randomUUID();
-        UUID uuid2 = UUID.randomUUID();
-        UUID uuid3 = UUID.randomUUID();
+    public void getTagsFromList() {
+        TodoList list = new TodoList("Todolist");
+        Tag expectedTag = new Tag("Tag");
+        list.addTagId(expectedTag.getId());
+        list.addTagId(expectedTag.getId());
+        String targetPathTodoList = TODO_LIST_PATH + list.getId().toString() + ".json";
+        String targetPathTag = TAGS_PATH + expectedTag.getId().toString() + ".json";
 
-        listDirFuture.complete(new String[] {uuid1.toString(), uuid2.toString(), uuid3.toString()});
-        doReturn(listDirFuture).when(storageServiceMock).listDir(anyString());
-
-        final FileStorageDatabase database = new FileStorageDatabase(storageServiceMock);
-        try {
-            List<UUID> actualList = database.getAllTagsIds().join();
-            assertEquals(uuid1, actualList.get(0));
-            assertEquals(uuid2, actualList.get(1));
-            assertEquals(uuid3, actualList.get(2));
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
-    @Test
-    public void getAllTagsWorks() {
-        Tag expectedTag = new Tag("TAG");
-        List<Tag> tagsList = new ArrayList<>();
-        tagsList.add(expectedTag);
-        tagsList.add(expectedTag);
+        CompletableFuture<byte[]> downloadFutureTag = new CompletableFuture<>();
+        CompletableFuture<byte[]> downloadFutureTodoList = new CompletableFuture<>();
 
         byte[] serializedTag =
                 JSONSerializer.serializeTag(expectedTag).getBytes(StandardCharsets.UTF_8);
-        downloadFuture.complete(serializedTag);
-        doReturn(downloadFuture).when(storageServiceMock).downloadBytes(anyString());
+        downloadFutureTag.complete(serializedTag);
 
-        listDirFuture.complete(
-                new String[] {expectedTag.getId().toString(), expectedTag.getId().toString()});
-        doReturn(listDirFuture).when(storageServiceMock).listDir(anyString());
+        byte[] serializedTodoList =
+                JSONSerializer.serializeTodoList(list).getBytes(StandardCharsets.UTF_8);
+        downloadFutureTodoList.complete(serializedTodoList);
+
+        doReturn(downloadFutureTag).when(storageServiceMock).downloadBytes(targetPathTag);
+        doReturn(downloadFutureTodoList).when(storageServiceMock).downloadBytes(targetPathTodoList);
 
         try {
-            List<Tag> actualCollection = database.getAllTags().join();
+            List<Tag> actualCollection = database.getTagsFromList(list.getId()).join();
             assertEquals(expectedTag.getId(), actualCollection.get(0).getId());
             assertEquals(expectedTag.getBody(), actualCollection.get(0).getBody());
             assertEquals(expectedTag.getId(), actualCollection.get(1).getId());

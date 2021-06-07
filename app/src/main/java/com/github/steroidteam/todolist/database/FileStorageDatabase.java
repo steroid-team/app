@@ -352,11 +352,6 @@ public class FileStorageDatabase implements Database {
         return this.storageService.upload(bytes, notePath).thenApply(str -> note);
     }
 
-    public CompletableFuture<List<UUID>> getTagsIdsFromList(@NonNull UUID todoListID) {
-        Objects.requireNonNull(todoListID);
-        return getTodoList(todoListID).thenApply(TodoList::getTagsIds);
-    }
-
     public CompletableFuture<Tag> putTag(@NonNull Tag tag) {
         Objects.requireNonNull(tag);
         String targetPath = TAGS_PATH + tag.getId().toString() + ".json";
@@ -467,8 +462,12 @@ public class FileStorageDatabase implements Database {
                         });
     }
 
-    public CompletableFuture<List<UUID>> getTagsList() {
+    public CompletableFuture<List<UUID>> getAllTagsIds() {
         return getListFromPath(TAGS_PATH);
+    }
+
+    public CompletableFuture<List<Tag>> getAllTags() {
+        return getAllTagsIds().thenCompose(ids -> getTagsFromIds(ids));
     }
 
     public CompletableFuture<List<Tag>> getTagsFromIds(List<UUID> ids) {
@@ -483,6 +482,11 @@ public class FileStorageDatabase implements Database {
                         tagFutures.stream()
                                 .map(CompletableFuture::join)
                                 .collect(Collectors.<Tag>toList()));
+    }
+
+    public CompletableFuture<List<UUID>> getTagsIdsFromList(@NonNull UUID todoListID) {
+        Objects.requireNonNull(todoListID);
+        return getTodoList(todoListID).thenApply(TodoList::getTagsIds);
     }
 
     public CompletableFuture<List<Tag>> getTagsFromList(UUID listId) {
@@ -505,7 +509,7 @@ public class FileStorageDatabase implements Database {
         CompletableFuture<String> headerUploadFuture =
                 this.storageService.upload(is, fileSystemHeaderPath);
 
-        /* In the mean time, get the Note then set the associated header ID,
+        /* In the mean time, get the Note then set the associated header ID
          * then synchronize everything */
 
         CompletableFuture<Note> currentNote = getNote(noteID);
@@ -532,6 +536,11 @@ public class FileStorageDatabase implements Database {
                         })
                 .thenCompose(note -> headerUploadFuture)
                 .thenApply(str -> null);
+    }
+
+    @Override
+    public CompletableFuture<Void> removeImage(UUID imageID) {
+        return this.storageService.delete(IMAGES_PATH + imageID + ".jpeg").thenApply(v -> null);
     }
 
     @Override

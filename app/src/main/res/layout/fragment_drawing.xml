@@ -32,7 +32,7 @@
 
         <TextView
             android:id="@+id/drawing_fragment_title"
-            style="@style/ActivityTitle"
+            style="@style/ViewTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/drawing_activity_title"
@@ -97,23 +97,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/drawing_toolbar">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/drawing_first_btn"
             style="@style/DrawingButton" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/drawing_second_btn"
             style="@style/DrawingButton" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/drawing_third_btn"
             style="@style/DrawingButton" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/drawing_fourth_btn"
-            style="@style/DrawingButton" />
+            style="@style/BlackCanvasButton" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/drawing_fifth_btn"
             style="@style/DrawingButton" />
     </LinearLayout>

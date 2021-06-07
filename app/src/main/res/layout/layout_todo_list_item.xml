@@ -9,14 +9,13 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/layout_todo_list_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@android:color/transparent"
             style="@style/SelectionList.Entry.Title"/>
 
     </RelativeLayout>

@@ -1,18 +1,12 @@
 package com.github.steroidteam.todolist.view;
 
-import static com.github.steroidteam.todolist.util.Utils.dip2px;
+import static com.github.steroidteam.todolist.util.Utils.getRoundedBitmap;
 import static com.github.steroidteam.todolist.view.NoteSelectionFragment.NOTE_ID_KEY;
 
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -54,7 +48,6 @@ public class NoteDisplayFragment extends Fragment {
     private LatLng position; // TODO : change this !!! LISTEN TO RESULT LISTENER OF MAP
     private String locationName; // TODO : change this !!!
 
-    private UUID noteID;
     private RichEditor richEditor;
     private Uri cameraFileUri;
     private ActivityResultLauncher<String> headerImagePickerActivityLauncher;
@@ -71,10 +64,16 @@ public class NoteDisplayFragment extends Fragment {
     private final int HEADER_WIDTH = 1000;
     private final int HEADER_HEIGHT = 500;
 
+    private final int RADIUS_HEADER_TOP = 0;
+    private final int RADIUS_HEADER_BOTTOM = 50;
+
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View root = inflater.inflate(R.layout.fragment_note_display, container, false);
+
+        View noteHeader = root.findViewById(R.id.note_header);
+        noteHeader.setTag(R.drawable.rounded_corner_just_bottom_bg); // Use it for testing purposes
 
         headerFilePath = getActivity().getCacheDir().getAbsolutePath();
 
@@ -129,46 +128,26 @@ public class NoteDisplayFragment extends Fragment {
 
                                 BitmapDrawable ob =
                                         new BitmapDrawable(
-                                                getResources(), getRoundedBitmap(scaled));
+                                                getResources(),
+                                                getRoundedBitmap(
+                                                        scaled,
+                                                        RADIUS_HEADER_TOP,
+                                                        RADIUS_HEADER_BOTTOM));
                                 header.setBackgroundTintList(null);
                                 header.setBackground(ob);
+                                header.setTag(0); // For testing purposes
                             });
         } else {
             Bitmap newBitmap =
                     Bitmap.createBitmap(HEADER_WIDTH, HEADER_HEIGHT, Bitmap.Config.ARGB_8888);
             newBitmap.eraseColor(getActivity().getColor(R.color.light_grey));
-            BitmapDrawable ob = new BitmapDrawable(getResources(), getRoundedBitmap(newBitmap));
+            BitmapDrawable ob =
+                    new BitmapDrawable(
+                            getResources(),
+                            getRoundedBitmap(newBitmap, RADIUS_HEADER_TOP, RADIUS_HEADER_BOTTOM));
             header.setBackground(ob);
+            header.setTag(0); // For testing purposes
         }
-    }
-
-    private Bitmap getRoundedBitmap(Bitmap bitmap) {
-        Bitmap output =
-                Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-        final float roundPx = dip2px(getContext(), 25);
-        paint.setAntiAlias(true);
-        Path path = new Path();
-        float[] corners =
-                new float[] {
-                    0,
-                    0, // Top left radius in px
-                    0,
-                    0, // Top right radius in px
-                    roundPx,
-                    roundPx, // Bottom right radius in px
-                    roundPx,
-                    roundPx // Bottom left radius in px
-                };
-        path.addRoundRect(rectF, corners, Path.Direction.CW);
-        canvas.drawPath(path, paint);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        return output;
     }
 
     private void updateUI(View root, Note note) {
@@ -214,7 +193,6 @@ public class NoteDisplayFragment extends Fragment {
     private void initRichEditor(View root) {
         // Rich text editor setup.
         richEditor = root.findViewById(R.id.notedisplay_text_editor);
-        richEditor.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.bg_grey));
         int padding = (int) getResources().getDimension(R.dimen.note_body_padding);
         richEditor.setPadding(padding, padding, padding, 0);
 
@@ -226,6 +204,21 @@ public class NoteDisplayFragment extends Fragment {
                                         getResources().getDisplayMetrics().widthPixels
                                                 / getResources().getDisplayMetrics().density)
                         - 2 * padding;
+
+        switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                // Night mode: black background, white text.
+                richEditor.setBackgroundColor(0);
+                richEditor.setEditorFontColor(ContextCompat.getColor(getContext(), R.color.white));
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+            case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                // Light mode: light grey background, black text.
+                richEditor.setBackgroundColor(
+                        ContextCompat.getColor(getContext(), R.color.bg_grey));
+                richEditor.setEditorFontColor(0);
+                break;
+        }
     }
 
     private void setImagePickerListeners(View root) {
@@ -342,11 +335,11 @@ public class NoteDisplayFragment extends Fragment {
 
         Bitmap bitmap;
 
+        ConstraintLayout header = getView().findViewById(R.id.note_header);
+
         String tmpFileName = "bitmap_tmp.jpeg";
         File tmpFile = new File(getContext().getCacheDir(), tmpFileName);
 
-        System.err.println(
-                tmpFile.toString() + " " + tmpFile.toURI() + "                     zqdqzd");
         try (FileOutputStream output = new FileOutputStream(tmpFile)) {
             InputStream is = getContext().getContentResolver().openInputStream(uri);
             bitmap = BitmapFactory.decodeStream(is);
@@ -355,6 +348,15 @@ public class NoteDisplayFragment extends Fragment {
             output.close();
 
             noteViewModel.updateNoteHeader(tmpFile.getAbsolutePath());
+
+            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, HEADER_WIDTH, HEADER_HEIGHT, false);
+
+            BitmapDrawable ob = new BitmapDrawable(getResources(), scaled);
+
+            header.setBackgroundTintList(null);
+            header.setBackground(ob);
+            header.setTag(0); // For testing purposes
+
         } catch (Exception e) {
             Toast.makeText(getContext(), "Error: could not display the image", Toast.LENGTH_LONG)
                     .show();
@@ -385,5 +387,18 @@ public class NoteDisplayFragment extends Fragment {
         super.onPause();
         position = null;
         locationName = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Uri drawingPath = noteViewModel.getTmpDrawingPath();
+
+        if (drawingPath != null) {
+            richEditor.focusEditor();
+            richEditor.insertImage(drawingPath.toString(), "", imageDisplayWidth);
+            noteViewModel.setTmpDrawingPath(null);
+        }
     }
 }

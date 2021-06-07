@@ -49,6 +49,9 @@
         <action
             android:id="@+id/action_nav_note_display_to_nav_audio"
             app:destination="@id/nav_audio" />
+        <action
+            android:id="@+id/action_nav_note_display_to_nav_drawing"
+            app:destination="@id/nav_drawing" />
     </fragment>
 
     <fragment

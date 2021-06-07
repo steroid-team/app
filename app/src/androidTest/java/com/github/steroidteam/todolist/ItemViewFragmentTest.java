@@ -8,9 +8,9 @@ import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
+import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckBox;
 import static com.github.steroidteam.todolist.CustomMatchers.atPositionCheckText;
@@ -127,7 +127,10 @@ public class ItemViewFragmentTest {
 
         CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
         tagsFuture.complete(new ArrayList<>());
+        doReturn(tagsFuture).when(databaseMock).getAllTags();
         doReturn(tagsFuture).when(databaseMock).getTagsFromIds(any());
+        doReturn(tagsFuture).when(databaseMock).getAllTagsIds();
+        doReturn(tagsFuture).when(databaseMock).getTagsFromList(any());
 
         DatabaseFactory.setCustomDatabase(databaseMock);
 
@@ -136,7 +139,7 @@ public class ItemViewFragmentTest {
         ViewModelFactoryInjection.setCustomTodoListRepo(context, UUID.randomUUID());
         scenario =
                 FragmentScenario.launchInContainer(
-                        ItemViewFragment.class, null, R.style.Theme_Asteroid);
+                        ItemViewFragment.class, null, R.style.AsteroidTheme);
     }
 
     @Test
@@ -198,7 +201,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
@@ -210,7 +213,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION, TASK_BODY_LAYOUT_ID)));
@@ -218,7 +221,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
@@ -351,7 +354,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .perform(
@@ -361,7 +364,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
@@ -396,7 +399,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
@@ -404,7 +407,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
@@ -449,7 +452,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .perform(
@@ -458,7 +461,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .perform(
@@ -469,7 +472,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
@@ -501,7 +504,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
@@ -513,7 +516,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
@@ -521,7 +524,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .check(matches(atPositionCheckBox(0, false, TASK_BOX_LAYOUT_ID)));
@@ -573,7 +576,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .perform(
@@ -594,7 +597,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .check(matches(atPositionCheckText(0, TASK_DESCRIPTION_2, TASK_BODY_LAYOUT_ID)));
@@ -627,7 +630,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
@@ -677,7 +680,7 @@ public class ItemViewFragmentTest {
         onView(
                         allOf(
                                 withId(R.id.child_task_recycler_view),
-                                withParent(
+                                isDescendantOfA(
                                         new RecyclerViewMatcher(R.id.activity_itemview_itemlist)
                                                 .atPosition(0))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
@@ -790,7 +793,7 @@ public class ItemViewFragmentTest {
                                 public void onLocationChanged(@NonNull Location location) {
                                     assertEquals(
                                             ReminderLocationBroadcast.createLocationNotification(
-                                                    location, fragment.getActivity()),
+                                                    location, "TEST", fragment.getActivity()),
                                             true);
                                 }
 

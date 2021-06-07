@@ -85,7 +85,6 @@
     <string name="content_date_reminder">taskDescriptionDateReminder</string>
     <string name="channel_date_name">ReminderDateChannel</string>
     <string name="title_location_reminder">Location reminder !</string>
-    <string name="content_location_reminder">Hey ! You\'ve some tasks from this location</string>
     <string name="toast_reminder">The reminder has been set !</string>
     <string name="cancel">Cancel</string>
     <string name="log_out">Log out</string>
@@ -102,4 +101,6 @@
     <string name="export_to_calendar">Export to calendar</string>
     <string name="date_reminder">Date reminder</string>
     <string name="remove_due_date">Remove due date</string>
-</resources>
+        <string name="other_labels">Other labels</string>
+        <string name="todolist_labels">Todolist labels</string>
+    </resources>

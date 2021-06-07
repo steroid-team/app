@@ -11,8 +11,10 @@ import static com.github.steroidteam.todolist.view.DrawingView.BACKGROUND_COLOR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
+import android.Manifest;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.MotionEvent;
@@ -20,13 +22,18 @@ import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.platform.app.InstrumentationRegistry;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.model.notes.Note;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.model.user.UserFactory;
 import com.github.steroidteam.todolist.view.DrawingFragment;
 import com.github.steroidteam.todolist.view.MainActivity;
 import com.google.firebase.auth.FirebaseUser;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.junit.Before;
 import org.junit.Rule;
@@ -38,18 +45,35 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DrawingFragmentTest {
+
+    private final String FIXTURE_DEFAULT_NOTE_TITLE = "My note";
+    private final String FIXTURE_DEFAULT_NOTE_CONTENT = "My note content";
+
     private FragmentScenario<DrawingFragment> scenario;
 
     @Mock Database databaseMock;
 
     @Before
     public void init() {
+        Note note = new Note(FIXTURE_DEFAULT_NOTE_TITLE);
+        note.setContent(FIXTURE_DEFAULT_NOTE_CONTENT);
+        CompletableFuture<Note> noteFuture = new CompletableFuture<>();
+        noteFuture.complete(note);
+
+        List<UUID> notes = Collections.singletonList(UUID.randomUUID());
+        CompletableFuture<List<UUID>> notesFuture = new CompletableFuture<>();
+        notesFuture.complete(notes);
+
+        doReturn(notesFuture).when(databaseMock).getNotesList();
+        doReturn(noteFuture).when(databaseMock).getNote(any());
+        doReturn(noteFuture).when(databaseMock).updateNote(any(), any());
+
         // Since we are using an activity, set a mocked user.
         FirebaseUser mockedUser = Mockito.mock(FirebaseUser.class);
         UserFactory.set(mockedUser);
         scenario =
                 FragmentScenario.launchInContainer(
-                        DrawingFragment.class, null, R.style.Theme_Asteroid);
+                        DrawingFragment.class, null, R.style.AsteroidTheme);
         CompletableFuture<TodoListCollection> todoListCollectionFuture = new CompletableFuture<>();
         todoListCollectionFuture.complete(new TodoListCollection());
         doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
@@ -167,7 +191,23 @@ public class DrawingFragmentTest {
     }
 
     @Test
-    public void saveButtonWorks() {
+    public void saveButtonWithPermissionWorks() {
+        InstrumentationRegistry.getInstrumentation()
+                .getUiAutomation()
+                .grantRuntimePermission(
+                        InstrumentationRegistry.getInstrumentation()
+                                .getTargetContext()
+                                .getPackageName(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        InstrumentationRegistry.getInstrumentation()
+                .getUiAutomation()
+                .grantRuntimePermission(
+                        InstrumentationRegistry.getInstrumentation()
+                                .getTargetContext()
+                                .getPackageName(),
+                        Manifest.permission.READ_EXTERNAL_STORAGE);
+
         onView(withId(R.id.drawing_save_btn)).perform(click());
         assertEquals(Lifecycle.State.DESTROYED, activityRule.getScenario().getState());
     }

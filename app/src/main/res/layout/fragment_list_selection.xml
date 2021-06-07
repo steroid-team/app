@@ -31,7 +31,7 @@
 
         <TextView
             android:id="@+id/activity_title"
-            style="@style/ActivityTitle"
+            style="@style/ViewTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/list_activity_title"
@@ -39,18 +39,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageButton
-            android:id="@+id/search_button"
-            style="@style/ToolbarActionButton"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginEnd="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/search_icon"
-            android:contentDescription="@string/search_btn_description" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -67,7 +55,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/list_selection_toolbar"/>
+        app:layout_constraintTop_toBottomOf="@+id/list_selection_toolbar" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/create_todo_button"
@@ -76,12 +64,13 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
-        android:src="@drawable/plus_icon"
-        app:backgroundTint="@color/dark_blue"
-        app:elevation="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="@string/new_list_btn_description"
-        android:focusable="true" />
+        android:focusable="true"
+        android:src="@drawable/plus_icon"
+        app:backgroundTint="?attr/colorPrimary"
+        app:elevation="0dp"
+        app:tint="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

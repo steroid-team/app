@@ -15,12 +15,15 @@ import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.espresso.intent.Intents;
 import com.github.steroidteam.todolist.database.Database;
 import com.github.steroidteam.todolist.database.DatabaseFactory;
+import com.github.steroidteam.todolist.model.todo.Tag;
 import com.github.steroidteam.todolist.model.todo.Task;
 import com.github.steroidteam.todolist.model.todo.TodoList;
 import com.github.steroidteam.todolist.model.todo.TodoListCollection;
 import com.github.steroidteam.todolist.view.DailyPlanningFragment;
 import com.github.steroidteam.todolist.viewmodel.ViewModelFactoryInjection;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.junit.After;
@@ -76,6 +79,13 @@ public class DailyPlanningFragmentTest {
         todoListCollectionFuture.complete(collection);
         doReturn(todoListCollectionFuture).when(databaseMock).getTodoListCollection();
 
+        CompletableFuture<List<Tag>> tagsFuture = new CompletableFuture<>();
+        tagsFuture.complete(new ArrayList<>());
+        doReturn(tagsFuture).when(databaseMock).getAllTags();
+        doReturn(tagsFuture).when(databaseMock).getTagsFromIds(any());
+        doReturn(tagsFuture).when(databaseMock).getAllTagsIds();
+        doReturn(tagsFuture).when(databaseMock).getTagsFromList(any());
+
         DatabaseFactory.setCustomDatabase(databaseMock);
 
         File fakeFile = new File("Fake pathname");
@@ -83,7 +93,7 @@ public class DailyPlanningFragmentTest {
         ViewModelFactoryInjection.setCustomTodoListRepo(context, UUID.randomUUID());
         scenario =
                 FragmentScenario.launchInContainer(
-                        DailyPlanningFragment.class, null, R.style.Theme_Asteroid);
+                        DailyPlanningFragment.class, null, R.style.AsteroidTheme);
     }
 
     @Test

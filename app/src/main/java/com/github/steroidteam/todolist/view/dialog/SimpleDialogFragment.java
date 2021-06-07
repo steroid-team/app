@@ -3,10 +3,9 @@ package com.github.steroidteam.todolist.view.dialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.Gravity;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.DialogFragment;
 import com.github.steroidteam.todolist.R;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class SimpleDialogFragment extends DialogFragment {
 
@@ -32,7 +31,7 @@ public class SimpleDialogFragment extends DialogFragment {
         int title = getArguments().getInt(TITLE_KEY);
 
         Dialog dialog =
-                new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.Dialog))
+                new MaterialAlertDialogBuilder(getActivity())
                         .setTitle(title)
                         .setPositiveButton(
                                 R.string.confirm,
@@ -44,7 +43,6 @@ public class SimpleDialogFragment extends DialogFragment {
 
         dialog.setCanceledOnTouchOutside(false);
         dialog.getWindow().setGravity(Gravity.CENTER);
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         return dialog;
     }
 }

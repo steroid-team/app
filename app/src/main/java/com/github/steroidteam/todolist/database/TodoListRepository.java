@@ -73,6 +73,8 @@ public class TodoListRepository {
                 .thenCombine(
                         this.localDatabase.getTodoListCollection(),
                         (remoteTodoCollection, localTodoCollection) -> {
+                            List<CompletableFuture<Void>> completableFutureList = new ArrayList<>();
+
                             // CHECK THAT ALL REMOTE TO-DO WILL BE IN THE LOCAL DATABASE
                             for (int i = 0; i < remoteTodoCollection.getSize(); ++i) {
                                 UUID currentRemoteID = remoteTodoCollection.getUUID(i);
@@ -84,9 +86,11 @@ public class TodoListRepository {
                                 } else {
                                     // The to-do list is not present in the local file system.
                                     // We need to add it:
-                                    this.remoteDatabase
-                                            .getTodoList(currentRemoteID)
-                                            .thenAccept(this.localDatabase::putTodoList);
+                                    CompletableFuture<Void> future =
+                                            this.remoteDatabase
+                                                    .getTodoList(currentRemoteID)
+                                                    .thenAccept(this.localDatabase::putTodoList);
+                                    completableFutureList.add(future);
                                 }
                             }
 
@@ -94,9 +98,24 @@ public class TodoListRepository {
                             for (int i = 0; i < localTodoCollection.getSize(); ++i) {
                                 UUID currentLocalID = localTodoCollection.getUUID(i);
                                 if (!remoteTodoCollection.contains(currentLocalID)) {
-                                    this.localDatabase.removeTodoList(currentLocalID);
+                                    CompletableFuture<Void> future2 =
+                                            this.localDatabase.removeTodoList(currentLocalID);
+                                    completableFutureList.add(future2);
                                 }
                             }
+
+                            CompletableFuture<Void> futureOfList =
+                                    CompletableFuture.allOf(
+                                            completableFutureList.toArray(
+                                                    new CompletableFuture[0]));
+
+                            futureOfList
+                                    .thenCompose(str -> this.localDatabase.getTodoListCollection())
+                                    .thenAccept(
+                                            todoListCollection -> {
+                                                setTodoListMutableLiveData(
+                                                        todoListCollection, localDatabase);
+                                            });
                             return null;
                         })
                 .thenCompose(str -> this.localDatabase.getTodoListCollection())

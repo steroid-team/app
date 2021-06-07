@@ -227,11 +227,6 @@ public class TodoListRepository {
         return globalTags;
     }
 
-    public LiveData<List<Tag>> getUnlinkedTags(UUID todoListID) {
-        setTagsLists(todoListID);
-        return unlinkedTags;
-    }
-
     public void putTagInTodolist(UUID todoListID, UUID tagId) {
         localDatabase
                 .putTagInList(todoListID, tagId)
@@ -243,9 +238,10 @@ public class TodoListRepository {
                 .thenAccept(
                         str -> {
                             List<Tag> unlinked = globalTags.getValue();
-                            unlinked.removeAll(globalTags.getValue());
+                            unlinked.removeAll(localTags.getValue());
                             unlinkedTags.postValue(unlinked);
                         });
+        remoteDatabase.putTagInList(todoListID, tagId);
     }
 
     public void putTag(Tag tag) {
@@ -274,7 +270,7 @@ public class TodoListRepository {
                 .thenAccept(
                         str -> {
                             List<Tag> unlinked = globalTags.getValue();
-                            unlinked.removeAll(globalTags.getValue());
+                            unlinked.removeAll(localTags.getValue());
                             unlinkedTags.postValue(unlinked);
                         });
     }

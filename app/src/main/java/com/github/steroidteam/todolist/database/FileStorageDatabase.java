@@ -434,7 +434,7 @@ public class FileStorageDatabase implements Database {
                 .thenApply(JSONSerializer::serializeTodoList)
                 .thenApply(
                         serializedTodoList -> serializedTodoList.getBytes(StandardCharsets.UTF_8))
-                .thenCompose(bytes -> this.storageService.upload(bytes, listPath))
+                .thenCompose(bytes -> storageService.upload(bytes, listPath))
                 .thenApply(str -> tagId);
     }
 

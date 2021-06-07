@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -14,6 +15,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.firebase.ui.auth.AuthUI;
 import com.github.steroidteam.todolist.R;
 import com.github.steroidteam.todolist.model.user.UserFactory;
+import com.github.steroidteam.todolist.viewmodel.UserViewModel;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -49,6 +51,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Inflate drawer's header with the user profile data.
         View headerView = navigationView.getHeaderView(0);
+
+        UserViewModel userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        userViewModel
+                .getUser()
+                .observe(this, userObservable -> setNavHeader(headerView, userObservable));
+    }
+
+    private void setNavHeader(View headerView, FirebaseUser user) {
         TextView navUserName = headerView.findViewById(R.id.nav_user_name);
         navUserName.setText(user.getDisplayName());
         TextView navUserEmail = headerView.findViewById(R.id.nav_user_email);

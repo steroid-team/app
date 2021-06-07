@@ -136,6 +136,24 @@ public class MainActivityTest {
 
             // List selection should be displayed now.
             onView(withId(R.id.fragment_list_selection)).check(matches(isDisplayed()));
+
+            // Open the drawer again and select "User".
+            onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
+            onView(withId(R.id.drawer_layout)).check(matches(isOpen()));
+            onView(withId(R.id.nav_profile)).perform(click());
+            onView(withId(R.id.drawer_layout)).check(matches(isClosed()));
+
+            // List selection should be displayed now.
+            onView(withId(R.id.fragment_profile)).check(matches(isDisplayed()));
+
+            // Open the drawer again and select "User".
+            onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
+            onView(withId(R.id.drawer_layout)).check(matches(isOpen()));
+            onView(withId(R.id.nav_credits)).perform(click());
+            onView(withId(R.id.drawer_layout)).check(matches(isClosed()));
+
+            // List selection should be displayed now.
+            onView(withId(R.id.fragment_credits)).check(matches(isDisplayed()));
         }
     }
 

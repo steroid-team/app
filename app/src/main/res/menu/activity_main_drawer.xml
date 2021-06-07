@@ -15,4 +15,19 @@
             android:icon="@drawable/note"
             android:title="@string/menu_notes" />
     </group>
+
+    <item android:title="Settings">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_profile"
+                    android:icon="@drawable/profile"
+                    android:title="@string/profile" />
+                <item
+                    android:id="@+id/nav_credits"
+                    android:icon="@drawable/credits"
+                    android:title="@string/credits" />
+            </group>
+        </menu>
+    </item>
 </menu>

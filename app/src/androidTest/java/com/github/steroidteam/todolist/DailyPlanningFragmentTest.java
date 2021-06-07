@@ -86,24 +86,6 @@ public class DailyPlanningFragmentTest {
                         DailyPlanningFragment.class, null, R.style.Theme_Asteroid);
     }
 
-    /*@Test
-    public void taskDescriptionIsCorrectlyDisplayed() {
-        final String TASK_DESCRIPTION = "Buy bananas";
-
-        TodoList todoList = new TodoList("Some random title");
-        CompletableFuture<TodoList> todoListFuture = new CompletableFuture<>();
-        todoListFuture.complete(todoList);
-        Task task = new Task(TASK_DESCRIPTION);
-        todoList.addTask(task);
-        doReturn(todoListFuture).when(databaseMock).getTodoList(any());
-
-        CompletableFuture<Task> taskFuture = new CompletableFuture<>();
-        taskFuture.complete(task);
-        doReturn(taskFuture).when(databaseMock).getTask(any(UUID.class), anyInt());
-
-        onView(withId(R.id.task_description)).check(matches(withText(TASK_DESCRIPTION)));
-    }*/
-
     @Test
     public void setTaskForTodayWorks() {
         final String TASK_DESCRIPTION = "Buy bananas";
@@ -126,7 +108,7 @@ public class DailyPlanningFragmentTest {
     @Test
     public void tasksProperlyCycle() {
         onView(withId(R.id.today_plan_button)).perform(click());
-        onView(withId(R.id.today_none_button)).perform(click());
+        onView(withId(R.id.afternoon_button)).perform(click());
         onView(withId(R.id.task_description)).check(matches(withText("task2")));
     }
 }
